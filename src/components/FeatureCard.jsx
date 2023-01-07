@@ -40,7 +40,7 @@ export function FeatureCard() {
       </div>
 
       <div className="my-auto mx-auto px-6  text-center">
-            <h1 className='text-white text-xl'> Brush up on your competitive cybersecurity skills with hundreds of community uploaded problems. All challenge problems have detailed writeups. </h1>
+            <h1 className='text-white text-xl'> Learn new cybersecurity concepts in an interactive fashion. We use machine learning to create more dynamic learning experiences. </h1>
       </div>
 
       </div>
