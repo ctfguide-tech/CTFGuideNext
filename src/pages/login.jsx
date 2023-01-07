@@ -11,7 +11,7 @@ export default function Login() {
       <Head>
         <title>Sign In - CTFGuide</title>
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
 
@@ -28,7 +28,7 @@ export default function Login() {
           <p className="mt-2 text-center text-sm text-gray-600">
         
             <a href="#" className="font-semibold text-blue-600 hover:text-blue-500">
-             Don't have an account?
+             Don&apos;t have an account?
             </a>
           </p>
         </div>

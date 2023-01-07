@@ -17,7 +17,7 @@ export default function Home() {
           content="Cybersecurity as a service."
         />
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
       <Header/>
