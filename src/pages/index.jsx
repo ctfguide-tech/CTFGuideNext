@@ -1,31 +1,30 @@
 import Head from 'next/head'
-
-import { CallToAction } from '@/components/CallToAction'
-import { Footer } from '@/components/Footer'
+import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
-import { PrimaryFeatures } from '@/components/PrimaryFeatures'
-import { Schools } from '@/components/Schools'
-
+import { useState } from 'react'
+import { FeatureCard } from '@/components/FeatureCard'
+import { Footer } from '@/components/Footer'
 export default function Home() {
+
   return (
     <>
+
       <Head>
         <title>CTFGuide</title>
         <meta
           name="description"
-          content="Most bookkeeping software is accurate, but hard to use. We make the opposite trade-off, and hope you don’t get audited."
+          content="Cybersecurity as a service."
         />
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+        </style>
       </Head>
-      <Header />
-      <main>
-        <Hero />
-        <Schools />
-        <PrimaryFeatures />
-   
-     
-      </main>
-      <Footer />
+      <Header/>
+      <Hero/>
+
+      <FeatureCard/>
+      <Footer/>
     </>
   )
 }

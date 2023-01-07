@@ -10,7 +10,7 @@ function classNames(...classes) {
 
 export function StandardNav() {
   return (
-    <Disclosure as="nav" className="bg-white shadow py-2">
+    <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

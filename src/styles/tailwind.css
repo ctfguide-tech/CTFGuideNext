@@ -1,7 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 #__next {
   min-height: 100%;
+  background-color:#161716;
 }
+
+
+
+
+body {
+  background-color:#161716;
+  font-family: 'Poppins', sans-serif;
+  height: "100%"
+
+}
+
+
