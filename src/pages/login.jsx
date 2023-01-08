@@ -8,22 +8,31 @@ import { Alert } from '@/components/Alert'
 export default function Login() {
 
   function loginUser() {
-
+    console.log(document.getElementById("username").value)
     var data = JSON.stringify({
-      "username": document.getElementById("email").value,
+      "username": document.getElementById("username").value,
       "password": document.getElementById("password").value
     });
 
     var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
+  
 
     xhr.addEventListener("readystatechange", function () {
-      if (this.readyState === 4) {
-        console.log(this.responseText);
+      if (this.readyState === 4 && this.status === 200) {
+        var parsedJSON = JSON.parse(this.responseText);
+        if (parsedJSON.status == "success") {
+          window.location.href = "/dashboard";
+        } else {
+          window.alert("Invalid credentials");
+        }
       }
     });
 
+
+
     xhr.open("POST", process.env.NEXT_PUBLIC_API_URL + "/users/login");
+   
+    xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(data);
 
   }
@@ -59,18 +68,18 @@ export default function Login() {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div style={{ backgroundColor: "#212121" }} className=" py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" action="#" method="POST">
+            <div className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-200">
-                  Email address
+                  Username
                 </label>
                 <div className="mt-1">
                   <input
                     style={{ backgroundColor: "#161716", borderWidth: "0px" }}
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
                     required
                     className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                   />
@@ -107,12 +116,13 @@ export default function Login() {
               <div>
                 <button
                   type="submit"
+                  onClick={loginUser}
                   className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Sign in
                 </button>
               </div>
-            </form>
+            </div>
 
             <div className="mt-6">
 

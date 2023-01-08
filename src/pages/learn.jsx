@@ -14,6 +14,9 @@ export default function Dashboard() {
           name="description"
           content="Cybersecurity made easy for everyone"
         />
+                <style>
+          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+        </style>
       </Head>
         <StandardNav />
 
