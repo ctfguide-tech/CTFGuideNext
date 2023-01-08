@@ -1,11 +1,34 @@
 import Head from 'next/head'
 import Link from 'next/link'
-
 import { Button } from '@/components/Button'
 import { TextField } from '@/components/Fields'
 import { Logo } from '@/components/Logo'
+import { Alert } from '@/components/Alert'
 
 export default function Login() {
+
+  function loginUser() {
+
+    var data = JSON.stringify({
+      "username": document.getElementById("email").value,
+      "password": document.getElementById("password").value
+    });
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", process.env.NEXT_PUBLIC_API_URL + "/users/login");
+    xhr.send(data);
+
+  }
+
+
   return (
     <>
       <Head>
@@ -14,27 +37,28 @@ export default function Login() {
           @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
+      <Alert></Alert>
 
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Link href="../">
-          <img
-            className="mx-auto h-20 w-auto"
-            src="../darkLogo.png"
-            alt="CTFGuide"
-          />
+            <img
+              className="mx-auto h-20 w-auto"
+              src="../darkLogo.png"
+              alt="CTFGuide"
+            />
           </Link>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">Sign in to your account</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-        
+
             <a href="#" className="font-semibold text-blue-600 hover:text-blue-500">
-             Don&apos;t have an account?
+              Don&apos;t have an account?
             </a>
           </p>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div style={{backgroundColor: "#212121"}} className=" py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div style={{ backgroundColor: "#212121" }} className=" py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form className="space-y-6" action="#" method="POST">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-200">
@@ -42,7 +66,7 @@ export default function Login() {
                 </label>
                 <div className="mt-1">
                   <input
-                    style={{  backgroundColor:"#161716", borderWidth: "0px" }}
+                    style={{ backgroundColor: "#161716", borderWidth: "0px" }}
                     id="email"
                     name="email"
                     type="email"
@@ -59,7 +83,7 @@ export default function Login() {
                 </label>
                 <div className="mt-1">
                   <input
-                    style={{  backgroundColor:"#161716", borderWidth: "0px" }}
+                    style={{ backgroundColor: "#161716", borderWidth: "0px" }}
                     id="password"
                     name="password"
                     type="password"
@@ -71,7 +95,7 @@ export default function Login() {
               </div>
 
               <div className="flex items-center justify-between">
-      
+
 
                 <div className="text-sm text-center mx-auto">
                   <a href="#" className="text-center font-medium text-blue-600 hover:text-blue-500">
@@ -91,12 +115,12 @@ export default function Login() {
             </form>
 
             <div className="mt-6">
-        
+
 
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <div>
                   <a
-                     style={{  backgroundColor:"#161716", borderWidth: "0px" }}
+                    style={{ backgroundColor: "#161716", borderWidth: "0px" }}
                     href="#"
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
                   >
@@ -113,7 +137,7 @@ export default function Login() {
 
                 <div>
                   <a
-                     style={{  backgroundColor:"#161716", borderWidth: "0px" }}
+                    style={{ backgroundColor: "#161716", borderWidth: "0px" }}
                     href="#"
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
                   >
@@ -125,7 +149,7 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <a   style={{  backgroundColor:"#161716", borderWidth: "0px" }}
+                  <a style={{ backgroundColor: "#161716", borderWidth: "0px" }}
                     href="#"
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
                   >
