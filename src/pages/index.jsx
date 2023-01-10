@@ -5,6 +5,7 @@ import { Hero } from '@/components/Hero'
 import { useState } from 'react'
 import { FeatureCard } from '@/components/FeatureCard'
 import { Footer } from '@/components/Footer'
+import { PricingPanel } from '@/components/PricingPanel'
 export default function Home() {
 
   return (
@@ -24,6 +25,7 @@ export default function Home() {
       <Hero/>
 
       <FeatureCard/>
+      <PricingPanel/>
       <Footer/>
     </>
   )

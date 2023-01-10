@@ -18,13 +18,13 @@ export default function Dashboard() {
           @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-        <StandardNav />
+
 
       <main>
       
         <LearnCore/>
       </main>
-      <Footer />
+     
     </>
   )
 }

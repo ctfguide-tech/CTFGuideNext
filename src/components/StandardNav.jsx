@@ -35,26 +35,32 @@ export function StandardNav() {
                 <div className="hidden md:ml-6 md:flex md:space-x-8">
                   {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:border-gray-300 hover:text-gray-700" */}
                   <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-blue-500 px-1 pt-1 text-sm font-medium text-white"
+                    href="./dashboard"
+                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Dashboard
                   </a>
                   <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700"
+                    href="./learn"
+                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
+                  >
+                    Learn
+                  </a>
+                  <a
+                    href="./classes"
+                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Classes
                   </a>
                   <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700"
+                    href="./practice"
+                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Practice
                   </a>
                   <a
                     href="#"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700"
+                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Social
                   </a>
