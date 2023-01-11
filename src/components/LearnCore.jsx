@@ -22,8 +22,8 @@ export function LearnCore() {
         <img src="./default.png" width="30" className='my-auto'></img>
         </div>
     </ul>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-0  mt-2 h-100 overflow-hidden">
-                <div style={{backgroundColor: "#212121"}} className="px-4 py-4 h-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-0  mt-2 h-100   resize-x">
+                <div style={{backgroundColor: "#212121"}} className="px-4 py-4 h-100 resize-x">
                     <h1 className="text-2xl font-bold text-white">Using your terminal</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
@@ -58,7 +58,7 @@ export function LearnCore() {
                     <button className='ml-2 mt-4 text-white px-3 py-1 rounded-lg '>Skip</button>
 
                 </div>
-                <div className='h-screen bg-black overflow-hidden'>
+                <div className='h-screen bg-black overflow-hidden resize-x'>
                 <div className='text-white bg-black text-sm flex'>
                     <p className='px-2 py-1'><span className='text-green-400'>◉</span> Connected to sandbox.ctfguide.com</p>
                     <div className='ml-auto px-2 py-1 flex'>

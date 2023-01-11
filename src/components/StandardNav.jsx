@@ -9,6 +9,16 @@ function classNames(...classes) {
 }
 
 export function StandardNav() {
+
+  function logout() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        window.location.href = "/";
+      }
+    }
+    xhttp.open(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, "POST", true);
+  }
   return (
     <Disclosure as="nav" className=" shadow">
       {({ open }) => (
@@ -217,6 +227,7 @@ export function StandardNav() {
                 <Disclosure.Button
                   as="a"
                   href="#"
+                  onClick={{logout}}
                   className="block px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
                 >
                   Sign out
