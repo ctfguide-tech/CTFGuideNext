@@ -12,5 +12,5 @@ Next, run the development server:
 npm run dev
 ```
 
-Finally, open [http://localhost:3000](http://localhost:3000) in your browser to view the website.
+Finally, open [http://localhost:3001](http://localhost:3001) in your browser to view the website.
 
