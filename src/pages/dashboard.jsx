@@ -3,8 +3,8 @@ import Head from 'next/head'
 import { Footer } from '@/components/Footer'
 
 import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/DashboardHeader'
-import { Stats } from '@/components/Stats'
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
+import { Stats } from '@/components/dashboard/Stats'
 export default function Dashboard() {
   return (
     <>

@@ -3,17 +3,18 @@ import Link from 'next/link'
 import { Container } from '@/components/Container'
 import { Logo } from '@/components/Logo'
 import { NavLink } from '@/components/NavLink'
-
+import { FadeInSection } from '../functions/styling/FadeInSection'
 export function PricingPanel() {
     return (
         <>
-                <Container style={{ backgroundColor: "#161716" }} className="py-10">
+                <Container style={{ backgroundColor: "#161716" }} className="mt-40">
 
 <div>
+<FadeInSection>
                         <h1 className='mt-24 text-white text-5xl font-semibold text-center '>Pricing</h1>
-
+                        </FadeInSection>
                         <div className="grid grid-cols-3 gap-5 max-w mx-auto mt-16">
-
+                        <FadeInSection>
                               <div>
                                     <div style={{ backgroundColor: "#212121" }} className='bg-black py-4 border-l-8 border-blue-900'>
                                           <img src="./free.png" width="80" className='mx-auto text-center'></img>
@@ -34,7 +35,7 @@ export function PricingPanel() {
                                           </ul>
                                     </div>
                               </div>
-
+</FadeInSection><FadeInSection>
                               <div>
                                     <div style={{ backgroundColor: "#212121" }} className='bg-black py-4 border-l-8 border-blue-900 mx-auto text-center'>
                                           <img src="./fame.png" width="80" className='mx-auto text-center'></img>
@@ -56,6 +57,8 @@ export function PricingPanel() {
 
                                     </div>
                               </div>
+</FadeInSection>
+<FadeInSection>
                               <div>
                                     <div style={{ backgroundColor: "#212121" }} className='bg-black py-4 border-l-8 border-blue-900 mx-auto text-center'>
                                           <img src="./organization.png" width="80" className='mx-auto text-center'></img>
@@ -77,9 +80,10 @@ export function PricingPanel() {
 
 
                               </div>
-
+</FadeInSection>
                         </div>
 </div>
+
 </Container>
         </>
     )

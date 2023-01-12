@@ -5,6 +5,7 @@ export default function Document(props) {
 
   return (
     <Html
+    style={{ backgroundColor: "#161716" }} 
       className="h-full scroll-smooth bg-white antialiased [font-feature-settings:'ss01']"
       lang="en"
     >
