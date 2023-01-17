@@ -1,129 +1,373 @@
-# Tailwind UI License
+Mozilla Public License Version 2.0
+==================================
 
-## Personal License
+1. Definitions
+--------------
 
-Tailwind Labs Inc. grants you an on-going, non-exclusive license to use the Components and Templates.
+1.1. "Contributor"
+    means each individual or legal entity that creates, contributes to
+    the creation of, or owns Covered Software.
 
-The license grants permission to **one individual** (the Licensee) to access and use the Components and Templates.
+1.2. "Contributor Version"
+    means the combination of the Contributions of others (if any) used
+    by a Contributor and that particular Contributor's Contribution.
 
-You **can**:
+1.3. "Contribution"
+    means Covered Software of a particular Contributor.
 
-- Use the Components and Templates to create unlimited End Products.
-- Modify the Components and Templates to create derivative components and templates. Those components and templates are subject to this license.
-- Use the Components and Templates to create unlimited End Products for unlimited Clients.
-- Use the Components and Templates to create End Products where the End Product is sold to End Users.
-- Use the Components and Templates to create End Products that are open source and freely available to End Users.
+1.4. "Covered Software"
+    means Source Code Form to which the initial Contributor has attached
+    the notice in Exhibit A, the Executable Form of such Source Code
+    Form, and Modifications of such Source Code Form, in each case
+    including portions thereof.
 
-You **cannot**:
+1.5. "Incompatible With Secondary Licenses"
+    means
 
-- Use the Components and Templates to create End Products that are designed to allow an End User to build their own End Products using the Components and Templates or derivatives of the Components and Templates.
-- Re-distribute the Components and Templates or derivatives of the Components and Templates separately from an End Product, neither in code or as design assets.
-- Share your access to the Components and Templates with any other individuals.
-- Use the Components and Templates to produce anything that may be deemed by Tailwind Labs Inc, in their sole and absolute discretion, to be competitive or in conflict with the business of Tailwind Labs Inc.
+    (a) that the initial Contributor has attached the notice described
+        in Exhibit B to the Covered Software; or
 
-### Example usage
+    (b) that the Covered Software was made available under the terms of
+        version 1.1 or earlier of the License, but not also under the
+        terms of a Secondary License.
 
-Examples of usage **allowed** by the license:
+1.6. "Executable Form"
+    means any form of the work other than Source Code Form.
 
-- Creating a personal website by yourself.
-- Creating a website or web application for a client that will be owned by that client.
-- Creating a commercial SaaS application (like an invoicing app for example) where end users have to pay a fee to use the application.
-- Creating a commercial self-hosted web application that is sold to end users for a one-time fee.
-- Creating a web application where the primary purpose is clearly not to simply re-distribute the components (like a conference organization app that uses the components for its UI for example) that is free and open source, where the source code is publicly available.
+1.7. "Larger Work"
+    means a work that combines Covered Software with other material, in
+    a separate file or files, that is not Covered Software.
 
-Examples of usage **not allowed** by the license:
+1.8. "License"
+    means this document.
 
-- Creating a repository of your favorite Tailwind UI components or templates (or derivatives based on Tailwind UI components or templates) and publishing it publicly.
-- Creating a React or Vue version of Tailwind UI and making it available either for sale or for free.
-- Create a Figma or Sketch UI kit based on the Tailwind UI component designs.
-- Creating a "website builder" project where end users can build their own websites using components or templates included with or derived from Tailwind UI.
-- Creating a theme, template, or project starter kit using the components or templates and making it available either for sale or for free.
-- Creating an admin panel tool (like [Laravel Nova](https://nova.laravel.com/) or [ActiveAdmin](https://activeadmin.info/)) that is made available either for sale or for free.
+1.9. "Licensable"
+    means having the right to grant, to the maximum extent possible,
+    whether at the time of the initial grant or subsequently, any and
+    all of the rights conveyed by this License.
 
-In simple terms, use Tailwind UI for anything you like as long as it doesn't compete with Tailwind UI.
+1.10. "Modifications"
+    means any of the following:
 
-### Personal License Definitions
+    (a) any file in Source Code Form that results from an addition to,
+        deletion from, or modification of the contents of Covered
+        Software; or
 
-Licensee is the individual who has purchased a Personal License.
+    (b) any new file in Source Code Form that contains any Covered
+        Software.
 
-Components and Templates are the source code and design assets made available to the Licensee after purchasing a Tailwind UI license.
+1.11. "Patent Claims" of a Contributor
+    means any patent claim(s), including without limitation, method,
+    process, and apparatus claims, in any patent Licensable by such
+    Contributor that would be infringed, but for the grant of the
+    License, by the making, using, selling, offering for sale, having
+    made, import, or transfer of either its Contributions or its
+    Contributor Version.
 
-End Product is any artifact produced that incorporates the Components or Templates or derivatives of the Components or Templates.
+1.12. "Secondary License"
+    means either the GNU General Public License, Version 2.0, the GNU
+    Lesser General Public License, Version 2.1, the GNU Affero General
+    Public License, Version 3.0, or any later versions of those
+    licenses.
 
-End User is a user of an End Product.
+1.13. "Source Code Form"
+    means the form of the work preferred for making modifications.
 
-Client is an individual or entity receiving custom professional services directly from the Licensee, produced specifically for that individual or entity. Customers of software-as-a-service products are not considered clients for the purpose of this document.
+1.14. "You" (or "Your")
+    means an individual or a legal entity exercising rights under this
+    License. For legal entities, "You" includes any entity that
+    controls, is controlled by, or is under common control with You. For
+    purposes of this definition, "control" means (a) the power, direct
+    or indirect, to cause the direction or management of such entity,
+    whether by contract or otherwise, or (b) ownership of more than
+    fifty percent (50%) of the outstanding shares or beneficial
+    ownership of such entity.
 
-## Team License
+2. License Grants and Conditions
+--------------------------------
 
-Tailwind Labs Inc. grants you an on-going, non-exclusive license to use the Components and Templates.
+2.1. Grants
 
-The license grants permission for **up to 25 Employees and Contractors of the Licensee** to access and use the Components and Templates.
+Each Contributor hereby grants You a world-wide, royalty-free,
+non-exclusive license:
 
-You **can**:
+(a) under intellectual property rights (other than patent or trademark)
+    Licensable by such Contributor to use, reproduce, make available,
+    modify, display, perform, distribute, and otherwise exploit its
+    Contributions, either on an unmodified basis, with Modifications, or
+    as part of a Larger Work; and
 
-- Use the Components and Templates to create unlimited End Products.
-- Modify the Components and Templates to create derivative components and templates. Those components and templates are subject to this license.
-- Use the Components and Templates to create unlimited End Products for unlimited Clients.
-- Use the Components and Templates to create End Products where the End Product is sold to End Users.
-- Use the Components and Templates to create End Products that are open source and freely available to End Users.
+(b) under Patent Claims of such Contributor to make, use, sell, offer
+    for sale, have made, import, and otherwise transfer either its
+    Contributions or its Contributor Version.
 
-You **cannot**:
+2.2. Effective Date
 
-- Use the Components or Templates to create End Products that are designed to allow an End User to build their own End Products using the Components or Templates or derivatives of the Components or Templates.
-- Re-distribute the Components or Templates or derivatives of the Components or Templates separately from an End Product.
-- Use the Components or Templates to create End Products that are the property of any individual or entity other than the Licensee or Clients of the Licensee.
-- Use the Components or Templates to produce anything that may be deemed by Tailwind Labs Inc, in their sole and absolute discretion, to be competitive or in conflict with the business of Tailwind Labs Inc.
+The licenses granted in Section 2.1 with respect to any Contribution
+become effective for each Contribution on the date the Contributor first
+distributes such Contribution.
 
-### Example usage
+2.3. Limitations on Grant Scope
 
-Examples of usage **allowed** by the license:
+The licenses granted in this Section 2 are the only rights granted under
+this License. No additional rights or licenses will be implied from the
+distribution or licensing of Covered Software under this License.
+Notwithstanding Section 2.1(b) above, no patent license is granted by a
+Contributor:
 
-- Creating a website for your company
-- Creating a website or web application for a client that will be owned by that client
-- Creating a commercial SaaS application (like an invoicing app for example) where end users have to pay a fee to use the application
-- Creating a commercial self-hosted web application that is sold to end users for a one-time fee
-- Creating a web application where the primary purpose is clearly not to simply re-distribute the components or templates (like a conference organization app that uses the components or a template for its UI for example) that is free and open source, where the source code is publicly available
+(a) for any code that a Contributor has removed from Covered Software;
+    or
 
-Examples of use **not allowed** by the license:
+(b) for infringements caused by: (i) Your and any other third party's
+    modifications of Covered Software, or (ii) the combination of its
+    Contributions with other software (except as part of its Contributor
+    Version); or
 
-- Creating a repository of your favorite Tailwind UI components or template (or derivatives based on Tailwind UI components or templates) and publishing it publicly
-- Creating a React or Vue version of Tailwind UI and making it available either for sale or for free
-- Creating a "website builder" project where end users can build their own websites using components or templates included with or derived from Tailwind UI
-- Creating a theme or template using the components or templates and making it available either for sale or for free
-- Creating an admin panel tool (like [Laravel Nova](https://nova.laravel.com/) or [ActiveAdmin](https://activeadmin.info/)) that is made available either for sale or for free
-- Creating any End Product that is not the sole property of either your company or a client of your company. For example your employees/contractors can't use your company Tailwind UI license to build their own websites or side projects.
+(c) under Patent Claims infringed by Covered Software in the absence of
+    its Contributions.
 
-### Team License Definitions
+This License does not grant any rights in the trademarks, service marks,
+or logos of any Contributor (except as may be necessary to comply with
+the notice requirements in Section 3.4).
 
-Licensee is the business entity who has purchased a Team License.
+2.4. Subsequent Licenses
 
-Components and Templates are the source code and design assets made available to the Licensee after purchasing a Tailwind UI license.
+No Contributor makes additional grants as a result of Your choice to
+distribute the Covered Software under a subsequent version of this
+License (see Section 10.2) or under the terms of a Secondary License (if
+permitted under the terms of Section 3.3).
 
-End Product is any artifact produced that incorporates the Components or Templates or derivatives of the Components or Templates.
+2.5. Representation
 
-End User is a user of an End Product.
+Each Contributor represents that the Contributor believes its
+Contributions are its original creation(s) or it has sufficient rights
+to grant the rights to its Contributions conveyed by this License.
 
-Employee is a full-time or part-time employee of the Licensee.
+2.6. Fair Use
 
-Contractor is an individual or business entity contracted to perform services for the Licensee.
+This License is not intended to limit any rights You have under
+applicable copyright doctrines of fair use, fair dealing, or other
+equivalents.
 
-Client is an individual or entity receiving custom professional services directly from the Licensee, produced specifically for that individual or entity. Customers of software-as-a-service products are not considered clients for the purpose of this document.
+2.7. Conditions
 
-## Enforcement
+Sections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted
+in Section 2.1.
 
-If you are found to be in violation of the license, access to your Tailwind UI account will be terminated, and a refund may be issued at our discretion. When license violation is blatant and malicious (such as intentionally redistributing the Components or Templates through private warez channels), no refund will be issued.
+3. Responsibilities
+-------------------
 
-The copyright of the Components and Templates is owned by Tailwind Labs Inc. You are granted only the permissions described in this license; all other rights are reserved. Tailwind Labs Inc. reserves the right to pursue legal remedies for any unauthorized use of the Components or Templates outside the scope of this license.
+3.1. Distribution of Source Form
 
-## Liability
+All distribution of Covered Software in Source Code Form, including any
+Modifications that You create or to which You contribute, must be under
+the terms of this License. You must inform recipients that the Source
+Code Form of the Covered Software is governed by the terms of this
+License, and how they can obtain a copy of this License. You may not
+attempt to alter or restrict the recipients' rights in the Source Code
+Form.
 
-Tailwind Labs Inc.’s liability to you for costs, damages, or other losses arising from your use of the Components or Templates — including third-party claims against you — is limited to a refund of your license fee. Tailwind Labs Inc. may not be held liable for any consequential damages related to your use of the Components or Templates.
+3.2. Distribution of Executable Form
 
-This Agreement is governed by the laws of the Province of Ontario and the applicable laws of Canada. Legal proceedings related to this Agreement may only be brought in the courts of Ontario. You agree to service of process at the e-mail address on your original order.
+If You distribute Covered Software in Executable Form then:
 
-## Questions?
+(a) such Covered Software must also be made available in Source Code
+    Form, as described in Section 3.1, and You must inform recipients of
+    the Executable Form how they can obtain a copy of such Source Code
+    Form by reasonable means in a timely manner, at a charge no more
+    than the cost of distribution to the recipient; and
 
-Unsure which license you need, or unsure if your use case is covered by our licenses?
+(b) You may distribute such Executable Form under the terms of this
+    License, or sublicense it under different terms, provided that the
+    license for the Executable Form does not attempt to limit or alter
+    the recipients' rights in the Source Code Form under this License.
 
-Email us at [support@tailwindui.com](mailto:support@tailwindui.com) with your questions.
+3.3. Distribution of a Larger Work
+
+You may create and distribute a Larger Work under terms of Your choice,
+provided that You also comply with the requirements of this License for
+the Covered Software. If the Larger Work is a combination of Covered
+Software with a work governed by one or more Secondary Licenses, and the
+Covered Software is not Incompatible With Secondary Licenses, this
+License permits You to additionally distribute such Covered Software
+under the terms of such Secondary License(s), so that the recipient of
+the Larger Work may, at their option, further distribute the Covered
+Software under the terms of either this License or such Secondary
+License(s).
+
+3.4. Notices
+
+You may not remove or alter the substance of any license notices
+(including copyright notices, patent notices, disclaimers of warranty,
+or limitations of liability) contained within the Source Code Form of
+the Covered Software, except that You may alter any license notices to
+the extent required to remedy known factual inaccuracies.
+
+3.5. Application of Additional Terms
+
+You may choose to offer, and to charge a fee for, warranty, support,
+indemnity or liability obligations to one or more recipients of Covered
+Software. However, You may do so only on Your own behalf, and not on
+behalf of any Contributor. You must make it absolutely clear that any
+such warranty, support, indemnity, or liability obligation is offered by
+You alone, and You hereby agree to indemnify every Contributor for any
+liability incurred by such Contributor as a result of warranty, support,
+indemnity or liability terms You offer. You may include additional
+disclaimers of warranty and limitations of liability specific to any
+jurisdiction.
+
+4. Inability to Comply Due to Statute or Regulation
+---------------------------------------------------
+
+If it is impossible for You to comply with any of the terms of this
+License with respect to some or all of the Covered Software due to
+statute, judicial order, or regulation then You must: (a) comply with
+the terms of this License to the maximum extent possible; and (b)
+describe the limitations and the code they affect. Such description must
+be placed in a text file included with all distributions of the Covered
+Software under this License. Except to the extent prohibited by statute
+or regulation, such description must be sufficiently detailed for a
+recipient of ordinary skill to be able to understand it.
+
+5. Termination
+--------------
+
+5.1. The rights granted under this License will terminate automatically
+if You fail to comply with any of its terms. However, if You become
+compliant, then the rights granted under this License from a particular
+Contributor are reinstated (a) provisionally, unless and until such
+Contributor explicitly and finally terminates Your grants, and (b) on an
+ongoing basis, if such Contributor fails to notify You of the
+non-compliance by some reasonable means prior to 60 days after You have
+come back into compliance. Moreover, Your grants from a particular
+Contributor are reinstated on an ongoing basis if such Contributor
+notifies You of the non-compliance by some reasonable means, this is the
+first time You have received notice of non-compliance with this License
+from such Contributor, and You become compliant prior to 30 days after
+Your receipt of the notice.
+
+5.2. If You initiate litigation against any entity by asserting a patent
+infringement claim (excluding declaratory judgment actions,
+counter-claims, and cross-claims) alleging that a Contributor Version
+directly or indirectly infringes any patent, then the rights granted to
+You by any and all Contributors for the Covered Software under Section
+2.1 of this License shall terminate.
+
+5.3. In the event of termination under Sections 5.1 or 5.2 above, all
+end user license agreements (excluding distributors and resellers) which
+have been validly granted by You or Your distributors under this License
+prior to termination shall survive termination.
+
+************************************************************************
+*                                                                      *
+*  6. Disclaimer of Warranty                                           *
+*  -------------------------                                           *
+*                                                                      *
+*  Covered Software is provided under this License on an "as is"       *
+*  basis, without warranty of any kind, either expressed, implied, or  *
+*  statutory, including, without limitation, warranties that the       *
+*  Covered Software is free of defects, merchantable, fit for a        *
+*  particular purpose or non-infringing. The entire risk as to the     *
+*  quality and performance of the Covered Software is with You.        *
+*  Should any Covered Software prove defective in any respect, You     *
+*  (not any Contributor) assume the cost of any necessary servicing,   *
+*  repair, or correction. This disclaimer of warranty constitutes an   *
+*  essential part of this License. No use of any Covered Software is   *
+*  authorized under this License except under this disclaimer.         *
+*                                                                      *
+************************************************************************
+
+************************************************************************
+*                                                                      *
+*  7. Limitation of Liability                                          *
+*  --------------------------                                          *
+*                                                                      *
+*  Under no circumstances and under no legal theory, whether tort      *
+*  (including negligence), contract, or otherwise, shall any           *
+*  Contributor, or anyone who distributes Covered Software as          *
+*  permitted above, be liable to You for any direct, indirect,         *
+*  special, incidental, or consequential damages of any character      *
+*  including, without limitation, damages for lost profits, loss of    *
+*  goodwill, work stoppage, computer failure or malfunction, or any    *
+*  and all other commercial damages or losses, even if such party      *
+*  shall have been informed of the possibility of such damages. This   *
+*  limitation of liability shall not apply to liability for death or   *
+*  personal injury resulting from such party's negligence to the       *
+*  extent applicable law prohibits such limitation. Some               *
+*  jurisdictions do not allow the exclusion or limitation of           *
+*  incidental or consequential damages, so this exclusion and          *
+*  limitation may not apply to You.                                    *
+*                                                                      *
+************************************************************************
+
+8. Litigation
+-------------
+
+Any litigation relating to this License may be brought only in the
+courts of a jurisdiction where the defendant maintains its principal
+place of business and such litigation shall be governed by laws of that
+jurisdiction, without reference to its conflict-of-law provisions.
+Nothing in this Section shall prevent a party's ability to bring
+cross-claims or counter-claims.
+
+9. Miscellaneous
+----------------
+
+This License represents the complete agreement concerning the subject
+matter hereof. If any provision of this License is held to be
+unenforceable, such provision shall be reformed only to the extent
+necessary to make it enforceable. Any law or regulation which provides
+that the language of a contract shall be construed against the drafter
+shall not be used to construe this License against a Contributor.
+
+10. Versions of the License
+---------------------------
+
+10.1. New Versions
+
+Mozilla Foundation is the license steward. Except as provided in Section
+10.3, no one other than the license steward has the right to modify or
+publish new versions of this License. Each version will be given a
+distinguishing version number.
+
+10.2. Effect of New Versions
+
+You may distribute the Covered Software under the terms of the version
+of the License under which You originally received the Covered Software,
+or under the terms of any subsequent version published by the license
+steward.
+
+10.3. Modified Versions
+
+If you create software not governed by this License, and you want to
+create a new license for such software, you may create and use a
+modified version of this License if you rename the license and remove
+any references to the name of the license steward (except to note that
+such modified license differs from this License).
+
+10.4. Distributing Source Code Form that is Incompatible With Secondary
+Licenses
+
+If You choose to distribute Source Code Form that is Incompatible With
+Secondary Licenses under the terms of this version of the License, the
+notice described in Exhibit B of this License must be attached.
+
+Exhibit A - Source Code Form License Notice
+-------------------------------------------
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+If it is not possible or desirable to put the notice in a particular
+file, then You may include the notice in a location (such as a LICENSE
+file in a relevant directory) where a recipient would be likely to look
+for such a notice.
+
+You may add additional accurate notices of copyright ownership.
+
+Exhibit B - "Incompatible With Secondary Licenses" Notice
+---------------------------------------------------------
+
+  This Source Code Form is "Incompatible With Secondary Licenses", as
+  defined by the Mozilla Public License, v. 2.0.
