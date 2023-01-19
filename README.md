@@ -1,4 +1,4 @@
-
+<img src="https://raw.githubusercontent.com/ctfguide-tech/.github/main/Screenshot%202023-01-19%20at%2012.22.46%20AM.png" style="width:100%">
 ## Getting started
 
 

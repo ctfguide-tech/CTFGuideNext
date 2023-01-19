@@ -27,11 +27,10 @@ export default function Home() {
       </Head>
 
       <Header/>
-      
+
       <Hero/>
 
-      <FeatureCard/>
-      <PricingPanel/>
+   
       <Footer/>
     </>
   )
