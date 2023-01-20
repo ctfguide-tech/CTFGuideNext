@@ -171,7 +171,7 @@ export function StandardNav() {
                 href="#"
                 className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
-                Classes
+              Groups
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
@@ -182,10 +182,10 @@ export function StandardNav() {
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
-                href="#"
+                href="live.ctfguide.com"
                 className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
-                Social
+                Live
               </Disclosure.Button>
             </div>
             <div className="border-t border-gray-200 pt-4 pb-3">

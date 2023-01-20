@@ -4,9 +4,8 @@ import { Footer } from '@/components/Footer'
 
 import { StandardNav } from '@/components/StandardNav'
 import { Container } from '@/components/Container'
-import { RoleAsk } from '@/components/onboarding/RoleAsk'
-import { ExpAsk } from '@/components/onboarding/ExpAsk'
-import { ProjectAsk } from '@/components/onboarding/ProjectAsk'
+
+import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
 
 export default function Onboarding() {
   return (
@@ -24,7 +23,7 @@ export default function Onboarding() {
       <main>
         
         <Container className="h-flex items-center justify-center h-screen">
-            <ProjectAsk/>
+           <OnboardingFlow></OnboardingFlow>
         </Container>
    
       </main>

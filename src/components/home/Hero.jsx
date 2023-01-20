@@ -10,7 +10,6 @@ export function Hero() {
   return (
     
     <Container style={{fontFamily: 'Poppins, sans-serif'}}  className="bg-blend-darken  mx-auto max-w mt-20">
- <FadeInSection>
     <div className='flex flex-wrap items-center text-center lg:text-left -mx-2 my-auto mx-auto'>
  <div className="lg:w-2/3 px-2 lg:pr-10 mt-10 lg:mt-0 order-1 md:order-1 lg:order-none lg:pl-40">
  <h1 className="font-medium drop-shadow-3xl mx-auto  font-display lg:text-5xl text-3xl tracking-tight text-white text-wrap ">
@@ -27,7 +26,6 @@ export function Hero() {
       <img src="./testfux.png" className="floating mx-auto text-center  w-full" ></img>
   </div>
     </div>
-    </FadeInSection>
     </Container>
 
     

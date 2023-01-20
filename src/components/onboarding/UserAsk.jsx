@@ -1,12 +1,3 @@
-
-/*
-
-
-    2/4 User Experience
-  
-
-
-*/
 import Link from 'next/link'
 
 import { Container } from '@/components/Container'

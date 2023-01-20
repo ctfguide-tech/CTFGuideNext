@@ -8,10 +8,8 @@ export function FeatureCard() {
       return (
             <>
                   <Container style={{ backgroundColor: "#161716" }} className="">
-                  <FadeInSection>
                         <h1 className='text-white text-5xl font-semibold text-center'>Features</h1>
-                        </FadeInSection>
-                        <FadeInSection>
+                 
      
                         <div style={{ backgroundColor: "#161716" }} className='max-w-6xl mx-auto grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 mt-16'>
                      
@@ -24,8 +22,7 @@ export function FeatureCard() {
                                     <h1 className='text-white text-xl'> Connect to our Linux terminals right from your browser. Work together with friends on the same terminal with just a few clicks</h1>
                               </div>
                         </div>
-</FadeInSection>
-<FadeInSection>
+
                         <div style={{ backgroundColor: "#161716" }} className='max-w-6xl mx-auto grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1  mt-10'>
                               <div style={{ fontFamily: 'Poppins, sans-serif' }} className="bg-gradient-to-r from-blue-900 to-blue-900 py-10">
                                     <img src="./practice.png" className='w-20 mx-auto'></img>
@@ -38,7 +35,7 @@ export function FeatureCard() {
                               </div>
 
                         </div>
-</FadeInSection>
+
 
 <FadeInSection>
 

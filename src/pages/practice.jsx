@@ -28,15 +28,32 @@ export default function Pratice() {
                 <div className=" w-full " style={{ backgroundColor: "#212121" }}>
 
                     <div className="flex mx-auto text-center h-28 my-auto">
-                        <h1 className='text-3xl text-white mx-auto my-auto font-semibold'>Practice</h1>
+                        <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Practice</h1>
                     </div>
 
 
                 </div>
 
 
-                <div className='max-w-6xl mx-auto text-center'>
-                  <h1 className='text-white text-3xl'>  Freshly brewed </h1>
+                <div className='max-w-6xl mx-auto text-left mt-6'>
+                  <h1 className='text-white text-3xl font-semibold'> 🔥 Popular </h1>
+                  <div className="grid grid-cols-4 gap-4 mt-4">
+                    <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-green-500' style={{ backgroundColor: "#212121" }}>
+                        <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
+                        <p className='text-white'>Decrypt my breakfast please</p>
+                        
+                    </div>
+                    <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-red-500' style={{ backgroundColor: "#212121" }}>
+                        <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
+                        <p className='text-white'>Decrypt my breakfast please</p>
+                        
+                    </div>
+                    <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-yellow-500' style={{ backgroundColor: "#212121" }}>
+                        <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
+                        <p className='text-white'>Decrypt my breakfast please</p>
+                        
+                    </div>
+                  </div>
                 </div>
 
 
