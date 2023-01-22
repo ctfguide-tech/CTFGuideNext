@@ -22,9 +22,9 @@ export default function Onboarding() {
       </Head>
       <main>
         
-        <Container className="h-flex items-center justify-center h-screen">
+        <div className="h-flex items-center justify-center h-screen">
            <OnboardingFlow></OnboardingFlow>
-        </Container>
+        </div>
    
       </main>
     </>

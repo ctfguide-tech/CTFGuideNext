@@ -17,28 +17,33 @@ import { NavLink } from '@/components/NavLink'
 import { RoleAsk } from '@/components/onboarding/RoleAsk'
 import { ExpAsk } from '@/components/onboarding/ExpAsk'
 import { ProjectAsk } from '@/components/onboarding/ProjectAsk'
+import { DataAsk } from '@/components/onboarding/DataAsk'
 import { useState, useEffect } from 'react'
+import { DataAskPart2 } from '@/components/onboarding/DataAskPart2'
+import { Demo } from '@/components/onboarding/Demo'
+import { useRouter } from 'next/router'
 
 
 export function OnboardingFlow() {
-    const [flowState, setFlowState] = useState('none');
+    const router = useRouter()
+    const part = router.query.part;
+    const [flowState, setFlowState] = useState(part);
     
     useEffect(() => {
+
 
         
     });
 
+   // Read part from URL query parameter
+ 
 
-    if (flowState === '1') {
-        return <RoleAsk />
-    } else if (flowState === '2') {
-        return <ExpAsk />
-    } else if (flowState === '3') {
-        return <ProjectAsk />
-    } else if (flowState === '4') {
-        return <ProjectAsk />
+    if (flowState === 1) {
+        return <DataAsk />
+    } else if (flowState === 2) {
+        return <DataAskPart2 />
     } else {
-        return (
+     /*   return (
             <>
     
             <div className='flex justify-center items-center h-screen'>
@@ -55,5 +60,8 @@ export function OnboardingFlow() {
             </div>
             </>
         )
+        */
+
+        return <DataAsk/>
     }
 }

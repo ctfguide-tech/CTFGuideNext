@@ -41,6 +41,7 @@ export default function Pratice() {
                     <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-green-500' style={{ backgroundColor: "#212121" }}>
                         <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
                         <p className='text-white'>Decrypt my breakfast please</p>
+                        <span></span>
                         
                     </div>
                     <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-red-500' style={{ backgroundColor: "#212121" }}>
