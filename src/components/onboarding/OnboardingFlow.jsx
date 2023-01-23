@@ -26,42 +26,21 @@ import { useRouter } from 'next/router'
 
 export function OnboardingFlow() {
     const router = useRouter()
-    const part = router.query.part;
-    const [flowState, setFlowState] = useState(part);
+
+    const [flowState, setFlowState] = useState(router.query.part || '1');
     
     useEffect(() => {
-
-
-        
-    });
+        setFlowState(router.query.part);
+    }, [router.query.part]);
 
    // Read part from URL query parameter
  
 
-    if (flowState === 1) {
+    if (flowState === "1") {
         return <DataAsk />
-    } else if (flowState === 2) {
+    } else if (flowState === "2") {
         return <DataAskPart2 />
     } else {
-     /*   return (
-            <>
-    
-            <div className='flex justify-center items-center h-screen'>
-                <h1 className='text-white text-3xl mr-10'>No flow state selected <p className='text-white text-lg'>Reload to get back to this menu</p></h1>
-
-                
-                <select value={{flowState}} onChange={(e => setFlowState(e.target.value))} className='rounded-lg'>
-                    <option value="none">Select a flow state</option>
-                    <option value="1">Flow 1</option>
-                    <option value="2">Flow 2</option>
-                    <option value="3">Flow 3</option>
-                    <option value="4">Flow 4</option>
-                </select>
-            </div>
-            </>
-        )
-        */
-
         return <DataAsk/>
     }
 }

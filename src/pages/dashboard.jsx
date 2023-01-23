@@ -18,10 +18,31 @@ export default function Dashboard() {
           @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-        <StandardNav />
+      <StandardNav />
       <main>
         <DashboardHeader />
-      <Stats/>
+        <Stats />
+        <div className="max-w-6xl mx-auto w-full px-9">
+
+          <h1 className="text-xl text-white tracking-tight mt-2  mb-2  " style={{ color: "#595959" }}> PLATFORM  FEED</h1>
+
+          <div
+            style={{ backgroundColor: "#212121" }}
+            className="rounded-lg mb-16  px-6 py-5 shadow-sm    hover:border-gray-600 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+          >
+
+            <h1 className="text-white text-xl">CTFGuide Winter Competition</h1>
+
+            <p className="text-white mt-2" style={{ color: "#8c8c8c" }}>
+              The CTFGuide Winter Competition is now live! Compete against other CTFGuide users to win prizes and earn points. The competition ends on January 1st, 2023. Join the competition by clicking this link: https://comp.ctfguide.com/2.
+            </p>
+
+
+            <p className="mt-4 text-sm italic" style={{ color: "#8c8c8c" }}>Posted by CTFGuide Team - 12/21/22</p>
+
+          </div>
+        </div>
+
       </main>
       <Footer />
     </>

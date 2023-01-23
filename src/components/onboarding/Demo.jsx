@@ -67,7 +67,7 @@ export function Demo() {
                         <p>⏳ Unlimited</p>
                     </div>
                     </div>
-                <iframe id="terminal" className="w-full" height="500" src="https://terminal.ctfguide.com/wetty/ssh/root?"></iframe>
+                <iframe id="terminal" className="w-full" height="500" src="https://terminal.ctfguide.com/wetty/ssh/root?2"></iframe>
               
                 </div>
                 

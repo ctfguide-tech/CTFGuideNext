@@ -4,36 +4,50 @@ import { Button } from '@/components/Button'
 import { TextField } from '@/components/Fields'
 import { Logo } from '@/components/Logo'
 import { Alert } from '@/components/Alert'
+import { FrontendApi, Configuration, Session, Identity } from "@ory/client"
+import { useState, useEffect } from "react"
+const basePath = process.env.REACT_APP_ORY_URL || "http://localhost:3001/.ory"
+const ory = new FrontendApi(
+  new Configuration({
+    basePath,
+    baseOptions: {
+      withCredentials: true,
+    },
+  }),
+)
+
 
 export default function Login() {
 
-  function loginUser() {
-    console.log(document.getElementById("username").value)
-    var data = JSON.stringify({
-      "username": document.getElementById("username").value,
-      "password": document.getElementById("password").value
-    });
+  const [session, setSession] = useState();
+  const [logoutUrl, setLogoutUrl] = useState();
 
-    var xhr = new XMLHttpRequest();
-  
-
-    xhr.addEventListener("readystatechange", function () {
-      if (this.readyState === 4 && this.status === 200) {
-        var parsedJSON = JSON.parse(this.responseText);
-        if (parsedJSON.status == "success") {
-          window.location.href = "/dashboard";
-        } else {
-          window.alert("Invalid credentials");
-        }
-      }
-    });
+  useEffect(() => {
+    ory
+      .toSession()
+      .then(({ data }) => {
+        setSession(data)
+        ory.createBrowserLogoutFlow().then(({ data }) => {
+          setLogoutUrl(data.logout_url)
+        })
+      })
+      .catch((err) => {
+        console.error(err)
+        window.location.replace(`${basePath}/ui/login`)
+      })
+  }, [])
 
 
-
-    xhr.open("POST", process.env.NEXT_PUBLIC_API_URL + "/users/login");
-   
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(data);
+  async function loginUser() {
+    const username = document.getElementById("username").value
+    const password = document.getElementById("password").value
+    try {
+     
+        window.location.href = "/dashboard"
+    } catch (err) {
+        console.error(err)
+        window.alert("Invalid credentials")
+    }
 
   }
 

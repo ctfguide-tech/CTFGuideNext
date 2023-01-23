@@ -12,7 +12,6 @@ import Link from 'next/link'
 import { Container } from '@/components/Container'
 import { Logo } from '@/components/Logo'
 import { NavLink } from '@/components/NavLink'
-import { FadeInSection } from '../functions/styling/FadeInSection'
 export function DataAsk() {
 
     function submitData() {
@@ -50,7 +49,6 @@ export function DataAsk() {
         <>
 
 
-    <FadeInSection>
             <div className='flex justify-center items-center h-screen'>
                 <Container style={{ backgroundColor: "#161716" }} className=" ">
 
@@ -136,7 +134,6 @@ export function DataAsk() {
 
                 </Container>
             </div>
-            </FadeInSection>
         </>
     )
 }
