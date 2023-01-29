@@ -4,51 +4,42 @@ import { Button } from '@/components/Button'
 import { TextField } from '@/components/Fields'
 import { Logo } from '@/components/Logo'
 import { Alert } from '@/components/Alert'
-import { FrontendApi, Configuration, Session, Identity } from "@ory/client"
 import { useState, useEffect } from "react"
-const basePath = process.env.REACT_APP_ORY_URL || "http://localhost:3001/.ory"
-const ory = new FrontendApi(
-  new Configuration({
-    basePath,
-    baseOptions: {
-      withCredentials: true,
-    },
-  }),
-)
+import { app } from '../config/firebaseConfig';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth"
 
 
 export default function Login() {
-
+  const auth = getAuth();
   const [session, setSession] = useState();
   const [logoutUrl, setLogoutUrl] = useState();
 
   useEffect(() => {
-    ory
-      .toSession()
-      .then(({ data }) => {
-        setSession(data)
-        ory.createBrowserLogoutFlow().then(({ data }) => {
-          setLogoutUrl(data.logout_url)
-        })
-      })
-      .catch((err) => {
-        console.error(err)
-        window.location.replace(`${basePath}/ui/login`)
-      })
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        window.location.replace("/dashboard")
+      } 
+    });
   }, [])
 
 
   async function loginUser() {
-    const username = document.getElementById("username").value
+    const email = document.getElementById("username").value
     const password = document.getElementById("password").value
-    try {
-     
-        window.location.href = "/dashboard"
-    } catch (err) {
-        console.error(err)
-        window.alert("Invalid credentials")
-    }
 
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        window.location.replace("/dashboard")
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        document.getElementById("error").classList.remove("hidden");
+        document.getElementById("errorMessage").innerHTML = errorMessage;
+      });
+    
   }
 
 
@@ -82,7 +73,11 @@ export default function Login() {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div style={{ backgroundColor: "#212121" }} className=" py-8 px-4 shadow sm:rounded-lg sm:px-10">
+
             <div className="space-y-6">
+              <div id="error" className="hidden bg-red-500 px-2 py-1 rounded tex†-white">
+                <h1 className='text-white text-center' id="errorMessage">Something went wrong.</h1>
+              </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-200">
                   Username
@@ -141,7 +136,7 @@ export default function Login() {
             <div className="mt-6">
 
 
-              <div className="mt-6 grid grid-cols-3 gap-3">
+              <div className="mt-6 grid grid-cols-3 gap-3 ">
                 <div>
                   <a
                     style={{ backgroundColor: "#161716", borderWidth: "0px" }}

@@ -11,42 +11,14 @@ export default function Home() {
     {
       name: 'Practice Problems',
       description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
+        'Get access to over hundereds of verified community uploaded practice problems.',
     },
     {
-      name: 'Practice Problems',
+      name: 'Huge Community',
       description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
+        'Talk about the latest cybersecurity news with fellow hackers.',
     },
-    {
-      name: 'Practice Problems',
-      description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
-    },
-    {
-      name: 'Practice Problems',
-      description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
-    },
-    {
-      name: 'Practice Problems',
-      description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
-    },    {
-      name: 'Practice Problems',
-      description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
-    },
-    {
-      name: 'Practice Problems',
-      description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
-    },
-    {
-      name: 'Practice Problems',
-      description:
-        'Get access to over hundereds of verified community uploaded practice problems..',
-    },
+   
   ]
   return (
     <>
@@ -89,7 +61,7 @@ export default function Home() {
     <div className="">
       <div className="mx-auto max-w-7xl py-24 px-6 sm:py-32 lg:px-8 lg:py-40">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">All the tools you'd need.</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Features</h2>
           <p className="mx-auto mt-4 max-w-xl text-lg leading-8 text-gray-100">
            We've got everything to make you a pro at ethical hacking.
           </p>

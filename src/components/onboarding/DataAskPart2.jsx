@@ -15,7 +15,8 @@ import { NavLink } from '@/components/NavLink'
 export function DataAskPart2() {
 
     function submitData() {
-      
+        window.location.href = "./onboarding?part=3"
+
     }
 
 

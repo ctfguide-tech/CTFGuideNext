@@ -12,7 +12,7 @@ export function Demo() {
 
     return (
         
-        <div style={{}} className="h-full mx-auto py-2 overflow-hidden w-full">
+        <div style={{}} className="h-full mx-auto py-2  w-full">
 
        
     <ul className='text-white flex gap-4 px-4 my-auto'>
@@ -95,7 +95,7 @@ export function Demo() {
                     <h1>
                         Type your username (e4) above.
                         <br></br>
-                        <span className='text-blue-500' style={{fontSize: ".8rem"}}>Pending Completion</span>
+                        <span className='text-white' style={{fontSize: ".8rem"}}>✅ Mark as complete</span>
                     </h1>
             </div>
             

@@ -40,6 +40,8 @@ export function OnboardingFlow() {
         return <DataAsk />
     } else if (flowState === "2") {
         return <DataAskPart2 />
+    } else if (flowState === "3") {
+        return <Demo />
     } else {
         return <DataAsk/>
     }

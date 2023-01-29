@@ -5,8 +5,29 @@ import { Footer } from '@/components/Footer'
 import { StandardNav } from '@/components/StandardNav'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { Stats } from '@/components/dashboard/Stats'
+import { useEffect } from 'react'
 export default function Dashboard() {
+
+      /*
+      Code to check if onboarding has been complete
+    */
+    useEffect(() => {
+      fetch("api.ctfguide.com/dashboard")
+        .then((res) => res.json())
+
+        .then((data) => {
+          if (data.onboardingComplete == false) {
+            window.location.replace("http://localhost:3000/onboarding?part=1")
+          }
+        }
+        )
+        .catch((error) => window.location.replace("http://localhost:3000/onboarding?part=1"))
+    })
+
   return (
+
+
+
     <>
       <Head>
         <title>Dashboard - CTFGuide</title>

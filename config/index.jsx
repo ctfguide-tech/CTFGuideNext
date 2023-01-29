@@ -3,7 +3,9 @@ import { ORY_PROJECT_URL, ORY_ACCESS_TOKEN } from "../config/manage";
 import { 
     Configuration, 
     FrontendApi, 
-
+    IdentityApi, 
+    PermissionApi, 
+    RelationshipApi 
 } from "@ory/client";
 
 const oryConfig = new Configuration({
@@ -15,4 +17,5 @@ const oryConfig = new Configuration({
 
 export const ory = {
     frontend: new FrontendApi(oryConfig),
+
 };

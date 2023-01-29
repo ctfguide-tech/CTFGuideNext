@@ -40,7 +40,7 @@ export function DataAsk() {
         }
 
         localStorage.setItem("tempData", data)
-        window.location.href = "./onboarding/2"
+        window.location.href = "./onboarding?part=2"
     }
 
 
