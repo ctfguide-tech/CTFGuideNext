@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 export function Demo() {
 
-    const [navbarOpen, setNavbarOpen] = useState(false);
+    const [navbarOpen, setNavbarOpen] = useState(false);    
 
 
     return (
@@ -62,7 +62,7 @@ export function Demo() {
                 </div>
                 <div className='h-screen bg-black overflow-hidden resize-x'>
                 <div className='text-white bg-black text-sm flex'>
-                    <p className='px-2 py-1'><span className='text-green-400'>◉</span> Connected to sandbox.ctfguide.com</p>
+                    <p className='px-2 py-1'><span className='text-red-500'>◉</span> Not Connected to sandbox.ctfguide.com</p>
                     <div className='ml-auto px-2 py-1 flex'>
                         <p>⏳ Unlimited</p>
                     </div>

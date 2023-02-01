@@ -50,7 +50,8 @@ export function Footer() {
           </div>
           <p className="mt-6 text-sm text-white sm:mt-0">
             Copyright &copy; {new Date().getFullYear()} CTFGuide Corporation. All rights
-            reserved.
+            reserved. <br></br>
+            Made with love by Penn State students.
           </p>
         </div>
       </Container>

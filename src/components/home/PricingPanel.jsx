@@ -3,87 +3,57 @@ import Link from 'next/link'
 import { Container } from '@/components/Container'
 import { Logo } from '@/components/Logo'
 import { NavLink } from '@/components/NavLink'
-import { FadeInSection } from '../functions/styling/FadeInSection'
 export function PricingPanel() {
+      const stats = [
+            { label: 'Founded', value: '2020' },
+            { label: 'Employees', value: '4' },
+            { label: 'Beta Users', value: '521' },
+            { label: 'Raised', value: '$10K' },
+          ]
+
     return (
         <>
                 <Container style={{ backgroundColor: "#161716" }} className="mt-40">
-
-<div>
-<FadeInSection>
-                        <h1 className='mt-24 text-white text-5xl font-semibold text-center '>Pricing</h1>
-                        </FadeInSection>
-                        <div className="grid grid-cols-3 gap-5 max-w mx-auto mt-16">
-                        <FadeInSection>
-                              <div>
-                                    <div style={{ backgroundColor: "#212121" }} className='bg-black py-4 border-l-8 border-blue-900'>
-                                          <img src="./free.png" width="80" className='mx-auto text-center'></img>
-
-                                          <h1 className='mt-4 text-white text-center text-3xl'>Free</h1>
-                                          <h3 className='mx-auto text-white text-center text-4xl font-semibold'>$0<span className='text-2xl'>/month</span></h3>
-
-                                          <ul className='mx-auto text-white text-center'>
-                                                <li>✓ 1 hour daily limit on terminals</li>
-                                                <li>✓ Access to 50% of learning content</li>
-                                                <li>✓ Access to practice problems</li>
-                                                <li>✓ Create classrooms</li>
-                                                <li>✓ Community Support</li>
-
-                  <br></br>
-                                          <a className='text-blue-500 text-center mx-auto border px-2 py-1 mt-4 text-xl  border-blue-500   ' href="mailto:sales@ctfguide.com">Get Started</a>
-
-                                          </ul>
-                                    </div>
-                              </div>
-</FadeInSection><FadeInSection>
-                              <div>
-                                    <div style={{ backgroundColor: "#212121" }} className='bg-black py-4 border-l-8 border-blue-900 mx-auto text-center'>
-                                          <img src="./fame.png" width="80" className='mx-auto text-center'></img>
-                                          <h1 className='mt-4 text-white text-center text-3xl'>Pro</h1>
-                                          <h3 className='mx-auto text-white text-center text-4xl font-semibold'>$5<span className='text-2xl'>/month</span></h3>
-                                          <ul className='mx-auto text-white text-center'>
-                                                <li>✓ No daily limit on terminals</li>
-                                                <li>✓ Host private competitions</li>
-                                                <li>✓ Pro Badge that is visible to everyone</li>
-                                                <li>✓ Access to all learning content</li>
-                                                <li>✓ Priority terminal access</li>
-
-                                          </ul>
-
-                                          <br></br>
+   <div className="lg:mx-auto  lg:max-w-7xl ">
+     
+        <div className="relative mx-auto max-w-7xl px-6 sm:max-w-6xl lg:px-0">
+          {/* Content area */}
+          <div className="pt-12 sm:pt-16 lg:pt-20">
+           
+               
+            <h2 className="mt-12 text-4xl font-bold tracking-tight text-white ">
+              "On a mission to educate the next generation of cybersecurity professionals."
+            </h2>
+            <div className="mt-12 space-y-6 text-gray-200">
+              <p className="text-lg">
+              Pranav Ramesh, a high school student, started a cybersecurity club in his school in 2019. He led the club to win multiple CTF competitions, including the University of Delaware Blue Hen CTF in 2020. Pranav believed in the importance of collaborative learning and created a cloud-based platform connecting standalone competitive hacking engines and problem banks for his club to use. The platform was successful and was adopted by cybersecurity enthusiasts and clubs at dozens of schools. <br></br><br></br>Raymond, a cloud infrastructure engineer, saw the potential for a cybersecurity equivalent to platforms like GitHub and Kaggle and joined the CTFGuide team to help achieve that goal. <br></br><br></br>On October 31, 2022, CTFGuide received a grant from Amazon Web Services to aid in its development and research.
 
 
-                                          <a className='text-blue-500 text-center mx-auto border px-2 py-1 mt-4 text-xl  border-blue-500 ' href="mailto:sales@ctfguide.com">Buy Now</a>
 
-                                    </div>
-                              </div>
-</FadeInSection>
-<FadeInSection>
-                              <div>
-                                    <div style={{ backgroundColor: "#212121" }} className='bg-black py-4 border-l-8 border-blue-900 mx-auto text-center'>
-                                          <img src="./organization.png" width="80" className='mx-auto text-center'></img>
-                                          <h1 className='mt-4 text-white text-center text-3xl'>Organizations</h1>
-                                          <h3 className='mx-auto text-white text-center text-4xl font-semibold'>$200-$500<span className='text-2xl'>/month</span></h3>
-                                          <ul className='mx-auto text-white text-center'>
-                                          <li>✓ Pro for all members</li>
-                                          <li>✓ SSO Support</li>
-                                          <li>✓ Custom domain support</li>
-                                          <li>✓ Employee training modules</li>
-                                          <li>✓ Custom branding</li>
-                                          <br></br>
-                                          <a className='text-blue-500 text-center mx-auto border px-2 py-1 mt-4 text-xl  border-blue-500 ' href="mailto:sales@ctfguide.com">Contact Sales</a>
+</p>
+            </div>
+          </div>
 
-                                          </ul>
+          {/* Stats section */}
+          <div className="mt-10 mb-20">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-8">
+              {stats.map((stat) => (
+                <div key={stat.label} className="border-t-2 border-gray-100 pt-6">
+                  <dt className="text-base font-medium text-gray-200">{stat.label}</dt>
+                  <dd className="text-3xl font-bold tracking-tight text-white">{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="mt-10">
 
+            </div>
+            <br></br>
+            <br></br>
 
-                                    </div>
-
-
-                              </div>
-</FadeInSection>
-                        </div>
-</div>
-
+          </div>
+        </div>
+      </div>
+  
 </Container>
         </>
     )
