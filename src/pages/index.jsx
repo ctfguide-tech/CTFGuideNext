@@ -4,7 +4,7 @@ import { Header } from '@/components/Header'
 import { Hero } from '@/components/home/Hero'
 import { useState } from 'react'
 import { Footer } from '@/components/Footer'
-import { PricingPanel } from '@/components/home/PricingPanel'
+import { AboutPanel } from '@/components/home/AboutPanel'
 import { FeaturesPanel } from '@/components/home/FeaturesPanel' 
 import { Stats } from '@/components/home/Stats'
 
@@ -31,7 +31,7 @@ export default function Home() {
 
 
       <FeaturesPanel/>
-    <PricingPanel/>
+    <AboutPanel/>
     <Stats></Stats>
 
       <Footer/>

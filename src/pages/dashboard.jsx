@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer'
 import { StandardNav } from '@/components/StandardNav'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { Stats } from '@/components/dashboard/Stats'
+import { Developer } from '@/components/dashboard/Developer'
 import { useEffect } from 'react'
 export default function Dashboard() {
 
@@ -64,6 +65,7 @@ export default function Dashboard() {
           </div>
         </div>
 
+    <Developer></Developer>
       </main>
       <Footer />
     </>

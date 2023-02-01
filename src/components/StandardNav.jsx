@@ -1,24 +1,32 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { PlusIcon } from '@heroicons/react/20/solid'
 import { Logo } from '@/components/Logo'
+import { app } from '../config/firebaseConfig';
+import { getAuth, onAuthStateChanged, signOut, getIdToken} from "firebase/auth";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-
+const auth = getAuth();
+const user = auth.currentUser;
 export function StandardNav() {
 
-  function logout() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        window.location.href = "/";
-      }
-    }
-    xhttp.open(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, "POST", true);
+  function logout() { 
+    signOut(auth).then(() => {
+      window.location.replace("/login")
+    }).catch((error) => {
+      console.log(error)
+    });
   }
+
+useEffect(() => {
+  getIdToken(user).then((token) => {
+    console.log(token)
+  })
+
+}, [])
+
   return (
     <Disclosure as="nav" className=" shadow">
       {({ open }) => (
@@ -108,14 +116,14 @@ export function StandardNav() {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-100 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <Menu.Item>
                           {({ active }) => (
                             <a
                               href="#"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
+                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
                               )}
                             >
                               Your Profile
@@ -128,7 +136,7 @@ export function StandardNav() {
                               href="#"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
+                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
                               )}
                             >
                               Settings
@@ -137,15 +145,15 @@ export function StandardNav() {
                         </Menu.Item>
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="#"
+                            <span
+                              onClick={logout}
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
+                                'block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-200'
                               )}
                             >
                               Sign out
-                            </a>
+                            </span>
                           )}
                         </Menu.Item>
                       </Menu.Items>
