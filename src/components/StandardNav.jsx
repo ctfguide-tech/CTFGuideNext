@@ -20,13 +20,8 @@ export function StandardNav() {
     });
   }
 
-useEffect(() => {
-  getIdToken(user).then((token) => {
-    console.log(token)
-  })
 
-}, [])
-
+  
   return (
     <Disclosure as="nav" className=" shadow">
       {({ open }) => (
