@@ -12,7 +12,7 @@ export function Footer() {
  
        <img src="darkLogo.png" className="w-14 mx-auto text-center" /> 
           <nav className="mt-4 text-sm" aria-label="quick links">
-            <div className="-my-1 flex justify-center gap-x-6">
+            <div className="-my-1 flex place-content-center gap-x-6">
               <NavLink href="#features">Terms of Service</NavLink>
               <NavLink href="#features">Privacy Policy</NavLink>
               <NavLink href="#features">Customer Support</NavLink>
