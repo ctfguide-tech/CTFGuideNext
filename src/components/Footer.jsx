@@ -13,9 +13,11 @@ export function Footer() {
        <img src="darkLogo.png" className="w-14 mx-auto text-center" /> 
           <nav className="mt-4 text-sm" aria-label="quick links">
             <div className="-my-1 flex place-content-center gap-x-6">
-              <NavLink href="#features">Terms of Service</NavLink>
-              <NavLink href="#features">Privacy Policy</NavLink>
-              <NavLink href="#features">Customer Support</NavLink>
+              <NavLink href="../terms-of-service">Terms of Service</NavLink>
+              <NavLink href="../privacy-policy">Privacy Policy</NavLink>
+              <NavLink href="https://status.ctfguide.com/">Status</NavLink>
+              <NavLink href="../careers">Careers</NavLink>
+              
 
 
             </div>
