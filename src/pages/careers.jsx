@@ -40,6 +40,24 @@ export default function Careers() {
       height: "200"
     },
 
+
+  ]
+
+  const listings = [
+    {
+      team: "Web Team",
+      position: "Full-Time",
+      roleName: "UI/UX Team Lead",
+      listingPosted: "Feb 8th",
+      type: "Remote"
+    },
+    {
+      team: "",
+      position: "Full-Time",
+      roleName: "",
+      listingPosted: "",
+      type: "Remote"
+    },
   ]
 
 
@@ -104,81 +122,120 @@ export default function Careers() {
         </div>
 
 
-        <div className="overflow-hidden  py-24 sm:py-32" style={{ backgroundColor: "#212121" }}>
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="overflow-hidden py-24 sm:py-32" style={{ backgroundColor: "#212121" }}>
 
 
-            <div className="mx-auto grid grid-cols-2 gap-6">
+          <div>
+            <p className="text-3xl font-bold text-white sm:text-4xl text-center">Looking for a Job?</p>
+          </div>
 
-              <div id="entity1">
-                <div>
-                  <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Looking for a Job?</p>
 
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                    Email
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      style={{ backgroundColor: "#161716", borderWidth: "0px" }}
-                      id="email"
-                      name="email"
-                      type="text"
-                      autoComplete="email"
-                      required
-                      className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    />
+
+          <div id="listings" className='max-w-6xl mx-auto mt-4'>
+            {
+              listings.map((job) => {
+                return (
+
+                  <div className='card text-white rounded-lg my-auto ' style={{ backgroundColor: "#161716" }}>
+                    <div className='grid grid-cols-3 mt-4 px-6 py-10'>
+
+
+                      <div>
+                        <h1 className='font-semibold text-xl'>{job.team}</h1>
+                        <h1 className='font-semibold text-3xl'>{job.roleName}</h1>
+                      </div>
+
+                      <div>
+                        <span className="text-white px-6 rounded-full" style={{ backgroundColor: "#212121" }}>{job.type}</span>
+                        <span className="text-white ml-6 px-6 rounded-full" style={{ backgroundColor: "#212121" }}>{job.position}</span>
+
+                        </div>
+
+                   
+
+                    </div>
                   </div>
-
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                    First Name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      style={{ backgroundColor: "#161716", borderWidth: "0px" }}
-                      id="FirstName"
-                      name="FirstName"
-                      type="text"
-                      autoComplete="FirstName"
-                      required
-                      className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                    Last Name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      style={{ backgroundColor: "#161716", borderWidth: "0px" }}
-                      id="LastName"
-                      name="LastName"
-                      type="text"
-                      autoComplete="LastName"
-                      required
-                      className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py- placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              <div id="entity2">
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl py-3">Tell us about yourself!</h1>
-                <textarea className='w-full h-full rounded-md px-4 py-3 text-white' style={{ backgroundColor: "#161716", borderWidth: "0px" }}></textarea>
-
-              </div>
-
-
-            </div>
-
-
+                )
+              })}
 
           </div>
+
+
+
+          {
+            /*
+          <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
+            Email
+          </label>
+          <div className="mt-1">
+            <input
+              style={{ backgroundColor: "#161716", borderWidth: "0px" }}
+              id="email"
+              name="email"
+              type="text"
+              autoComplete="email"
+              required
+              className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
+            First Name
+          </label>
+          <div className="mt-1">
+            <input
+              style={{ backgroundColor: "#161716", borderWidth: "0px" }}
+              id="FirstName"
+              name="FirstName"
+              type="text"
+              autoComplete="FirstName"
+              required
+              className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
+            Last Name
+          </label>
+          <div className="mt-1">
+            <input
+              style={{ backgroundColor: "#161716", borderWidth: "0px" }}
+              id="LastName"
+              name="LastName"
+              type="text"
+              autoComplete="LastName"
+              required
+              className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py- placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+        </div>
+
+      </div>
+
+      <div id="entity2">
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl py-3">Tell us about yourself!</h1>
+        <textarea className='w-full h-full rounded-md px-4 py-3 text-white' style={{ backgroundColor: "#161716", borderWidth: "0px" }}></textarea>
+
+      </div>
+
+
+    </div>
+    */
+          }
+
+
+
+
+
+
+
+
+
         </div>
 
 
