@@ -52,10 +52,10 @@ export default function Careers() {
       type: "Remote"
     },
     {
-      team: "",
+      team: "Engineering Back-End",
       position: "Full-Time",
-      roleName: "",
-      listingPosted: "",
+      roleName: "Data Analyst/Engineer",
+      listingPosted: "Feb 11th",
       type: "Remote"
     },
   ]
@@ -145,13 +145,24 @@ export default function Careers() {
                         <h1 className='font-semibold text-3xl'>{job.roleName}</h1>
                       </div>
 
-                      <div>
-                        <span className="text-white px-6 rounded-full" style={{ backgroundColor: "#212121" }}>{job.type}</span>
-                        <span className="text-white ml-6 px-6 rounded-full" style={{ backgroundColor: "#212121" }}>{job.position}</span>
+                      <div className='mx-auto my-6'>
+                        <span className="text-white px-6 rounded-full" style={{ backgroundColor: "#212121" }}>&#127758; {job.type}</span>
+                        <span className="text-white ml-6 px-6 rounded-full" style={{ backgroundColor: "#212121" }}>&#9201; {job.position}</span>
 
-                        </div>
+                      </div>
 
-                   
+                      <div className='mx-auto mt-2'>
+                        <button
+                          className=" mx-8 justify-center rounded-full border border-transparent bg-blue-600 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          Learn More
+                        </button>
+
+                        <button
+                          className=" justify-center rounded-full border border-transparent bg-blue-600 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          Apply
+                        </button>
+                      </div>
+
 
                     </div>
                   </div>
