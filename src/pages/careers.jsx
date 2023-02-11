@@ -34,8 +34,8 @@ export default function Careers() {
     },
     {
       personName: "Abhinav Byreddy",
-      position: "Systems Architect",
-      image: "../abhi.jpeg",
+      position: "Chief Architect",
+      image: "../abhiCTF.jpg",
       width: "200",
       height: "200"
     },
@@ -153,12 +153,12 @@ export default function Careers() {
 
                       <div className='mx-auto mt-2'>
                         <button
-                          className=" mx-8 justify-center rounded-full border border-transparent bg-blue-600 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          className=" mx-8 justify-center rounded-full border border-transparent bg-blue-700 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                           Learn More
                         </button>
 
                         <button
-                          className=" justify-center rounded-full border border-transparent bg-blue-600 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          className=" justify-center rounded-full border border-transparent bg-blue-700 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                           Apply
                         </button>
                       </div>
