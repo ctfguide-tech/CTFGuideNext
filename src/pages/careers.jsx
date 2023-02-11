@@ -30,7 +30,7 @@ export default function Careers() {
       personName: "Raymond Yan",
       position: "Co-Founder",
       image: "../Raymond.jpeg",
-      width: "195"
+      width: "200"
     },
     {
       personName: "Abhinav Byreddy",
@@ -39,6 +39,24 @@ export default function Careers() {
       width: "200",
       height: "200"
     },
+    {
+      personName: "Srihari Raman",
+      position: "CFO",
+      image: "../srihari.jpg",
+      width: "200",
+      height: "200"
+    },
+
+    {
+      personName: "Mish Adelanwa",
+      position: "Advisor",
+      image: "../mish.jpg",
+      width: "200",
+      height: "200"
+    },
+  
+  
+
 
 
   ]
@@ -58,6 +76,7 @@ export default function Careers() {
       listingPosted: "Feb 11th",
       type: "Remote"
     },
+
   ]
 
 
