@@ -5,6 +5,7 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true,
   },
+  ignoreDuringBuilds: true
 }
 
 module.exports = nextConfig
