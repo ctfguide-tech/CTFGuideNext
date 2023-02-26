@@ -42,28 +42,16 @@ export function LearnCore() {
                     </div>
 
 
-                    <h1 className='mt-4 text-xl text-white font-semibold'>Have a question?</h1>
-                    <textarea  style={{backgroundColor:"#161716"}} className='h-1/4 mt-2 w-full bg-black text-white border-none text-white'>
-                            We'll use machine learning to answer your question.
-                      
-                            For example:
-                           "Why is their new UI"?
-
-                            You can also ask us to simply the wording in this lesson. For example: "I don't get the second paragraph, can you simplify it?"
-
-                    </textarea>
 
  
-                    <button className='mt-4 bg-blue-700 text-white px-2 py-1 rounded-lg '>Waiting...</button>
-                    <button className='ml-2 mt-4 text-white px-3 py-1 rounded-lg '>Skip</button>
+                    <button className='mt-10 border mx-auto text-center accent-gray-900 hover:bg-gray-900 text-white px-4 py-2 w-1/2 rounded-lg text-xl'>Continue</button>
 
                 </div>
                 <div className='h-screen bg-black overflow-hidden resize-x'>
                 <div className='text-white bg-black text-sm flex'>
-                    <p className='px-2 py-1'><span className='text-green-400'>◉</span> Connected to sandbox.ctfguide.com</p>
+                    <p className='px-2 py-1'><span className='text-green-400'>◉</span> Connected to terminal.ctfguide.com</p>
                     <div className='ml-auto px-2 py-1 flex'>
-                        <p>⏳ 23:12 remaining</p>
-                        <button className='ml-4 bg-gray-900 px-3 hover:bg-gray-800'> Invite to terminal</button>
+                        <p>No time limit!</p>
                     </div>
                     </div>
                 <iframe id="terminal" className="w-full" height="500" src="https://terminal.ctfguide.com/wetty/ssh/root?"></iframe>
