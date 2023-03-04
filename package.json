@@ -20,6 +20,7 @@
     "@ory/integrations": "^1.1.0",
     "@oryd/kratos-client": "^0.0.0-next.5212bbfcf5dc",
     "@tailwindcss/forms": "^0.5.3",
+    "@tremor/react": "^1.8.1",
     "autoprefixer": "^10.4.12",
     "babel-plugin-macros": "^3.1.0",
     "clsx": "^1.2.1",

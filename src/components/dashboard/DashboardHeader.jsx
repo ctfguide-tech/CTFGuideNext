@@ -2,15 +2,12 @@ import { EnvelopeIcon, CogIcon } from '@heroicons/react/20/solid'
 
 const profile = {
   name: 'Pranav Ramesh',
-  email: 'pranav@ctfguide.com',
+  email: '-----------------',
   avatar:
-    './default.png',
+    './default_pfp.jpeg',
   backgroundImage:
     'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
   fields: [
-
-    ['Points', '5000'],
-    ['Birthday', 'September 12, 2004'],
     ['Role', 'CTFGuide Developer']
   ],
 }
@@ -29,8 +26,8 @@ export function DashboardHeader() {
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
               <h1 className="truncate text-2xl font-bold text-white mt-8">{profile.name}</h1>
-              <p className='text-yellow-400'>
-                CTFGuide Pro
+              <p className='text-white'>
+                { profile.fields[0][1] }
               </p>
             </div>
             <div className="justify-stretch mt-12 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 ">

@@ -6,7 +6,9 @@ import { StandardNav } from '@/components/StandardNav'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { Stats } from '@/components/dashboard/Stats'
 import { Developer } from '@/components/dashboard/Developer'
+import { Performance } from '@/components/dashboard/Performance'
 import { useEffect } from 'react'
+import { Friends } from '@/components/dashboard/Friends'
 export default function Dashboard() {
 
       /*
@@ -44,13 +46,14 @@ export default function Dashboard() {
       <main>
         <DashboardHeader />
         <Stats />
+        <Friends/>
         <div className="max-w-6xl mx-auto w-full px-9">
 
           <h1 className="text-xl text-white tracking-tight mt-2  mb-2  " style={{ color: "#595959" }}> PLATFORM  FEED</h1>
 
           <div
-            style={{ backgroundColor: "#212121" }}
-            className="rounded-lg mb-16  px-6 py-5 shadow-sm    hover:border-gray-600 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+            style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }}
+            className="rounded-lg mb-16  px-6 py-5 shadow-sm border hover:border-gray-600 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
           >
 
             <h1 className="text-white text-xl">CTFGuide Winter Competition</h1>

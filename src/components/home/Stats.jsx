@@ -2,6 +2,7 @@ import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
 
 
 
+
 export function Stats() {
     const stats = [
         { name: 'Discord Community Size', stat: '136 members' },
