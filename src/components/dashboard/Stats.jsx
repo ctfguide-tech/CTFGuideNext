@@ -40,22 +40,22 @@ const valueFormatter = (number) => (
 export function Stats() {
     return (
         <>
-            <Container className="mt-4 rounded-lg mx-auto max-w-6xl">
-                <div className='mx-auto mt-4'>
+           
+                <div className='mx-auto mt-10'>
                     <h1 className="text-xl text-white tracking-tight mt-2    " style={{ color: "#595959" }}> AT A GLANCE</h1>
                     <div className='mx-auto text-center grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-1 mb-4 mt-2  gap-4 rounded-lg'>
-                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className='border px-4 py-2 mx-auto w-full stext-center text-white rounded-lg  '>
+                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full stext-center text-white rounded-lg  '>
 
                             <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-blue-900'>5 days</h1>
-                            <h1 className='text-xl font-semibold'>Streak</h1>
+                            <h1 className='text-xl'>Streak</h1>
                         </div>
 
-                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className='border px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
+                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
                             <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-900'>45th</h1>
-                            <h1 className='text-xl font-semibold'>Rank</h1>
+                            <h1 className='text-xl '>Rank</h1>
                         </div>
 
-                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className='border px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
+                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
                             <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-red-400 to-blue-900'>2000</h1>
 
                             <h1 className='text-xl'>Points</h1>
@@ -63,7 +63,7 @@ export function Stats() {
                     </div>
                 </div>
 
-            </Container>
+
         </>
     )
 }
