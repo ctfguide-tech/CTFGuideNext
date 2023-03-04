@@ -11,6 +11,8 @@ import { useEffect } from 'react'
 import { Friends } from '@/components/dashboard/Friends'
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+import NotificationDropdown from '@/components/dashboard/NotificationDropdown';
+
 const people = [
   {
     name: 'Leslie Alexander',
