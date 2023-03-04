@@ -29,6 +29,7 @@ export function DashboardHeader() {
               <p className='text-white'>
                 { profile.fields[0][1] }
               </p>
+      
             </div>
             <div className="justify-stretch mt-12 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 ">
             <button

@@ -93,12 +93,12 @@ export function Performance() {
     return (
         <>
             <Container className="mt-4 rounded-lg mx-auto max-w-6xl ">
-            <div className='mx-auto text-center flex justify-center gap-4 mb-14 mt-14  rounded-lg'>
+            <div className='mx-auto text-center flex justify-center gap-4 mb-14  rounded-lg'>
 
-<div className='mx-auto text-center w-full'>
+<div className='mx-auto text-center'>
     <p className='text-white'> Skill Overview </p>
     <DonutChart
-        height="h-80"
+        height="h-40"
         data={cities}
         variant="pie"
         category="percent"
@@ -112,7 +112,7 @@ export function Performance() {
     />
 </div>
 
-<div className='mx-auto text-center w-full'>
+<div className='mx-auto text-center w-full '>
 <p className='text-white'> Points Earned </p>
 
 

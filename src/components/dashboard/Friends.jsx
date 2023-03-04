@@ -5,26 +5,18 @@ import Container from '@/components/Container';
 export function Friends() {
     return (
         <>
-            <Container className="mt-4 rounded-lg mx-auto max-w-6xl ">
-                <div>
-                    <div className="flex items-end">
-                        <div className="pt-72 pl-64 pr-4 rounded-full">
-                            <div className="w-16 h-16 bg-green-400 rounded-[100%]" />
-                        </div>
-                        <div className="w-80 h-80 ml-28 rounded-full" />
-                        <div className="w-16 h-16 bg-green-400 rounded-[100%]" />
-                        <div className="w-80 h-80 ml-32 rounded-full" />
-                        <div className="w-16 h-16 bg-green-400 rounded-[100%]" />
-                    </div>
-                    <div className="flex items-center mt-6">
-                        <div className="text-white text-4xl">longusername12</div>
-                        <div className="ml-36 text-white text-4xl">longusername12</div>
-                        <div className="ml-36 text-white text-4xl">longusername12</div>
+
+                <div className='mx-auto text-center flex justify-center gap-4 mb-14 mt-14  rounded-lg'>
+
+                    <div className="grid grid-cols-3 mt-6 mx-auto text-center max-w-5xl">
+                        <div className="text-white text-2xl">unknown1</div>
+                        <div className="ml-36 text-white text-2xl">unknown2</div>
+                        <div className="ml-36 text-white text-2xl">longusername12</div>
                     </div>
                 </div>
 
 
-            </Container>
+
         </>
     )
 }

@@ -99,7 +99,7 @@ export function StandardNav() {
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full border "
-                          src="../default_pfp.jpeg"
+                          src="../default.png"
                           alt=""
                         />
                       </Menu.Button>
@@ -198,7 +198,7 @@ export function StandardNav() {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full"
-                    src="./default_pfp.jpeg"
+                    src="../default.png"
                     alt=""
                   />
                 </div>
