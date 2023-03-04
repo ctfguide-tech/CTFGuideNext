@@ -69,6 +69,52 @@ export default function Dashboard() {
       </Head>
       <StandardNav />
       <main>
+      <div className="hidden md:flex md:flex-shrink-0 animate__animated animate__fadeIn animate__faster ">
+      <div className="hidden flex flex-col w-64">
+        <div className="hidden flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
+          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+      
+
+            <nav className="flex-1 px-2 bg-white space-y-1">
+              <a  id="overviewbutton" onclick="showOverview()" className="group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150">
+                <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150" >
+                  <i text="font-size:1.5rem;" className="far fa-compass fa-fw"></i>
+                </div>
+                <span text="Font-size:1rem;">  Overview </span>
+              </a>
+              <a href="#" className="hidden group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition ease-in-out duration-150">
+             
+                <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150" >
+                  <i  className="fas fa-chalkboard-teacher"></i> 
+                </div>
+                <span text="Font-size:1rem;"> classNamees </span>
+              </a>
+              <a text="cursor:pointer;"  id="socialbutton" onclick="showSocial()" className="hidden group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition ease-in-out duration-150">
+            
+                <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150" >
+                  <i text="font-size:1.5rem;"  className="fas fa-users"></i> 
+                </div>
+              <span text="Font-size:1rem;"> Friends <b className="bg-red-100 text-red-500  px-2 rounded-full">alpha</b></span>
+              </a>
+  
+
+            </nav>
+          </div>
+       
+        </div>
+      </div> 
+      </div>
+    
+    <div className="flex flex-col w-0 flex-1 overflow-hidden">
+      <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+        <button className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150" aria-label="Open sidebar">
+          <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      </div>
+
       <DashboardHeader />
 
         <div class="grid grid-cols-2 w-full">
@@ -77,7 +123,7 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto w-full px-9">
 
 
-        <h1 className="text-xl text-white tracking-tight mt-2  mb-2  " style={{ color: "#595959" }}> YOUR BADGES</h1>
+        <h1 className="text-xl text-white tracking-tight mt-2  mb-2  " text={{ color: "#595959" }}> YOUR BADGES</h1>
         <div
             style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }}
             className="rounded-lg  mb-4 px-6 py-5 shadow-sm border hover:border-gray-600 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"

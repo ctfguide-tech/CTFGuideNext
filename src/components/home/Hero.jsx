@@ -17,8 +17,7 @@ export function Hero() {
                     Cybersecurity demystified.
                   </h1>
                   <p className="mx-auto my-auto mt-6 text-lg leading-8 text-gray-400 sm:text-center">
-                    A platform built for learning cybersecurity right from the browser.
-                  </p>
+                  Data-driven cybersecurity mastery for the adventurous.                  </p>
                   <div className="mt-8 flex gap-x-4 sm:justify-center">
                     <a
                       to="./register"
