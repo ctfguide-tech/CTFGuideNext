@@ -63,21 +63,8 @@ export default function Dashboard() {
           {/* Main content area */}
           <div className="flex-1">
 
-            <h1 className='text-white text-4xl mt-5'>Badges</h1>
-            {/* Fetch badges from API */}
-            <div className="flex flex-col mt-5">
-            {badges.map((badge) => (
-                  <div>
-                    <div className="flex flex-row items-center justify-between text-white">
-                        <h1>{badge.slug}</h1>
-                        <h1>{badge.title}</h1>
-                        
-
-                        </div>
-              </div>
-            ))}
-            
-                </div>
+            <h1 className='text-white text-4xl mt-5'>Your Challenges</h1>
+         
 
      
           </div>
