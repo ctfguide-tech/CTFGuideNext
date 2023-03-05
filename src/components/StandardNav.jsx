@@ -1,6 +1,6 @@
-import { Fragment, useEffect } from 'react'
+import { Fragment, useEffect, useState, useRef, useContext } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, Cog6ToothIcon, PencilSquareIcon, ShieldExclamationIcon, UserCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Logo } from '@/components/Logo'
 import { app } from '../config/firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut, getIdToken} from "firebase/auth";
@@ -77,7 +77,6 @@ export function StandardNav() {
                   >
                     Create
                   </a>
-
                   <a
                     href="./live"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
@@ -93,7 +92,7 @@ export function StandardNav() {
                 <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
                   <button
                     type="button"
-                    className="rounded-full  p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -127,10 +126,10 @@ export function StandardNav() {
                               href="#"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'
                               )}
                             >
-                              Your Profile
+                              Your Profile <UserCircleIcon className="block h-4 w-4 ml-auto mt-1" aria-hidden="true" />
                             </a>
                           )}
                         </Menu.Item>
@@ -140,10 +139,36 @@ export function StandardNav() {
                               href="../settings"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'
                               )}
                             >
-                              Settings
+                              Settings <Cog6ToothIcon className="block h-4 w-4 ml-auto mt-1" aria-hidden="true" />
+                            </a> 
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="https://feedback.ctfguide.com/"
+                              className={classNames(
+                                active ? 'bg-gray-100' : '',
+                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'
+                              )}
+                            >
+                              Feedback <PencilSquareIcon className="block h-4 w-4 ml-auto mt-1" aria-hidden="true" />
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="../report"
+                              className={classNames(
+                                active ? 'bg-gray-100' : '',
+                                'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'
+                              )}
+                            >
+                              Report <ShieldExclamationIcon className="block h-4 w-4 ml-auto mt-1" aria-hidden="true" />
                             </a>
                           )}
                         </Menu.Item>
@@ -153,10 +178,10 @@ export function StandardNav() {
                               onClick={logout}
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-200'
+                                'block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-200 flex'
                               )}
                             >
-                              Sign out
+                              Sign out <ArrowRightIcon className="block h-4 w-4 ml-auto mt-1" aria-hidden="true" />
                             </span>
                           )}
                         </Menu.Item>
