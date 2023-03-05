@@ -1,158 +1,89 @@
 import Head from 'next/head'
-
-import { Footer } from '@/components/Footer'
-
+import Link from 'next/link'
+import { useState } from 'react'
+import { Button } from '@/components/Button'
+import { TextField } from '@/components/Fields'
+import { Logo } from '@/components/Logo'
+import { Alert } from '@/components/Alert'
+import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { Stats } from '@/components/dashboard/Stats'
-import { Developer } from '@/components/dashboard/Developer'
-import { Performance } from '@/components/dashboard/Performance'
-import { useEffect } from 'react'
-import { Friends } from '@/components/dashboard/Friends'
-import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import NotificationDropdown from '@/components/dashboard/NotificationDropdown';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SideNavContent } from '@/components/dashboard/SideNavContents'
-import { QuickSettings } from '@/components/dashboard/QuickSetttings'
-import { Suggest } from '@/components/dashboard/Suggest'
+import CreatorNavTab from '@/components/challenge/CreatorDashboardTab'
+import { DocumentCheckIcon, DocumentChartBarIcon, DocumentMagnifyingGlassIcon } from '@heroicons/react/20/solid'
 
-export default function Dashboard() {
-  const [open, setOpen] = useState(true)
+export default function Create() {
 
+  const [activeTab, setActiveTab] = useState('created');
 
-  /*
-  Code to check if onboarding has been complete
-*/
-  useEffect(() => {
-    fetch("api.ctfguide.com/dashboard")
-      .then((res) => res.json())
-
-      .then((data) => {
-        if (data.onboardingComplete == false) {
-          //      window.location.replace("http://localhost:3000/onboarding?part=1")
-        }
-      }
-      )
-    //  .catch((error) => window.location.replace("http://localhost:3000/onboarding?part=1"))
-  })
+  function handleTabClick(tab) {
+    setActiveTab(tab);
+  }
 
   return (
-
-
-
     <>
-      <Head>
-        <title>Dashboard - CTFGuide</title>
-        <meta
-          name="description"
-          content="Cybersecurity made easy for everyone"
-        />
-        <style>
-          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-        </style>
-      </Head>
-      <StandardNav />
-      <main>
+        <Head>
+                <title>Practice  - CTFGuide</title>
+                <style>
+                    @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+                </style>
+        </Head>
+            <StandardNav />
 
-      <div className=" w-full " style={{ backgroundColor: "#212121" }}>
-
-<div className="flex mx-auto text-center h-28 my-auto">
-    <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Creator Portal</h1>
-</div>
-
-
-
-</div>
-
-<div className='max-w-7xl mx-auto'>
-    <h1 className='text-white text-3xl mt-10'>Your Challenges</h1>
-    
-    <h1 className="text-xl text-white tracking-tight mt-2    " style={{ color: "#595959" }}> DRAFTS</h1>
-    <div style={{ backgroundColor: "#212121" }} className="mb-3 rounded-lg flex align-middle">
-
-    <div>
-    <h1 className="text-xl text-white  px-5 py-1" > Challenge 1</h1>
-
-    </div>
-      <div className='ml-auto mt-2'>
-        <button className=' text-white px-1 rounded-lg'>Edit</button>
-        <button className=' text-red-500 mr-4 ml-4 rounded-lg'>Delete</button>
-
+    <main>
+    <div className=" w-full " style={{ backgroundColor: "#212121" }}>
+        <div className="flex mx-auto text-center h-28 my-auto">
+            <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Create</h1>
         </div>
     </div>
-    <div style={{ backgroundColor: "#212121" }} className="mb-3 rounded-lg flex align-middle">
-
-<div>
-<h1 className="text-xl text-white  px-5 py-1" > Challenge 1</h1>
-
-</div>
-  <div className='ml-auto mt-2'>
-    <button className=' text-white px-1 rounded-lg'>Edit</button>
-    <button className=' text-red-500 mr-4 ml-4 rounded-lg'>Delete</button>
-
-    </div>
-</div>
-<div style={{ backgroundColor: "#212121" }} className="mb-3 rounded-lg flex align-middle">
-
-<div>
-<h1 className="text-xl text-white  px-5 py-1" > Challenge 1</h1>
-
-</div>
-  <div className='ml-auto mt-2'>
-    <button className=' text-white px-1 rounded-lg'>Edit</button>
-    <button className=' text-red-500 mr-4 ml-4 rounded-lg'>Delete</button>
-
-    </div>
-</div>
-    
-
-
-    <h1 className="text-xl text-white tracking-tight mt-2    " style={{ color: "#595959" }}> PENDING REVIEW</h1>
-    <div style={{ backgroundColor: "#212121" }} className="mb-3 rounded-lg flex align-middle">
-
-    <div>
-    <h1 className="text-xl text-white  px-5 py-1" > Challenge 1</h1>
-
-    </div>
-      <div className='ml-auto mt-2'>
-        <button className=' text-red-500 mr-4 ml-4 rounded-lg'>Cancel Review</button>
-
+    <div className="flex flex-col md:flex-row">
+          <div className="w-full md:w-1/3 bg-gray-800 p-4">
+            <h2 className="text-lg font-semibold text-white">Stats Dashboard</h2>
+            {/* Dashboard content goes here */}
+          </div>
+          <div className="w-full md:w-2/3 p-4">
+            <h2 className="text-lg font-semibold text-white">{activeTab === 'created' ? 'Created Challenges' : activeTab === 'unverified' ? 'Unverified Challenges' : 'Pending Changes'}</h2>
+            <CreatorNavTab activeTab={activeTab}></CreatorNavTab>
+          </div>
         </div>
-    </div>
-
-    <div style={{ backgroundColor: "#212121" }} className="mb-3 rounded-lg flex align-middle">
-
-<div>
-<h1 className="text-xl text-white  px-5 py-1 align-center" > Challenge 1 <span className='ml-4 bg-yellow-900 text-yellow-200 px-4  text-sm rounded-full'>Review Requested</span></h1>
-
-</div>
-  <div className='ml-auto mt-2'>
-    <button className=' text-white px-1 rounded-lg'>Edit</button>
-    <button className=' text-red-500 mr-4 ml-4 rounded-lg'>Delete</button>
-
-    </div>
-</div>
-
-
-    <h1 className="text-xl text-white tracking-tight mt-2    " style={{ color: "#595959" }}> PUBLISHED</h1>
-    <div style={{ backgroundColor: "#212121" }} className="mb-3 rounded-lg flex align-middle">
-
-    <div>
-    <h1 className="text-xl text-white  px-5 py-1" > Challenge 1</h1>
-
-    </div>
-      <div className='ml-auto mt-2'>
-        <button className=' text-white px-1 rounded-lg'>Edit</button>
-        <button className=' text-red-500 mr-4 ml-4 rounded-lg'>Request Deletion</button>
-
+    <div className="flex max-w-6xl mx-auto mt-10">
+                    <div className="w-2/3  max-w-xs flex-row-reverse">
+            <div className='max-w-6xl mx-auto text-left mt-6'>
+                    <h1 className='text-white text-3xl font-semibold mb-3'> My Challenges </h1>
+            </div>
+        <div className="flex items-center mt-1">
+              <button
+                 style={{ backgroundColor: "#212121", borderWidth: "0px" }}
+                 onClick={() => handleTabClick('created')}
+                 isActive={activeTab === 'created'}
+                 type="button"
+                 className="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+               >
+                <DocumentCheckIcon className="w-5 h-5 text-white" aria-hidden="true" />
+                <span>&nbsp;Created</span>
+              </button>
+              <button
+                 style={{ backgroundColor: "#212121", borderWidth: "0px" }}
+                 onClick={() => handleTabClick('unverified')}
+                 isActive={activeTab === 'unverified'}
+                 type="button"
+                 className="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+               >
+                <DocumentChartBarIcon className="w-5 h-5 text-white" aria-hidden="true" />
+                <span>&nbsp;Unverified</span>
+              </button>
+              <button
+                 style={{ backgroundColor: "#212121", borderWidth: "0px" }}
+                 onClick={() => handleTabClick('pending changes')}
+                 isActive={activeTab === 'pendingChanges'}
+                 type="button"
+                 className="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+               >
+                <DocumentMagnifyingGlassIcon className="w-5 h-5 text-white" aria-hidden="true" />
+                <span>&nbsp;Pending</span>
+              </button>
+          </div>
         </div>
-    </div>
-</div>
-
-
+        </div>
       </main>
-      <Footer />
     </>
   )
 }
