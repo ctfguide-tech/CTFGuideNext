@@ -92,7 +92,7 @@ const dataFormatter = (number) =>
 export function Performance() {
     return (
         <>
-            <div className='mt-10 mx-auto text-center flex justify-center gap-4 mb-14  rounded-lg'>
+            <div className='hidden mt-10 mx-auto text-center flex justify-center gap-4 mb-14  rounded-lg'>
 
                 <div className=' text-center w-1/2'>
                     <p className='text-white'> Skill Overview </p>

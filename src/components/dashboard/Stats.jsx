@@ -74,7 +74,7 @@ export function Stats() {
     return (
         <>
            
-                <div className='mx-auto '>
+                <div className='mx-auto hidden'>
                     <h1 className="text-xl text-white tracking-tight mt-2    " style={{ color: "#595959" }}> AT A GLANCE</h1>
                     <div className='mx-auto text-center grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-1 mb-4 mt-2  gap-4 rounded-lg'>
                         <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full stext-center text-white rounded-lg  '>
