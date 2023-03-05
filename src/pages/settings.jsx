@@ -88,20 +88,20 @@ export default function Dashboard() {
 
     <input type="password" id="confirmnewpass" placeholder="Confirm New Password" className="mt-3 border border-gray-600  px-2 py-1 rounded-lg w-full" />
     <button  class="bg-blue-700 px-2 py-1 rounded-lg mt-3">Change Password</button>
-    <p className="text-xl font-semibold mt-4 hidden">Change your username</p>
-    <input placeholder="Loading..." id="usernamechange" className="hidden mt-3 border border-gray-600  px-2 py-1 rounded-lg w-full" />
+    <p className="text-xl font-semibold mt-4 ">Change your username</p>
+    <input placeholder="Loading..." id="usernamechange" className=" mt-3 border border-gray-600  px-2 py-1 rounded-lg w-full" />
 
-    <p className="hidden text-xl font-semibold mt-4">Set a biography</p>
-    <textarea placeholder="People can see your biography when clicking on your name" className="hidden mt-3 border border-gray-600  px-2 py-1 rounded-lg w-full">
+    <p className=" text-xl font-semibold mt-4">Set a biography</p>
+    <textarea placeholder="People can see your biography when clicking on your name" className=" mt-3 border border-gray-600  px-2 py-1 rounded-lg w-full">
     </textarea>
 
-    <p className="hidden text-xl font-semibold mt-4">Profile Picture</p>
+    <p className=" text-xl font-semibold mt-4">Profile Picture</p>
 
     <div className="flex align-middle">
-      <img className="hidden h-10 w-10 rounded-full align-middle border border-white" src="../../defaultpfp.png" alt="profile picture" />
-      <input type="file" className="hidden ml-2 mt-1.5 text-sm align-middle"></input>
+      <img className=" h-10 w-10 rounded-full align-middle border border-white" src="../../default_pfp.jpeg" alt="profile picture" />
+      <input type="file" className=" ml-2 mt-1.5 text-sm align-middle"></input>
     </div>
-    <button class="hidden bg-blue-700 px-2 py-1 rounded-lg mt-3">Save Changes</button>
+    <button class=" bg-blue-700 px-2 py-1 rounded-lg mt-3">Save Changes</button>
 
   </div>
 

@@ -15,7 +15,7 @@ export function LearnCore() {
     <ul className='text-white flex gap-4 px-4 my-auto'>
     <li className='font-semibold my-auto'><img width="40" src="./darkLogo.png"></img></li>
     <a className=' my-auto hover:border-b h-full' href='../dashboard'>Dashboard</a>
-    <li className=' my-auto'>Course Menu</li>
+    <li className=' my-auto'><a href="../learn-2">Course Menu</a></li>
 
     <div className='ml-auto my-auto flex'>
         <li className='my-auto mr-4'>Logged in as Pranav</li>

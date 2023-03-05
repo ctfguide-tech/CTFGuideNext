@@ -60,24 +60,24 @@ export default function Dashboard() {
 
                     <h1 className='text-white text-2xl mt-4 font-semibold mt-6'>Learning Modules</h1>
                     <div className="grid grid-cols-2 mt-4 gap-4">
-                        <a href="../learn" className='mt-1 py-6 mt-4' style={{backgroundColor:"#212121"}}>
+                        <a href="../learn" className='mt-1 py-6 mt-4 rounded-lg' style={{backgroundColor:"#212121"}}>
                             <h1 className='text-white text-2xl mx-auto text-center'>Linux Basics</h1>
                             <div className='px-10 mt-4 text-white'>
-                            <ProgressBar percentageValue={45} color="teal" tooltip={true} marginTop="mt-2" />
+                            <ProgressBar percentageValue={45} color="blue" tooltip={true} marginTop="mt-2" />
                             <p1 className="mt-4">43%</p1>
                             </div>
                         </a>
-                        <div className='mt-1 py-6 mt-4' style={{backgroundColor:"#212121"}}>
+                        <div className='mt-1 py-6 mt-4 rounded-lg' style={{backgroundColor:"#212121"}}>
                             <h1 className='text-white text-2xl mx-auto text-center'>Cryptography</h1>
                             <div className='px-10 mt-4 text-white'>
-                            <ProgressBar percentageValue={45} color="teal" tooltip={true} marginTop="mt-2" />
+                            <ProgressBar percentageValue={45} color="blue" tooltip={true} marginTop="mt-2" />
                             <p1 className="mt-4">43%</p1>
                             </div>
                         </div>
-                        <div className='mt-1 py-6 mt-4' style={{backgroundColor:"#212121"}}>
+                        <div className='mt-1 py-6 mt-4 rounded-lg' style={{backgroundColor:"#212121"}}>
                             <h1 className='text-white text-2xl mx-auto text-center'>Forensics</h1>
                             <div className='px-10 mt-4 text-white'>
-                            <ProgressBar percentageValue={45} color="teal" tooltip={true} marginTop="mt-2" />
+                            <ProgressBar percentageValue={45} color="blue" tooltip={true} marginTop="mt-2" />
                             <p1 className="mt-4">43%</p1>
                             </div>
                         </div>
