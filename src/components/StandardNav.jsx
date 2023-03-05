@@ -49,7 +49,7 @@ export function StandardNav() {
                   {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:border-gray-300 hover:text-gray-700" */}
                   <a
                     href="./dashboard"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
+                    className="ml-2 inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Dashboard
                   </a>

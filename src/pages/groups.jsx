@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { StandardNav } from '@/components/StandardNav'
 import { Button } from '@/components/Button'
+import { Footer } from '@/components/Footer'
 
 export default function ComingSoon() {
   return (
@@ -36,6 +37,7 @@ export default function ComingSoon() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

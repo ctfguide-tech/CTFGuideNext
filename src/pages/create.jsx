@@ -9,6 +9,7 @@ import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import CreatorNavTab from '@/components/challenge/CreatorDashboardTab'
 import { DocumentCheckIcon, DocumentChartBarIcon, DocumentMagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { Footer } from '@/components/Footer'
 
 export default function Create() {
 
@@ -84,6 +85,7 @@ export default function Create() {
         </div>
         </div>
       </main>
+      <Footer />
     </>
   )
 }

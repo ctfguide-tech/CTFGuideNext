@@ -6,6 +6,7 @@ import { Logo } from '@/components/Logo'
 import { Alert } from '@/components/Alert'
 import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
+import { Footer } from '@/components/Footer'
 
 export default function Pratice() {
 
@@ -127,7 +128,7 @@ export default function Pratice() {
             </main>
 
 
-
+            <Footer />
         </>
     )
 }
