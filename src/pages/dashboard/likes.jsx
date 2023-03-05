@@ -20,19 +20,21 @@ import { Suggest } from '@/components/dashboard/Suggest'
 export default function Dashboard() {
   const [open, setOpen] = useState(true)
   const [likes, setLikes] = useState([]);
-  let username = "laphatize"
+  
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`http://localhost:3001/users/${username}/likes`);
+      const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
       const data = await response.json();
-      setLikes(data);
+console.log(data)    
+  setLikes(data);
+      likes.map((like) => (
+        console.log(like.challenge.slug)
+      ));
+
     };
     fetchData();
     setLikes([
-        {
-            "slug": "scrambled_eggs",
-            "title": "Content",
-        }
+      
     ])
   }, []);
 
@@ -67,14 +69,17 @@ export default function Dashboard() {
             {/* Fetch likes from API */}
             <div className="flex flex-col mt-5">
             {likes.map((like) => (
-                  <div>
-                    <div className="flex flex-row items-center justify-between text-white">
-                        <h1>{like.slug}</h1>
-                        <h1>{like.title}</h1>
+  <div>
+    <a href={like.challengeUrl} style={{ backgroundColor: "#212121"}} className='mb-4 flex rounded-lg px-5 py-3 text-white align-center'>
+      <h2 className='text-xl font-semibold align-middcenterle'>{like.challenge.title}</h2>
 
-                        </div>
-              </div>
-            ))}
+      <div className='ml-auto flex align-center mt-1'>
+      <p> {like.challenge.category.join(", ")}</p>
+    </div>
+    </a>
+  </div>
+))}
+
             
                 </div>
 

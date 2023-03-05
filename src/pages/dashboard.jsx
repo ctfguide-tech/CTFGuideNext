@@ -21,21 +21,6 @@ export default function Dashboard() {
   const [open, setOpen] = useState(true)
 
 
-  /*
-  Code to check if onboarding has been complete
-*/
-  useEffect(() => {
-    fetch("api.ctfguide.com/dashboard")
-      .then((res) => res.json())
-
-      .then((data) => {
-        if (data.onboardingComplete == false) {
-          //      window.location.replace("http://localhost:3000/onboarding?part=1")
-        }
-      }
-      )
-    //  .catch((error) => window.location.replace("http://localhost:3000/onboarding?part=1"))
-  })
 
   return (
 
@@ -63,10 +48,10 @@ export default function Dashboard() {
 
           {/* Main content area */}
           <div className="flex-1">
+            <QuickSettings />
 
             <Stats />
-            <Suggest/>
-            <QuickSettings />
+            <Suggest />
             <Performance></Performance>
           </div>
         </div>

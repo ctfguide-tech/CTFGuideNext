@@ -18,7 +18,7 @@ export default function Login() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
-        window.location.replace("/dashboard")
+     //  window.location.replace("/dashboard")
       } 
     });
   }, [])
@@ -30,7 +30,38 @@ export default function Login() {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        window.location.replace("/dashboard")
+
+
+        // Fetch ID Token
+        userCredential.user.getIdToken().then((idToken) => {
+          // Send token to backend via HTTPS
+          console.log(idToken)
+          var data = new FormData();
+          var xhr = new XMLHttpRequest();
+
+
+          xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
+          xhr.addEventListener("readystatechange", function() {
+            if(this.readyState === 4) {
+              window.alert(this.responseText)
+              console.log(this.responseText)
+           var parsed = JSON.parse(this.responseText);
+           console.log(parsed.userLikesUrl)
+              localStorage.setItem("idToken", idToken);
+              localStorage.setItem("userLikesUrl", parsed.userLikesUrl);
+             window.location.replace("/dashboard");
+
+            }
+          });
+          xhr.setRequestHeader("Authorization", "Bearer " + idToken);
+          xhr.send(data);
+
+
+        
+
+        }
+        );
+
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -53,7 +84,7 @@ export default function Login() {
       </Head>
   
 
-      <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div style={{fontFamily: "Poppins, sans-serif"}} className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Link href="../">
             <img
