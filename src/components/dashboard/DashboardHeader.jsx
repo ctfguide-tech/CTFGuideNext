@@ -50,29 +50,24 @@ useEffect(() => {
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
               <h1 className="truncate text-2xl font-bold text-white mt-8">{username}</h1>
               <p className='text-white'>
-                {location}
+              <i class="fas fa-map-marker-alt"></i>  {location}
               </p>
 
             </div>
-            <div className="justify-stretch mt-12 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 ">
-              <a
-                href={github}
-                style={{ backgroundColor: "#212121", borderWidth: "0px" }}
-                type="button"
-                className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-2  text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-
-                  <i class="fab fa-github text-xl"></i>
-    
-              </a>
-              <button
-                style={{ backgroundColor: "#212121", borderWidth: "0px" }}
-                type="button"
-                className="hidden inline-flex justify-center rounded-md border border-gray-300 bg-white px-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-            <i class="fas fa-link text-lg"></i>
-              </button>
+            <div className="justify-stretch mt-12 flex  ">
+           
+            <div className="px-10 py-1 mt-8 rounded-lg mb-0" style={{ backgroundColor: "#212121", borderWidth: "0px" }}>
+              <h1 className='text-white text-xl mt-0 mb-0 font-semibold'>4000</h1>
+              <p className='mt-0 text-white'>Points</p>
             </div>
+
+            <div className="ml-4 px-10 py-1 mt-8 rounded-lg mb-0" style={{ backgroundColor: "#212121", borderWidth: "0px" }}>
+              <h1 className='text-white text-xl mt-0 font-semibold'>#0</h1>
+              <p className='mt-0 text-white'>Rank</p>
+            </div>
+            
+            </div>
+            
           </div>
         </div>
         <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
