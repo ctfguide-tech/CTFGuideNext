@@ -64,10 +64,6 @@ export default function Login() {
           });
           xhr.setRequestHeader("Authorization", "Bearer " + idToken);
           xhr.send(data);
-
-
-
-
         }
         );
 
@@ -105,7 +101,7 @@ export default function Login() {
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">Sign in to your account</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
 
-            <a href="#" className="font-semibold text-blue-600 hover:text-blue-500">
+            <a href="../register" className="font-semibold text-blue-600 hover:text-blue-500">
               Don&apos;t have an account?
             </a>
           </p>
@@ -153,8 +149,6 @@ export default function Login() {
               </div>
 
               <div className="flex items-center justify-between">
-
-
                 <div className="text-sm text-center mx-auto">
                   <a href="#" className="text-center font-medium text-blue-600 hover:text-blue-500">
                     Forgot your password?
