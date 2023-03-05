@@ -18,8 +18,8 @@ export default function Login() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
-     //  window.location.replace("/dashboard")
-      } 
+        //  window.location.replace("/dashboard")
+      }
     });
   }, [])
 
@@ -41,15 +41,24 @@ export default function Login() {
 
 
           xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener("readystatechange", function() {
-            if(this.readyState === 4) {
-              window.alert(this.responseText)
-              console.log(this.responseText)
-           var parsed = JSON.parse(this.responseText);
-           console.log(parsed.userLikesUrl)
+          xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+              var parsed = JSON.parse(this.responseText);
+
+              // Store Token in local storage.
               localStorage.setItem("idToken", idToken);
+
+              // Store related API endpoints in local storage.
               localStorage.setItem("userLikesUrl", parsed.userLikesUrl);
-             window.location.replace("/dashboard");
+              localStorage.setItem("userChallengesUrl", parsed.userChallengesUrl);
+              localStorage.setItem("userBadgesUrl", parsed.userBadgesUrl);
+              localStorage.setItem("notificationsUrl", parsed.notificationsUrl);
+              localStorage.setItem("email", parsed.email);
+              localStorage.setItem("role", parsed.role);
+
+
+              // Redirect to dashboard
+              window.location.replace("/dashboard");
 
             }
           });
@@ -57,7 +66,7 @@ export default function Login() {
           xhr.send(data);
 
 
-        
+
 
         }
         );
@@ -70,7 +79,7 @@ export default function Login() {
         document.getElementById("error").classList.remove("hidden");
         document.getElementById("errorMessage").innerHTML = errorMessage;
       });
-    
+
   }
 
 
@@ -82,9 +91,9 @@ export default function Login() {
           @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-  
 
-      <div style={{fontFamily: "Poppins, sans-serif"}} className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+
+      <div style={{ fontFamily: "Poppins, sans-serif" }} className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Link href="../">
             <img
