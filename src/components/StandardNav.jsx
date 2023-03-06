@@ -8,6 +8,7 @@ import { getAuth, onAuthStateChanged, signOut, getIdToken} from "firebase/auth";
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
+
 const auth = getAuth();
 const user = auth.currentUser;
 export function StandardNav() {
@@ -21,8 +22,10 @@ export function StandardNav() {
   }
 
 
-  
+  const [notification, showNotifications] = useState(false)
+
   return (
+    
     <Disclosure as="nav" className=" shadow">
       {({ open }) => (
         <>
@@ -90,13 +93,33 @@ export function StandardNav() {
               <div className="flex items-center">
 
                 <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-                  <button
-                    type="button"
-                    className="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                <button
+                  onClick={() => showNotifications(!notification)}
+  id="bell-button"
+  type="button"
+  class="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+>
+  <span class="sr-only">View notifications</span>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+    <path
+      fill-rule="evenodd"
+      d="M10 18a2 2 0 002-2H8a2 2 0 002 2zm6.1-6c-.83-.9-1.1-2-1.1-3.3V7c0-3.3-1.8-6.1-4.5-6.8V0h-2v.2C6.8.9 5 3.7 5 7v1.7c0 1.3-.27 2.4-1.1 3.3-.4.4-.6.9-.6 1.4 0 .6.4 1.1 1 1.3v2.7a2 2 0 002 2h6a2 2 0 002-2v-2.7c.6-.2 1-.7 1-1.3 0-.5-.2-1-.6-1.4z"
+      clip-rule="evenodd"
+    />
+  </svg>
+</button>
+
+{ notification && 
+<div id="dropdown" class="relative mt-20 bg-white rounded-md shadow-lg mt-2 py-2">
+  <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 1</a>
+  <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 2</a>
+  <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 3</a>
+</div>
+
+}
+
+
+
 
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">

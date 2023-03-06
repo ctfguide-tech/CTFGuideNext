@@ -68,7 +68,6 @@ export default function Pratice() {
                         <PracticeNav />
                     </div>
                     <div className='w-3/4'>
-                    <Community />
                     </div>
                 </div>
             </main>
