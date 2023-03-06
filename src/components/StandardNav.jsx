@@ -48,7 +48,7 @@ export function StandardNav() {
                 <div className="hidden md:ml-6 md:flex md:space-x-8">
                   {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:border-gray-300 hover:text-gray-700" */}
                   <a
-                    href="./dashboard"
+                    href="../../dashboard"
                     className="ml-2 inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Dashboard
@@ -60,13 +60,13 @@ export function StandardNav() {
                     Learn
                   </a>
                   <a
-                    href="./groups"
+                    href="../../groups"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Groups
                   </a>
                   <a
-                    href="./practice"
+                    href="../../practice"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Practice
@@ -78,7 +78,7 @@ export function StandardNav() {
                     Create
                   </a>
                   <a
-                    href="./live"
+                    href="../../live"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Live
