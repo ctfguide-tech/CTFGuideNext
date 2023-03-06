@@ -55,10 +55,14 @@ export default function Dashboard() {
                     {/* Sidebar */}
                     <LearnNav/>
 
+                    
+
                     {/* Main content area */}
                     <div className="flex-1 text-white">
 
                         {/* Load in markdown from a github url */}
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Mark Done</button>
+
                         <h1 className='mt-10 text-3xl font-semibold'>What is Linux</h1>
                         <hr className='mb-5 mt-2'></hr>
                         <ReactMarkdown >{markdown}</ReactMarkdown>

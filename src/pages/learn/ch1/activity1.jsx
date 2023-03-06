@@ -57,6 +57,7 @@ export default function Dashboard() {
 
                     {/* Main content area */}
                     <div className="flex-1 text-white">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Mark Done</button>
 
                         {/* Load in markdown from a github url */}
                         <h1 className='mt-10 text-3xl font-semibold'>Mastery Task</h1>

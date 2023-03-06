@@ -59,7 +59,8 @@ export default function Dashboard() {
                     <div className="flex-1 text-white ">
 
                         {/* Load in markdown from a github url */}
-      
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Mark Done</button>
+
                         <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/embed/P5DtOOkCFM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                         <h1 className='mt-3 ml-12 text-3xl font-semibold'>Command Basics</h1>
                         <h1 className=' ml-12 text-lg font-semibold text-blue-500'>@CTFGuideTeam</h1>
