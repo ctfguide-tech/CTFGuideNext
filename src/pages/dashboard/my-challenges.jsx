@@ -11,7 +11,6 @@ import { useEffect } from 'react'
 import { Friends } from '@/components/dashboard/Friends'
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import NotificationDropdown from '@/components/dashboard/NotificationDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SideNavContent } from '@/components/dashboard/SideNavContents'
 import { QuickSettings } from '@/components/dashboard/QuickSetttings'

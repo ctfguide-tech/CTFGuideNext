@@ -54,7 +54,7 @@ export function StandardNav() {
                     Dashboard
                   </a>
                   <a
-                    href="../learn-2"
+                    href="../../learn-2"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Learn
@@ -105,7 +105,7 @@ export function StandardNav() {
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full border "
-                          src="../default.png"
+                          src="../../default.png"
                           alt=""
                         />
                       </Menu.Button>
@@ -136,7 +136,7 @@ export function StandardNav() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="../settings"
+                              href="../../settings"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'
@@ -162,7 +162,7 @@ export function StandardNav() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="../report"
+                              href="../../report"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'
@@ -230,7 +230,7 @@ export function StandardNav() {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full"
-                    src="../default.png"
+                    src="../../default.png"
                     alt=""
                   />
                 </div>
