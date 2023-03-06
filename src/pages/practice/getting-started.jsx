@@ -39,7 +39,7 @@ export default function Pratice() {
                 }
             })
             .catch(error => {
-                console.log(error)
+                window.alert(error)
         });
     }
     loadChallenges();
@@ -63,13 +63,9 @@ export default function Pratice() {
                         <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Practice</h1>
                     </div>
                 </div>
-                <div className="flex">
-                    <div className="flex h-screen max-w-7xl mx-auto ">
-                        <PracticeNav />
-                    </div>
-                    <div className='w-3/4'>
-                    <Community />
-                    </div>
+                <div className="flex h-screen max-w-7xl mx-auto ">
+                    <PracticeNav />
+                    {/* Main Content */}
                 </div>
             </main>
             <Footer />

@@ -9,6 +9,7 @@ import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
 import { Community } from '@/components/practice/community'
+import { GoToCreate } from '@/components/practice/GoToCreate'
 
 export default function Pratice() {
     function loadChallenges() {
@@ -60,7 +61,7 @@ export default function Pratice() {
             <main>
                 <div className=" w-full " style={{ backgroundColor: "#212121" }}>
                     <div className="flex mx-auto text-center h-28 my-auto">
-                        <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Practice</h1>
+                        <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Community</h1>
                     </div>
                 </div>
                 <div className="flex">
@@ -68,7 +69,10 @@ export default function Pratice() {
                         <PracticeNav />
                     </div>
                     <div className='w-3/4'>
-                    <Community />
+                        <div className='w-3/4'>
+                            <GoToCreate />
+                        </div>
+                        <Community />
                     </div>
                 </div>
             </main>
