@@ -12,17 +12,8 @@ export function LearnCore() {
 
     return (
         <div style={{}} className="h-full mx-auto py-2 overflow-hidden">
-    <ul className='text-white flex gap-4 px-4 my-auto'>
-    <li className='font-semibold my-auto'><img width="40" src="./darkLogo.png"></img></li>
-    <a className=' my-auto hover:border-b h-full' href='../dashboard'>Dashboard</a>
-    <li className=' my-auto'><a href="../learn">Course Menu</a></li>
 
-    <div className='ml-auto my-auto flex'>
-        <li className='my-auto mr-4'>Logged in as Pranav</li>
-        <img src="./default.png" width="30" className='my-auto'></img>
-        </div>
-    </ul>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-0  mt-2 h-100   resize-x">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-0  mt-2 h-100   resize-x">
                 <div style={{backgroundColor: "#212121"}} className="px-4 py-4 h-100 resize-x">
                     <h1 className="text-2xl font-bold text-white">Using your terminal</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
@@ -44,7 +35,6 @@ export function LearnCore() {
 
 
  
-                    <button className='mt-10 border mx-auto text-center accent-gray-900 hover:bg-gray-900 text-white px-4 py-2 w-1/2 rounded-lg text-xl'>Continue</button>
 
                 </div>
                 <div className='h-screen bg-black overflow-hidden resize-x'>
