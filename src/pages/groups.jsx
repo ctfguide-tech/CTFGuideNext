@@ -28,7 +28,7 @@ export default function ComingSoon() {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div style={{ backgroundColor: "#212121" }} className="py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <p className="text-gray-300 text-center">Learn and training with a guided group. Coming soon...</p>
+            <p className="text-gray-300 text-center">Learn and train with a guided group. Coming soon...</p>
             <div className="mt-6">
               <Button href="../practice" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue focus:bg-blue-700">
                 Keep on practicing!
