@@ -9,7 +9,7 @@ import { Developer } from '@/components/dashboard/Developer'
 import { useEffect } from 'react'
 
 import { Image } from 'next/image'
-
+import { Header } from '@/components/Header'
 export default function Careers() {
   /*
         Code to check if onboarding has been complete
@@ -31,13 +31,6 @@ export default function Careers() {
       position: "Co-Founder",
       image: "../Raymond.jpeg",
       width: "200"
-    },
-    {
-      personName: "Abhinav Byreddy",
-      position: "Chief Architect",
-      image: "../abhiCTF.jpg",
-      width: "200",
-      height: "200"
     },
     {
       personName: "Srihari Raman",
@@ -109,8 +102,7 @@ export default function Careers() {
       </Head>
 
 
-
-      <StandardNav />
+      <Header/>
       <main>
 
         <div className='mx-auto text-center w-full mt-20 mb-20 max-w-6xl'>
@@ -126,7 +118,7 @@ export default function Careers() {
          sm is for "smaller" devices
          */
         }
-        <div className='grid grid-cols-3 gap-4 mx-auto text-center max-w-7xl'>
+        <div className='grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-4 mx-auto text-center max-w-7xl'>
           {
             team.map((person) => {
               return (
@@ -156,30 +148,25 @@ export default function Careers() {
                 return (
 
                   <div className='card text-white rounded-lg my-auto ' style={{ backgroundColor: "#161716" }}>
-                    <div className='grid grid-cols-3 mt-4 px-6 py-10'>
+                    <div className='grid mt-6 px-6 py-5 my-auto mx-auto'>
 
 
                       <div>
-                        <h1 className='font-semibold text-xl'>{job.team}</h1>
+                        <h1 className=' text-xl'>{job.team}</h1>
                         <h1 className='font-semibold text-3xl'>{job.roleName}</h1>
+                        <p>Remote - Full Time</p>
                       </div>
 
-                      <div className='mx-auto my-6'>
-                        <span className="text-white px-6 rounded-full" style={{ backgroundColor: "#212121" }}>&#127758; {job.type}</span>
-                        <span className="text-white ml-6 px-6 rounded-full" style={{ backgroundColor: "#212121" }}>&#9201; {job.position}</span>
 
-                      </div>
 
-                      <div className='mx-auto mt-2'>
-                        <button
-                          className=" mx-8 justify-center rounded-full border border-transparent bg-blue-700 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                          Learn More
-                        </button>
-
-                        <button
-                          className=" justify-center rounded-full border border-transparent bg-blue-700 py-3 px-8 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                      <div className='ml-auto'>
+                     
+                       <a
+                          href="https://ctfguide.freshteam.com/jobs"
+                          className=" justify-center rounded-full border border-transparent bg-blue-700 py-1 px-4 text-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                           Apply
-                        </button>
+                        </a>
+                      
                       </div>
 
 

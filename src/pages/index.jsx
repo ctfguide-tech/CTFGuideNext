@@ -7,6 +7,8 @@ import { Footer } from '@/components/Footer'
 import { AboutPanel } from '@/components/home/AboutPanel'
 import { FeaturesPanel } from '@/components/home/FeaturesPanel' 
 import { Stats } from '@/components/home/Stats'
+import { LearningPanel } from '@/components/home/LearningPanel'
+import { Enterprise } from '@/components/home/Enterprise'
 
 
 export default function Home() {
@@ -32,10 +34,17 @@ export default function Home() {
 
 
       <FeaturesPanel/>
-    <AboutPanel/>
-    <Stats></Stats>
 
-      <Footer/>
+      <LearningPanel/>
+    <Stats></Stats>
+    <Enterprise/>
+
+    <div className='mx-auto text-center mx-auto max-w-7xl px-6 lg:px-8 py-20' style={{backgroundColor:"#212121"}}>
+    <h1 className='text-white text-4xl mx-auto text-center font-semibold mb-8'>What are you waiting for? Start hacking today!</h1>
+    <a href="./register" className=' rounded-lg text-2xl px-10 py-2 bg-blue-600 mx-auto text-center text-white'>Create Account</a>
+    
+    </div>
+  <Footer/>
     </>
   )
 }

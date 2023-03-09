@@ -14,8 +14,7 @@ export function Hero() {
 
                 <div>
                   <h1 className="mx-auto my-auto text-4xl text-white font-bold tracking-tight sm:text-center sm:text-6xl">
-                    Cybersecurity demystified.
-                  </h1>
+                  Your personal roadmap for cybersecurity.                  </h1>
                   <p className="mx-auto my-auto mt-6 text-lg leading-8 text-gray-400 sm:text-center">
                   Data-driven cybersecurity mastery for the adventurous.                  </p>
                   <div className="mt-8 flex gap-x-4 sm:justify-center">
