@@ -6,7 +6,7 @@ import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
 export function Stats() {
     const stats = [
         { name: 'Schools', stat: '50+ schools' },
-        { name: 'Challenge Attempts', stat: '10,2000 attempts' },
+        { name: 'Challenge Attempts', stat: '10,200 attempts' },
         { name: 'Total Challenges Solved', stat: '1,346+ challenges' },
       ]
 
