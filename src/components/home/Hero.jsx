@@ -19,7 +19,7 @@ export function Hero() {
                   Data-driven cybersecurity mastery for the adventurous.                  </p>
                   <div className="mt-8 flex gap-x-4 sm:justify-center">
                     <a
-                      to="./register"
+                      href="./register"
                       className="inline-block rounded-lg border px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm"
                     >
                       Create an account
@@ -28,7 +28,7 @@ export function Hero() {
                       </span>
                     </a>
                     <a
-                      to="./login"
+                      href="./login"
                       className="inline-block rounded-lg px-4 py-1.5 text-base font-semibold leading-7 text-white ring-1 ring-white/10 hover:ring-white/20"
                     >
                       Returning user?
