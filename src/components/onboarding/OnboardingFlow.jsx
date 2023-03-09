@@ -28,16 +28,28 @@ export function OnboardingFlow() {
     const router = useRouter()
 
     const [flowState, setFlowState] = useState(router.query.part || '1');
-    
+   
+    var username = "";
+    var birthday = "";
+    var firstname = "";
+    var lastname = "";
+    var location = "";
+
+
     useEffect(() => {
         setFlowState(router.query.part);
     }, [router.query.part]);
+
+  
+  
+
+
 
    // Read part from URL query parameter
  
 
     if (flowState === "1") {
-        return <DataAsk />
+        return <DataAsk/>
     } else if (flowState === "2") {
         return <DataAskPart2 />
     } else if (flowState === "3") {

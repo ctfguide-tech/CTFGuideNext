@@ -64,8 +64,8 @@ export default function Dashboard() {
                         {/* Fetch badges from API */}
                         <div className="grid grid-cols-5 mt-4 gap-x-4 gap-y-4">
                             {badges.map((data) => (
-                                <div style={{ backgroundColor: "#212121"}} className='mx-auto px-4 py-4 rounded-lg w-full text-center  align-center'>
-                                                                        <img src={`../badges/level1/${data.badge.badgeName.toLowerCase()}.png`} width="100" className='mx-auto px-1 mt-2' />
+                                <div style={{ backgroundColor: "#212121" }} className='mx-auto px-4 py-4 rounded-lg w-full text-center  align-center'>
+                                    <img src={`../badges/level1/${data.badge.badgeName.toLowerCase()}.png`} width="100" className='mx-auto px-1 mt-2' />
 
                                     <h1 class="text-white text-xl  mx-auto text-center mt-2">{data.badge.badgeName}</h1>
                                     <h1 class="text-white text-lg ">{new Date(data.createdAt).toLocaleDateString('en-US', {

@@ -12,38 +12,52 @@ import Link from 'next/link'
 import { Container } from '@/components/Container'
 import { Logo } from '@/components/Logo'
 import { NavLink } from '@/components/NavLink'
-export function DataAsk() {
+import { userAgent } from 'next/server';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router'
+
+
+
+
+export function DataAsk({ props }) {
+    const router = useRouter()
+
+
+    useEffect(() => {
+        if (router.query.part == "1") {
+        if (router.query.error) {
+            document.getElementById("error").classList.remove("hidden");
+            document.getElementById("error").innerHTML = router.query.error;
+        }
+        }
+    });
 
     function submitData() {
-        // Data validation
-        if (document.getElementById("username").value.length < 5) {
-            document.getElementById("username").classList.remove("border-0")
-            document.getElementById("username").classList.add("border")
-            document.getElementById("username").classList.add("border-red-400")
-        } 
-        if (document.getElementById("fullname").value.length < 5) {
-            document.getElementById("fullname").classList.remove("border-0")
-            document.getElementById("fullname").classList.add("border")
-            document.getElementById("fullname").classList.add("border-red-400")
-        } 
-        if (document.getElementById("jobtitle").value.length < 5) {
-            document.getElementById("jobtitle").classList.remove("border-0")
-            document.getElementById("jobtitle").classList.add("border")
-            document.getElementById("jobtitle").classList.add("border-red-400")
-        }
-
         // Generate JSON to send
-        var data = {
-            "username": document.getElementById("username").value,
-            "fullname": document.getElementById("fullname").value,
-            "jobtitle": document.getElementById("jobtitle").value
+
+        var username = document.getElementById("username").value;
+        var birthday = document.getElementById("birthday").value;
+        var firstname = document.getElementById("fullname").value.split(" ")[0];
+        var lastname = document.getElementById("fullname").value.split(" ")[1];
+        
+        const parts = birthday.split("-");
+        const newDateStr = `${parts[1]}-${parts[2]}-${parts[0]}`;
+        localStorage.setItem("username", document.getElementById("username").value);
+        localStorage.setItem("birthday", newDateStr);
+        localStorage.setItem("firstname", document.getElementById("fullname").value.split(" ")[0]);
+        localStorage.setItem("lastname", document.getElementById("fullname").value.split(" ")[1]);
+
+
+        if (!username || !birthday || !firstname || !lastname) {
+            return window.alert("Please fill out all fields.");
+        } else { 
+            window.location.replace("./onboarding?part=2");
         }
 
-        localStorage.setItem("tempData", data)
-        window.location.href = "./onboarding?part=2"
+        //window.location.replace("./onboarding?part=2");
     }
 
-
+ 
 
     return (
         <>
@@ -61,6 +75,10 @@ export function DataAsk() {
                         <div className="my-auto mx-auto px-4 ">
                     
                             <h1 className='text-white text-xl '> You seem new around here, tell us about yourself. </h1>
+                           
+                            <div id="error" className='hidden bg-red-900 mt-2 mb-2 text-white text-center rounded-lg px-2 py-1'>
+                              Error - Something went wrong.
+                            </div>
                             <div className=' mt-4'>
                                 <div className="isolate -space-y-px rounded-md shadow-sm">
                                     <div style={{borderColor: "#212121"}}  className="relative rounded-md rounded-b-none border  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600">
@@ -92,23 +110,10 @@ export function DataAsk() {
                                 
                                     <div style={{borderColor: "#212121"}}  className="relative rounded-md rounded-t-none border px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600">
                                         <label htmlFor="job-title" className="block text-xs font-medium text-white">
-                                            Job Title
+                                            Birthday
                                         </label>
-                                        <select
-                                            style={{backgroundColor: "#212121"}}
-                                            type="text"
-                                            name="job-title"
-                                            id="jobtitle"
-                                            className="mt-2 py-1 rounded block w-full border-0 p-0 text-white placeholder-gray-500 focus:ring-0 sm:text-sm px-4"
-                                            placeholder="Head of Tomfoolery"
-                                        >
-                                            <option>Student</option>
-                                            <option>K-12 Teacher</option>
-                                            <option>College Professor</option>
-                                            <option>Employer</option>
-                                            <option>Other</option>
-
-                                        </select>
+                                
+                                        <input id="birthday" type="date" style={{backgroundColor: "#212121"}} className="mt-2 py-1 rounded block w-full border-0 p-0 text-white placeholder-gray-500 focus:ring-0 sm:text-sm px-4"></input>
                                      
                                     </div>
                                 </div>

@@ -47,6 +47,13 @@ export default function Login() {
               // Store Token in local storage.
               localStorage.setItem("idToken", idToken);
 
+
+              if (!parsed.email) {
+                // User hasn't finished onboarding.
+                window.location.replace("/onboarding");
+                return;
+              }
+
               // Store related API endpoints in local storage.
               localStorage.setItem("userLikesUrl", parsed.userLikesUrl);
               localStorage.setItem("userChallengesUrl", parsed.userChallengesUrl);

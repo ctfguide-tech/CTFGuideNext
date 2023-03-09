@@ -19,7 +19,7 @@ export default function Register() {
           userCredential.user.getIdToken().then((idToken) => {
 
 
-
+            var xhr = new XMLHttpRequest();
             xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
             xhr.addEventListener("readystatechange", function () {
               if (this.readyState === 4) {
@@ -32,6 +32,9 @@ export default function Register() {
 
               }
             });
+            xhr.setRequestHeader("Authorization", `Bearer ${idToken}`);
+            xhr.send();
+            
 
           }
           );
