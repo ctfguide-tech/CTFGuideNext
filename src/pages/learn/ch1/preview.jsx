@@ -22,33 +22,26 @@ export default function Dashboard() {
     const [open, setOpen] = useState(true)
     const [markdown, setMarkdown] = useState("");
 
+    const [lessonProgress, setLessonProgress] = useState(null);
 
     useEffect(() => {
-
-
-
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/1/progress/1`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("idToken"),
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-         //   window.alert(JSON.stringify(data));
+        fetch('http://localhost:3001/lessons/1/progress', {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            },
           })
-          .catch((err) => {
+          .then(res => res.json())
+          .then(data => {
+            setLessonProgress(data);
+          })
+          .catch(err => {
             console.log(err);
           });
-    }, [])
-
-
+    }, []);
 
     return (
-
-
-
         <>
             <Head>
                 <title>Learn - CTFGuide</title>
@@ -70,9 +63,7 @@ export default function Dashboard() {
                 </div>
                     <div className="flex h-screen max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav/>
-
-                    
+                    <LearnNav totalProgress={lessonProgress}/>
 
                     {/* Main content area */}
                     <div className="flex-1 text-white">

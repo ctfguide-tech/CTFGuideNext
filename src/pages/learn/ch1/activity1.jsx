@@ -17,6 +17,7 @@ import { QuickSettings } from '@/components/dashboard/QuickSetttings'
 import { Suggest } from '@/components/dashboard/Suggest'
 import { ProgressBar  } from '@tremor/react'
 import ReactMarkdown from "react-markdown";
+import QuizPage from '@/components/learn/QuizPage'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -33,9 +34,6 @@ export default function Dashboard() {
       }, []);
 
     return (
-
-
-
         <>
             <Head>
                 <title>Learn - CTFGuide</title>
@@ -56,44 +54,8 @@ export default function Dashboard() {
                     <LearnNav/>
 
                     {/* Main content area */}
-                    <div className="flex-1 text-white">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Mark Done</button>
-
-                        {/* Load in markdown from a github url */}
-                        <h1 className='mt-10 text-3xl font-semibold'>Mastery Task</h1>
-                        <hr className='mb-5 mt-2'></hr>
-                        <div style={{ backgroundColor: "#212121", padding: "1rem", borderRadius: "0.5rem" }}>
-  <h2 style={{ color: "white", fontWeight: "bold", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Question:</h2>
-  <p style={{ color: "white", fontSize: "1.25rem", marginBottom: "1rem" }}>Example of Question</p>
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
-      <input type="radio" id="option1" name="answer" value="option1" style={{ marginRight: "0.5rem" }} />
-      <label htmlFor="option1" style={{ color: "white", fontSize: "1.25rem" }}>1</label>
-    </div>
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
-      <input type="radio" id="option2" name="answer" value="option2" style={{ marginRight: "0.5rem" }} />
-      <label htmlFor="option2" style={{ color: "white", fontSize: "1.25rem" }}>2</label>
-    </div>
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
-      <input type="radio" id="option3" name="answer" value="option3" style={{ marginRight: "0.5rem" }} />
-      <label htmlFor="option3" style={{ color: "white", fontSize: "1.25rem" }}>3</label>
-    </div>
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
-      <input type="radio" id="option4" name="answer" value="option4" style={{ marginRight: "0.5rem" }} />
-      <label htmlFor="option4" style={{ color: "white", fontSize: "1.25rem" }}>4</label>
-
-    </div>
-
-
-  </div>
-
-  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Submit</button>
-</div>
-
+                    <QuizPage totalQuizPages={5}/>
                     </div>
-                    </div>
-
-
                 </div>
             </main>
             <Footer />
