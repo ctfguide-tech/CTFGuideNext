@@ -111,9 +111,8 @@ export function StandardNav() {
 
 { notification && 
 <div id="dropdown" class="relative mt-20 bg-white rounded-md shadow-lg mt-2 py-2">
-  <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 1</a>
-  <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 2</a>
-  <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 3</a>
+
+  
 </div>
 
 }
