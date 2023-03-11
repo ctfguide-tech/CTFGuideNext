@@ -100,13 +100,10 @@ export function StandardNav() {
   class="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 >
   <span class="sr-only">View notifications</span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-    <path
-      fill-rule="evenodd"
-      d="M10 18a2 2 0 002-2H8a2 2 0 002 2zm6.1-6c-.83-.9-1.1-2-1.1-3.3V7c0-3.3-1.8-6.1-4.5-6.8V0h-2v.2C6.8.9 5 3.7 5 7v1.7c0 1.3-.27 2.4-1.1 3.3-.4.4-.6.9-.6 1.4 0 .6.4 1.1 1 1.3v2.7a2 2 0 002 2h6a2 2 0 002-2v-2.7c.6-.2 1-.7 1-1.3 0-.5-.2-1-.6-1.4z"
-      clip-rule="evenodd"
-    />
-  </svg>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+</svg>
+
 </button>
 
 { notification && 
