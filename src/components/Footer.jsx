@@ -10,7 +10,7 @@ export function Footer() {
       <Container>
         <div className="py-16">
  
-       <img src="darkLogo.png" className="w-14 mx-auto text-center" /> 
+       <img src="../../darkLogo.png" className="w-14 mx-auto text-center" /> 
           <nav className="mt-4 text-sm" aria-label="quick links">
             <div className="-my-1 flex place-content-center gap-x-6">
               <NavLink href="../terms-of-service">Terms of Service</NavLink>
