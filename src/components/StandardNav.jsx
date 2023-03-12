@@ -4,6 +4,7 @@ import { Bars3Icon, BellIcon, XMarkIcon, Cog6ToothIcon, PencilSquareIcon, Shield
 import { Logo } from '@/components/Logo'
 import { app } from '../config/firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut, getIdToken} from "firebase/auth";
+import { redirect } from 'next/navigation';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
