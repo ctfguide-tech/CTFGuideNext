@@ -61,7 +61,7 @@ Linux architecture is based on a modular approach. The kernel, which is the core
                 
                 <img width="300" className='mx-auto text-center mt-10' src="https://www.ctfguide.com/arch2.png"></img>
                     <div className='mt-6 ml-6'>
-                        <MarkDone sublesson={1} section={1}/>
+                        <MarkDone sublesson={1} section={1} href={"./video1"}/>
                     </div>
                     </div>
                     </div>

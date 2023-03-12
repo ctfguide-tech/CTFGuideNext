@@ -58,7 +58,7 @@ export default function Dashboard() {
                         {/* Load in markdown from a github url */}
                         <LearnCore/>
                         <div className="ml-6 mt-2">
-                            <MarkDone sublesson={4} section={1}/>
+                            <MarkDone sublesson={4} section={1} href={"../"}/>
                         </div>
                     </div>
                     </div>

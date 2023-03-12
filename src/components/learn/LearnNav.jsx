@@ -1,6 +1,7 @@
 
 import Container from '@/components/Container';
 import { ProgressBar  } from '@tremor/react'
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 export function LearnNav({navElements}) {
   const [lessonProgress, setLessonProgress] = useState(null);
@@ -32,11 +33,11 @@ export function LearnNav({navElements}) {
             <ProgressBar percentageValue={lessonProgress ? lessonProgress.totalProgress : 0} color="blue" tooltip={true} marginTop="mt-2" />
 
           </div>
-              <li className="mt-6 mb-4 py-1"><a href={navElements[0].href} className="ml-1 px-2 py-2 text-white font-medium text"><i class="far fa-file mr-2"></i>{navElements[0].title}</a></li>
-              <li className="mb-4 py-1"><a href={navElements[1].href} className="px-2 py-2 text-white font-medium text"><i class="fas fa-play-circle mr-2"></i>{navElements[1].title}</a></li>
-              <li className="mb-4 py-1"><a href={navElements[2].href} className="px-2 py-2 text-white font-medium text"><i class="fas fa-clipboard-check mr-2"></i>{navElements[2].title}</a></li>
-              <li className="py-1"><a href={navElements[3].href} className="px-2 py-2 text-white font-medium text"><i class="fas fa-terminal mr-2"></i>{navElements[3].title}</a></li>
-              <li className="ml-5 mt-2 mr-2 py-1"><a href="./dynamic1" className="px-2 py-2 text-white font-medium text">Using your terminal</a></li>
+              <li className="mt-6 mb-4 py-1"><Link href={navElements[0].href} className="ml-1 px-2 py-2 text-white font-medium text hover:bg-[#212121] active:bg-[#2e2e2e] rounded-md"><i class="far fa-file mr-2"></i>{navElements[0].title}</Link></li>
+              <li className="mb-4 py-1"><Link href={navElements[1].href} className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md"><i class="fas fa-play-circle mr-2"></i>{navElements[1].title}</Link></li>
+              <li className="mb-4 py-1"><Link href={navElements[2].href} className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md"><i class="fas fa-clipboard-check mr-2"></i>{navElements[2].title}</Link></li>
+              <li className="py-1"><Link href={navElements[3].href} className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md"><i class="fas fa-terminal mr-2"></i>{navElements[3].title}</Link></li>
+              <li className="ml-5 mt-2 mr-2 py-1"><Link href="./dynamic1" className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md">Using your terminal</Link></li>
             </ul>
           </div>
         </>

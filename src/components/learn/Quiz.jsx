@@ -1,50 +1,34 @@
 import { useState, useEffect } from "react";
 
 export function Quiz({ page, sublesson }) {
-  /**
-   * const [quizData, setQuizData] = useState(null);
-   * 
-  useEffect(() => {
-    fetch(`http://localhost:3000/quiz/${page}`)
-      .then((response) => response.json())
-      .then((data) => setQuizData({
-        "question": "Is javascript free?",
-        "answers": ["Yes", "No", "Javascript follows a freemium model where users get 10 GB of javascript free and then $5 for each following 10 GBs"]
-      }))
-      .catch(
-        setQuizData({
-            "question": "Is javascript free?",
-            "answers": ["Yes", "No", "Javascript follows a freemium model where users get 10 GB of javascript free and then $5 for each following 10 GBs"]
-          })
-      );
-  }, [page]);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
-  if (!quizData) {
-    return <div></div>;
-  }
-  **/
+  const handleAnswerSelection = (event) => {
+    setSelectedAnswer(event.target.value);
+  };
 
-  const checkAnswer = () => {
-    // Check answer
-    // const selectiom = formSubmission
-    if (/**quizData[parseInt(page) - 1].solution == selection*/1) {
-      console.log("Submission correct!")
-      useEffect(() => {
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${page}`, {
-              method: 'PUT',
-              headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer " + localStorage.getItem("idToken"),
-              },
-          })
-          .then((res) => res.json())
-          .catch((err) => {
-              // Trigger Unauthenticated Popup
-          });
-      }, [])
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const solution = quizData[page - 1].solution;
+    const isCorrect = selectedAnswer === solution;
+
+    if (isCorrect) {
+      console.log("Submission correct!");
+
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${page}`, {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("idToken"),
+        },
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          // Trigger Unauthenticated Popup
+        });
     } else {
-      // Answer not correct!
-      console.log("Submission incorrect!")
+      console.log("Submission incorrect!");
     }
   };
 
@@ -79,7 +63,8 @@ export function Quiz({ page, sublesson }) {
       "answers": ["rmdir", "rm", "mv", "cp"],
       "solution": "rmdir"
     }
-  ]
+  ];
+
   const { question, answers } = quizData[page - 1];
 
   return (
@@ -104,7 +89,7 @@ export function Quiz({ page, sublesson }) {
       <p style={{ color: "white", fontSize: "1.25rem", marginBottom: "1rem" }}>
         {question}
       </p>
-      <form>
+      <form onSubmit={handleSubmit}>
         {answers.map((answer, index) => (
           <div
             key={index}
@@ -118,7 +103,9 @@ export function Quiz({ page, sublesson }) {
               type="radio"
               id={`option${index + 1}`}
               name="answer"
-              value={`option${index + 1}`}
+              value={answer}
+              checked={selectedAnswer === answer}
+              onChange={handleAnswerSelection}
               style={{ marginRight: "0.5rem" }}
             />
             <label
@@ -131,7 +118,6 @@ export function Quiz({ page, sublesson }) {
         ))}
         <button
           type="submit"
-          onSubmit={checkAnswer()}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           style={{ marginTop: "1rem" }}
         >

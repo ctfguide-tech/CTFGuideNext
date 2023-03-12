@@ -64,7 +64,7 @@ export default function Dashboard() {
                         </div>
                         <h1 className=' ml-12 text-lg font-semibold text-blue-500'>@CTFGuideTeam</h1>
                         <div className="ml-6 mt-2">
-                            <MarkDone sublesson={2} section={1}/>
+                            <MarkDone sublesson={2} section={1} href="./activity1"/>
                         </div>
                     </div>
                     </div>

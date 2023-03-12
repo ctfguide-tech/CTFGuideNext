@@ -1,9 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Quiz } from './Quiz';
 import { SectionsNav } from './SectionsNav';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
-function QuizPage({ totalQuizPages, sublesson }) { // receive totalQuizPages as a prop
+function QuizPage({ totalQuizPages, sublesson }) {
+  const router = useRouter();
   const [page, setPage] = useState(1);
+
+  // Update page state when query param changes
+  useEffect(() => {
+    const queryPage = parseInt(router.query.quizPage);
+    if (queryPage && !isNaN(queryPage)) {
+      setPage(queryPage);
+    }
+  }, [router.query.quizPage]);
 
   const handleNext = () => {
     setPage(page + 1);
@@ -14,6 +25,16 @@ function QuizPage({ totalQuizPages, sublesson }) { // receive totalQuizPages as 
   };
 
   const pagePercentage = parseInt(100/totalQuizPages)
+
+  // Update query param when page state changes
+  // This code doesn't work!
+  /**
+  useEffect(() => {
+    router.replace({
+      query: { quizPage: page }
+    });
+  }, [page, router]);
+  */
 
   return (
     <div className="flex-1 text-white">
@@ -37,11 +58,11 @@ function QuizPage({ totalQuizPages, sublesson }) { // receive totalQuizPages as 
           </button>
         )}
         {page === totalQuizPages && (
-          <a href="./dynamic1">
+          <Link href="./dynamic1">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               Go to next task
             </button>
-          </a>
+          </Link>
         )}
       </div>
     </div>
