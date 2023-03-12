@@ -17,7 +17,7 @@ import { QuickSettings } from '@/components/dashboard/QuickSetttings'
 import { Suggest } from '@/components/dashboard/Suggest'
 
 
-export function MyFriends() {
+export function Badges(props) {
 
     return (
     
@@ -25,7 +25,7 @@ export function MyFriends() {
         <h1 className='text-white text-4xl mt-5'>Badges</h1>
         {/* Fetch badges from API */}
         <div className="grid grid-cols-5 mt-4 gap-x-4 gap-y-4">
-            {badges.map((data) => (
+            {props.badges.map((data) => (
                 <div style={{ backgroundColor: "#212121" }} className='mx-auto px-4 py-4 rounded-lg w-full text-center  align-center'>
                     <img src={`../badges/level1/${data.badge.badgeName.toLowerCase()}.png`} width="100" className='mx-auto px-1 mt-2' />
 

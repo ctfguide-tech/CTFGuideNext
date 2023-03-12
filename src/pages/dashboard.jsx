@@ -15,16 +15,65 @@ import { SideNavContent } from '@/components/dashboard/SideNavContents'
 import { QuickSettings } from '@/components/dashboard/QuickSetttings'
 import { Suggest } from '@/components/dashboard/Suggest'
 
-import { MyFriends } from '@/components/dashboard/MyFriends'
-import { MyChallenges } from '@/components/dashboard/MyChallenges'
+import { YourChallenges } from '@/components/dashboard/YourChallenges'
 import { Likes } from '@/components/dashboard/Likes'
 import { Badges } from '@/components/dashboard/Badges'
+import { useRouter } from 'next/router'
+
 
 
 export default function Dashboard() {
+
+
+  const router = useRouter()
+
+
+  
+
   const [open, setOpen] = useState(true)
 
+  const [likes, setLikes] = useState([]);
+  const [badges, setbadges] = useState([]);
+  const [challenges, setchallenges] = useState([]);
 
+  useEffect(() => {
+    const fetchBadges = async () => {
+      const response = await fetch(`${localStorage.getItem("userBadgesUrl")}`);
+      const data = await response.json();
+      console.log(data)
+      setbadges(data);
+    };
+    fetchBadges();
+    setbadges([
+
+    ])
+
+    const fetchChallenges = async () => {
+      const response = await fetch(`${localStorage.getItem("userChallengesUrl")}`);
+      const data = await response.json();
+      console.log(data)
+      setchallenges(data);
+    };
+    fetchChallenges();
+    setchallenges([
+    ])
+
+
+    const fetchData = async () => {
+      const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
+      const data = await response.json();
+      console.log(data)
+      setLikes(data);
+      likes.map((like) => (
+        console.log(like.challenge.slug)
+      ));
+
+    };
+    fetchData();
+    setLikes([
+
+    ])
+  }, []);
 
   return (
 
@@ -52,17 +101,37 @@ export default function Dashboard() {
 
           {/* Main content area */}
           <div className="flex-1">
-            <QuickSettings />
-
-            <Stats />
-            <Suggest />
-            <Performance></Performance>
 
 
-            <MyFriends />
-            <MyChallenges/>
-            <Likes  />
-            <Badges/>
+
+            {router.pathname === '/dashboard' ? (
+              <div>
+                <QuickSettings />
+                <Stats />
+                <Suggest />
+                <Performance></Performance>
+              </div>
+            ) : null}
+
+
+
+            {router.pathname === '/dashboard/challenges' ? (
+
+              <YourChallenges challenges={challenges} />
+
+            ) : null}
+
+
+            {router.pathname === '/dashboard/badges' ? (
+
+              <Badges badges={badges} />
+
+            ) : null}
+
+            {router.pathname === '/dashboard/likes' ? (
+
+              <Likes likes={likes} />
+            ) : null}
 
 
           </div>
