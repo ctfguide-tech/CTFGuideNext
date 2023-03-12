@@ -26,6 +26,7 @@
     "clsx": "^1.2.1",
     "corepack": "^0.17.0",
     "dotenv": "^16.0.3",
+    "easymde": "^2.18.0",
     "enable": "^3.4.0",
     "firebase": "^9.16.0",
     "focus-visible": "^5.2.0",
@@ -35,6 +36,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.5",
+    "react-simplemde-editor": "^5.2.0",
+    "simplemde": "^1.11.2",
     "tailwindcss": "^3.2.1"
   },
   "devDependencies": {

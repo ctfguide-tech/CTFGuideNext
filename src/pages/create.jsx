@@ -22,7 +22,7 @@ export default function Create() {
   return (
     <>
         <Head>
-                <title>Practice  - CTFGuide</title>
+                <title>Create  - CTFGuide</title>
                 <style>
                     @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
                 </style>
@@ -30,60 +30,80 @@ export default function Create() {
             <StandardNav />
 
     <main>
-    <div className=" w-full " style={{ backgroundColor: "#212121" }}>
-        <div className="flex mx-auto text-center h-28 my-auto">
-            <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Create</h1>
-        </div>
+  
+        <div className="flex max-w-7xl mx-auto mt-10 px-10  pb-6  my-auto rounded-2xl bg-neutral-800 text-white text-2xl space-y-6">
+  <div className=" text-4xl font-bold mt-10 my-auto">Pranav’s Creator Dashboard</div>
+  <div className="mt-0 flex items-center gap-x-4 ml-auto my-auto">
+    <div className=''>
+      <div className="px-6 py-2.5 mx-auto text-center rounded-lg bg-neutral-900">
+        <div className="text-white text-2xl">1000</div>
+        <div className="mt-1 text-white text-sm">Views</div>
+      </div>
     </div>
-    <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-1/3 bg-gray-800 p-4">
-            <h2 className="text-lg font-semibold text-white">Stats Dashboard</h2>
-            {/* Dashboard content goes here */}
-          </div>
-          <div className="w-full md:w-2/3 p-4">
-            <h2 className="text-lg font-semibold text-white">{activeTab === 'created' ? 'Created Challenges' : activeTab === 'unverified' ? 'Unverified Challenges' : 'Pending Changes'}</h2>
-            <CreatorNavTab activeTab={activeTab}></CreatorNavTab>
-          </div>
+
+    <div>
+      <div className="px-6 py-2.5 mx-auto text-center rounded-lg bg-neutral-900">
+        <div className="text-white text-2xl">1000</div>
+        <div className="mt-1 text-white text-sm">Attempts</div>
+      </div>
+    </div>
+   
+    <div>
+      <div className="px-6 py-2.5 mx-auto text-center rounded-lg bg-neutral-900">
+        <div className="text-white text-2xl">1000</div>
+        <div className="mt-1 text-white text-sm">Solves</div>
+      </div>
+    </div>
+   
+   
+ 
+  </div>
+
+
+  
+</div>
+
+
+
+  
+<div className='flex grid grid-cols-3 gap-x-4 mt-4 mx-auto text-center mt-10'>
+   
+      <div className=" px-6 py-2.5 w-full mx-auto text-center rounded-lg bg-neutral-900 mx-auto text-center ">
+        <div className="text-white text-2xl text-center">Unverified</div>
+
         </div>
-    <div className="flex max-w-6xl mx-auto mt-10">
-                    <div className="w-2/3  max-w-xs flex-row-reverse">
-            <div className='max-w-6xl mx-auto text-left mt-6'>
-                    <h1 className='text-white text-3xl font-semibold mb-3'> My Challenges </h1>
+
+        <div className="px-6 py-2.5  mx-auto text-center rounded-lg bg-neutral-900">
+        <div className="text-white text-2xl">Pending Changes</div>
+
+        </div>
+
+        <div className="px-6 py-2.5 mx-auto text-center rounded-lg bg-neutral-900">
+        <div className="text-white text-2xl">Published</div>
+
+        </div>
+
+
+    </div>
+
+    <div className='max-w-7xl mx-auto mt-10'>
+      <div className="px-6 py-2.5 mx-auto  rounded-lg bg-neutral-800 flex">
+        <div className="text-white text-2xl my-auto">Challenge Name</div>
+        <div className='ml-auto flex'>
+          <div className="mr-2  px-6 py-2.5 mx-auto text-center  text-red-500 rounded-lg bg-neutral-900">
+            Delete
             </div>
-        <div className="flex items-center mt-1">
-              <button
-                 style={{ backgroundColor: "#212121", borderWidth: "0px" }}
-                 onClick={() => handleTabClick('created')}
-                 isActive={activeTab === 'created'}
-                 type="button"
-                 className="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-               >
-                <DocumentCheckIcon className="w-5 h-5 text-white" aria-hidden="true" />
-                <span>&nbsp;Created</span>
-              </button>
-              <button
-                 style={{ backgroundColor: "#212121", borderWidth: "0px" }}
-                 onClick={() => handleTabClick('unverified')}
-                 isActive={activeTab === 'unverified'}
-                 type="button"
-                 className="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-               >
-                <DocumentChartBarIcon className="w-5 h-5 text-white" aria-hidden="true" />
-                <span>&nbsp;Unverified</span>
-              </button>
-              <button
-                 style={{ backgroundColor: "#212121", borderWidth: "0px" }}
-                 onClick={() => handleTabClick('pending changes')}
-                 isActive={activeTab === 'pendingChanges'}
-                 type="button"
-                 className="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-               >
-                <DocumentMagnifyingGlassIcon className="w-5 h-5 text-white" aria-hidden="true" />
-                <span>&nbsp;Pending</span>
-              </button>
-          </div>
+            <div className=" px-6 py-2.5 mx-auto text-center  text-white  rounded-lg bg-neutral-900">
+            Edit
+            </div>
+
         </div>
         </div>
+        
+    </div>
+ 
+  
+  
       </main>
       <Footer />
     </>

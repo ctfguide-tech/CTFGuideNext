@@ -8,13 +8,18 @@ import { Stats } from '@/components/dashboard/Stats'
 import { Developer } from '@/components/dashboard/Developer'
 import { Performance } from '@/components/dashboard/Performance'
 import { useEffect } from 'react'
-import { Friends } from '@/components/dashboard/Friends'
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SideNavContent } from '@/components/dashboard/SideNavContents'
 import { QuickSettings } from '@/components/dashboard/QuickSetttings'
 import { Suggest } from '@/components/dashboard/Suggest'
+
+import { MyFriends } from '@/components/dashboard/MyFriends'
+import { MyChallenges } from '@/components/dashboard/MyChallenges'
+import { Likes } from '@/components/dashboard/Likes'
+import { Badges } from '@/components/dashboard/Badges'
+
 
 export default function Dashboard() {
   const [open, setOpen] = useState(true)
@@ -52,6 +57,14 @@ export default function Dashboard() {
             <Stats />
             <Suggest />
             <Performance></Performance>
+
+
+            <MyFriends />
+            <MyChallenges/>
+            <Likes  />
+            <Badges/>
+
+
           </div>
         </div>
 
