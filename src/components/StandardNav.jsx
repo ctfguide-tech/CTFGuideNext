@@ -58,7 +58,7 @@ export function StandardNav() {
                     Dashboard
                   </a>
                   <a
-                    href="../../learn-2"
+                    href="../../learn"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-gray-300 hover:text-gray-700 hover:text-gray-200"
                   >
                     Learn
