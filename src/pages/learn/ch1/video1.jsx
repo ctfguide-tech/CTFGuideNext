@@ -17,6 +17,7 @@ import { QuickSettings } from '@/components/dashboard/QuickSetttings'
 import { Suggest } from '@/components/dashboard/Suggest'
 import { ProgressBar  } from '@tremor/react'
 import ReactMarkdown from "react-markdown";
+import { MarkDone } from '@/components/learn/MarkDone'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -33,9 +34,6 @@ export default function Dashboard() {
       }, []);
 
     return (
-
-
-
         <>
             <Head>
                 <title>Learn - CTFGuide</title>
@@ -53,18 +51,21 @@ export default function Dashboard() {
                     <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
                     <div className="flex h-screen max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav/>
+                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
                     <div className="flex-1 text-white ">
 
                         {/* Load in markdown from a github url */}
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Mark Done</button>
 
                         <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/embed/P5DtOOkCFM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                        <h1 className='mt-3 ml-12 text-3xl font-semibold'>Command Basics</h1>
+                        <div className='flex'>
+                            <h1 className='mt-4 ml-12 mr-6 text-3xl font-semibold'>Command Basics</h1>
+                        </div>
                         <h1 className=' ml-12 text-lg font-semibold text-blue-500'>@CTFGuideTeam</h1>
-
+                        <div className="ml-6 mt-2">
+                            <MarkDone sublesson={2} section={1}/>
+                        </div>
                     </div>
                     </div>
 

@@ -7,9 +7,8 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { Stats } from '@/components/dashboard/Stats'
 import { Developer } from '@/components/dashboard/Developer'
 import { Performance } from '@/components/dashboard/Performance'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Friends } from '@/components/dashboard/Friends'
-import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LearnNav } from '@/components/learn/LearnNav'
@@ -18,10 +17,11 @@ import { Suggest } from '@/components/dashboard/Suggest'
 import { ProgressBar  } from '@tremor/react'
 import ReactMarkdown from "react-markdown";
 import { LearnCore } from '@/components/LearnCore'
+import { MarkDone } from '@/components/learn/MarkDone'
+
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
     const [markdown, setMarkdown] = useState("");
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,9 +33,6 @@ export default function Dashboard() {
       }, []);
 
     return (
-
-
-
         <>
             <Head>
                 <title>Learn - CTFGuide</title>
@@ -53,15 +50,16 @@ export default function Dashboard() {
                     <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
                     <div className="flex h-screen max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav/>
+                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
                     <div className="flex-1 text-white">
 
                         {/* Load in markdown from a github url */}
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginTop: "1rem" }}>Mark Done</button>
-
                         <LearnCore/>
+                        <div className="ml-6 mt-2">
+                            <MarkDone sublesson={4} section={1}/>
+                        </div>
                     </div>
                     </div>
 

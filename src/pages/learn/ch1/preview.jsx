@@ -17,29 +17,11 @@ import { QuickSettings } from '@/components/dashboard/QuickSetttings'
 import { Suggest } from '@/components/dashboard/Suggest'
 import { ProgressBar  } from '@tremor/react'
 import ReactMarkdown from "react-markdown";
+import { MarkDone } from '@/components/learn/MarkDone'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
     const [markdown, setMarkdown] = useState("");
-
-    const [lessonProgress, setLessonProgress] = useState(null);
-
-    useEffect(() => {
-        fetch('http://localhost:3001/lessons/1/progress', {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + localStorage.getItem("idToken"),
-            },
-          })
-          .then(res => res.json())
-          .then(data => {
-            setLessonProgress(data);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-    }, []);
 
     return (
         <>
@@ -63,7 +45,7 @@ export default function Dashboard() {
                 </div>
                     <div className="flex h-screen max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav totalProgress={lessonProgress}/>
+                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
                     <div className="flex-1 text-white">
@@ -78,10 +60,11 @@ Linux is a free and  open source operating system. It is developed by Linus Torv
 Linux architecture is based on a modular approach. The kernel, which is the core of the operating system, manages the resources of the computer and provides services to applications. The shell is a command line interpreter that allows users to interact with the kernel. The hardware consists of the physical components of the computer, such as the processor, memory, and storage devices. The utilities are programs that provide functions that are not directly related to the operation of the computer, such as text editors and file managers.
                 
                 <img width="300" className='mx-auto text-center mt-10' src="https://www.ctfguide.com/arch2.png"></img>
+                    <div className='mt-6 ml-6'>
+                        <MarkDone sublesson={1} section={1}/>
                     </div>
                     </div>
-
-
+                    </div>
                 </div>
             </main>
             <Footer />

@@ -7,9 +7,8 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { Stats } from '@/components/dashboard/Stats'
 import { Developer } from '@/components/dashboard/Developer'
 import { Performance } from '@/components/dashboard/Performance'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Friends } from '@/components/dashboard/Friends'
-import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LearnNav } from '@/components/learn/LearnNav'
@@ -22,7 +21,6 @@ import QuizPage from '@/components/learn/QuizPage'
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
     const [markdown, setMarkdown] = useState("");
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,10 +49,10 @@ export default function Dashboard() {
                     <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
                     <div className="flex h-screen max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav/>
+                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
-                    <QuizPage totalQuizPages={5}/>
+                    <QuizPage totalQuizPages={6} sublesson={3}/>
                     </div>
                 </div>
             </main>
