@@ -18,6 +18,7 @@ import { Suggest } from '@/components/dashboard/Suggest'
 import { ProgressBar  } from '@tremor/react'
 import ReactMarkdown from "react-markdown";
 import { MarkDone } from '@/components/learn/MarkDone'
+import { motion } from 'framer-motion';
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -60,7 +61,13 @@ export default function Dashboard() {
 
                         <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/embed/P5DtOOkCFM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                         <div className='flex'>
-                            <h1 className='mt-4 ml-12 mr-6 text-3xl font-semibold'>Command Basics</h1>
+                            <motion.h1
+                            className='mt-4 ml-12 mr-6 text-3xl font-semibold animate-slide-in-right'
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            >
+                            Command Basics
+                            </motion.h1>
                         </div>
                         <h1 className=' ml-12 text-lg font-semibold text-blue-500'>@CTFGuideTeam</h1>
                         <div className="ml-6 mt-2">

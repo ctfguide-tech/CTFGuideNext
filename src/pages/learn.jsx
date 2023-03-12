@@ -1,23 +1,10 @@
 import Head from 'next/head'
-
 import { Footer } from '@/components/Footer'
-
 import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { Stats } from '@/components/dashboard/Stats'
-import { Developer } from '@/components/dashboard/Developer'
-import { Performance } from '@/components/dashboard/Performance'
 import { useEffect } from 'react'
-import { Friends } from '@/components/dashboard/Friends'
 import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SideNavContent } from '@/components/dashboard/SideNavContents'
-import { QuickSettings } from '@/components/dashboard/QuickSetttings'
-import { Suggest } from '@/components/dashboard/Suggest'
-import { ProgressBar  } from '@tremor/react'
 import { LearningModule } from '@/components/learn/LearningModule'
-import Link from 'next/link'
+import { AuthPopup } from '@/components/authPopup'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -69,13 +56,7 @@ export default function Dashboard() {
                         <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Learn</h1>
                     </div>
                 </div>
-                <div className="rounded-md bg-[#3B82F6] hover:bg-[#468dff]">
-                    <Link href="/login">
-                        <div className="flex mx-auto text-center h-10 my-auto">
-                            <h1 className='text-lg text-white mx-auto my-auto font-semibold'>Log in to see your progress!</h1>
-                        </div>
-                    </Link>
-                </div>
+                <AuthPopup />
                 
                 <div className='max-w-6xl mx-auto mt-10'>
                     <h1 className='text-white text-3xl mb-4 font-semibold mt-6'>Up next for you</h1>   

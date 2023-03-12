@@ -39,10 +39,12 @@ export function SectionsNav({currentPage, cpv, colors, sublesson}) {
         <div className="w-full text-gray-900 flex-none mt-6 border-r mr-6 mb-6" style={{ borderColor: "#212121" }}>
             <div style={{backgroundColor:"#212121"}} className="py-4 px-4 rounded-lg">
                 <h1 className='text-white mx-auto text-center mb-3'>Section Progress</h1>
-                <CategoryBar
-                categoryPercentageValues={cpv}
-                colors={colors}
+                <ProgressBar
                 percentageValue={lessonProgress && lessonProgress.progress}
+                color="blue"
+                // categoryPercentageValues={cpv}
+                // colors={colors}
+                // percentageValue={lessonProgress && lessonProgress.progress}
                 />
             </div>
         </div>

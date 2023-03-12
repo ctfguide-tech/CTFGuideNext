@@ -3,8 +3,22 @@ import { Quiz } from './Quiz';
 import { SectionsNav } from './SectionsNav';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 function QuizPage({ totalQuizPages, sublesson }) {
+  // Refresh on submit
+  /**
+  const [quizState, setQuizState] = useState({
+    page: 1,
+    sublesson: 1,
+    isCorrect: false,
+  });
+
+  const handleQuizSubmit = (isCorrect) => {
+    setQuizState((prevState) => ({ ...prevState, isCorrect }));
+  };
+  */
+
   const router = useRouter();
   const [page, setPage] = useState(1);
 
@@ -26,19 +40,15 @@ function QuizPage({ totalQuizPages, sublesson }) {
 
   const pagePercentage = parseInt(100/totalQuizPages)
 
-  // Update query param when page state changes
-  // This code doesn't work!
-  /**
-  useEffect(() => {
-    router.replace({
-      query: { quizPage: page }
-    });
-  }, [page, router]);
-  */
-
   return (
     <div className="flex-1 text-white">
-      <h1 className='mt-10 text-3xl font-semibold'>Mastery Task</h1>
+      <motion.h1
+        className='mt-10 text-3xl font-semibold animate-slide-in-right'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        >
+        Mastery Task
+      </motion.h1>
       <hr className='mb-5 mt-2'></hr>
       <SectionsNav currentPage={page} cpv={new Array(totalQuizPages).fill(pagePercentage)} colors={new Array(totalQuizPages).fill("gray")} sublesson={sublesson}/>
       <div className="flex" style={{ overflowX: "scroll" }}>

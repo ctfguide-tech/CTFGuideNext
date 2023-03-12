@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 export function Quiz({ page, sublesson }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showError, setErrorPopup] = useState(false);
 
   const handleAnswerSelection = (event) => {
     setSelectedAnswer(event.target.value);
@@ -15,6 +17,8 @@ export function Quiz({ page, sublesson }) {
 
     if (isCorrect) {
       console.log("Submission correct!");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 4000);
 
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${page}`, {
         method: 'PUT',
@@ -29,6 +33,8 @@ export function Quiz({ page, sublesson }) {
         });
     } else {
       console.log("Submission incorrect!");
+      setErrorPopup(true);
+      setTimeout(() => setErrorPopup(false), 4000);
     }
   };
 
@@ -124,6 +130,8 @@ export function Quiz({ page, sublesson }) {
           Submit
         </button>
       </form>
+      {showPopup && <div className="fixed center bottom-6 right-6 bg-[#7cd313] p-2 rounded-md">Correct!</div>}
+      {showError && <div className="fixed center bottom-6 right-6 bg-[#f44a3a] p-2 rounded-md">Incorrect!</div>}
     </div>
   );
 }
