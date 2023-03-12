@@ -43,12 +43,12 @@ export default function Dashboard() {
                         <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Linux Basics</h1>
                     </div>
                 </div>
-                    <div className="flex h-screen max-w-7xl mx-auto ">
+                    <div className="flex max-w-7xl mx-auto ">
                     {/* Sidebar */}
                     <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
-                    <div className="flex-1 text-white">
+                    <div className=" text-white">
 
                         {/* Load in markdown from a github url */}
 
@@ -67,6 +67,9 @@ Linux architecture is based on a modular approach. The kernel, which is the core
                     </div>
                 </div>
             </main>
+
+
+            
             <Footer />
         </>
     )
