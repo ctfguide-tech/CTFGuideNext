@@ -53,11 +53,11 @@ export function Community({challenges}) {
                                     }
                                     if(
                                         filter !== "" && 
-                                        !(challenge.title.includes(filter) || challenge.problem.includes(filter))
+                                        !(challenge.title.toLowerCase().includes(filter.toLowerCase()) || challenge.problem.toLowerCase().includes(filter.toLowerCase()))
                                     ) {
                                         return false;
                                     }
-                                    if(challenge.category.includes(filter)) {
+                                    if(challenge.category.toLowerCase().includes(filter.toLowerCase())) {
                                         return true;
                                     }
                                     return true;
