@@ -6,19 +6,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 function QuizPage({ totalQuizPages, sublesson }) {
-  // Refresh on submit
-  /**
-  const [quizState, setQuizState] = useState({
-    page: 1,
-    sublesson: 1,
-    isCorrect: false,
-  });
-
-  const handleQuizSubmit = (isCorrect) => {
-    setQuizState((prevState) => ({ ...prevState, isCorrect }));
-  };
-  */
-
   const router = useRouter();
   const [page, setPage] = useState(1);
 
