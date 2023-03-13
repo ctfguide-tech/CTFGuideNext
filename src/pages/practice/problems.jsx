@@ -17,6 +17,24 @@ import { KeyIcon, LockOpenIcon } from '@heroicons/react/24/outline'
 
 export default function ProblemsPage() {
     const [components, setComponents] = useState([]);
+    const set = [
+        {
+            name: "Cryptography", 
+            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity."
+        },
+        {
+            name: "Forensics", 
+            description: "Sometimes, secrets are hidden in plain site. Can you crack these challenges?"
+        },
+        {
+            name: "Web", 
+            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity."
+        },
+        {
+            name: "Cryptography", 
+            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity."
+        }
+    ];
 
     useEffect(() => {
         fetch("https://api.ctfguide.com/challenges/type/all")
@@ -29,6 +47,12 @@ export default function ProblemsPage() {
             console.error(error);
         });
     }, []);
+
+    const filterData = (category) => {
+        return components.filter(component => {
+            return component.category.toLowerCase().includes(category.toLowerCase())
+        });
+    }
 
     return (
         <>
@@ -57,22 +81,15 @@ export default function ProblemsPage() {
                         <div className='w-3/4'>
                             <ProblemSetCards />
                         </div>
-                        
-                        <div className="w-4/5 rounded-lg overflow-hidden shadow-lg mb-16" style={{ backgroundColor: "#212121" }}>
-                            <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-white">Cryptography</h2>
-                            <p className="text-gray-300 text-center mt-2">Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity.</p>
-                            <div className="container mx-auto py-8">
-                                <ProblemSet data={components}/>
+                        {set.map(setInfo => (
+                            <div className="w-4/5 rounded-lg overflow-hidden shadow-lg mb-16" style={{ backgroundColor: "#212121" }}>
+                                <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-white">{setInfo.name}</h2>
+                                <p className="text-gray-300 text-center mt-2">{setInfo.description}</p>
+                                <div className="container mx-auto py-8">
+                                    <ProblemSet data={filterData(setInfo.name)}/>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="w-4/5 rounded-lg overflow-hidden shadow-lg" style={{ backgroundColor: "#212121" }}>
-                            <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-white">Steganography</h2>
-                            <p className="text-gray-300 text-center mt-2">Sometimes, secrets are hidden in plain site. Can you crack these challenges?</p>
-                            <div className="container mx-auto py-8">
-                                <ProblemSet data={components}/>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </main>
