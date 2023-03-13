@@ -82,10 +82,10 @@ export default function ProblemsPage() {
                             <ProblemSetCards />
                         </div>
                         {set.map(setInfo => (
-                            <div className="w-4/5 rounded-lg overflow-hidden shadow-lg mb-16" style={{ backgroundColor: "#212121" }}>
+                            <div className="rounded-lg overflow-hidden shadow-lg mb-16 mr-4 border-2 border-[#212121]">
                                 <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-white">{setInfo.name}</h2>
                                 <p className="text-gray-300 text-center mt-2">{setInfo.description}</p>
-                                <div className="container mx-auto py-8">
+                                <div className="container mx-auto">
                                     <ProblemSet data={filterData(setInfo.name)}/>
                                 </div>
                             </div>

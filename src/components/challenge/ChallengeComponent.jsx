@@ -9,12 +9,19 @@ const Challenge = ({data, inCarousel}) => {
         'hard': 'border-red-500 ',
     };
 
-    let classStyle = 'card rounded-lg px-4 py-4 w-full border-l-4 bg-[#222222] ';
+    let classStyle = 'card rounded-lg px-6 py-4 w-full border-l-4 bg-[#222222] ';
     if(borderColor[difficulty]) {
         classStyle += borderColor[difficulty];
     }
     if(inCarousel) {
         classStyle += " m-4 ";
+        classStyle += " w-[300px] ";
+    }
+
+    const badgeColor = {
+        'easy': 'bg-[#28a745] text-[#212529] ',
+        'medium': 'bg-[#f0ad4e] text-[#212529] ',
+        'hard': 'bg-[#dc3545] ',
     }
 
     return (
@@ -25,12 +32,12 @@ const Challenge = ({data, inCarousel}) => {
                     id: data.id,
                 },
             }}
-            className={classStyle + "min-h-[200px]"}
+            className={classStyle + "min-h-[190px]"}
             >
             <div className="h-full relative">
-                <span className='text-white px-2 rounded-lg bg-blue-900 text-sm mr-2 mt-1 mb-4'>{data.difficulty}</span>
+                <span className={'text-white px-2 rounded-lg font-semibold bg-blue-900 text-sm mr-2 mt-1 ' + badgeColor[difficulty]}>{data.difficulty}</span>
 
-                <h3 className='text-white text-2xl font-bold truncate'>{data.title.substring(0, 45)}</h3>
+                <h3 className='text-white text-2xl font-bold truncate mt-2'>{data.title.substring(0, 45)}</h3>
                 <p className='text-white truncate text-sm mt-1'>{data.problem.substring(0, 40)}</p>
                 <div className='absolute left-0 bottom-1 flex mt-2 w-full flex-wrap'>
                     {data.category.replace(/\s/g, '').split(',').map((category, index) => (

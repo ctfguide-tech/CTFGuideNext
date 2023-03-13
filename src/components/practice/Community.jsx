@@ -48,20 +48,17 @@ export function Community({challenges}) {
                         {
                             challenges
                                 .filter(challenge => {
-                                    if(difficulty.toLowerCase() === "all") {
-                                        return true;
-                                    }
-                                    if(difficulty !== "" && challenge.difficulty !== difficulty.toLowerCase()) {
+                                    if(difficulty !== "All" && difficulty !== "" && challenge.difficulty !== difficulty.toLowerCase()) {
                                         return false;
-                                    }
-                                    if(challenge.category.includes(filter)) {
-                                        return true;
                                     }
                                     if(
                                         filter !== "" && 
                                         !(challenge.title.includes(filter) || challenge.problem.includes(filter))
                                     ) {
                                         return false;
+                                    }
+                                    if(challenge.category.includes(filter)) {
+                                        return true;
                                     }
                                     return true;
                                 })

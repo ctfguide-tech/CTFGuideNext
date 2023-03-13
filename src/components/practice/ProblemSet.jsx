@@ -15,14 +15,14 @@ const Carousel = ({ data }) => {
 
   return (
     <div className="carousel">
-      <div className="carousel__container flex pb-4">
+      <div className="carousel__container flex p-4">
         {data.slice(currentIndex, currentIndex + 4).map((item) => (
             <Challenge data={item} inCarousel={true}/>
         ))}
       </div>
-      <div className="mt-1 text-center">
+      <div className="mt-4 text-center">
         <button
-          className="carousel__button carousel__button--prev transform -translate-y-1/2"
+          className="carousel__button carousel__button--prev  transform -translate-y-1/2"
           onClick={handlePrevClick}
           disabled={currentIndex === 0}
         >
