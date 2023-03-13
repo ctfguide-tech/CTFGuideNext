@@ -28,7 +28,7 @@ export default function Pratice() {
             <main>
                 <div className=" w-full " style={{ backgroundColor: "#212121" }}>
                     <div className="flex mx-auto text-center h-28 my-auto">
-                        <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Practice</h1>
+                        <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Explore</h1>
                     </div>
                 </div>
                 <div className="flex h-screen max-w-7xl mx-auto ">

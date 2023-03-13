@@ -18,12 +18,15 @@ export default function Pratice() {
     })
     const router = useRouter();
     const data = router.query;
+
+    console.log(data);
     
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Need to be fixed in here
                 const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges');
+                //const response = await fetch("https://api.ctfguide.com/challenges/" + '/challenges');
                 const { result } = await response.json();
                 setChallenge(result[0]);
             } catch (err) {

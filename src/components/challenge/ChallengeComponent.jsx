@@ -24,12 +24,15 @@ const Challenge = ({data, inCarousel}) => {
         'hard': 'bg-[#dc3545] ',
     }
 
+    console.log(data);
+
     return (
         <Link 
             href={{
                 pathname: "/challenge",
                 query: {
                     id: data.id,
+                    slug: data.slug,
                 },
             }}
             className={classStyle + "min-h-[190px]"}
