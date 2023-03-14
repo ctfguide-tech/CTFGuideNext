@@ -7,13 +7,21 @@ import { Alert } from '@/components/Alert'
 import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { faL } from '@fortawesome/free-solid-svg-icons'
+import { Disclosure, Menu, Transition, Dialog } from '@headlessui/react'
+import { BellIcon, MenuIcon, XIcon, FireIcon, StarIcon } from '@heroicons/react/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import Collapsible from 'react-collapsible';
+
 
 export default function Pratice() {
     const [challenge, setChallenge] = useState({});
     const [liked, setLiked] = useState(false);
     const [isVoted, setIsVoted] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [hintOpen, setHintOpen] = useState(false);
+    const [flag, setFlag] = useState("");
 
     const [userData, setUserData] = useState({
         points: 0,
@@ -45,9 +53,47 @@ export default function Pratice() {
         // setIsUpVoted(false)
     }, [challenge]);
 
-    const submitFlag = () => {
+    const submitFlag = async () => {
+        const slug = challenge.slug;
+        
+        if(!flag) {
+            document.getElementById("enteredFlag").classList.add("border-red-600");
+            document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
 
+            setTimeout(function () {
+                document.getElementById("enteredFlag").classList.remove("border-red-600");
+            }, 2000)
+        }
+
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/submissions');
+            const { message, award } = await response.json();
+
+            console.log(message, award);
+            if(message === 'OK') {
+                document.getElementById("enteredFlag").classList.add("border-green-600");
+                document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
+                setOpen(true);
+    
+                setTimeout(function () {
+                    document.getElementById("enteredFlag").classList.remove("border-green-600");
+                }, 2000)
+            } else {
+                document.getElementById("enteredFlag").classList.add("border-red-600");
+                document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
+
+                setTimeout(function () {
+                    document.getElementById("enteredFlag").classList.remove("border-red-600");
+                }, 2000)
+            }
+        } catch (err) {
+            throw err;
+        }
     };
+    const flagChanged = (event) => {
+        setFlag(event.target.value);
+    }
+
     const setUpvote = (event) => {
         setIsVoted(true)
     }
@@ -180,9 +226,9 @@ export default function Pratice() {
                 <div className="text-sm    rounded-lg   rounded-lg flex" >
                     <div style={{ color: "#8c8c8c" }} className="mb-4">
 
-                    <input id="enteredFlag" style={{ backgroundColor: "#212121" }} placeholder="Flag Here" className="mx-auto text-white  focus-outline-none  outline-none px-4 py-1 rounded-lg mr-2 bg-black border border-gray-700"></input>
+                    <input id="enteredFlag" onChange={flagChanged} style={{ backgroundColor: "#212121" }} placeholder="Flag Here" className="mx-auto text-white  focus-outline-none  outline-none px-4 py-1 rounded-lg mr-2 bg-black border border-gray-700"></input>
                     <button id="enterFlagBTN" onClick={submitFlag} className="  bg-green-700   rounded-lg  hover:bg-green-900 text-green-300 px-4 py-1">Submit Flag</button>
-                    <button onClick={() => setOpen(true)} className="mt-4  bg-black  rounded-lg  bg-yellow-700 text-yellow-300 hover:bg-yellow-900 text-white px-4 py-1 ml-2">Stuck?</button>
+                    <button onClick={() => setHintOpen(true)} className="mt-4  bg-black  rounded-lg  bg-yellow-700 text-yellow-300 hover:bg-yellow-900 text-white px-4 py-1 ml-2">Stuck?</button>
                     </div>
 
                 </div>
@@ -345,6 +391,131 @@ export default function Pratice() {
         
         
         </main>
+        <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
+
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <div className="relative inline-block align-bottom bg-gray-900 border border-gray-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                <div>
+                  <div className="mx-auto flex items-center justify-center rounded-full ">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                    </svg>
+
+                  </div>
+                  <div className="mt-3 text-center sm:mt-5">
+                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-100">
+                      Nice hackin', partner!
+                    </Dialog.Title>
+                    <div className="mt-2">
+                      <p className="text-gray-200">
+                        You were awarded <span>{localStorage.getItem("award")}</span> points.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 sm:mt-6 mx-auto text-center flex">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center w-auto rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
+                    onClick={() => window.location.href = "../leaderboards/global"}
+                  >
+                    View Leaderboards
+                  </button>
+                  <button
+                    type="button"
+                    className="ml-2 w-auto inline-flex justify-center   rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
+                    onClick={() => window.location.href = "../practice/all"}
+                  >
+                    Back to Challenges
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+        </Transition.Root>
+
+        <Transition.Root show={hintOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-10" onClose={setHintOpen}>
+                <div className="fixed inset-0" />
+
+                <div className="fixed inset-0 overflow-hidden">
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transform transition ease-in-out duration-500 sm:duration-700"
+                        enterFrom="translate-x-full"
+                        enterTo="translate-x-0"
+                        leave="transform transition ease-in-out duration-500 sm:duration-700"
+                        leaveFrom="translate-x-0"
+                        leaveTo="translate-x-full"
+                    >
+                        <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                        <div className="flex h-full flex-col overflow-y-scroll bg-[#161616] py-6 shadow-xl">
+                            <div className="px-4 sm:px-6">
+                            <div className="flex items-start justify-between">
+                                <Dialog.Title className="text-base font-semibold leading-6 text-gray-300">
+                                <h2>Hints</h2>
+                                </Dialog.Title>
+                                <div className="ml-3 flex h-7 items-center">
+                                <button
+                                    type="button"
+                                    className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    onClick={() => setHintOpen(false)}
+                                >
+                                    <span className="sr-only">Close panel</span>
+                                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                                </button>
+                                </div>
+                            </div>
+                            </div>
+                            <div className="relative mt-6 flex-1 px-4 sm:px-6  text-yellow-400 font-medium">
+                                {challenge.Hints ? challenge.Hints.map((hint, index) => (
+                                    <div className='w-full p-2 border-2 border-gray-300 border-solid text-lg bg-[#212121]'>
+                                    <Collapsible trigger={"Hint #" + (index + 1)} >
+                                        <p className='text-base text-white font-normal'>
+                                            {hint.message}
+                                        </p>
+                                    </Collapsible>
+                                </div>
+                                )) : <p className='text-base text-white font-normal'>
+                                    Oops, not hints for this challenge.
+                                </p>}
+                            </div>
+                        </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                    </div>
+                </div>
+                </div>
+            </Dialog>
+        </Transition.Root>
         
         </>
     )
