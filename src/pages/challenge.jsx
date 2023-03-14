@@ -8,27 +8,29 @@ import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { faL } from '@fortawesome/free-solid-svg-icons'
 
 export default function Pratice() {
     const [challenge, setChallenge] = useState({});
+    const [liked, setLiked] = useState(false);
+    const [isVoted, setIsVoted] = useState(null);
+
     const [userData, setUserData] = useState({
         points: 0,
         susername: 'Loading...',
         spassword: 'Loading...',
     })
     const router = useRouter();
-    const data = router.query;
+    const { id, slug } = router.query;
 
-    console.log(data);
-    
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Need to be fixed in here
-                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges');
+                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug);
                 //const response = await fetch("https://api.ctfguide.com/challenges/" + '/challenges');
-                const { result } = await response.json();
-                setChallenge(result[0]);
+                const result = await response.json();
+                setChallenge(result);
             } catch (err) {
                 throw err;
             }
@@ -36,9 +38,62 @@ export default function Pratice() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        console.log(challenge)
+        const voted = null; // needs to be calculated
+        setIsVoted(voted);
+        // setIsUpVoted(false)
+    }, [challenge]);
+
     const submitFlag = () => {
 
     };
+    const setUpvote = (event) => {
+        setIsVoted(true)
+    }
+    const setDownvote = (event) => {
+        setIsVoted(false)
+    }
+    const addToFavourite = async (event) => {
+        const url = challenge.likeUrl;
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/like', requestOptions);
+        const data = await response.json();
+        setLiked(true);
+    }
+
+    const removeFromFavourite = async (event) => {
+        const url = challenge.likeUrl;
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/dislike', requestOptions);
+        const data = await response.json();
+        setLiked(false);
+    }
+
+    const likeChallenge = (event) => {
+        if(!liked)  {
+            addToFavourite();
+        } else {
+            alert("You already liked this");
+        }
+    }
+
+    const unlikeChallenge = (event) => {
+        if(liked) {
+            removeFromFavourite()
+        } else {
+            alert("You already disliked this");
+        }
+    }
+
     return (
         <>
         <Head>
@@ -61,8 +116,27 @@ export default function Pratice() {
         
         
         <div className='max-w-6xl mx-auto text-left mt-6'>
-            <h1 className='text-white text-3xl font-semibold'> Challenge Description </h1>
+            <div className='flex place-items-center justify-between mb-2'>
+                <div>
+                    <h1 className='text-white text-3xl font-semibold inline-block'> Challenge Description </h1>
+                    <button 
+                        onClick={addToFavourite}
+                        class="text-transparent ml-4 bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">
+                        Add to favourite
+                    </button>
+                </div>
 
+                <div>
+                    <button onClick={setUpvote} className="w-[80px] h-[80px] m-1 rounded-md card-body border-2 border-solid border-orange-400">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">👍</h1>
+                        <p className="text-white text-lg">{challenge.upvotes + (isVoted === true ? 1 : 0)}</p>
+                    </button>
+                    <button onClick={setDownvote} className="w-[80px] h-[80px] m-1 rounded-md card-body border-2 border-solid p-1 border-orange-400">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">👎</h1>
+                        <p className="text-white text-lg">{challenge.downvotes + (isVoted === false ? 1 : 0)}</p>
+                    </button>
+                </div>
+            </div>
         {/* ***************************************** */}
         <div>
 
@@ -85,7 +159,7 @@ export default function Pratice() {
                     </div>
 
                     <div className=" pl-3">
-                    <div className="text-white text-lg font-bold">raym0nd <i className="fas fa-tools"></i></div>
+                    <div className="text-white text-lg font-bold">{challenge.creator} <i className="fas fa-tools"></i></div>
                     <div className=" text-sm" style={{ color: "#8c8c8c" }}> Author</div>
 
                     </div>
@@ -153,28 +227,16 @@ export default function Pratice() {
             <button onClick={() => {}} id="commentButton" style={{ backgroundColor: "#212121" }} className="mt-4 border border-gray-700 bg-black hover:bg-gray-900 rounded-lg text-white px-4 py-1">Post Comment</button>
             <h1 id="commentError" className="hidden text-red-400 text-xl px-2 py-1 mt-4">Error posting comment! This could be because it was less than 5 characters or greater than 250 characters. </h1>
             {
+                challenge.messages && challenge.messages.map((message) => (
 
-                // challenge.data.map((item) => (
+                <div className="mt-4 bg-black rounded-lg  " style={{ backgroundColor: "#212121" }} >
+                    <h1 className="text-white px-5 pt-4 text-xl">@{message.title}</h1>
+                    <p className="px-5 text-white pb-4 space-y-10">
+                        <span className="mb-5">{message.content}</span><br className="mt-10"></br>
+                    </p>
+                </div>
 
-                // <div className="mt-4 bg-black rounded-lg  " style={{ backgroundColor: "#212121" }} >
-                //     <h1 className="text-white px-5 pt-4 text-xl">@{item.username}</h1>
-                //     <p className="px-5 text-white pb-4 space-y-10"><span className="mb-5">{item.comment}</span><br className="mt-10"></br><a onClick={() => {
-                //     var xhttp = new XMLHttpRequest();
-                //     xhttp.onreadystatechange = function () {
-                //         if (this.status === 200 && this.readyState === 4) {
-                //         window.alert("Thank you for reporting this challenge. Our moderation team will look into this.")
-                //         }
-
-                //         if (this.status != 200 && this.readyState === 4) {
-                //         window.alert("Error reporting comment. Please try again later. ")
-                //         }
-                //     }
-                //     xhttp.open("GET", `${process.env.REACT_APP_API_URL}/challenges/report?commentID=${item.id}&uid=${localStorage.getItem("token")}&challengeID=${window.location.href.split("/")[4]}`);
-                //     xhttp.send();
-                //     }} className="mt-4 text-red-600 hover:text-red-500  ">Report Comment</a></p>
-                // </div>
-
-                // ))
+                ))
 
             }
 

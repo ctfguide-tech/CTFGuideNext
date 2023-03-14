@@ -19,9 +19,13 @@ export default function Pratice() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('https://api.ctfguide.com/challenges/type/all');
-                const data = await response.json();
-                setChallenges([...data]);
+                // const response = await fetch('https://api.ctfguide.com/challenges/type/all');
+                // const data = await response.json();
+                // setChallenges([...data]);
+                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges');
+                const { result } = await response.json();
+                
+                setChallenges([...result]);
             } catch (err) {
                 throw err;
             }

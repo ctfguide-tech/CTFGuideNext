@@ -2,7 +2,7 @@ import { useState,useEffect } from "react"
 import Challenge from "../challenge/ChallengeComponent";
 
 export function Community({challenges}) {
-    const [difficulty, setDifficulty] = useState('All');
+    const [difficulty, setDifficulty] = useState('all');
     const [results, setResults] = useState([]);
     const [filter, setFilter] = useState("");
 
@@ -48,17 +48,17 @@ export function Community({challenges}) {
                         {
                             challenges
                                 .filter(challenge => {
-                                    if(difficulty !== "All" && difficulty !== "" && challenge.difficulty !== difficulty.toLowerCase()) {
+                                    if(difficulty.toLowerCase() != "all" && challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()) {
                                         return false;
+                                    }
+                                    if(filter !== "" && challenge.category.includes(filter.toLowerCase())) {
+                                        return true;
                                     }
                                     if(
                                         filter !== "" && 
-                                        !(challenge.title.toLowerCase().includes(filter.toLowerCase()) || challenge.problem.toLowerCase().includes(filter.toLowerCase()))
+                                        !(challenge.title.toLowerCase().includes(filter.toLowerCase()) || challenge.content.toLowerCase().includes(filter.toLowerCase()))
                                     ) {
                                         return false;
-                                    }
-                                    if(challenge.category.toLowerCase().includes(filter.toLowerCase())) {
-                                        return true;
                                     }
                                     return true;
                                 })
