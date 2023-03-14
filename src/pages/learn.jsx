@@ -59,7 +59,7 @@ export default function Dashboard() {
                 <AuthPopup />
                 
                 <div className='max-w-6xl mx-auto mt-10'>
-                    <h1 className='text-white text-3xl mb-4 font-semibold mt-6'>Up next for you</h1>   
+                    <h1 className='text-white text-3xl mb-4 font-semibold mt-6'>Up next for you</h1>
                     <div className="grid grid-cols-2 mt-4 gap-x-6 gap-y-6">
 
                     {/**Up Next Card 1*/}    

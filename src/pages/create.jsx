@@ -30,7 +30,11 @@ export default function Create() {
       }
 
       const data = await response.json();
-      setChallenges(data);
+      if (typeof(data) == 'array') {
+        setChallenges(data);
+      } else {
+        setChallenges([])
+      }
     };
 
     fetchChallenges();
@@ -86,9 +90,14 @@ export default function Create() {
             </div>
           </div>
         </div>
-        {/**challenges && challenges.map((challenge) => (
+        <hr className="w-2/3 mx-auto mt-6 mb-6 m-2 border-[#313131]" />
+        {challenges.length != 0 ? challenges.map((challenge) => (
           <ChallengeCard key={challenge.id} challenge={challenge} />
-        ))*/}
+        )) : <div className='w-2/3 mx-auto'>
+        <div className="px-6 py-2.5 mx-auto rounded-md bg-neutral-800 flex">
+            <div className="text-white text-2xl my-auto mx-auto pt-4 pb-4">Nothing to display!</div>
+        </div>
+        </div>}
       </main>
       <Footer />
     </>
