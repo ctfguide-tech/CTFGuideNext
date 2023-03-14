@@ -16,20 +16,24 @@ const Carousel = ({ data }) => {
   return (
     <div className="carousel">
       <div className="carousel__container flex p-4">
-        {data.slice(currentIndex, currentIndex + 4).map((item) => (
+        {data.length && data.map((item) => (
             <Challenge data={item} inCarousel={true}/>
         ))}
+        {
+        !data.length && <p className="text-center text-white w-full mb-4">No data available for this category</p>
+          
+        }
       </div>
       <div className="mt-4 text-center">
         <button
-          className="carousel__button carousel__button--prev  transform -translate-y-1/2"
+          className="carousel__button carousel__button--prev  transform -translate-y-1/2 cursor-pointer"
           onClick={handlePrevClick}
           disabled={currentIndex === 0}
         >
           <ArrowLeftCircleIcon className="text-white block h-16 w-16" aria-hidden="true" />
         </button>
         <button
-          className="carousel__button carousel__button--next transform -translate-y-1/2"
+          className="carousel__button carousel__button--next transform -translate-y-1/2 cursor-pointer"
           onClick={handleNextClick}
           disabled={currentIndex + 4 >= data.length}
         >

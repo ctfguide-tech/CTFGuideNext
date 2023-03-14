@@ -505,7 +505,7 @@ export default function Pratice() {
                                     </Collapsible>
                                 </div>
                                 )) : <p className='text-base text-white font-normal'>
-                                    Oops, not hints for this challenge.
+                                    Oops, no hints for this challenge.
                                 </p>}
                             </div>
                         </div>

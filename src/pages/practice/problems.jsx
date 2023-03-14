@@ -37,11 +37,12 @@ export default function ProblemsPage() {
     ];
 
     useEffect(() => {
-        fetch("https://api.ctfguide.com/challenges/type/all")
+        fetch(process.env.NEXT_PUBLIC_API_URL + "/challenges")
         .then((response) => response.json())
         .then((data) => {
-            console.log(data)
-            setComponents(data);
+            console.log(data.result);
+            const {result} = data;
+            setComponents(result);
         })
         .catch((error) => {
             console.error(error);
@@ -50,7 +51,9 @@ export default function ProblemsPage() {
 
     const filterData = (category) => {
         return components.filter(component => {
-            return component.category.toLowerCase().includes(category.toLowerCase())
+            return component.category.some(categoryName => {
+                return categoryName.toLowerCase() === category.toLowerCase();
+            })
         });
     }
 
@@ -81,8 +84,8 @@ export default function ProblemsPage() {
                         <div className='w-3/4'>
                             <ProblemSetCards />
                         </div>
-                        {set.map(setInfo => (
-                            <div className="rounded-lg overflow-hidden shadow-lg mb-16 mr-4 border-2 border-[#212121]">
+                        {set.map((setInfo, index) => (
+                            <div key={index} className="rounded-lg overflow-hidden shadow-lg mb-16 mr-4 border-2 border-[#212121]">
                                 <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-white">{setInfo.name}</h2>
                                 <p className="text-gray-300 text-center mt-2">{setInfo.description}</p>
                                 <div className="container mx-auto">
