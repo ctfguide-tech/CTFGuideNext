@@ -22,6 +22,9 @@ export default function Pratice() {
     const [open, setOpen] = useState(false);
     const [hintOpen, setHintOpen] = useState(false);
     const [flag, setFlag] = useState("");
+    const [comment, setComment] = useState("");
+    const [comments, setComments] = useState([]);
+    const [leaderboards, setLeaderboards] = useState([]);
 
     const [userData, setUserData] = useState({
         points: 0,
@@ -47,10 +50,12 @@ export default function Pratice() {
     }, []);
 
     useEffect(() => {
-        console.log(challenge)
+        fetchLeaderboard();
+    }, []) 
+
+    useEffect(() => {
         const voted = null; // needs to be calculated
         setIsVoted(voted);
-        // setIsUpVoted(false)
     }, [challenge]);
 
     const submitFlag = async () => {
@@ -69,7 +74,7 @@ export default function Pratice() {
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/submissions');
             const { message, award } = await response.json();
 
-            console.log(message, award);
+            // console.log(message, award);
             if(message === 'OK') {
                 document.getElementById("enteredFlag").classList.add("border-green-600");
                 document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
@@ -90,10 +95,71 @@ export default function Pratice() {
             throw err;
         }
     };
+
+    const fetchComments = async () => {
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments');
+            const { result } = await response.json();
+
+            if(result.length) {
+                setComments([...result]);
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const fetchLeaderboard = async () => {
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/leaderboard');
+            const leaderboards = await response.json();
+            const NO_PLACE = "Not placed";
+
+            console.log("leaderboards", leaderboards)
+
+            const user1 = leaderboards.filter(leaderboard => {
+                return leaderboard.id == 1
+            })
+            const user2 = leaderboards.filter(leaderboard => {
+                return leaderboard.id == 2
+            })
+            const user3 = leaderboards.filter(leaderboard => {
+                return leaderboard.id == 3
+            })
+
+            console.log("asdjfopasdfjasoidjfaopsjidfaopsidjf", user1);
+            setLeaderboards([
+                user1.length ? user1[0].username : NO_PLACE, 
+                user2.length ? user2[0].username : NO_PLACE,
+                user3.length ? user3[0].username : NO_PLACE,
+            ]);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const submitComment = async () => {
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments';
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                "content": comment,
+            })
+        };
+        const response = await fetch(endPoint, requestOptions);
+        const { error } = await response.json();
+
+        if(error) {
+            console.log("Error occured while adding the comment");
+        }
+    }
+    const commentChange = (event) => {
+        setComment(event.target.value);
+    }
     const flagChanged = (event) => {
         setFlag(event.target.value);
     }
-
     const setUpvote = (event) => {
         setIsVoted(true)
     }
@@ -239,7 +305,7 @@ export default function Pratice() {
             <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center">
             <div className="card-body">
                 <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">#1</h1>
-                <p className="text-white text-lg">Laphatize</p>
+                <p className="text-white text-lg">{leaderboards[0]}</p>
 
             </div>
             </div>
@@ -247,7 +313,7 @@ export default function Pratice() {
             <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center">
             <div className="card-body">
                 <h1 className="text-white text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-indigo-500 " >#2</h1>
-                <p className="text-white text-lg">Raymond</p>
+                <p className="text-white text-lg">{leaderboards[1]}</p>
 
             </div>
             </div>
@@ -255,7 +321,7 @@ export default function Pratice() {
             <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center">
             <div className="card-body">
                 <h1 className="text-white text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-green-500">#3</h1>
-                <p className="text-white text-lg">Joshua</p>
+                <p className="text-white text-lg">{leaderboards[2]}</p>
 
             </div>
             </div>
@@ -268,12 +334,12 @@ export default function Pratice() {
         </div>
         <div className="mt-5 rounded-lg px-5 ">
             <h1 className="text-white text-3xl font-semibold">Comments</h1>
-            <textarea id="comment" style={{ backgroundColor: "#212121" }} className="border-none mt-4 text-white focus-outline-none outline-none block w-full bg-black rounded-lg"></textarea>
+            <textarea id="comment" onChange={commentChange} style={{ backgroundColor: "#212121" }} className="border-none mt-4 text-white focus-outline-none outline-none block w-full bg-black rounded-lg"></textarea>
 
-            <button onClick={() => {}} id="commentButton" style={{ backgroundColor: "#212121" }} className="mt-4 border border-gray-700 bg-black hover:bg-gray-900 rounded-lg text-white px-4 py-1">Post Comment</button>
+            <button onClick={submitComment} id="commentButton" style={{ backgroundColor: "#212121" }} className="mt-4 border border-gray-700 bg-black hover:bg-gray-900 rounded-lg text-white px-4 py-1">Post Comment</button>
             <h1 id="commentError" className="hidden text-red-400 text-xl px-2 py-1 mt-4">Error posting comment! This could be because it was less than 5 characters or greater than 250 characters. </h1>
             {
-                challenge.messages && challenge.messages.map((message) => (
+                comments.map((message) => (
 
                 <div className="mt-4 bg-black rounded-lg  " style={{ backgroundColor: "#212121" }} >
                     <h1 className="text-white px-5 pt-4 text-xl">@{message.title}</h1>
@@ -285,8 +351,6 @@ export default function Pratice() {
                 ))
 
             }
-
-
             </div>  
         </div>
         {/* ***************************************** */}
