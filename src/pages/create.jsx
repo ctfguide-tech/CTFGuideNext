@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import CreatorNavTab from '@/components/challenge/CreatorDashboardTab';
-import { DocumentCheckIcon, DocumentChartBarIcon, DocumentMagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Footer } from '@/components/Footer';
 import { ChallengeCard } from '@/components/create/ChallengeCard';
 import { CreatorDashboard } from '@/components/create/CreatorDashboard';
@@ -10,6 +9,7 @@ import { CreatorDashboard } from '@/components/create/CreatorDashboard';
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
   const [challenges, setChallenges] = useState([]);
+  const [hasChallenges, setHasChallenges] = useState(false);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -17,23 +17,49 @@ export default function Create() {
 
       switch (activeTab) {
         case 'unverified':
-          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`);
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
           break;
         case 'pending changes':
-          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`);
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
           break;
         case 'published':
-          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`);
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
           break;
         default:
-          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`);
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
       }
 
       const data = await response.json();
-      if (typeof(data) == 'array') {
+      if (Array.isArray(data) && data.length > 0) {
         setChallenges(data);
+        setHasChallenges(true);
       } else {
-        setChallenges([])
+        setChallenges([]);
+        setHasChallenges(false);
       }
     };
 
@@ -91,13 +117,11 @@ export default function Create() {
           </div>
         </div>
         <hr className="w-2/3 mx-auto mt-6 mb-6 m-2 border-[#313131]" />
-        {challenges.length != 0 ? challenges.map((challenge) => (
-          <ChallengeCard key={challenge.id} challenge={challenge} />
-        )) : <div className='w-2/3 mx-auto'>
+        {hasChallenges ? challenges.map(challenge => <ChallengeCard challenge={challenge} />) : <div className='w-2/3 mx-auto'>
         <div className="px-6 py-2.5 mx-auto rounded-md bg-neutral-800 flex">
             <div className="text-white text-2xl my-auto mx-auto pt-4 pb-4">Nothing to display!</div>
         </div>
-        </div>}
+        </div>} 
       </main>
       <Footer />
     </>
