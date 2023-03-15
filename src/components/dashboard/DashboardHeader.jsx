@@ -13,6 +13,10 @@ const [username, setUsername] = useState("Loading...");
 const [location, setLocation] = useState("Loading...");
 const [github, setGithub] = useState("https://github.com");
 
+const [points, setPoints] = useState("...");
+const [rank, setRank] = useState("...");
+
+
 
 useEffect(() => {
 
@@ -30,6 +34,8 @@ useEffect(() => {
         setUsername(data.username)
         setLocation(data.location)
         setGithub(data.githubUrl)
+        setPoints(data.points)
+        setRank(data.leaderboardNum+1)
       })
       .catch((err) => {
         console.log(err);
@@ -57,12 +63,12 @@ useEffect(() => {
             <div className="justify-stretch mt-12 flex  ">
            
             <div className="px-10 py-1 mt-8 rounded-lg mb-0" style={{ backgroundColor: "#212121", borderWidth: "0px" }}>
-              <h1 className='text-white text-xl mt-0 mb-0 font-semibold'>4000</h1>
+              <h1 className='text-white mx-auto text-center text-xl mt-0 mb-0 font-semibold'>{points}</h1>
               <p className='mt-0 text-white'>Points</p>
             </div>
 
             <div className="ml-4 px-10 py-1 mt-8 rounded-lg mb-0" style={{ backgroundColor: "#212121", borderWidth: "0px" }}>
-              <h1 className='text-white text-xl mt-0 font-semibold'>#0</h1>
+              <h1 className='text-white  mx-auto text-center text-xl mt-0 font-semibold'>#{rank}</h1>
               <p className='mt-0 text-white'>Rank</p>
             </div>
             
