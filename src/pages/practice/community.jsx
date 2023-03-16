@@ -1,3 +1,5 @@
+import React, {useEffect, useState} from 'react';
+
 import Head from 'next/head'
 import Link from 'next/link'
 import { Button } from '@/components/Button'
@@ -12,38 +14,24 @@ import { Community } from '@/components/practice/community'
 import { GoToCreate } from '@/components/practice/GoToCreate'
 
 export default function Pratice() {
-    function loadChallenges() {
-        fetch('https://api.ctfguide.com/challenges/type/all')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)  
+    const [challenges, setChallenges] = useState([]);
 
-                for ( var i = 0; i < data.length; i++ ) {
-                var difficultyColor = "border-green-500";
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // const response = await fetch('https://api.ctfguide.com/challenges/type/all');
+                // const data = await response.json();
+                // setChallenges([...data]);
+                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges');
+                const { result } = await response.json();
                 
-                if (data[i].difficulty == "easy") {
-                    difficultyColor = "border-green-500";
-                } else if (data[i].difficulty == "medium") {
-                    difficultyColor = "border-yellow-500";
-                } else if (data[i].difficulty == "hard") {
-                    difficultyColor = "border-red-500";
-                }
-
-                document.getElementById("starter").insertAdjacentHTML('afterend', `<div class='card rounded-lg px-4 py-2 w-full border-l-4 ${difficultyColor}' style='background-color: #212121'>
-                <h1 class='text-white text-2xl'>${data[i].title}</h1>
-                <p class='text-white truncate'>${data[i].problem.substring(0, 40)}</p>
-                <div class='flex mt-2'>
-
-                    <p class='text-white px-2  rounded-lg bg-blue-900 text-sm'>${data[i].category}</p>
-                </div>
-            </div>`)
-                }
-            })
-            .catch(error => {
-                console.log(error)
-        });
-    }
-    loadChallenges();
+                setChallenges([...result]);
+            } catch (err) {
+                throw err;
+            }
+        };
+        fetchData();        
+    }, []);
 
     return (
         <>
@@ -72,7 +60,7 @@ export default function Pratice() {
                         <div className='w-3/4'>
                             <GoToCreate />
                         </div>
-                        <Community />
+                        <Community challenges={challenges} />
                     </div>
                 </div>
             </main>
