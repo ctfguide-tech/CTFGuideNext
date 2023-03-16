@@ -118,7 +118,7 @@ export default function Dashboard() {
       }
     });
 
-    xhr.open("GET", "http://localhost:3001/account");
+    xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
 
     xhr.send();
@@ -171,7 +171,7 @@ export default function Dashboard() {
                 }
               });
 
-              xhr.open("PUT", `${NEXT_PUBLIC_API_URL}/account`);
+              xhr.open("PUT", `${process.env.NEXT_PUBLIC_API_URL}/account`);
               xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
               xhr.setRequestHeader("Content-Type", "application/json");
 
@@ -184,7 +184,7 @@ export default function Dashboard() {
         }
       });
 
-      xhr.open("GET", "http://localhost:3001/account");
+      xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
       xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
       xhr.send();
     } else {
@@ -245,7 +245,7 @@ export default function Dashboard() {
       }
     });
     
-    xhr.open("PUT", "http://localhost:3001/account/preferences");
+    xhr.open("PUT", `${NEXT_PUBLIC_API_URL}/account/preferences`);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
     xhr.setRequestHeader("Content-Type", "application/json");
     
@@ -274,7 +274,7 @@ export default function Dashboard() {
       }
     });
 
-    xhr.open("GET", "http://localhost:3001/account/preferences");
+    xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
 
     xhr.send();
@@ -561,7 +561,7 @@ export default function Dashboard() {
                       <div className="sm:col-span-6">
                         <h2 className="text-xl font-medium text-white">Password Management</h2>
                         <p className="mt-1 text-sm text-white">
-                          This information will be displayed publicly so be careful what you share.
+                          Change your password
                         </p>
                       </div>
 
