@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-function QuizPage({ totalQuizPages, sublesson }) {
+function QuizPage({ totalQuizPages, sublesson, quizData, nextPage }) {
   const router = useRouter();
   const [page, setPage] = useState(1);
 
@@ -40,7 +40,7 @@ function QuizPage({ totalQuizPages, sublesson }) {
       <SectionsNav currentPage={page} cpv={new Array(totalQuizPages).fill(pagePercentage)} colors={new Array(totalQuizPages).fill("gray")} sublesson={sublesson}/>
       <div className="flex" style={{ overflowX: "scroll" }}>
         {[...Array(totalQuizPages)].map((_, index) => (
-          page === index + 1 && <Quiz page={page} sublesson={sublesson}/>
+          page === index + 1 && <Quiz page={page} sublesson={sublesson} quizData={quizData}/>
         ))}
       </div>
       <div className="flex justify-between mt-5">
@@ -55,7 +55,7 @@ function QuizPage({ totalQuizPages, sublesson }) {
           </button>
         )}
         {page === totalQuizPages && (
-          <Link href="./dynamic1">
+          <Link href={nextPage}>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               Go to next task
             </button>

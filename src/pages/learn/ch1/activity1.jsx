@@ -22,16 +22,38 @@ export default function Dashboard() {
         }
     }, [router.query.quizPage]);
 
-    /**
-    useEffect(() => {
-        const fetchData = async () => {
-          const response = await fetch("https://gist.githubusercontent.com/rt2zz/e0a1d6ab2682d2c47746950b84c0b6ee/raw/83b8b4814c3417111b9b9bef86a552608506603e/markdown-sample.md");
-          const data = await response.text();
-          setMarkdown(data);
-        };
-        fetchData();
-      }, []);
-     */
+    const quizData = [
+        {
+          "question": "What is Linux?",
+          "answers": ["An operating system", "A programming language", "A video game", "A web browser"],
+          "solution": "An operating system"
+        },
+        {
+          "question": "Which command is used to list files and directories in Linux?",
+          "answers": ["pwd", "ls", "cd", "cat"],
+          "solution": "ls"
+        },
+        {
+          "question": "Which command is used to change the permissions of a file in Linux?",
+          "answers": ["chmod", "chown", "chgrp", "chmodx"],
+          "solution": "chmod"
+        },
+        {
+          "question": "Which command is used to create a new directory in Linux?",
+          "answers": ["mkdir", "touch", "cp", "mv"],
+          "solution": "mkdir"
+        },
+        {
+          "question": "Which command is used to search for a specific string in a file in Linux?",
+          "answers": ["grep", "find", "locate", "whereis"],
+          "solution": "grep"
+        },
+        {
+          "question": "Which command is used to remove a directory in Linux?",
+          "answers": ["rmdir", "rm", "mv", "cp"],
+          "solution": "rmdir"
+        }
+    ];
 
     return (
         <>
@@ -54,7 +76,7 @@ export default function Dashboard() {
                     <LearnNav navElements={[{href: "/learn/ch1/preview", title: "What is Linux?"}, {href: "/learn/ch1/video1", title: "Command Basics"}, {href: "/learn/ch1/activity1", title: "Mastery Task"}, {href: "/learn/ch1/dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
-                    <QuizPage totalQuizPages={6} sublesson={3} quizPage={quizPage}/>
+                    <QuizPage totalQuizPages={6} sublesson={3} quizPage={quizPage} quizData={quizData} nextPage={"./dynamic1"}/>
                     </div>
                 </div>
             </main>

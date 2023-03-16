@@ -23,7 +23,7 @@ export default function Dashboard() {
     return (
         <>
             <Head>
-                <title>Learn - CTFGuide</title>
+                <title>What is Forensics? - CTFGuide</title>
                 <meta
                     name="description"
                     content="Cybersecurity made easy for everyone"

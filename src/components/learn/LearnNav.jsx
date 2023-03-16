@@ -43,16 +43,6 @@ export function LearnNav({navElements}) {
         colorArray.push("gray");
       }
     }
-    // console.log(lessonProgress)
-    /**
-    if (progressArray.length == 0) {
-      progressArray.push({
-        "name": 'Section 1',
-        "progress": 100
-      });
-      colorArray.push("gray");
-    }
-    */
 
     return (
       <>
@@ -77,7 +67,6 @@ export function LearnNav({navElements}) {
               <li className="mb-4 py-1"><Link href={navElements[1].href} className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md"><i class="fas fa-play-circle mr-2"></i>{navElements[1].title}</Link></li>
               <li className="mb-4 py-1"><Link href={navElements[2].href} className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md"><i class="fas fa-clipboard-check mr-2"></i>{navElements[2].title}</Link></li>
               <li className="py-1"><Link href={navElements[3].href} className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md"><i class="fas fa-terminal mr-2"></i>{navElements[3].title}</Link></li>
-              <li className="ml-5 mt-2 mr-2 py-1"><Link href="./dynamic1" className="px-2 py-2 text-white font-medium text hover:bg-[#212121] rounded-md">Using your terminal</Link></li>
             </ul>
           </div>
         </>

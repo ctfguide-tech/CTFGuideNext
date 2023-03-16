@@ -23,7 +23,7 @@ export default function Dashboard() {
     return (
         <>
             <Head>
-                <title>Learn - CTFGuide</title>
+                <title>Cryptography! - CTFGuide</title>
                 <meta
                     name="description"
                     content="Cybersecurity made easy for everyone"
@@ -35,16 +35,15 @@ export default function Dashboard() {
             <StandardNav />
             <main>
                 <div className='max-w-6xl mx-auto'>
-                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>What is Forensics?</h1>
+                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Cryptography!</h1>
                     <div className="flex  max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "What is Forensics?"}, {href: "./video2", title: "Cyberchef 101"}, {href: "./activity2", title: "Mastery Task"}, {href: "./dynamic2", title: "I spy with my little eyes..."}]}/>
+                    <LearnNav navElements={[{href: "./preview", title: "Cryptography!"}, {href: "./video3", title: "PKI Introduction"}, {href: "./activity3", title: "Knees Deep into TLS"}, {href: "./dynamic3", title: "Password Dump"}]}/>
                     
                     {/* Main content area */}
                     <div className="flex-1 text-white ">
 
                         {/* Load in markdown from a github url */}
-
                         <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/embed/P5DtOOkCFM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                         <div className='flex'>
                             <motion.h1
@@ -52,12 +51,12 @@ export default function Dashboard() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             >
-                            Cyberchef 101
+                            PKI Introduction
                             </motion.h1>
                         </div>
                         <h1 className=' ml-12 text-lg font-semibold text-blue-500'>@CTFGuideTeam</h1>
                         <div className="ml-6 mt-2">
-                            <MarkDone sublesson={6} section={1} href="./activity2"/>
+                            <MarkDone sublesson={10} section={1} href="./activity3"/>
                         </div>
                     </div>
                     </div>

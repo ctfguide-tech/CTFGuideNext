@@ -3,11 +3,10 @@ import Head from 'next/head'
 import { Footer } from '@/components/Footer'
 
 import { StandardNav } from '@/components/StandardNav'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { LearnNav } from '@/components/learn/LearnNav'
 import { MarkDone } from '@/components/learn/MarkDone'
 import { motion } from 'framer-motion';
-import { AuthPopup } from '@/components/authPopup'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
