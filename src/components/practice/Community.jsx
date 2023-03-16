@@ -31,20 +31,8 @@ export function Community({challenges}) {
 
 
                     <div className='max-w-6xl text-left mt-6'>
-                        {/* <div className="grid grid-cols-4 gap-4 gap-y-6 mt-4">
-                            <div id="starter" className='hidden card rounded-lg px-4 py-2 w-full border-l-4 border-green-500' style={{ backgroundColor: "#212121" }}>
-                                <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-                                <p className='text-white'>Decrypt my breakfast please</p>
-                                <div className='flex mt-2'>
-
-                                    <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-                                    <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-                                </div>
-                            </div>
-                        </div> */}
                         <h1 className='text-white text-3xl font-semibold'> 🔥 Popular </h1>
-                        <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 gap-y-6 mt-4">
-                            
+                        <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-4 gap-y-6 mt-4">
                         {
                             challenges
                                 .filter(challenge => {

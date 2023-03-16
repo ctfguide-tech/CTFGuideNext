@@ -63,9 +63,13 @@ export default function Pratice() {
                         <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Getting started</h1>
                     </div>
                 </div>
-                <div className="flex h-screen max-w-7xl mx-auto ">
-                    <PracticeNav />
-                    {/* Main Content */}
+                <div className="flex flex-col sm:flex-row">
+                    <div className="w-full md:w-1/5 flex md:h-screen max-w-7xl md:mx-auto md:justify-center px-8 md:px-16">
+                        <PracticeNav />
+                    </div>
+                    <div className='w-full md:w-4/5 px-8 xl:px-16 border-l border-gray-800'>
+                        Getting started
+                    </div>
                 </div>
             </main>
             <Footer />
