@@ -11,8 +11,8 @@ import CreatorNavTab from '@/components/challenge/CreatorDashboardTab'
 import { DocumentCheckIcon, DocumentChartBarIcon, DocumentMagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Footer } from '@/components/Footer'
 const pages = [
-    { name: 'Creator Dashboard', href: '#', current: false },
-    { name: 'Challenge Creation', href: '#', current: true },
+    { name: 'Creator Dashboard', href: '../create', current: false },
+    { name: 'Challenge Creation', href: './', current: true },
   ]
 
 
@@ -22,6 +22,54 @@ export default function Createchall() {
 
   function handleTabClick(tab) {
     setActiveTab(tab);
+  }
+
+  function uploadChallenge() {
+
+    // WARNING: For POST requests, body is set to null by browsers.
+    var data = JSON.stringify({
+      "title": document.getElementById("challengeName").value,
+      "content": document.getElementById("content").value,
+      "category": document.getElementById("category").value,
+      "points": 100,
+      "difficulty": (document.getElementById("difficulty").value).toUpperCase(),
+      "keyword": document.getElementById("solution").value,
+      "challengeType": "STANDARD",
+      "hints": [
+        document.getElementById("hint1").value,
+        document.getElementById("hint2").value,
+        document.getElementById("hint3").value
+      ],
+      "penalties": [
+        10,
+        15,
+        20
+      ]
+    });
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function() {
+
+      if (this.readyState === 4 || this.status === 201) {
+        window.location.replace("/create")
+      }
+
+      if (this.readyState === 4 && this.status != 201) {
+        window.alert("Something went wrong.")
+      }
+
+
+
+
+    });
+
+    xhr.open("POST", "http://localhost:3001/challenges");
+    xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.send(data);
+
   }
 
   return (
@@ -127,7 +175,7 @@ export default function Createchall() {
                         <div className="mt-5 rounded-lg   bg-neutral-800">
                             <h3 className="bg-neutral-700 rounded-t-lg px-4 py-5 mt-6  text-3xl leading-6 font-medium text-white"><i class="fas fa-align-left"></i> Challenge Content</h3>
                            <div className='px-5 py-5'>
-                           <textarea className='px-5 w-full h-40  bg-neutral-900 border-none py-4 text-white rounded-lg'>
+                           <textarea id="content" className='px-5 w-full h-40  bg-neutral-900 border-none py-4 text-white rounded-lg'>
                                 </textarea>
 
                             </div>
@@ -164,7 +212,7 @@ export default function Createchall() {
                    
                    
 
-                        <button  className="mr-2 mt-6 bg-green-700 border-green-600 hover:bg-green-800 px-4 py-2 text-2xl text-white rounded-lg"><i class="fas fa-send"></i> Send for approval</button>
+                        <button onClick={uploadChallenge} className="mr-2 mt-6 bg-green-700 border-green-600 hover:bg-green-800 px-4 py-2 text-2xl text-white rounded-lg"><i class="fas fa-send"></i> Send for approval</button>
 
                         <button  className="hidden mr-2 mt-6 bg-blue-700 border-blue-600 hover:bg-blue-800 px-4 py-2 text-2xl text-white rounded-lg"><i class="fas fa-save"></i> Save as draft</button>
 

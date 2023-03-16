@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function Quiz({ page, sublesson }) {
+export function Quiz({ page, sublesson, quizData }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [showError, setErrorPopup] = useState(false);
@@ -12,7 +12,7 @@ export function Quiz({ page, sublesson }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const solution = quizData[page - 1].solution;
+    const solution = quizData ? quizData[page - 1].solution : "";
     const isCorrect = selectedAnswer === solution;
 
     if (isCorrect) {
@@ -38,40 +38,7 @@ export function Quiz({ page, sublesson }) {
     }
   };
 
-  const quizData = [
-    {
-      "question": "What is Linux?",
-      "answers": ["An operating system", "A programming language", "A video game", "A web browser"],
-      "solution": "An operating system"
-    },
-    {
-      "question": "Which command is used to list files and directories in Linux?",
-      "answers": ["pwd", "ls", "cd", "cat"],
-      "solution": "ls"
-    },
-    {
-      "question": "Which command is used to change the permissions of a file in Linux?",
-      "answers": ["chmod", "chown", "chgrp", "chmodx"],
-      "solution": "chmod"
-    },
-    {
-      "question": "Which command is used to create a new directory in Linux?",
-      "answers": ["mkdir", "touch", "cp", "mv"],
-      "solution": "mkdir"
-    },
-    {
-      "question": "Which command is used to search for a specific string in a file in Linux?",
-      "answers": ["grep", "find", "locate", "whereis"],
-      "solution": "grep"
-    },
-    {
-      "question": "Which command is used to remove a directory in Linux?",
-      "answers": ["rmdir", "rm", "mv", "cp"],
-      "solution": "rmdir"
-    }
-  ];
-
-  const { question, answers } = quizData[page - 1];
+  const { question, answers } = quizData ? quizData[page - 1] : {question: "", answers: [""]};
 
   return (
     <div

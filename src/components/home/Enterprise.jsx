@@ -26,7 +26,7 @@ export function Enterprise() {
             <div class="grid lg:grid-cols-4 md:grid-cols-4 grid-cols-1 mx-auto">
     <div class="col-span-3">
         <h1 class="text-white font-bold text-6xl w-4/5 leading-tight">Supercharge your hiring like never before.</h1>
-        <h1 class="text-white  text-4xl mt-5 leading-tight">Evaluate employees in seconds not days.</h1>
+        <h1 class="text-white  text-4xl mt-5 leading-tight">Evaluate employees in seconds, not days.</h1>
         <h1 class="text-white  text-4xl leading-tight">Streamline your onboarding experience.</h1>
         <button class="text-blue-600 text-xl mt-5">Learn more about what we can do for your business.</button>
     </div>

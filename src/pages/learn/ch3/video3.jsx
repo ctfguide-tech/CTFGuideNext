@@ -1,12 +1,11 @@
 import Head from 'next/head'
 
 import { Footer } from '@/components/Footer'
-
 import { StandardNav } from '@/components/StandardNav'
 import { useEffect, useState } from 'react'
 import { LearnNav } from '@/components/learn/LearnNav'
-import { LearnCore } from '@/components/LearnCore'
 import { MarkDone } from '@/components/learn/MarkDone'
+import { motion } from 'framer-motion';
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -24,7 +23,7 @@ export default function Dashboard() {
     return (
         <>
             <Head>
-                <title>Learn - CTFGuide</title>
+                <title>Cryptography! - CTFGuide</title>
                 <meta
                     name="description"
                     content="Cybersecurity made easy for everyone"
@@ -36,18 +35,28 @@ export default function Dashboard() {
             <StandardNav />
             <main>
                 <div className='max-w-6xl mx-auto'>
-                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
+                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Cryptography!</h1>
                     <div className="flex  max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
-
+                    <LearnNav navElements={[{href: "./preview", title: "Cryptography!"}, {href: "./video3", title: "PKI Introduction"}, {href: "./activity3", title: "Knees Deep into TLS"}, {href: "./dynamic3", title: "Password Dump"}]}/>
+                    
                     {/* Main content area */}
-                    <div className="flex-1 text-white">
+                    <div className="flex-1 text-white ">
 
                         {/* Load in markdown from a github url */}
-                        <LearnCore/>
+                        <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/embed/P5DtOOkCFM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        <div className='flex'>
+                            <motion.h1
+                            className='mt-4 ml-12 mr-6 text-3xl font-semibold animate-slide-in-right'
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            >
+                            PKI Introduction
+                            </motion.h1>
+                        </div>
+                        <h1 className=' ml-12 text-lg font-semibold text-blue-500'>@CTFGuideTeam</h1>
                         <div className="ml-6 mt-2">
-                            <MarkDone sublesson={4} section={1} href={"../"}/>
+                            <MarkDone sublesson={10} section={1} href="./activity3"/>
                         </div>
                     </div>
                     </div>

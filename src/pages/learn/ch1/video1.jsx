@@ -3,27 +3,14 @@ import Head from 'next/head'
 import { Footer } from '@/components/Footer'
 
 import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { Stats } from '@/components/dashboard/Stats'
-import { Developer } from '@/components/dashboard/Developer'
-import { Performance } from '@/components/dashboard/Performance'
-import { useEffect } from 'react'
-import { Friends } from '@/components/dashboard/Friends'
-import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useEffect, useState } from 'react'
 import { LearnNav } from '@/components/learn/LearnNav'
-import { QuickSettings } from '@/components/dashboard/QuickSetttings'
-import { Suggest } from '@/components/dashboard/Suggest'
-import { ProgressBar  } from '@tremor/react'
-import ReactMarkdown from "react-markdown";
 import { MarkDone } from '@/components/learn/MarkDone'
 import { motion } from 'framer-motion';
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
     const [markdown, setMarkdown] = useState("");
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +19,7 @@ export default function Dashboard() {
           setMarkdown(data);
         };
         fetchData();
-      }, []);
+    }, []);
 
     return (
         <>

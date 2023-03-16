@@ -1,36 +1,27 @@
+import Link from "next/link";
+import Head from 'next/head';
 
 const NotFound = () => {
     return (
-        <div className="grid grid-rows-3 grid-cols-3">
-            <div>
-
-            </div>
-            
-            <div>
-
-            </div>
-
-            <div>
-
-            </div>
-
-            <div>
-
-            </div>
-            <div className="not-found ">
-                <div className="overflow-hidden py-24 sm:py-32  rounded-lg" style={{ backgroundColor: "#212121" }}>
-                    <div className='mx-auto text-center w-full mt-20 mb-20 max-w-6xl'>
-                        <p className="mt-2 text-6xl font-bold text-white sm:text-4xl"><span className='mt-2 text-4xl font-bold tracking-tight text-blue-600 sm:text-4xl'>Oops!</span> it looks like that page doesn't exist anymore!</p>
-                        <p className="mt-2 text-4xl font-bold text-white sm:text-4xl content-center">Go back to our <span className='mt-2 text-4xl font-bold tracking-tight text-blue-600 sm:text-4xl'>homepage!</span></p>
-                    </div>
+        <>
+            <Head>
+                <title>Page Not Found!</title>
+                <meta
+                    name="description"
+                    content="Cybersecurity made easy for everyone"
+                />
+                <style>
+                @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+                </style>
+            </Head>
+            <div className="grid h-screen place-items-center place-items-center">
+                <div>
+                    <Link href="/">
+                        <h1 className='text-lg text-white mx-auto my-auto font-semibold'>We couldn't find this page!</h1>
+                    </Link>
                 </div>
             </div>
-
-            <div>
-
-            </div>
-        </div>
-
+        </>
     );
 }
 

@@ -24,7 +24,7 @@ export default function Dashboard() {
     return (
         <>
             <Head>
-                <title>Learn - CTFGuide</title>
+                <title>Cryptography! - CTFGuide</title>
                 <meta
                     name="description"
                     content="Cybersecurity made easy for everyone"
@@ -36,10 +36,10 @@ export default function Dashboard() {
             <StandardNav />
             <main>
                 <div className='max-w-6xl mx-auto'>
-                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
+                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Cryptography!</h1>
                     <div className="flex  max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
+                    <LearnNav navElements={[{href: "./preview", title: "Cryptography!"}, {href: "./video3", title: "PKI Introduction"}, {href: "./activity3", title: "Knees Deep into TLS"}, {href: "./dynamic3", title: "Password Dump"}]}/>
 
                     {/* Main content area */}
                     <div className="flex-1 text-white">
@@ -47,7 +47,7 @@ export default function Dashboard() {
                         {/* Load in markdown from a github url */}
                         <LearnCore/>
                         <div className="ml-6 mt-2">
-                            <MarkDone sublesson={4} section={1} href={"../"}/>
+                            <MarkDone sublesson={12} section={1} href={"../"}/>
                         </div>
                     </div>
                     </div>

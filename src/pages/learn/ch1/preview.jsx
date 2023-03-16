@@ -3,11 +3,10 @@ import Head from 'next/head'
 import { Footer } from '@/components/Footer'
 
 import { StandardNav } from '@/components/StandardNav'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { LearnNav } from '@/components/learn/LearnNav'
 import { MarkDone } from '@/components/learn/MarkDone'
 import { motion } from 'framer-motion';
-import { AuthPopup } from '@/components/authPopup'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -28,7 +27,7 @@ export default function Dashboard() {
             <StandardNav />
             <main>
                 <div className='max-w-6xl mx-auto '>
-                <div className=" w-full  mt-10 backdrop-blur-lg	" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80')" }}>
+                <div className=" w-full mt-10 backdrop-blur-lg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80')" }}>
                     <div className="backdrop-blur-md flex mx-auto text-center h-28 my-auto">
                         <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Linux Basics</h1>
                     </div>

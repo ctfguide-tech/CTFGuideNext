@@ -69,3 +69,7 @@ body {
 .animate-slide-in-right {
   animation: slideInRight 1s;
 }
+
+.animate-slide-in-right3 {
+  animation: slideInRight 3s;
+}

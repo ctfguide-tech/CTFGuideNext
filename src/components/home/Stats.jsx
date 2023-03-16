@@ -1,13 +1,13 @@
 import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
-
-
-
+import CountUp from "react-countup";
+import { CountUpScroll } from './CountUpOnScroll';
+import VisibilitySensor from 'react-visibility-sensor';
 
 export function Stats() {
     const stats = [
-        { name: 'Schools', stat: '50+ schools' },
-        { name: 'Challenge Attempts', stat: '10,200 attempts' },
-        { name: 'Total Challenges Solved', stat: '1,346+ challenges' },
+        { name: 'Schools Reached', stat: 50, sttype: "Schools" },
+        { name: 'Challenge Attempts', stat: 10200, sttype: "Attempts" },
+        { name: 'Total Challenges Solved', stat: 1346, sttype: "Solved" },
       ]
 
   return (
@@ -23,7 +23,14 @@ export function Stats() {
         {stats.map((item) => (
           <div key={item.name} style={{backgroundColor: "#161716" }} className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
             <dt className="truncate  font-medium text-white text-md">{item.name}</dt>
-            <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">{item.stat}</dd>
+            <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">
+              <CountUp className="mt-1 text-3xl font-semibold tracking-tight text-white" end={item.stat} redraw={true} duration={3} separator=",">
+                {({ countUpRef, start }) => (
+                    <VisibilitySensor onChange={start} delayedCall>
+                        <span ref={countUpRef} />
+                    </VisibilitySensor>
+                )}
+              </CountUp>+ {item.sttype}</dd>
           </div>
         ))}
       </dl>
