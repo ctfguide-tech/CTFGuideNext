@@ -94,14 +94,17 @@ export default function Dashboard() {
       if (this.readyState === 4) {
 
         console.log(this.responseText)
-        document.getElementById("first-name").value = JSON.parse(this.responseText).firstName;
-        document.getElementById("last-name").value = JSON.parse(this.responseText).lastName;
-        document.getElementById("bio").value = JSON.parse(this.responseText).bio;
-        document.getElementById("url").value = JSON.parse(this.responseText).githubUrl;
-        document.getElementById("location").value = JSON.parse(this.responseText).location;
-        document.getElementById("username").value = JSON.parse(this.responseText).username;
-        document.getElementById("email").value = JSON.parse(this.responseText).email;
 
+        if (document.getElementById("first-name")) { 
+            document.getElementById("first-name").value = JSON.parse(this.responseText).firstName;
+            document.getElementById("last-name").value = JSON.parse(this.responseText).lastName;
+            document.getElementById("bio").value = JSON.parse(this.responseText).bio;
+            document.getElementById("url").value = JSON.parse(this.responseText).githubUrl;
+            document.getElementById("location").value = JSON.parse(this.responseText).location;
+            document.getElementById("username").value = JSON.parse(this.responseText).username;
+            document.getElementById("email").value = JSON.parse(this.responseText).email;
+        }
+        
         if (pfpString == "") {
 
         } else {
