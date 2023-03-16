@@ -16,12 +16,11 @@ const Carousel = ({ data }) => {
   return (
     <div className="carousel">
       <div className="carousel__container flex p-4">
-        {data.length && data.map((item) => (
+        {data.length ? data.map((item) => (
             <Challenge data={item} inCarousel={true}/>
-        ))}
+        )) : ""}
         {
         !data.length && <p className="text-center text-white w-full mb-4">No data available for this category</p>
-          
         }
       </div>
       <div className="mt-4 text-center">

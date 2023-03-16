@@ -16,6 +16,8 @@ import Collapsible from 'react-collapsible';
 
 
 export default function Pratice() {
+    const NO_PLACE = "Not placed";
+
     const [challenge, setChallenge] = useState({});
     const [liked, setLiked] = useState(false);
     const [isVoted, setIsVoted] = useState(null);
@@ -24,7 +26,8 @@ export default function Pratice() {
     const [flag, setFlag] = useState("");
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
-    const [leaderboards, setLeaderboards] = useState([]);
+    const [leaderboards, setLeaderboards] = useState([NO_PLACE, NO_PLACE, NO_PLACE]);
+    const [award, setAward] = useState("");
 
     const [userData, setUserData] = useState({
         points: 0,
@@ -35,6 +38,11 @@ export default function Pratice() {
     const { id, slug } = router.query;
 
     useEffect(() => {
+        const award = localStorage.getItem('award');
+        if(award) {
+            setAward(award);
+        }
+
         const fetchData = async () => {
             try {
                 // Need to be fixed in here
@@ -115,7 +123,7 @@ export default function Pratice() {
             const leaderboards = await response.json();
             const NO_PLACE = "Not placed";
 
-            console.log("leaderboards", leaderboards)
+            if(!leaderboards.length) return;
 
             const user1 = leaderboards.filter(leaderboard => {
                 return leaderboard.id == 1
@@ -175,6 +183,7 @@ export default function Pratice() {
         };
         const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/like', requestOptions);
         const data = await response.json();
+        alert("Successfully added to favourites.");
         setLiked(true);
     }
 
@@ -497,7 +506,7 @@ export default function Pratice() {
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-gray-200">
-                        You were awarded <span>{localStorage.getItem("award")}</span> points.
+                        You were awarded <span>{award}</span> points.
                       </p>
                     </div>
                   </div>

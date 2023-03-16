@@ -33,7 +33,7 @@ const Challenge = ({data, inCarousel}) => {
                     slug: data.slug,
                 },
             }}
-            className={classStyle + "min-h-[190px]"}
+            className={classStyle + "min-h-[190px] min-w-[200px]"}
             >
             <div className="h-full relative">
                 <span className={'text-white px-2 rounded-lg font-semibold bg-blue-900 text-sm mr-2 mt-1 ' + badgeColor[difficulty.toLowerCase()]}>{data.difficulty}</span>
