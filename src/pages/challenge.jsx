@@ -78,6 +78,7 @@ function Pratice({slug}) {
                 return item.challenge.slug === slug;
             })
             setLiked(likes.length ? true : false);
+            setLikeCount(likeCount + 1)
         }
         fetchLikeUrl();
     }, []);
