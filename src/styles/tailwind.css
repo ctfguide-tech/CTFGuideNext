@@ -54,6 +54,10 @@ body {
   visibility: visible;
 }
 
+ul {
+  list-style-type: circle;
+}
+
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
