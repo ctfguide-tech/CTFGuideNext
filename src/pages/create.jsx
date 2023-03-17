@@ -83,21 +83,18 @@ export default function Create() {
       <StandardNav />
       <main>
         <CreatorDashboard />
-        <Link href="/ctfguide">
-          <div className='rounded-md mx-auto w-3/4 px-4 py-2 bg-neutral-800 hover:bg-[#303030]'>
-            <div className='flex'>
-              <InformationCircleIcon className='text-white h-4 mt-1 mr-1' />
-              <h1 className='text-white text-md font-medium'>Creating on CTFGuide?</h1>
-            </div>
-            <h1 className='text-white text-[12px] tracking-wide'>Learn more about contributing!</h1>
-          </div> 
-        </Link>
-        <div className='flex grid grid-cols-3 gap-x-4 mt-4 mx-auto text-center mt-10 w-2/3'>
+      <br></br>
+
+
+  
+
+
+
+        <div className='flex grid grid-cols-3 gap-x-4 mt-4 mx-auto text-center mt-2 max-w-7xl mb-10 shadow-lg'>
           <div className="rounded-md">
-            <img className='w-full h-4 rounded-t-lg object-cover' src={"https://camo.githubusercontent.com/f38cb60cf74f6e673504cbde590a1481018dd3bcb83d4307b3f20bb2a4a992f7/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f636f6e63656e747269635f636972636c65732e706e67"}></img>
             <div
-              className={`px-6 py-2.5 mx-auto text-center mt-1 pb-4 mt-4 bg-[#212121] hover:bg-[#2c2c2c] ${
-                activeTab === 'unverified' ? 'bg-neutral-900 text-white outline outline-[#3e3e3e] text-white' : 'bg-[#212121] text-white'
+              className={`cursor-pointer rounded-lg px-6 py-3 mx-auto text-center mt-1  mt-4 bg-[#212121] hover:bg-[#2c2c2c] ${
+                activeTab === 'unverified' ? 'bg-neutral-900 text-white bg-neutral-700 text-white' : 'bg-[#212121] text-white'
               }`}
               onClick={() => handleTabClick('unverified')}
             >
@@ -105,10 +102,9 @@ export default function Create() {
             </div>
           </div>
           <div className="rounded-md">
-            <img className='w-full h-4 rounded-t-lg object-cover' src={"https://camo.githubusercontent.com/f38cb60cf74f6e673504cbde590a1481018dd3bcb83d4307b3f20bb2a4a992f7/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f636f6e63656e747269635f636972636c65732e706e67"}></img>
             <div
-              className={`px-6 py-2.5 mx-auto text-center mt-1 pb-4 mt-4 bg-[#212121] hover:bg-[#2c2c2c] ${
-                activeTab === 'pending changes' ? 'bg-neutral-900 text-white outline outline-[#3e3e3e] text-white' : 'bg-[#212121] text-white'
+              className={`cursor-pointer rounded-lg px-6 py-2.5 mx-auto text-center mt-1 mt-4 bg-[#212121] hover:bg-[#2c2c2c] ${
+                activeTab === 'pending changes' ? 'bg-neutral-900 text-white bg-neutral-700] text-white' : 'bg-[#212121] text-white'
               }`}
               onClick={() => handleTabClick('pending changes')}
             >
@@ -116,10 +112,9 @@ export default function Create() {
             </div>
           </div>
           <div className="rounded-md">
-            <img className='w-full h-4 rounded-t-lg object-cover' src={"https://camo.githubusercontent.com/f38cb60cf74f6e673504cbde590a1481018dd3bcb83d4307b3f20bb2a4a992f7/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f636f6e63656e747269635f636972636c65732e706e67"}></img>
             <div
-              className={`px-6 py-2.5 mx-auto text-center mt-1 pb-4 mt-4 bg-[#212121] hover:bg-[#2c2c2c] ${
-                activeTab === 'published' ? 'bg-neutral-900 text-white outline outline-[#3e3e3e] text-white' : 'bg-[#212121] text-white'
+              className={`cursor-pointer rounded-lg px-6 py-2.5 mx-auto text-center mt-1  mt-4 bg-[#212121] hover:bg-[#2c2c2c] ${
+                activeTab === 'published' ? 'bg-neutral-900 text-white bg-neutral-700 text-white' : 'bg-[#212121] text-white'
               }`}
               onClick={() => handleTabClick('published')}
             >
@@ -127,12 +122,24 @@ export default function Create() {
             </div>
           </div>
         </div>
-        <hr className="w-2/3 mx-auto mt-6 mb-6 m-2 border-[#313131]" />
+
         {hasChallenges ? challenges.map(challenge => <ChallengeCard challenge={challenge} />) : <div className='w-2/3 mx-auto'>
+
         <div className="px-6 py-2.5 mx-auto rounded-md bg-neutral-800 flex">
             <div className="text-white text-2xl my-auto mx-auto pt-4 pb-4">Nothing to display!</div>
         </div>
+        
         </div>} 
+
+      
+        <div onClick={() => { window.location.replace("../create/new")}}  className="shadow-lg  cursor-pointer max-w-4xl mx-auto text-center mt-10 px-6 py-5 mx-auto rounded-lg hover:outline-neutral-700 bg-[#212121] hover:bg-[#2c2c2c] ">
+        <i className="mx-auto text-center text-white text-5xl text-neutral-600 far fa-plus-square"></i>
+              <h1 className='text-white text-xl text-center mx-auto text-neutral-400'>Create a new challenge </h1>
+</div>
+
+<p className='mx-auto text-center mt-4 text-white italic'>Not sure how to make a CTF? Read this <a href="https://ctf.guide" className='text-blue-500 hover:underline'>guide</a>.</p>
+      
+        
       </main>
       <Footer />
     </>

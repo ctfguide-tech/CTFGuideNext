@@ -34,11 +34,16 @@ export function StandardNav() {
     })
       .then((res) => res.json())
       .then((data) => {
+        if (data.error) {
+          window.location.href = "/login"
+        }
+        
         setUsername(data.username)
   
       })
       .catch((err) => {
         console.log(err);
+        window.location.href = "/login"
       });
   }, [])
 

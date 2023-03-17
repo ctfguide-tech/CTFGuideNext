@@ -62,6 +62,17 @@ export default function Dashboard() {
 
                         <h1 className='text-white text-4xl mt-5'>Badges</h1>
                         {/* Fetch badges from API */}
+
+
+                        {badges.length === 0 && (
+                            <div className='mt-1'>
+                            <h1 className='text-white text-lg bg-neutral-800 border border-neutral-600 px-6 py-3 rounded-lg'>
+                                🤔 Hmm, looks like you haven't earned any badges yet.
+                            </h1>
+                            </div>
+                        )}
+
+
                         <div className="grid grid-cols-5 mt-4 gap-x-4 gap-y-4">
                             {badges.map((data) => (
                                 <div style={{ backgroundColor: "#212121" }} className='mx-auto px-4 py-4 rounded-lg w-full text-center  align-center'>
