@@ -1,13 +1,13 @@
-import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
+import { HomeModernIcon, CommandLineIcon, SparklesIcon } from '@heroicons/react/20/solid'
 import CountUp from "react-countup";
 import { CountUpScroll } from './CountUpOnScroll';
 import VisibilitySensor from 'react-visibility-sensor';
 
 export function Stats() {
     const stats = [
-        { name: 'Schools Reached', stat: 50, sttype: "Schools" },
-        { name: 'Challenge Attempts', stat: 10200, sttype: "Attempts" },
-        { name: 'Total Challenges Solved', stat: 1346, sttype: "Solved" },
+        { name: 'Schools Reached', stat: 50, sttype: "Schools", icon: HomeModernIcon },
+        { name: 'Challenge Attempts', stat: 10200, sttype: "Attempts", icon: CommandLineIcon },
+        { name: 'Total Challenges Solved', stat: 1346, sttype: "Solved", icon: SparklesIcon },
       ]
 
   return (
@@ -22,7 +22,10 @@ export function Stats() {
 </p>              <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
         {stats.map((item) => (
           <div key={item.name} style={{backgroundColor: "#161716" }} className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
-            <dt className="truncate  font-medium text-white text-md">{item.name}</dt>
+            <div className='flex'>
+              <dt className="truncate font-medium text-white text-md">{item.name}</dt>
+              <item.icon className="ml-2 w-5 text-blue-500" />
+            </div>
             <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">
               <CountUp className="mt-1 text-3xl font-semibold tracking-tight text-white" end={item.stat} redraw={true} duration={3} separator=",">
                 {({ countUpRef, start }) => (

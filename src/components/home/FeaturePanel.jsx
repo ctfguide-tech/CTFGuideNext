@@ -1,4 +1,7 @@
 import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
+import VisibilitySensor from "react-visibility-sensor";
 
 const features = [
   {
@@ -20,8 +23,15 @@ const features = [
 ]
 
 export function FeaturesPanel() {
+  const imageRef = useRef(null);
+
+  const handleVisibilityChange = (isVisible) => {
+    if (isVisible) {
+      imageRef.current.style.visibility = "visible";
+    }
+  };
+
   return (
-    
     <div className="overflow-hidden  py-24 sm:py-32" style={{backgroundColor:"#212121"}}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-y-16 gap-x-8 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
@@ -43,13 +53,20 @@ export function FeaturesPanel() {
               </dl>
             </div>
           </div>
-          <img
-            src="./mock2.png"
-            alt="Product screenshot"
-            className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
-            width={2432}
-            height={1442}
-          />
+          <VisibilitySensor onChange={handleVisibilityChange} partialVisibility>
+            <motion.img
+              ref={imageRef}
+              src="./mock2.png"
+              alt="Product screenshot"
+              className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
+              width={2432}
+              height={1442}
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              transition={{ duration: 2 }}
+              style={{ visibility: "hidden" }}
+            />
+          </VisibilitySensor>
         </div>
       </div>
     </div>

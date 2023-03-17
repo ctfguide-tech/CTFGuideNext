@@ -1,4 +1,5 @@
 import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
+import { MapIcon } from '@heroicons/react/20/solid'
 
 const features = [
     {
@@ -27,7 +28,7 @@ export function LearningPanel() {
                     <div className='  mx-auto my-auto'>
                         <h1 className='font-semibold text-white text-4xl tracking-tight mb-5'> Get AI driven feedback during your sessions.
                         </h1>     
-                        <p1 className=" text-white text-xl">We can determine your weakpoints and determine what skill areas can be improved on.</p1>
+                        <p1 className=" text-white text-xl">We help identify strengths and weaknesses and determine what can be improved on.</p1>
            </div>
                     <div className='text-white text-4xl font-semibold mx-auto'>
                         <img src="./group14.png"></img>
@@ -39,12 +40,14 @@ export function LearningPanel() {
                     </div>
 
                     <div className='  mx-auto my-auto'>
-                        <h1 className='font-semibold text-white text-4xl mb-5'>          Dynamic Roadmaps
-                        </h1> 
+                        <div className='flex'>
+                            <h1 className='font-semibold text-white text-4xl mb-5'>          Dynamic Roadmaps</h1>
+                        </div>
                         
                         <p className=" text-white text-xl">
                         Get a personalized roadmap based on your skill level and learning goals.
-                        </p>               </div>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
