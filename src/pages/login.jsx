@@ -94,8 +94,12 @@ export default function Login() {
            result.user.getIdToken().then((idToken) => {
             // Send token to backend via HTTPS
             console.log(idToken)
+            localStorage.setItem("idToken", idToken);
+
+
             var data = new FormData();
             var xhr = new XMLHttpRequest();
+
   
 
             xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
@@ -104,8 +108,6 @@ export default function Login() {
                 try {
                   var parsed = JSON.parse(this.responseText);
                   
-                  // Store Token in local storage.
-                  localStorage.setItem("idToken", parsed.idToken);
               
                   if (!parsed.email) {
                     // User hasn't finished onboarding.
@@ -120,6 +122,8 @@ export default function Login() {
                   localStorage.setItem("notificationsUrl", parsed.notificationsUrl);
                   localStorage.setItem("email", parsed.email);
                   localStorage.setItem("role", parsed.role);
+
+                  window.location.replace("/dashboard")
                 } catch (error) {
                   console.log("Error parsing JSON data:", error);
                 }
