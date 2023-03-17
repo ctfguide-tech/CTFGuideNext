@@ -12,7 +12,9 @@ function classNames(...classes) {
 
 const auth = getAuth();
 const user = auth.currentUser;
+
 export function StandardNav() {
+  const [username, setUsername] = useState("-")
 
   function logout() { 
     signOut(auth).then(() => {
@@ -21,6 +23,29 @@ export function StandardNav() {
       console.log(error)
     });
   }
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("idToken"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          window.location.href = "/login"
+        }
+        
+        setUsername(data.username)
+  
+      })
+      .catch((err) => {
+        console.log(err);
+        window.location.href = "/login"
+      });
+  }, [])
 
 
   const [notification, showNotifications] = useState(false)
@@ -101,7 +126,7 @@ export function StandardNav() {
   class="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 >
   <span class="sr-only">View notifications</span>
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-7 h-7">
   <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
 </svg>
 
@@ -121,11 +146,11 @@ export function StandardNav() {
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                     <div>
-                      <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                      <Menu.Button className="flex rounded-full bg-white text-sm ">
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-8 w-8 rounded-full border "
-                          src="../../default.png"
+                          className="h-7 w-7  bg-neutral-900 border border-neutral-300 rounded-full"
+                          src={`https://robohash.org/` + username + `.png?set=set1&size=150x150`}
                           alt=""
                         />
                       </Menu.Button>
@@ -143,7 +168,7 @@ export function StandardNav() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="../dashboard"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex'

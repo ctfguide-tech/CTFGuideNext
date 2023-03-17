@@ -66,6 +66,15 @@ console.log(data)
 
             <h1 className='text-white text-4xl mt-5'>Likes</h1>
             {/* Fetch likes from API */}
+
+{likes.length === 0 && (
+            <div className='mt-1'>
+                <h1 className='text-white text-lg bg-neutral-800 border border-neutral-600 px-6 py-3 rounded-lg'>
+                🤔 Hmm, looks like you haven't liked a challenge yet.</h1>
+                </div>
+)}
+
+
             <div className="flex flex-col mt-5">
             {likes.map((like) => (
   <div>
@@ -81,6 +90,8 @@ console.log(data)
 
             
                 </div>
+
+             
 
      
           </div>

@@ -95,7 +95,7 @@ export default function Dashboard() {
 
         <DashboardHeader />
 
-        <div className="flex h-screen max-w-7xl mx-auto ">
+        <div className="flex  max-w-7xl mx-auto ">
           {/* Sidebar */}
           <SideNavContent />
 

@@ -58,7 +58,7 @@ export default function Pratice() {
                     </div>
                     <div className='w-full md:w-4/5 px-8 xl:px-16 border-l border-gray-800'>
                         <div className='w-3/4'>
-                            <GoToCreate />
+                           
                         </div>
                         <Community challenges={challenges} />
                     </div>

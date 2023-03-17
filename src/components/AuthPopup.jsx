@@ -1,28 +1,40 @@
-import { useState, useEffect } from 'react';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { useState, useEffect, use } from 'react';
+
 import Link from 'next/link';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export function AuthPopup() {
-  const [user, setUser] = useState(null);
 
+  // check if firebase logged in
+  const [user, setUser] = useState(false);
+  const auth = getAuth();
   useEffect(() => {
-    let unsubscribe
-    if (firebase?.auth) {
-        unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-            setUser(user);
-        });
+    const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      const uid = user.uid;
+      setUser(false)
+    } else {
+      setUser(false)
     }
+  });
+    });
+    
 
-    return unsubscribe;
-  }, []);
+  
+    
+
+
+
 
   if (user) {
     return <div>{/*User logged in*/}</div>;
   } else {
     // User logged out
     return (
-      <div className="rounded-md bg-[#3B82F6] hover:bg-[#468dff]">
+      <div className="hidden rounded-md bg-[#3B82F6] hover:bg-[#468dff]">
         <Link href="/login">
           <div className="flex mx-auto text-center h-10 my-auto">
             <h1 className='text-lg text-white mx-auto my-auto font-semibold'>Log in to see your progress!</h1>
