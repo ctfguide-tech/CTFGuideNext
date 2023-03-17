@@ -42,9 +42,15 @@ function Pratice({slug}) {
 
         const fetchData = async () => {
             try {
-                // Need to be fixed in here
-                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug);
-                //const response = await fetch("https://api.ctfguide.com/challenges/" + '/challenges');
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+                const response = await fetch(endPoint, requestOptions);
                 const result = await response.json();
                 setChallenge(result);
             } catch (err) {
@@ -56,7 +62,11 @@ function Pratice({slug}) {
 
     useEffect(() => {
         fetchLeaderboard();
-    }, []) 
+    }, []);
+
+    useEffect(() => {
+        fetchComments();
+    }, [])
 
     useEffect(() => {
         const voted = null; // needs to be calculated
@@ -65,39 +75,55 @@ function Pratice({slug}) {
 
     const submitFlag = async () => {
         const slug = challenge.slug;
+        console.log(flag.length);
         
         if(!flag) {
+            document.getElementById("enteredFlag").classList.remove("border-gray-700");
             document.getElementById("enteredFlag").classList.add("border-red-600");
             document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
 
             setTimeout(function () {
                 document.getElementById("enteredFlag").classList.remove("border-red-600");
             }, 2000)
-        }
+        } else {
+            try {
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/submissions';
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                    body: JSON.stringify({
+                        "keyword": flag,
+                    })
+                };
+                const response = await fetch(endPoint, requestOptions);
+                const { success, error } = await response.json();
 
-        try {
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/submissions');
-            const { message, award } = await response.json();
+                if(error) {
+                    alert(error);
+                }
+                
+                if(success) {
+                    document.getElementById("enteredFlag").classList.add("border-green-600");
+                    document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
+                    setOpen(true);
+        
+                    setTimeout(function () {
+                        document.getElementById("enteredFlag").classList.remove("border-green-600");
+                    }, 2000)
+                } else {
+                    document.getElementById("enteredFlag").classList.add("border-red-600");
+                    document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
 
-            // console.log(message, award);
-            if(message === 'OK') {
-                document.getElementById("enteredFlag").classList.add("border-green-600");
-                document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
-                setOpen(true);
-    
-                setTimeout(function () {
-                    document.getElementById("enteredFlag").classList.remove("border-green-600");
-                }, 2000)
-            } else {
-                document.getElementById("enteredFlag").classList.add("border-red-600");
-                document.getElementById("enterFlagBTN").innerHTML = "Submit Flag";
-
-                setTimeout(function () {
-                    document.getElementById("enteredFlag").classList.remove("border-red-600");
-                }, 2000)
+                    setTimeout(function () {
+                        document.getElementById("enteredFlag").classList.remove("border-red-600");
+                    }, 2000)
+                }
+            } catch (err) {
+                throw err;
             }
-        } catch (err) {
-            throw err;
         }
     };
 
@@ -106,12 +132,17 @@ function Pratice({slug}) {
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments');
             const { result } = await response.json();
 
-            if(result.length) {
+            if(result && result.length) {
                 setComments([...result]);
             }
         } catch (error) {
             throw error;
         }
+    }
+
+    const onCommentReport = async () => {
+        alert("Thank you for reporting this comment. Our moderation team will look into this.");
+        // Call comment report API
     }
 
     const fetchLeaderboard = async () => {
@@ -132,7 +163,6 @@ function Pratice({slug}) {
                 return leaderboard.id == 3
             })
 
-            console.log("asdjfopasdfjasoidjfaopsjidfaopsidjf", user1);
             setLeaderboards([
                 user1.length ? user1[0].username : NO_PLACE, 
                 user2.length ? user2[0].username : NO_PLACE,
@@ -147,15 +177,20 @@ function Pratice({slug}) {
         const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments';
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('idToken')
+            },
             body: JSON.stringify({
                 "content": comment,
             })
         };
         const response = await fetch(endPoint, requestOptions);
-        const { error } = await response.json();
+        const result = await response.json();
 
-        if(error) {
+        setComments([result, ...comments]);
+
+        if(result.error) {
             console.log("Error occured while adding the comment");
         }
     }
@@ -170,18 +205,6 @@ function Pratice({slug}) {
     }
     const setDownvote = (event) => {
         setIsVoted(false)
-    }
-    const addToFavourite = async (event) => {
-        const url = challenge.likeUrl;
-
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        };
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/like', requestOptions);
-        const data = await response.json();
-        alert("Successfully added to favourites.");
-        setLiked(true);
     }
 
     const removeFromFavourite = async (event) => {
@@ -237,11 +260,6 @@ function Pratice({slug}) {
             <div className='flex place-items-center justify-between mb-2'>
                 <div>
                     <h1 className='text-white text-3xl font-semibold inline-block'> Challenge Description </h1>
-                    <button 
-                        onClick={addToFavourite}
-                        class="text-transparent ml-4 bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">
-                        Add to favourite
-                    </button>
                 </div>
 
                 <div>
@@ -348,9 +366,10 @@ function Pratice({slug}) {
                 comments.map((message) => (
 
                 <div className="mt-4 bg-black rounded-lg  " style={{ backgroundColor: "#212121" }} >
-                    <h1 className="text-white px-5 pt-4 text-xl">@{message.title}</h1>
+                    <h1 className="text-white px-5 pt-4 text-xl">@{message.username}</h1>
                     <p className="px-5 text-white pb-4 space-y-10">
                         <span className="mb-5">{message.content}</span><br className="mt-10"></br>
+                        <a onClick={onCommentReport} className="mt-4 text-red-600 hover:text-red-500 cursor-pointer">Report Comment</a>
                     </p>
                 </div>
 
