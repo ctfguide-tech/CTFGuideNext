@@ -13,7 +13,7 @@ export function LearnCore() {
     return (
         <div style={{}} className="h-full mx-auto py-2 overflow-hidden">
 
-            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-0  mt-2 h-100   resize-x">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-0  mt-2 h-100   resize-x">
                 <div style={{backgroundColor: "#212121"}} className="px-4 py-4 h-100 resize-x">
                     <h1 className="text-2xl font-bold text-white">Using your terminal</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>

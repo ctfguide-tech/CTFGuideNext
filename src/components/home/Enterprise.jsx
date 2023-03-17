@@ -28,7 +28,7 @@ export function Enterprise() {
         <h1 class="text-white font-bold text-5xl w-4/5 leading-tight">Supercharge your hiring like never before.</h1>
         <h1 class="text-white text-3xl mt-5 leading-tight">Evaluate employees in seconds, not days.</h1>
         <h1 class="text-white text-3xl leading-tight">Streamline your onboarding experience.</h1>
-        <button class="text-blue-500 text-xl mt-5 flex">Learn more about what we can do for your business<ArrowRightIcon className='h-6 mt-1 ml-1'/></button>
+        <a href="https://enterprise.ctfguide.com" class="text-blue-500 text-xl mt-5 flex">Learn more about what we can do for your business<ArrowRightIcon className='h-6 mt-1 ml-1'/></a>
     </div>
     <div class="col-span-1 mx-auto my-auto md:flex md:items-center md:justify-center">
         <img width="200" src="rocket.png" alt="Rocket image"/>

@@ -77,7 +77,7 @@ export default function Pratice() {
 
         const response2 = await fetch(`https://PastNaturalLine.laphatize.repl.co?data=${JSON.stringify(data)}`);
         const data2 = await response2.text();
-        document.getElementById("insight").innerHTML = data2;
+        document.getElementById("insight").innerHTML = "Heads up! If you haven't solved a challenge - this response will be incorrect. " + data2;
        
         
       };
@@ -135,7 +135,28 @@ export default function Pratice() {
                         </div>
                     </div>
 
-                    <h1 className="text-2xl text-white tracking-tight mt-10 " style={{ color: "#595959" }}> INSIGHTS</h1>
+                    <h1 className="text-2xl text-white tracking-tight mt-10 " style={{ color: "#595959" }}> GUIDES</h1>
+
+                    <div className="grid grid-cols-3 gap-x-5 ">
+                        <div className='text-white bg-neutral-700 font-semibold rounded-lg px-3 py-2 w-full mt-10 backdrop-blur-lg'  >
+                            <img width={100} src="../flags.png"></img>
+                            <h1>Guide Title 1</h1>
+                            <p>Guide Summary blah blah blah</p>
+                        </div>
+
+                        <div className='bg-neutral-600 rounded-lg px-3 py-2'>
+                            <h1>Guide Title 1</h1>
+                            <p>Guide Summary blah blah blah</p>
+                        </div>
+
+                        <div className='bg-neutral-600 rounded-lg px-3 py-2'>
+                            <h1>Guide Title 1</h1>
+                            <p>Guide Summary blah blah blah</p>
+                        </div>
+                    </div>
+
+
+                    <h1 className="text-2xl text-white tracking-tight mt-10 truncate" style={{ color: "#595959" }}> INSIGHTS</h1>
                    
                    <div>
                     <p className='mt-1 text-white text-xl text-neutral-400' id="insight"><i class="fas fa-spinner fa-spin mr-2"></i>

@@ -11,13 +11,13 @@ useEffect(() => {
 
 document.getElementById("tos").innerHTML = `
 <h1 class='text-4xl font-semibold mb-4'>Privacy Policy</h1>
-<p>Last updated: March 17, 2023</p>
+<p class="mb-4">Last updated: March 17, 2023</p>
 <p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
 <p>We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been created with the help of the <a href="https://www.freeprivacypolicy.com/free-privacy-policy-generator/" target="_blank">Free Privacy Policy Generator</a>.</p>
 <h1>Interpretation and Definitions</h1>
-<h2>Interpretation</h2>
+<h2 class='text-3xl mb-2 mt-1'>Interpretation</h2>
 <p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p>
-<h2>Definitions</h2>
+<h2 class='text-3xl mb-2 mt-1'>Definitions</h2>
 <p>For the purposes of this Privacy Policy:</p>
 <ul>
 <li>
@@ -61,7 +61,7 @@ document.getElementById("tos").innerHTML = `
 </li>
 </ul>
 <h1>Collecting and Using Your Personal Data</h1>
-<h2>Types of Data Collected</h2>
+<h2 class='text-3xl mb-2 mt-1'>Types of Data Collected</h2>
 <h3>Personal Data</h3>
 <p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p>
 <ul>
@@ -75,7 +75,7 @@ document.getElementById("tos").innerHTML = `
 <p>Usage Data</p>
 </li>
 </ul>
-<h3>Usage Data</h3>
+
 <p>Usage Data is collected automatically when using the Service.</p>
 <p>Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
 <p>When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.</p>
@@ -119,7 +119,7 @@ document.getElementById("tos").innerHTML = `
 </li>
 </ul>
 <p>For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy or the Cookies section of our Privacy Policy.</p>
-<h2>Use of Your Personal Data</h2>
+<h2 class='text-3xl mb-2 mt-1'>Use of Your Personal Data</h2>
 <p>The Company may use Personal Data for the following purposes:</p>
 <ul>
 <li>
@@ -156,19 +156,19 @@ document.getElementById("tos").innerHTML = `
 <li><strong>With other users:</strong> when You share personal information or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside. If You interact with other users or register through a Third-Party Social Media Service, Your contacts on the Third-Party Social Media Service may see Your name, profile, pictures and description of Your activity. Similarly, other users will be able to view descriptions of Your activity, communicate with You and view Your profile.</li>
 <li><strong>With Your consent</strong>: We may disclose Your personal information for any other purpose with Your consent.</li>
 </ul>
-<h2>Retention of Your Personal Data</h2>
+<h2 class='text-3xl mb-2 mt-1'>Retention of Your Personal Data</h2>
 <p>The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.</p>
 <p>The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen the security or to improve the functionality of Our Service, or We are legally obligated to retain this data for longer time periods.</p>
-<h2>Transfer of Your Personal Data</h2>
+<h2 class='text-3xl mb-2 mt-1'>Transfer of Your Personal Data</h2>
 <p>Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ than those from Your jurisdiction.</p>
 <p>Your consent to this Privacy Policy followed by Your submission of such information represents Your agreement to that transfer.</p>
 <p>The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information.</p>
-<h2>Delete Your Personal Data</h2>
+<h2 class='text-3xl mb-2 mt-1'>Delete Your Personal Data</h2>
 <p>You have the right to delete or request that We assist in deleting the Personal Data that We have collected about You.</p>
 <p>Our Service may give You the ability to delete certain information about You from within the Service.</p>
 <p>You may update, amend, or delete Your information at any time by signing in to Your Account, if you have one, and visiting the account settings section that allows you to manage Your personal information. You may also contact Us to request access to, correct, or delete any personal information that You have provided to Us.</p>
 <p>Please note, however, that We may need to retain certain information when we have a legal obligation or lawful basis to do so.</p>
-<h2>Disclosure of Your Personal Data</h2>
+<h2 class='text-3xl mb-2 mt-1'>Disclosure of Your Personal Data</h2>
 <h3>Business Transactions</h3>
 <p>If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.</p>
 <h3>Law enforcement</h3>
@@ -182,7 +182,7 @@ document.getElementById("tos").innerHTML = `
 <li>Protect the personal safety of Users of the Service or the public</li>
 <li>Protect against legal liability</li>
 </ul>
-<h2>Security of Your Personal Data</h2>
+<h2 class='text-3xl mb-2 mt-1' >Security of Your Personal Data</h2>
 <p>The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially acceptable means to protect Your Personal Data, We cannot guarantee its absolute security.</p>
 <h1>Children's Privacy</h1>
 <p>Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to remove that information from Our servers.</p>
@@ -213,7 +213,7 @@ document.getElementById("tos").innerHTML = `
       </Head>
       <Header />
 
-      <div id="tos" style={{listStyleType: "circle"}} className='text-white max-w-7xl mx-auto text-left mt-10'>
+      <div id="tos" style={{listStyleType: "circle"}} className='text-white max-w-7xl mx-auto text-left mt-10 pb-10'>
 
       </div>
       

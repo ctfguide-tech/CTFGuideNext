@@ -35,11 +35,12 @@ export default function Dashboard() {
             </Head>
             <StandardNav />
             <main>
-                <div className='max-w-6xl mx-auto'>
-                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
-                    <div className="flex  max-w-7xl mx-auto ">
+                <div className='max-w mx-auto pl-20'>
+
+                    <div className="flex  max-w mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
+
+                    <LearnNav  navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
                     <div className="flex-1 text-white">
