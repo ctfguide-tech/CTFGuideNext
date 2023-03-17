@@ -29,9 +29,8 @@ const Challenge = ({data, inCarousel}) => {
             href={{
                 pathname: "/challenge",
                 query: {
-                    id: data.id,
-                    slug: data.slug,
-                },
+                    slug: data.slug
+                }
             }}
             className={classStyle + "min-h-[190px] min-w-[200px]"}
             >
