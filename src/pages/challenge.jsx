@@ -14,8 +14,7 @@ import { BellIcon, MenuIcon, XIcon, FireIcon, StarIcon } from '@heroicons/react/
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Collapsible from 'react-collapsible';
 
-
-export default function Pratice() {
+function Pratice({slug}) {
     const NO_PLACE = "Not placed";
 
     const [challenge, setChallenge] = useState({});
@@ -34,8 +33,6 @@ export default function Pratice() {
         susername: 'Loading...',
         spassword: 'Loading...',
     })
-    const router = useRouter();
-    const { id, slug } = router.query;
 
     useEffect(() => {
         const award = localStorage.getItem('award');
@@ -593,4 +590,10 @@ export default function Pratice() {
         </>
     )
 }
-    
+
+Pratice.getInitialProps = async ({req, query}) => {
+    const slug = query.slug ? query.slug : "";
+    return {slug: slug}
+}
+
+export default Pratice;
