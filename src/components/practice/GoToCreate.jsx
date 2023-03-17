@@ -26,8 +26,8 @@ export function GoToCreate() {
 export function ProblemSetCards() {
     return (
         <>
-        <div className='grid grid-cols-2 gap-x-4 mb-12 mt-12'>
-            <a href="../learn" style={{ backgroundImage: "url('http://jasonlong.github.io/geo_pattern/examples/xes.png')" }} class="shadow-md shadow-blue-500/40 hover:shadow-blue-500/80 flex px-4 py-3 rounded-lg cursor-pointer">
+        <div className='  mb-12 mt-12 mx-auto text-center'>
+            <a href="../learn"  style={{ backgroundImage: "url('https://camo.githubusercontent.com/92d956b92e76d7be2da5dcdc55bf806f719ecab7643713fc6f13d1a303bf26f3/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f74657373656c6c6174696f6e2e706e67')", backgroundSize: "cover" }} class="mx-auto text-center  background-cover shadow-md shadow-blue-500/40 hover:shadow-blue-500/80 flex px-4 py-3 rounded-lg cursor-pointer">
                 <button>
                     <div className=''>
                         <h1 className='text-3xl text-white font-semibold'>Don't know where to start?</h1>

@@ -14,8 +14,9 @@ import { BellIcon, MenuIcon, XIcon, FireIcon, StarIcon } from '@heroicons/react/
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Collapsible from 'react-collapsible';
 
+function Pratice({slug}) {
+    const NO_PLACE = "Not placed";
 
-export default function Pratice() {
     const [challenge, setChallenge] = useState({});
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
@@ -24,15 +25,14 @@ export default function Pratice() {
     const [flag, setFlag] = useState("");
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
-    const [leaderboards, setLeaderboards] = useState([]);
+    const [leaderboards, setLeaderboards] = useState([NO_PLACE, NO_PLACE, NO_PLACE]);
+    const [award, setAward] = useState("");
 
     const [userData, setUserData] = useState({
         points: 0,
         susername: 'Loading...',
         spassword: 'Loading...',
     })
-    const router = useRouter();
-    const { id, slug } = router.query;
 
     useEffect(() => {
         const award = localStorage.getItem('award');
@@ -177,7 +177,7 @@ export default function Pratice() {
             const leaderboards = await response.json();
             const NO_PLACE = "Not placed";
 
-            console.log("leaderboards", leaderboards)
+            if(!leaderboards.length) return;
 
             const user1 = leaderboards.filter(leaderboard => {
                 return leaderboard.id == 1
@@ -190,7 +190,7 @@ export default function Pratice() {
             })
 
             setLeaderboards([
-                user1.length ? user1[0].username : NO_PLACE,
+                user1.length ? user1[0].username : NO_PLACE, 
                 user2.length ? user2[0].username : NO_PLACE,
                 user3.length ? user3[0].username : NO_PLACE,
             ]);
@@ -216,7 +216,7 @@ export default function Pratice() {
 
         setComments([result, ...comments]);
 
-        if(error) {
+        if(result.error) {
             console.log("Error occured while adding the comment");
         }
     }
@@ -265,54 +265,50 @@ export default function Pratice() {
 
     return (
         <>
-            <Head>
-                <title>Practice  - CTFGuide</title>
-                <style>
-                    @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-                </style>
-            </Head>
-
-
-            <StandardNav />
-            <main>
-
-                <div className=" w-full py-10" style={{ backgroundColor: "#212121" }}>
-                    <div className=" mx-auto text-center my-auto">
-                        <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>                    {challenge.title}
-                        </h1>
-                        <div className="text-white text-lg font-bold mx-auto text-center my-auto ">
+        <Head>
+        <title>Practice  - CTFGuide</title>
+        <style>
+        @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+        </style>
+        </Head>
+        
+        
+        <StandardNav />
+        <main>
+        
+        <div className=" w-full py-10 " style={{ backgroundColor: "#212121" }}>
+            <div className="flex mx-auto text-center  my-auto">
+            <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>   {challenge.title} </h1>
+         
+            </div>
+            <div className="text-white text-lg  mx-auto text-center my-auto">
                             <div className="flex place-items-center justify-center my-auto">
+                            <p className='my-auto text-sm mr-2'>
+                                Created by 
+                                </p>
                         <img
-                          className="h-8 w-8 my-auto mr-2   bg-neutral-900  rounded-full"
+                          className="h-6 w-6 my-auto mr-2   bg-neutral-900  rounded-full my-auto"
                           src={`https://robohash.org/` + challenge.creator + `.png?set=set1&size=150x150`}
                           alt=""
                         />
-                           <p className='my-auto'>
+                           <p className='my-auto text-sm'>
                            {challenge.creator} 
                             </p>
-                            
-                           </div>
                             </div>
-
-                    </div>
+</div>
+        </div>
+        
+        
+        
+        <div className='max-w-6xl mx-auto text-left mt-6'>
+            <div className='flex place-items-center justify-between mb-2'>
+                <div>
+                    <h1 className='text-white text-3xl font-semibold inline-block'> Challenge Description </h1>
                 </div>
 
-
-
-                <div className='max-w-6xl mx-auto text-left mt-6'>
-                    <div className='flex place-items-center justify-between mb-2'>
-                        <div>
-                            <h1 className='text-white text-3xl font-semibold inline-block'> Challenge Description </h1>
-                            <button
-                                onClick={addToFavourite}
-                                class="text-transparent ml-4 bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">
-                                Add to favourite
-                            </button>
-                        </div>
-
                 <div>
-                    <button onClick={likeChallenge} className="w-[80px] h-[80px] m-1 rounded-md card-body border-2 border-solid border-orange-400">
-                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">👍</h1>
+                    <button onClick={likeChallenge} className="px-10 py-2  m-1 rounded-md card-body flex bg-neutral-800">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold mr-4">👍</h1>
                         <p className="text-white text-lg">{likeCount}</p>
                     </button>
                 </div>
@@ -320,68 +316,58 @@ export default function Pratice() {
         {/* ***************************************** */}
         <div>
 
-                        <div className="flex items-center justify-between">
+        </div>
+        <p id="challengeDetails" style={{ color: "#8c8c8c" }} className="w-5/6 text-white text-lg">
+            {challenge.content}
+        </p>
+        <div className="flex ">
+            <div className="mt-4 rounded-lg">
+                <div className="text-sm    rounded-lg   rounded-lg flex" >
+                    <div style={{ color: "#8c8c8c" }} className="mb-4">
 
-                            <div className="flex w-full my-auto">
-
-
-                            </div>
-
-
-                        </div>
-
-                    </div>
-                    <p id="challengeDetails" style={{ color: "#8c8c8c" }} className="w-5/6 text-white text-lg">
-                        {challenge.content}
-                    </p>
-                    <div className="flex ">
-                        <div className="mt-4 rounded-lg">
-                            <div className="text-sm    rounded-lg   rounded-lg flex" >
-                                <div style={{ color: "#8c8c8c" }} className="mb-4">
-
-                                    <input id="enteredFlag" onChange={flagChanged} style={{ backgroundColor: "#212121" }} placeholder="Flag Here" className="mx-auto text-white  focus-outline-none  outline-none px-4 py-1 rounded-lg mr-2 bg-black border border-gray-700"></input>
-                                    <button id="enterFlagBTN" onClick={submitFlag} className="  bg-green-700   rounded-lg  hover:bg-green-900 text-green-300 px-4 py-1">Submit Flag</button>
-                                    <button onClick={() => setHintOpen(true)} className="mt-4  bg-black  rounded-lg  bg-yellow-700 text-yellow-300 hover:bg-yellow-900 text-white px-4 py-1 ml-2">Stuck?</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-6 grid lg:grid-cols-3 gap-10 sm:grid-cols-1">
-
-                        <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center">
-                            <div className="card-body">
-                                <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">#1</h1>
-                                <p className="text-white text-lg">{leaderboards[0]}</p>
-
-                            </div>
-                        </div>
-
-                        <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center">
-                            <div className="card-body">
-                                <h1 className="text-white text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-indigo-500 " >#2</h1>
-                                <p className="text-white text-lg">{leaderboards[1]}</p>
-
-                            </div>
-                        </div>
-
-                        <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center">
-                            <div className="card-body">
-                                <h1 className="text-white text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-green-500">#3</h1>
-                                <p className="text-white text-lg">{leaderboards[2]}</p>
-
-                            </div>
-                        </div>
-
+                    <input id="enteredFlag" onChange={flagChanged} style={{ backgroundColor: "#212121" }} placeholder="Flag Here" className="mx-auto text-white  focus-outline-none  outline-none px-4 py-1 rounded-lg mr-2 bg-black border border-neutral-700"></input>
+                    <button id="enterFlagBTN" onClick={submitFlag} className="  bg-green-700   rounded-lg  hover:bg-green-900 text-green-300 px-4 py-1">Submit Flag</button>
+                    <button onClick={() => setHintOpen(true)} className="mt-4  bg-black  rounded-lg  bg-yellow-700 text-yellow-300 hover:bg-yellow-900 text-white px-4 py-1 ml-2">Stuck?</button>
                     </div>
 
-                    <div id="terminal" className=" mt-6 ">
-                        <p className="text-gray-400 mb-2 hint"><span className="text-white ">Terminal (Beta)</span> Login as <span className="text-yellow-400">{userData.susername}</span> using the password <span className="text-yellow-400">{userData.spassword}</span><a style={{ cursor: 'pointer' }} className="hidden hover:bg-black text-gray-300">Need help?</a></p>
-                        <iframe className="w-full" height="500" src="https://terminal.ctfguide.com/wetty/ssh/root?pass=" ></iframe>
-                    </div>
-                    <div className="mt-5 rounded-lg px-5 ">
-                        <h1 className="text-white text-3xl font-semibold">Comments</h1>
-                        <textarea id="comment" onChange={commentChange} style={{ backgroundColor: "#212121" }} className="border-none mt-4 text-white focus-outline-none outline-none block w-full bg-black rounded-lg"></textarea>
+                </div>
+            </div>
+        </div>
+        <div className="mt-6 grid lg:grid-cols-3 gap-10 sm:grid-cols-1">
+
+            <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center rounded-lg shadow-lg">
+            <div className="card-body">
+                <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">#1</h1>
+                <p className="text-white text-lg">{leaderboards[0]}</p>
+
+            </div>
+            </div>
+
+            <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center rounded-lg shadow-lg">
+            <div className="card-body">
+                <h1 className="text-white text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-indigo-500 " >#2</h1>
+                <p className="text-white text-lg">{leaderboards[1]}</p>
+
+            </div>
+            </div>
+
+            <div style={{ backgroundColor: "#212121" }} className="w-full py-3 card mx-auto text-center rounded-lg shadow-lg">
+            <div className="card-body">
+                <h1 className="text-white text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-green-500">#3</h1>
+                <p className="text-white text-lg">{leaderboards[2]}</p>
+
+            </div>
+            </div>
+
+        </div>
+
+        <div id="terminal" className=" mt-6 ">
+            <p className="text-gray-400 mb-2 hint"><span className="text-white ">Terminal (Beta)</span> Login as <span className="text-yellow-400">{userData.susername}</span> using the password <span className="text-yellow-400">{userData.spassword}</span><a style={{ cursor: 'pointer' }} className="hidden hover:bg-black text-gray-300">Need help?</a></p>
+            <iframe className="w-full" height="500" src="https://terminal.ctfguide.com/wetty/ssh/root?pass=" ></iframe>
+        </div>
+        <div className="mt-5 rounded-lg px-5 pb-20">
+            <h1 className="text-white text-3xl font-semibold">Comments</h1>
+            <textarea id="comment" onChange={commentChange} style={{ backgroundColor: "#212121" }} className="border-none mt-4 text-white focus-outline-none outline-none block w-full bg-black rounded-lg"></textarea>
 
             <button onClick={submitComment} id="commentButton" style={{ backgroundColor: "#212121" }} className="mt-4 border border-gray-700 bg-black hover:bg-gray-900 rounded-lg text-white px-4 py-1">Post Comment</button>
             <h1 id="commentError" className="hidden text-red-400 text-xl px-2 py-1 mt-4">Error posting comment! This could be because it was less than 5 characters or greater than 250 characters. </h1>
@@ -401,103 +387,7 @@ export default function Pratice() {
         </div>
         {/* ***************************************** */}
         
-        <hr className='max-w-4xl mx-auto mt-10 border-slate-800'></hr>
-        
-        <div className='max-w-6xl mx-auto text-left mt-6'>
-            <h1 className='text-white text-3xl font-semibold'> 📦  Recently Created </h1>
-            <div className="grid grid-cols-4 gap-4 gap-y-6 mt-4">
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-green-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            
-            
-            
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-red-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-yellow-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-red-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-yellow-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-red-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-yellow-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-red-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            
-            </div>
-            <div className='card rounded-lg px-4 py-2 w-full border-l-4 border-yellow-500' style={{ backgroundColor: "#212121" }}>
-            <h1 className='text-white text-2xl'>Scrambled Eggs</h1>
-            <p className='text-white'>Decrypt my breakfast please</p>
-            <div className='flex mt-2'>
-            
-            <p className='text-white px-2  rounded-lg bg-blue-900 text-sm'>decryption</p>
-            <p className='ml-2 text-white px-2 rounded-lg bg-blue-900 text-sm'>cryptography</p>
-            </div>
-            </div>
-            
-            
-            </div>
-        </div>
+    
         
         
         </main>
@@ -516,63 +406,63 @@ export default function Pratice() {
               <Dialog.Overlay className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
             </Transition.Child>
 
-                        {/* This element is to trick the browser into centering the modal contents. */}
-                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-                            &#8203;
-                        </span>
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                            enterTo="opacity-100 translate-y-0 sm:scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        >
-                            <div className="relative inline-block align-bottom bg-gray-900 border border-gray-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
-                                <div>
-                                    <div className="mx-auto flex items-center justify-center rounded-full ">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                        </svg>
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <div className="relative inline-block align-bottom bg-gray-900 border border-gray-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                <div>
+                  <div className="mx-auto flex items-center justify-center rounded-full ">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                    </svg>
 
-                                    </div>
-                                    <div className="mt-3 text-center sm:mt-5">
-                                        <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-100">
-                                            Nice hackin', partner!
-                                        </Dialog.Title>
-                                        <div className="mt-2">
-                                            <p className="text-gray-200">
-                                                You were awarded    points.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-5 sm:mt-6 mx-auto text-center flex">
-                                    <button
-                                        type="button"
-                                        className="inline-flex justify-center w-auto rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
-                                        onClick={() => window.location.href = "../leaderboards/global"}
-                                    >
-                                        View Leaderboards
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="ml-2 w-auto inline-flex justify-center   rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
-                                        onClick={() => window.location.href = "../practice/all"}
-                                    >
-                                        Back to Challenges
-                                    </button>
-                                </div>
-                            </div>
-                        </Transition.Child>
+                  </div>
+                  <div className="mt-3 text-center sm:mt-5">
+                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-100">
+                      Nice hackin', partner!
+                    </Dialog.Title>
+                    <div className="mt-2">
+                      <p className="text-gray-200">
+                        You were awarded <span>{award}</span> points.
+                      </p>
                     </div>
-                </Dialog>
-            </Transition.Root>
+                  </div>
+                </div>
+                <div className="mt-5 sm:mt-6 mx-auto text-center flex">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center w-auto rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
+                    onClick={() => window.location.href = "../leaderboards/global"}
+                  >
+                    View Leaderboards
+                  </button>
+                  <button
+                    type="button"
+                    className="ml-2 w-auto inline-flex justify-center   rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
+                    onClick={() => window.location.href = "../practice/all"}
+                  >
+                    Back to Challenges
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+        </Transition.Root>
 
-            <Transition.Root show={hintOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={setHintOpen}>
-                    <div className="fixed inset-0" />
+        <Transition.Root show={hintOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-10" onClose={setHintOpen}>
+                <div className="fixed inset-0" />
 
                 <div className="fixed inset-0 overflow-hidden">
                 <div className="absolute inset-0 overflow-hidden">

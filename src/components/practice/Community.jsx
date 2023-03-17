@@ -56,11 +56,7 @@ export function Community({challenges}) {
                         }
                         </div>
                     </div>
-                    <hr className='max-w-4xl mt-10 border-slate-800'></hr>
-            <div className='max-w-6xl text-left mt-6'>
-                <h1 className='text-white text-3xl font-semibold'> 📦  Recently Created </h1>
-                <div className="grid grid-cols-4 gap-4 gap-y-6 mt-4"></div>
-            </div>
+             
         </>
     )
 }
