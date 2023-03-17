@@ -19,7 +19,7 @@ function Pratice({slug}) {
 
     const [challenge, setChallenge] = useState({});
     const [liked, setLiked] = useState(false);
-    const [isVoted, setIsVoted] = useState(null);
+    const [likeCount, setLikeCount] = useState(0);
     const [open, setOpen] = useState(false);
     const [hintOpen, setHintOpen] = useState(false);
     const [flag, setFlag] = useState("");
@@ -36,6 +36,7 @@ function Pratice({slug}) {
 
     useEffect(() => {
         const award = localStorage.getItem('award');
+        
         if(award) {
             setAward(award);
         }
@@ -61,17 +62,39 @@ function Pratice({slug}) {
     }, []);
 
     useEffect(() => {
+        const fetchLikeUrl  = async () => {
+            const userLikesUrl = localStorage.getItem('userLikesUrl');
+            const requestOptions = {
+                method: 'GET',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('idToken'),
+                },
+            };
+            const response = await fetch(userLikesUrl, requestOptions);
+            const result = await response.json();
+
+            const likes = result.filter(item => {
+                return item.challenge.slug === slug;
+            })
+            setLiked(likes.length ? true : false);
+        }
+        fetchLikeUrl();
+    }, []);
+
+    useEffect(() => {
         fetchLeaderboard();
     }, []);
 
     useEffect(() => {
         fetchComments();
-    }, [])
+    }, []);
 
     useEffect(() => {
-        const voted = null; // needs to be calculated
-        setIsVoted(voted);
-    }, [challenge]);
+        if(challenge.upvotes) {
+            setLikeCount(challenge.upvotes);
+        }
+    }, [challenge])
 
     const submitFlag = async () => {
         const slug = challenge.slug;
@@ -200,38 +223,40 @@ function Pratice({slug}) {
     const flagChanged = (event) => {
         setFlag(event.target.value);
     }
-    const setUpvote = (event) => {
-        setIsVoted(true)
-    }
-    const setDownvote = (event) => {
-        setIsVoted(false)
-    }
-
-    const removeFromFavourite = async (event) => {
-        const url = challenge.likeUrl;
-
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        };
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/dislike', requestOptions);
-        const data = await response.json();
-        setLiked(false);
-    }
-
-    const likeChallenge = (event) => {
-        if(!liked)  {
-            addToFavourite();
+    const likeChallenge = async () => {
+        console.log(liked)
+        if(!liked) {
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/like';
+            const requestOptions = {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('idToken')
+                },
+            };
+            const {error} = await fetch(endPoint, requestOptions);
+            if(error) {
+                alert(error)
+            } else {
+                setLikeCount(likeCount + 1)
+                setLiked(true)
+            }
         } else {
-            alert("You already liked this");
-        }
-    }
-
-    const unlikeChallenge = (event) => {
-        if(liked) {
-            removeFromFavourite()
-        } else {
-            alert("You already disliked this");
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/deletelike';
+            const requestOptions = {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('idToken')
+                },
+            };
+            const {error} = await fetch(endPoint, requestOptions);
+            if(error) {
+                alert(error)
+            } else {
+                setLikeCount(likeCount - 1)
+                setLiked(false)
+            }
         }
     }
 
@@ -263,13 +288,9 @@ function Pratice({slug}) {
                 </div>
 
                 <div>
-                    <button onClick={setUpvote} className="w-[80px] h-[80px] m-1 rounded-md card-body border-2 border-solid border-orange-400">
+                    <button onClick={likeChallenge} className="w-[80px] h-[80px] m-1 rounded-md card-body border-2 border-solid border-orange-400">
                         <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">👍</h1>
-                        <p className="text-white text-lg">{challenge.upvotes + (isVoted === true ? 1 : 0)}</p>
-                    </button>
-                    <button onClick={setDownvote} className="w-[80px] h-[80px] m-1 rounded-md card-body border-2 border-solid p-1 border-orange-400">
-                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold">👎</h1>
-                        <p className="text-white text-lg">{challenge.downvotes + (isVoted === false ? 1 : 0)}</p>
+                        <p className="text-white text-lg">{likeCount}</p>
                     </button>
                 </div>
             </div>
@@ -363,18 +384,16 @@ function Pratice({slug}) {
             <button onClick={submitComment} id="commentButton" style={{ backgroundColor: "#212121" }} className="mt-4 border border-gray-700 bg-black hover:bg-gray-900 rounded-lg text-white px-4 py-1">Post Comment</button>
             <h1 id="commentError" className="hidden text-red-400 text-xl px-2 py-1 mt-4">Error posting comment! This could be because it was less than 5 characters or greater than 250 characters. </h1>
             {
-                comments.map((message) => (
+                comments.map((message, index) => (
 
-                <div className="mt-4 bg-black rounded-lg  " style={{ backgroundColor: "#212121" }} >
+                <div key={index} className="mt-4 bg-black rounded-lg  " style={{ backgroundColor: "#212121" }} >
                     <h1 className="text-white px-5 pt-4 text-xl">@{message.username}</h1>
                     <p className="px-5 text-white pb-4 space-y-10">
                         <span className="mb-5">{message.content}</span><br className="mt-10"></br>
                         <a onClick={onCommentReport} className="mt-4 text-red-600 hover:text-red-500 cursor-pointer">Report Comment</a>
                     </p>
                 </div>
-
                 ))
-
             }
             </div>  
         </div>
@@ -586,7 +605,7 @@ function Pratice({slug}) {
                             </div>
                             <div className="relative mt-6 flex-1 px-4 sm:px-6  text-yellow-400 font-medium">
                                 {challenge.Hints ? challenge.Hints.map((hint, index) => (
-                                    <div className='w-full p-2 border-2 border-gray-300 border-solid text-lg bg-[#212121]'>
+                                    <div key={index} className='w-full p-2 border-2 border-gray-300 border-solid text-lg bg-[#212121]'>
                                     <Collapsible trigger={"Hint #" + (index + 1)} >
                                         <p className='text-base text-white font-normal'>
                                             {hint.message}
@@ -610,8 +629,9 @@ function Pratice({slug}) {
     )
 }
 
-Pratice.getInitialProps = async ({req, query}) => {
-    const slug = query.slug ? query.slug : "";
+Pratice.getInitialProps = async ({pathname, req, query}) => {
+    const slug = query.slug;
+    console.log(pathname);
     return {slug: slug}
 }
 
