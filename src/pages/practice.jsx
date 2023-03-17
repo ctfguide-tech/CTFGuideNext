@@ -15,8 +15,6 @@ export default function Pratice() {
         fetch('https://api.ctfguide.com/challenges/type/all')
             .then(response => response.json())
             .then(data => {
-                console.log(data)  
-
                 for ( var i = 0; i < data.length; i++ ) {
                 var difficultyColor = "border-green-500";
                 

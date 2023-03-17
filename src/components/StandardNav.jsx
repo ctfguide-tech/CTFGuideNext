@@ -5,6 +5,8 @@ import { Logo } from '@/components/Logo'
 import { app } from '../config/firebaseConfig';
 import { getAuth, onAuthStateChanged, signOut, getIdToken} from "firebase/auth";
 import { redirect } from 'next/navigation';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -12,6 +14,15 @@ function classNames(...classes) {
 
 const auth = getAuth();
 const user = auth.currentUser;
+
+const DEFAULT_NOTIFICATION = {
+  image:
+    "https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png",
+  message: "Notification one.",
+  detailPage: "/events",
+  receivedTime: "12h ago"
+};
+
 export function StandardNav() {
 
   function logout() { 
@@ -24,6 +35,52 @@ export function StandardNav() {
 
 
   const [notification, showNotifications] = useState(false)
+  const [notificationData, setNotificationData] = useState([DEFAULT_NOTIFICATION]);
+
+  useEffect(() => {
+    const fetchNotification = async () => {
+      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
+      const requestOptions = {
+          method: 'GET',
+          headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('idToken'),
+          },
+      };
+      const response = await fetch(endPoint, requestOptions);
+      const result = await response.json();
+      if(!result || !result.length) return;
+
+      setNotificationData(result.map(notification => {
+        const currentDate = new Date();
+        const createdAt = new Date(notification.createdAt)
+        const timedelta = currentDate - createdAt;
+        console.log(notification)
+        let noti = "";
+
+        let seconds = Math.floor(timedelta / 1000);
+        let minutes = Math.floor(seconds / 60);
+        seconds = seconds % 60;
+        let hours = Math.floor(minutes / 60);
+        minutes = minutes % 60;
+        let days = Math.floor(hours / 24);
+        hours = hours % 24;
+
+        if(days) noti = days + ' days';
+        else if(hours) noti = hours + ' hours';
+        else if (minutes) noti = minutes + ' minutes';
+        else noti = seconds = ' seconds';
+
+        return {
+          message: notification.message,
+          receivedTime: noti + " ago",
+          detailPage: '/events',
+          image: "https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png",
+        }
+      }));
+    };
+    fetchNotification();
+  }, []);
 
   return (
     
@@ -94,22 +151,33 @@ export function StandardNav() {
               <div className="flex items-center">
 
                 <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-                <button
-                  onClick={() => showNotifications(!notification)}
-  id="bell-button"
-  type="button"
-  class="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
->
-  <span class="sr-only">View notifications</span>
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-</svg>
+                <Popup trigger={
+                  <button
+                    id="bell-button"
+                    type="button"
+                    class="rounded-full mr-3 p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    <span class="sr-only">View notifications</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                  </svg>
 
-</button>
+                  </button>
+                } position="bottom right" contentStyle={{width: '400px', fontSize: '13px', maxHeight: '400px', overflowY: "scroll"}}>
+                  <a href="#" className='block text-right pt-2'>Clear All</a>
+                  {notificationData.map(notification => (
+                    <div className="flex items-center p-2 py-3 border-b">
+                      <img className='mx-2' src={notification.image} alt="Icon" width="45" height="45"/>
+                      <div className='ml-2'>
+                        <p className='truncate text-sm'>{notification.message.substring(0, 45)}</p>
+                        <p>{notification.receivedTime}</p>
+                      </div>
+                    </div>
+                  ))}
+                </Popup>
 
 { notification && 
 <div id="dropdown" class="relative mt-20 bg-white rounded-md shadow-lg mt-2 py-2">
-
   
 </div>
 
