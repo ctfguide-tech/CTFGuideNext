@@ -135,29 +135,65 @@ export default function Pratice() {
 
                     <h1 className="text-2xl text-white tracking-tight mt-10 " style={{ color: "#595959" }}> GUIDES</h1>
 
-                    <div className="grid grid-cols-3 gap-x-5 mt-4 ">
-                        <a href="../guides/createctf" className='cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
-                           
-                            <h1 className='text-2xl text-neutral-100 flex'>Creating CTF's  <i className="fas fa-book ml-auto"></i></h1>
-                            <p className='text-neutral-300 text-sm'>Not all CTF's are made the same. Let's take a look at what makes a good CTF.</p>
-                        </a>
+                    <div className="w-full overflow-x-scroll pb-4">
+  <div className="flex gap-x-5 mt-4" style={{ width: "fit-content" }}>
 
-                        <a href="../guides/createctf"  className='cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
-                           
-                           <h1 className='text-2xl text-neutral-100 flex'>Solving CTF's  <i className="fas fa-book ml-auto"></i></h1>
-                           <p className='text-neutral-300 text-sm'>Never solved a CTF before? We've made a basic how-to guide just for you.</p>
-                       </a>
+  <a
+      href="../guides/about"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+    >
+      <h1 className="text-xl text-neutral-100 flex ">
+        About CTFGuide{" "}
+        <i className="fas fa-book ml-auto"></i>
+      </h1>
+      <p className="text-neutral-300 text-sm">
+        Wondering what CTFGuide is? Let's take a look at what we're all about.
+      </p>
+    </a>
+    <a
+      href="../guides/create"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+    >
+      <h1 className="text-xl text-neutral-100 flex">
+        Creating CTF's <i className="fas fa-book ml-auto"></i>
+      </h1>
+      <p className="text-neutral-300 text-sm">
+        Not all CTF's are made the same. Let's take a look at what makes a good
+        CTF.
+      </p>
+    </a>
 
-                       <a href="../guides/createctf"  className='cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
-                           
-                           <h1 className='text-2xl text-neutral-100 flex'>Solving CTF's  <i className="fas fa-book ml-auto"></i></h1>
-                           <p className='text-neutral-300 text-sm'>Never solved a CTF before? We've made a basic how-to guide just for you.</p>
-                       </a>
-                      
-                    </div>
+    <a
+      href="../guides/solve"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+    >
+      <h1 className="text-xl text-neutral-100 flex">
+        Solving CTF's <i className="fas fa-book ml-auto"></i>
+      </h1>
+      <p className="text-neutral-300 text-sm">
+        Never solved a CTF before? We've made a basic how-to guide just for you.
+      </p>
+    </a>
+
+    <a
+      href="../guides/approve"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+    >
+      <h1 className="text-xl text-neutral-100 flex ">
+        Getting your challenge approved{" "}
+        <i className="fas fa-book ml-auto"></i>
+      </h1>
+      <p className="text-neutral-300 text-sm">
+        Never solved a CTF before? We've made a basic how-to guide just for you.
+      </p>
+    </a>
+
+   
+  </div>
+</div>
 
 
-                    <h1 className="text-2xl text-white tracking-tight mt-10 truncate" style={{ color: "#595959" }}> INSIGHTS</h1>
+                    <h1 className="text-2xl text-white tracking-tight mt-10 truncate my-auto flex" style={{ color: "#595959" }}> INSIGHTS <p className='ml-2 my-auto bg-gray-500 rounded-lg text-sm text-white px-2'>EXPERIMENTAL</p></h1>
                    
                    <div>
                     <p className='mt-1 text-white text-xl text-neutral-400' id="insight"><i class="fas fa-spinner fa-spin mr-2"></i>

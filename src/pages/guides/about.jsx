@@ -8,7 +8,7 @@ import { motion, useScroll } from "framer-motion";
 import { PracticeNav } from '@/components/practice/PracticeNav';
 const pages = [
   { name: 'Hub', href: '../practice', current: false },
-  { name: "Solving CTF's", href: './create', current: true },
+  { name: "About CTFGuide", href: './create', current: true },
 ]
 
 export default function CTFGuide() {
@@ -76,21 +76,19 @@ export default function CTFGuide() {
       </ol>
     </nav>
 
-          <h1 className="text-3xl font-bold mb-4 mt-5">Solving CTF’s</h1>
-          <p className="mb-4 text-lg">To solve a CTF challenge, you typically need to gather information, find vulnerabilities to exploit, and escalate your privileges to extract a flag that proves you completed the challenge.</p>
+
+          <h1 className="text-3xl font-bold mb-4 mt-5">About CTFGuide</h1>
+          <p className="mb-4 text-lg">
+          Hello there, we're so happy to have you here! We are CTFGuide, a platform that helps you master cybersecurity through a personalized and community-based approach. Our platform offers various features like cloud terminals, hundreds of practice problems, and competitions that allow you to enhance your cybersecurity skills. We use AI-driven feedback to help you identify your strengths and weaknesses so you can improve your knowledge. Our website also provides a personalized roadmap based on your skill level and learning goals. We are proud to have reached over 50 schools, with over 10,200 attempts made on our challenges, and more than 1,346 challenges solved. Our approach emphasizes hands-on learning and community engagement, providing a dynamic and supportive environment for you to learn and grow.
+            <br></br>
+
+           
+          </p>
+
+          <p className='mt-10'>Join our <a href="https://discord.gg/q3hgRBvgkX" className='cursor-pointer text-blue-500 hover:underline '>Discord Community</a> to get updates and talk with fellow hackers.</p>
      
-          <h1 className="text-2xl font-bold mb-4 mt-5 text-blue-500">Gathering Information</h1>
-          <p className="mb-4 text-lg">The first step in solving a CTF challenge is to gather information. This can be done by reading the challenge description, looking at the source code, and using tools like nmap to scan the target.</p>
-          <img src="../solve1.png" className='mx-auto' width={400} ></img>
-
-          <h1 className="text-2xl font-bold mb-4 mt-5 text-blue-500">Locating the Flag</h1>
-          <p className="mb-4 text-lg">The flag for challenges are always going to be one string of text. If you think you've arrived to a spot where the flag might be, look for the word "flag".</p>
-          <img src="../solve2.png" width={600} className='mx-auto mt-10' ></img>
-
 
           </div>
-
- 
         </div>
       </main>
       <Footer />

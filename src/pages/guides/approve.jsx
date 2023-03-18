@@ -8,7 +8,7 @@ import { motion, useScroll } from "framer-motion";
 import { PracticeNav } from '@/components/practice/PracticeNav';
 const pages = [
   { name: 'Hub', href: '../practice', current: false },
-  { name: "Solving CTF's", href: './create', current: true },
+  { name: "Getting your challenge approved", href: './create', current: true },
 ]
 
 export default function CTFGuide() {
@@ -76,17 +76,20 @@ export default function CTFGuide() {
       </ol>
     </nav>
 
-          <h1 className="text-3xl font-bold mb-4 mt-5">Solving CTF’s</h1>
-          <p className="mb-4 text-lg">To solve a CTF challenge, you typically need to gather information, find vulnerabilities to exploit, and escalate your privileges to extract a flag that proves you completed the challenge.</p>
+          <h1 className="text-3xl font-bold mb-4 mt-5">Getting your challenge approved</h1>
+          <p className="mb-4 text-lg">Every challenge that is uploaded on CTFGuide goes through a rigorous approval process. We consider many factors when deciding the fate of your challenge.</p>
      
-          <h1 className="text-2xl font-bold mb-4 mt-5 text-blue-500">Gathering Information</h1>
-          <p className="mb-4 text-lg">The first step in solving a CTF challenge is to gather information. This can be done by reading the challenge description, looking at the source code, and using tools like nmap to scan the target.</p>
-          <img src="../solve1.png" className='mx-auto' width={400} ></img>
+          <h1 className="text-2xl font-bold mb-4 mt-5 text-blue-500">Quality Control</h1>
+          <p className="mb-4 text-lg">Generally, we will not approve challenges that are poorly written or have poor grammar. We also do not accept challenges that require redudant methods to solve. For example, hiding an embeded file in an embeded file in an embeded file is just wasting a person's time. For security reasons, we do not allow external linking to files. If you need to link to a file, you must make mention of it in the challenge description - our mod team will reach out to you regarding next steps.
 
-          <h1 className="text-2xl font-bold mb-4 mt-5 text-blue-500">Locating the Flag</h1>
-          <p className="mb-4 text-lg">The flag for challenges are always going to be one string of text. If you think you've arrived to a spot where the flag might be, look for the word "flag".</p>
-          <img src="../solve2.png" width={600} className='mx-auto mt-10' ></img>
 
+          
+          </p>
+          <h1 className="text-2xl font-bold mb-4 mt-5 text-blue-500">Approval Status</h1>
+          <p className="mb-4 text-lg">If your challenge gets approved or denied, you will recieve an email and we'll send you a notification on CTFGuide. If your challenge has been denied it will be moved to the "Pending Changes" category on your creator dashboard.</p>
+
+
+        
 
           </div>
 

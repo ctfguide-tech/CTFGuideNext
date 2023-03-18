@@ -41,6 +41,19 @@ body {
   100%   { transform: translate(0, -0px); }   
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #333;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #666;
+}
+
+
 .fade-in-section {
   opacity: 0;
   transform: translateY(20vh);

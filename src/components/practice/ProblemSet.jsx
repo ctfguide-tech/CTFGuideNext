@@ -29,14 +29,14 @@ const Carousel = ({ data }) => {
           onClick={handlePrevClick}
           disabled={currentIndex === 0}
         >
-          <ArrowLeftCircleIcon className="text-white block h-16 w-16" aria-hidden="true" />
+          <ArrowLeftCircleIcon className="text-neutral-500 hover:text-neutral-300 block h-10 w-10" aria-hidden="true" />
         </button>
         <button
           className="carousel__button carousel__button--next transform -translate-y-1/2 cursor-pointer"
           onClick={handleNextClick}
           disabled={currentIndex + 4 >= data.length}
         >
-          <ArrowRightCircleIcon className="text-white block h-16 w-16" aria-hidden="true" />
+          <ArrowRightCircleIcon className="text-neutral-500  hover:text-neutral-300  block h-10 w-10" aria-hidden="true" />
         </button>
       </div>
     </div>
