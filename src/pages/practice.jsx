@@ -144,7 +144,7 @@ export default function Pratice() {
 
                         <a href="../guides/createctf"  className='cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
                            
-                           <h1 className='text-2xl text-neutral-100 flex'>Solving your CTF's  <i className="fas fa-book ml-auto"></i></h1>
+                           <h1 className='text-2xl text-neutral-100 flex'>Solving CTF's  <i className="fas fa-book ml-auto"></i></h1>
                            <p className='text-neutral-300 text-sm'>Never solved a CTF before? We've made a basic how-to guide just for you.</p>
                        </a>
 
