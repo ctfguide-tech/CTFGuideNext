@@ -145,7 +145,7 @@ export default function Create() {
   return (
     <>
       <Head>
-        <title>Create  - CTFGuide</title>
+        <title>Create - CTFGuide</title>
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
@@ -187,28 +187,30 @@ export default function Create() {
                   <button type="button" className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 xl:w-3/4 mx-auto">Create New</button>
                   <button type="button" className="hidden mt-3 inline-flex items-center justify-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-neutral-800 sm:mt-0 sm:ml-3 xl:ml-0 xl:mt-3 xl:w-full">Invite Team</button>
              
-                <div class="max-w-sm mt-8 rounded-lg shadow bg-[#212121] px-4 py-4 rounded-md">
-                  <a href="#">
+                <a href="/guides/approve">
+                  <div class="max-w-sm mt-8 rounded-lg shadow bg-[#212121] hover:bg-[#303030] px-4 py-4 rounded-md">
+                    <FontAwesomeIcon icon="fa-solid fa-pencil" />
                       <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">The Creation Process</h5>
-                  </a>
-                  <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Everything to know about the challenge creation, approval, and management process.</p>
-                  <a href="#" class="inline-flex items-center text-blue-600 hover:underline">
+                    <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Everything to know about the challenge creation, approval, and management process.</p>
+                    <p class="inline-flex items-center text-blue-600 hover:underline">
                       Read More
                       <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path></svg>
-                  </a>
-                </div>
+                    </p>
+                  </div>
+                </a> 
 
-                <div class="max-w-sm mt-6 rounded-lg shadow bg-[#212121] px-4 py-4 rounded-md">
-                  <i class=" w-10 h-10 mb-2 text-neutral-500 dark:text-neutral-400 text-2xl fas fa-book-open w-10 h-10 mb-2 text-neutral-500 dark:text-neutral-400"></i>
-                  <a href="#">
+                <a href="/guides/create">
+                  <div class="max-w-sm mt-6 rounded-lg shadow bg-[#212121] hover:bg-[#303030] px-4 py-4 rounded-md">
+                    <i class="w-10 h-10 mb-2 text-blue-500 dark:text-blue-500 text-2xl fas fa-book-open"></i>
                       <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Not sure where to start?</h5>
-                  </a>
-                  <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">All you need to know to make an awesome CTF!</p>
-                  <a href="#" class="inline-flex items-center text-blue-600 hover:underline">
+                    <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">All you need to know to make an awesome CTF!</p>
+                    <p class="inline-flex items-center text-blue-600 hover:underline">
                       Learn How
                       <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path></svg>
-                  </a>
-                </div>
+                    </p>
+                  </div>
+                </a> 
+
                 </div>
               </div>
 
