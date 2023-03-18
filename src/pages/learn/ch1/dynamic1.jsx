@@ -33,28 +33,19 @@ export default function Dashboard() {
                     @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
                 </style>
             </Head>
-            <StandardNav />
-            <main>
-                <div className='max-w mx-auto pl-20'>
+       
+                <div className='mx-auto'>
 
-                    <div className="flex  max-w mx-auto ">
-                    {/* Sidebar */}
-
-                    <LearnNav  navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
-
-                    {/* Main content area */}
-                    <div className="flex-1 text-white">
+           
+                    <div className="text-white">
 
                         {/* Load in markdown from a github url */}
                         <LearnCore/>
-                        <div className="ml-6 mt-2">
-                            <MarkDone sublesson={4} section={1} href={"../"}/>
+                        <div className="ml-6">
                         </div>
                     </div>
-                    </div>
+         
                 </div>
-            </main>
-            <Footer />
         </>
     )
 }

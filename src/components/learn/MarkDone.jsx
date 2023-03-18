@@ -37,8 +37,8 @@ export function MarkDone({sublesson, section, href}) {
 
     return (
         <>
-            <Link href={href ? href : "./"}>
-                <button onClick={handleSubmit} className="bg-[#3B82F6] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md" style={{ marginTop: "1rem" }}>Mark Done</button>
+            <Link href={href ? href : "./"} className="my-auto">
+                <button onClick={handleSubmit} className="my-auto bg-[#3B82F6] hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md text-sm">Mark Done</button>
             </Link>
             {showPopup && <div className="fixed center bottom-6 right-6 bg-[#3B82F6] p-2 rounded-md">Progress Saved!</div>}
             {marked && <p></p>}
