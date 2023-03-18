@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { ArrowRightIcon } from '@heroicons/react/20/solid'
 
 import Head from 'next/head'
 import Link from 'next/link'
@@ -57,9 +58,18 @@ export default function Pratice() {
                         <PracticeNav />
                     </div>
                     <div className='w-full md:w-4/5 px-8 xl:px-16 border-l border-gray-800'>
-                        <div className='w-3/4'>
-                           
+                    
+                    <div className='w-1/2 mt-6 px-4 py-2 rounded-lg flex bg-[#212121] hover:bg-[#2c2c2c]'> 
+                        <div className='flex px-0 py-0'>
+                            <div>
+                                <h1 className='text-white text-2xl font-medium'>Did you know?</h1>
+                                <h1 className='text-white text-md italic'>You can contribute challenges too!</h1>
+                            </div>
                         </div>
+                        <div className='ml-auto my-auto px-2'>
+                            <a href="../create" className='bg-blue-700 text-lg px-2 rounded-lg text-white flex'>Check it out<ArrowRightIcon className='h-6 mt-1 ml-1'/></a>
+                        </div>
+                    </div>
                         <Community challenges={challenges} />
                     </div>
                 </div>
