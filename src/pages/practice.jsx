@@ -116,14 +116,14 @@ export default function Pratice() {
                   
                     <div className='mx-auto'>
                     <h1 className="text-2xl text-white tracking-tight mt-10 " style={{ color: "#595959" }}> YOUR PERFORMANCE</h1>
-                    <div className='mx-auto text-center grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-1 mb-4 mt-2  gap-4 rounded-lg'>
+                    <div className='mx-auto text-center grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 mb-4 mt-2  gap-4 rounded-lg'>
                         <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full stext-center text-white rounded-lg  '>
 
                             <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-blue-900'>{streak} days</h1>
                             <h1 className='text-xl'>Streak</h1>
                         </div>
 
-                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
+                        <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' hidden px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
                             <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-900'>{rank}</h1>
                             <h1 className='text-xl '>Rank</h1>
                         </div>
@@ -137,11 +137,11 @@ export default function Pratice() {
 
                     <h1 className="text-2xl text-white tracking-tight mt-10 " style={{ color: "#595959" }}> GUIDES</h1>
 
-                    <div className="grid grid-cols-3 gap-x-5 ">
-                        <div className='text-white bg-neutral-700 font-semibold rounded-lg px-3 py-2 w-full mt-10 backdrop-blur-lg'  >
-                            <img width={100} src="../flags.png"></img>
-                            <h1>Guide Title 1</h1>
-                            <p>Guide Summary blah blah blah</p>
+                    <div className="grid grid-cols-3 gap-x-5 mt-4 ">
+                        <div className='text-white bg-neutral-700 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
+                           
+                            <h1 className='text-2xl text-neutral-100'>Creating CTF's</h1>
+                            <p className='text-neutral-300 text-sm'>Not all CTF's are made the same. Let's take a look at what makes a good CTF.</p>
                         </div>
 
                         <div className='bg-neutral-600 rounded-lg px-3 py-2'>
