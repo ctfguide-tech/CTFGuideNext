@@ -122,12 +122,12 @@ export default function Pratice() {
                         </div>
 
                         <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' hidden px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
-                            <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-900'>{rank}</h1>
+                            <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-500'>{rank}</h1>
                             <h1 className='text-xl '>Rank</h1>
                         </div>
 
                         <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
-                            <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-red-400 to-blue-900'>{points}</h1>
+                            <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-red-400 to-pink-500'>{points}</h1>
 
                             <h1 className='text-xl'>Points</h1>
                         </div>
@@ -140,7 +140,7 @@ export default function Pratice() {
 
   <a
       href="../guides/about"
-      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-gradient-to-r from-green-900 to-blue-900 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
     >
       <h1 className="text-xl text-neutral-100 flex ">
         About CTFGuide{" "}
@@ -152,7 +152,7 @@ export default function Pratice() {
     </a>
     <a
       href="../guides/create"
-      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-gradient-to-r from-red-900 to-pink-900 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
     >
       <h1 className="text-xl text-neutral-100 flex">
         Creating CTF's <i className="fas fa-book ml-auto"></i>
@@ -165,7 +165,7 @@ export default function Pratice() {
 
     <a
       href="../guides/solve"
-      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-gradient-to-r from-yellow-900 to-orange-900 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
     >
       <h1 className="text-xl text-neutral-100 flex">
         Solving CTF's <i className="fas fa-book ml-auto"></i>
@@ -177,7 +177,7 @@ export default function Pratice() {
 
     <a
       href="../guides/approve"
-      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-neutral-700 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
+      className="w-1/3 flex-shrink-0 cursor-pointer text-white bg-gradient-to-r from-indigo-900 to-blue-900 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2 w-full backdrop-blur-lg py-4"
     >
       <h1 className="text-xl text-neutral-100 flex ">
         Getting your challenge approved{" "}

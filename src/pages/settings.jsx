@@ -94,6 +94,7 @@ export default function Dashboard() {
       if (this.readyState === 4) {
 
         console.log(this.responseText)
+        try {
 
         if (document.getElementById("first-name")) { 
             document.getElementById("first-name").value = JSON.parse(this.responseText).firstName;
@@ -118,6 +119,12 @@ export default function Dashboard() {
         }
 
 
+
+      } catch (e) {
+        console.log(e)
+      }
+
+      
       }
     });
 
@@ -264,7 +271,7 @@ export default function Dashboard() {
       if (this.readyState === 4) {
         console.log(this.responseText);
 
-
+try {
         if (JSON.parse(this.responseText)[0].value == true) {
           document.getElementById("friend-notif").checked = true;
         }
@@ -272,6 +279,9 @@ export default function Dashboard() {
         if (JSON.parse(this.responseText)[1].value == true) {
           document.getElementById("challenge-notif").checked = true;
         }
+      } catch (error) {
+        console.log(error)
+      }
 
 
       }
@@ -416,8 +426,8 @@ export default function Dashboard() {
                       </div>
 
                       <div className="sm:col-span-6">
-                        <label htmlFor="photo" className="block text-sm font-medium leading-6 text-white">
-                          Photo
+                        <label htmlFor="photo" className="block text-sm font-medium leading-6 text-white flex">
+                          Photo  (Experimental)
                         </label>
                         <div className="mt-2 flex items-center">
                           <img
@@ -633,8 +643,8 @@ export default function Dashboard() {
         preferences && (
           <div id="preferences" className="">
             <div className='flex max-w-6xl mx-auto'>
-              <div className="  text-white flex-none mt-10 border-r pr-10 pl-10" style={{ borderColor: "#212121" }}>
-                <ul className="py-2 mr-2">
+              <div className="  text-white flex-none mt-10 border-r list-none pr-10 pl-10" style={{ borderColor: "#212121" }}>
+                <ul className="py-2 mr-2 list-none">
                   <li className="py-1"><a href="../settings" className="px-2 py-2 text-white  font-medium text-lg"> General</a></li>
                   <li className="py-1 "><a href="../settings?loc=security" className="px-2 py-1  text-white hover:text-gray-400 font-medium text-lg">Security</a></li>
                   <li className="py-1 "><a href="../settings?loc=preferences" className="px-2 py-1  text-white hover:text-gray-400 font-medium text-lg">Email Preferences</a></li>

@@ -33,9 +33,19 @@ export function StandardNav() {
     });
   }
 
+  // if user signed out redirect
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.replace("/login")
+      }
+    });
+  }, [])
+
 
   const [notification, showNotifications] = useState(false)
   const [notificationData, setNotificationData] = useState([DEFAULT_NOTIFICATION]);
+  const [username, setUsername] = useState(null);
 
   useEffect(() => {
     const fetchNotification = async () => {
@@ -81,6 +91,24 @@ export function StandardNav() {
     };
     fetchNotification();
   }, []);
+
+  useEffect(() => {
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("idToken"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUsername(data.username)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}, [])
 
   return (
     
@@ -192,8 +220,8 @@ export function StandardNav() {
                       <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-8 w-8 rounded-full border "
-                          src="../../default.png"
+                          className="h-8 w-8 rounded-full border bg-neutral-900 "
+                          src={`https://robohash.org/` + username + `.png?set=set1&size=150x150`} 
                           alt=""
                         />
                       </Menu.Button>
@@ -318,7 +346,7 @@ export function StandardNav() {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full"
-                    src="../../default.png"
+                    src={`https://robohash.org/` + username + `.png?set=set1&size=150x150`} 
                     alt=""
                   />
                 </div>
