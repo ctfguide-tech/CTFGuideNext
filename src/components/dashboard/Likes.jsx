@@ -5,8 +5,8 @@ export function Likes(props) {
             {/* Fetch likes from API */}
             <div className="flex flex-col mt-5">
                 {props.likes.map((like) => (
-                    <div>
-                        <a href={like.challengeUrl} style={{ backgroundColor: "#212121" }} className='mb-4 flex rounded-lg px-5 py-3 text-white align-center'>
+                    <div className='bg-["#212121"] hover:bg-["#303030"] border border-blue-400'>
+                        <a href={like.challengeUrl} className='mb-4 flex rounded-lg px-5 py-3 text-white align-center'>
                             <h2 className='text-xl font-semibold align-middcenterle'>{like.challenge.title}</h2>
 
                             <div className='ml-auto flex align-center mt-1'>

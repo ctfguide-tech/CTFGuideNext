@@ -21,13 +21,15 @@ export function ChallengeCard({challenge}) {
                         {challenge.goodAtmps} Good Attempt(s)
                     </div>
                     <div className='ml-auto flex'>
-                    {(challenge.state == "STANDARD_VERIFIED") && <div className="flex mr-2 px-6 py-2.5 mx-auto text-center text-white rounded-lg bg-neutral-900">
-                        <EyeIcon className='text-white h-5 mr-2'/> View
+                    {(challenge.state == "STANDARD_VERIFIED") && <div className="flex ml-4 mr-2 px-6 py-2.5 mx-auto text-center text-white rounded-lg bg-neutral-900">    
+                        <a href={`/challenge?slug=${challenge.slug}`}>
+                            <EyeIcon className='text-white h-5 mr-2'/> View
+                        </a>
                     </div>}
-                    {(challenge.state == "STANDARD_PENDING") && <a  href={'../create/edit?slug=' + challenge.slug} className="flex mr-2 px-6 py-2.5 mx-auto text-center text-white rounded-lg bg-neutral-900">
+                    {(challenge.state == "STANDARD_PENDING") && <a href={'../create/edit?slug=' + challenge.slug} className="flex ml-4 mr-2 px-6 py-2.5 mx-auto text-center text-white rounded-lg bg-neutral-900">
                         <PencilIcon className='text-white h-5 mr-2'/> Edit
                     </a>}
-                    {(challenge.state == "STANDARD_UNVERIFIED" || challenge.state == "STANDARD_PENDING") && <div className="mr-2 px-6 py-2.5 mx-auto text-center text-red-500 cursor-pointer rounded-lg bg-neutral-900">
+                    {(challenge.state == "STANDARD_UNVERIFIED" || challenge.state == "STANDARD_PENDING") && <div className="ml-4 mr-2 px-6 py-2.5 mx-auto text-center text-red-500 cursor-pointer rounded-lg bg-neutral-900">
                         Delete
                     </div>}
                     </div>
