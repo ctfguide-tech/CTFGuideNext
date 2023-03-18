@@ -4,20 +4,11 @@ import { Footer } from '@/components/Footer'
 
 import { StandardNav } from '@/components/StandardNav'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { Stats } from '@/components/dashboard/Stats'
-import { Developer } from '@/components/dashboard/Developer'
-import { Performance } from '@/components/dashboard/Performance'
 import { useEffect } from 'react'
-import { Friends } from '@/components/dashboard/Friends'
-import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useState } from 'react'
 import { SideNavContent } from '@/components/dashboard/SideNavContents'
-import { QuickSettings } from '@/components/dashboard/QuickSetttings'
-import { Suggest } from '@/components/dashboard/Suggest'
 
 export default function Dashboard() {
-    const [open, setOpen] = useState(true)
     const [badges, setbadges] = useState([]);
     let username = "laphatize"
     useEffect(() => {
@@ -34,9 +25,6 @@ export default function Dashboard() {
     }, []);
 
     return (
-
-
-
         <>
             <Head>
                 <title>Dashboard - CTFGuide</title>
@@ -60,13 +48,12 @@ export default function Dashboard() {
                     {/* Main content area */}
                     <div className="flex-1">
 
-                        <h1 className='text-white text-4xl mt-5'>Badges</h1>
+                        <h1 className='text-white text-4xl mt-5'>My Badges</h1>
                         {/* Fetch badges from API */}
 
-
                         {badges.length === 0 && (
-                            <div className='mt-1'>
-                            <h1 className='text-white text-lg bg-neutral-800 border border-neutral-600 px-6 py-3 rounded-lg'>
+                            <div className='mt-3'>
+                            <h1 className='text-white text-lg bg-neutral-800 border border-neutral-700 px-6 py-3 rounded-lg'>
                                 🤔 Hmm, looks like you haven't earned any badges yet.
                             </h1>
                             </div>

@@ -1,15 +1,9 @@
-
-import Container from '@/components/Container';
 import { useState, useEffect } from 'react';
 
-
 export function QuickSettings() {
-
     const [banner, bannerState] = useState(false);
 
     useEffect(() => {
-
-
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
             method: "GET",
             headers: {
@@ -50,19 +44,19 @@ export function QuickSettings() {
 
     return (
         <>
-            <h1 className="text-xl text-white tracking-tight mt-10    " style={{ color: "#595959" }}> YOUR BIO</h1>
-            <textarea id="bio" onChange={() => bannerState(true)} style={{ backgroundColor: "#212121" }} readOnly={false} className='mt-2 border-none rounded-lg text-white w-full'>
+            <h1 className="text-xl text-white tracking-tight mt-10" style={{ color: "#595959" }}> YOUR BIO</h1>
+            <textarea id="bio" onChange={() => bannerState(true)} style={{ backgroundColor: "#212121" }} readOnly={false} className='mt-1 border-none rounded-lg text-white w-full'>
 
             </textarea>
 
-            <h1 className="text-xl text-white tracking-tight mt-2  " style={{ color: "#595959" }}> SITE FEED</h1>
+            <h1 className="text-xl text-white tracking-tight mt-2" style={{ color: "#595959" }}> SITE FEED</h1>
 
-            <div className='mx-auto gap-y-6  mb-4 mt-2  gap-4 rounded-lg w-full'>
+            <div className='mx-auto gap-y-6 mb-4 mt-1 gap-4 rounded-lg w-full'>
                 <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 pt-2 py-2 mx-auto w-full pb-5 text-white rounded-lg  '>
-                    <h1 className="text-white tracking-tight text-xl mt-2 font-semibold"> CTFGuide V3 has been released. </h1>
+                    <h1 className="text-white text-xl mt-2 font-semibold"> CTFGuide V3 is out now!</h1>
 
-                    <p> After months of development, we are proud to release the new version of CTFGuide. There's a lot to unpack here.
-    </p>
+                    <p> After months of development, we are excited to release the new version of CTFGuide. There's a lot to unpack here!
+                    </p>
                         <p id="feed1readmore" className=' mt-4 text-blue-500 italic hover:text-blue-500 hover:underline cursor-pointer' onClick={() => { document.getElementById('feed1rest').classList.remove("hidden"); document.getElementById('feed1readmore').classList.add("hidden") }}>Read More</p>
                 
                     <div id="feed1rest" className='hidden mt-4'>
@@ -75,24 +69,21 @@ export function QuickSettings() {
 
                         <p className='mx-auto text-center text-sm text-neutral-300'>Old CTFGuide UI (Left) and New CTFGuide UI (Right)</p>
 
-                        <p className='mt-8'>A common problem we'd been having was that we artificially 
+                        <p className='mt-8'>A common problem we'd have was that we artificially 
                         limited the amount of space we could design with. This limit is no longer there,
-                         meaning you should feel like the UI is more spread out now.<br></br><br></br>
+                         meaning you should feel like the UI is more spread out.<br></br><br></br>
 
                          We've also introduced a lot of new features including badges, likes, & learn. 
-                            These features are still in their early stages, but we're excited to see what you think of them.
+                            These features will aid everyone's unique learning journey and we're super pumped.
                             <br></br>   <br></br>
                          <b>Badges</b> - Badges are a way for you to show off your achievements on CTFGuide.
                             You can earn badges by completing certain tasks on the site.
                             <br></br>   <br></br>
-                            <b>Likes</b> - Likes are a way for you to show appreciation for a post. It's a completely new metric that we're introducing to CTFGuide. This will allow our moderation team to better gage the success of a challenge.
+                            <b>Likes</b> - Likes are a way for you to show appreciation for a creator or a certain area of Cybersecurity.
                             <br></br>   <br></br>
-                            <b>Learn</b> - We're super excited about this feature. Learn is a way for you to learn about cybersecurity. We'll be adding a lot of content to this section in the coming weeks. You'll find a lot of content developed internally by our team, as well as content that we're working on with other popular content creators.
+                            <b>Learn</b> - We're super excited about this feature. We'll be adding a lot of content to this section in the coming weeks. You'll find a lot of interesting content shared from our team members, as well as content from other members in the Cyber community!
                                 
                             <br></br>   <br></br>
-                            We've completely modernized our tech stack too. Our frontend has been completely rebuilt with Next.js and our backend has completely refactored and is fully meets the OpenAPI 3.1.0 specification. 
-                         
-                         
                          </p>
                          <p id="feed1readless" className=' mt-4 text-blue-500 italic hover:text-blue-500 hover:underline cursor-pointer' onClick={() => { document.getElementById('feed1rest').classList.add("hidden"); document.getElementById('feed1readmore').classList.remove("hidden") }}>See Less</p>
 
