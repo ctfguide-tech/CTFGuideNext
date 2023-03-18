@@ -156,7 +156,7 @@ export default function Create() {
 <br>
 </br>
 <div className="fixed top-0 left-0 h-full w-1/2 mt-10 " aria-hidden="true"></div>
-<div className="fixed top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
+<div className=" top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
 <div className="relative flex min-h-full flex-col">
   <div className="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
 
