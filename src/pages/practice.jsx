@@ -140,19 +140,17 @@ export default function Pratice() {
                     <div className="grid grid-cols-3 gap-x-5 mt-4 ">
                         <div className='text-white bg-neutral-700 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
                            
-                            <h1 className='text-2xl text-neutral-100'>Creating CTF's</h1>
+                            <h1 className='text-2xl text-neutral-100 flex'>Creating CTF's  <i className="fas fa-book ml-auto"></i></h1>
                             <p className='text-neutral-300 text-sm'>Not all CTF's are made the same. Let's take a look at what makes a good CTF.</p>
                         </div>
 
-                        <div className='bg-neutral-600 rounded-lg px-3 py-2'>
-                            <h1>Guide Title 1</h1>
-                            <p>Guide Summary blah blah blah</p>
-                        </div>
+                        <div className='text-white bg-neutral-700 font-semibold rounded-lg px-3 py-2 w-full  backdrop-blur-lg py-4'  >
+                           
+                           <h1 className='text-2xl text-neutral-100 flex'>Solving your CTF's  <i className="fas fa-book ml-auto"></i></h1>
+                           <p className='text-neutral-300 text-sm'></p>
+                       </div>
 
-                        <div className='bg-neutral-600 rounded-lg px-3 py-2'>
-                            <h1>Guide Title 1</h1>
-                            <p>Guide Summary blah blah blah</p>
-                        </div>
+                      
                     </div>
 
 
