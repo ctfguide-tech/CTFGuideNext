@@ -8,7 +8,6 @@ import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
-import { Community } from '@/components/practice/community'
 import { useState, useEffect } from 'react'
 import { LearningModule } from '@/components/learn/LearningModule'
 export default function Pratice() {

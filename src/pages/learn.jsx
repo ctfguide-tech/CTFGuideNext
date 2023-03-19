@@ -4,7 +4,6 @@ import { StandardNav } from '@/components/StandardNav'
 import { useEffect } from 'react'
 import { Fragment, useState } from 'react'
 import { LearningModule } from '@/components/learn/LearningModule'
-import { AuthPopup } from '@/components/authPopup'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
@@ -56,7 +55,6 @@ export default function Dashboard() {
                         <h1 className='text-4xl text-white mx-auto my-auto font-semibold'>Learn</h1>
                     </div>
                 </div>
-                <AuthPopup />
                 
                 <div className='max-w-6xl mx-auto mt-10'>
                     <h1 className='text-white text-3xl mb-4 font-semibold mt-6'>Up next for you</h1>
