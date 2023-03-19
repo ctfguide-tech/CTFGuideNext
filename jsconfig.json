@@ -3,6 +3,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
-  }
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false
+  },
+  "exclude": ["node_modules"]
 }
