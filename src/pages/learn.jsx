@@ -18,11 +18,9 @@ export default function Dashboard() {
 
             .then((data) => {
                 if (data.onboardingComplete == false) {
-                    //      window.location.replace("http://localhost:3000/onboarding?part=1")
                 }
             }
             )
-        //  .catch((error) => window.location.replace("http://localhost:3000/onboarding?part=1"))
     }, [])
 
     const [loggedIn, setLoggedIn] = useState(null);

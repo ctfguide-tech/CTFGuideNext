@@ -47,7 +47,7 @@ xhr.addEventListener("readystatechange", function() {
   }
 });
 
-xhr.open("GET", "http://localhost:3001/challenges/" + router.query.slug);
+xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.slug);
 xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
 
 xhr.send();
@@ -80,7 +80,7 @@ xhr.send();
 
     });
 
-    xhr.open("PUT", "http://localhost:3001/challenges/" + router.query.slug);
+    xhr.open("PUT", `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.slug);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
     xhr.setRequestHeader("Content-Type", "application/json");
 

@@ -22,7 +22,7 @@ export default function Dashboard() {
   let username = "laphatize"
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`http://localhost:3001/users/${username}/badges`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/badges`);
       const data = await response.json();
       setbadges(data);
     };
