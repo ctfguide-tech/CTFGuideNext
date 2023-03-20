@@ -8,7 +8,6 @@ import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
-import { Community } from '@/components/practice/community'
 import { GroupCard } from '@/components/practice/ExploreSet'
 
 export default function Pratice() {
