@@ -18,7 +18,7 @@ export function LearnCore() {
                 <h1 className='my-auto text-xl flex mt-3 my-auto'>Forensics Interactive Lab</h1>
                 
                 <div className='ml-auto my-auto mt-3 flex'>
-                <MarkDone  sublesson={4} section={2} href={"../"}/>
+                <MarkDone  sublesson={8} section={1} href={"../"}/>
                 <a href="../" className='my-auto ml-4 px-4 py-1 text-white bg-red-600 rounded-lg my-auto'>Exit Lab</a>
                  
                 </div>
