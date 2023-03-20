@@ -64,7 +64,7 @@ export default function Createchall() {
 
     });
 
-    xhr.open("POST", "http://localhost:3001/challenges");
+    xhr.open("POST", `${process.env.NEXT_PUBLIC_API_URL}/challenges`);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
     xhr.setRequestHeader("Content-Type", "application/json");
 
