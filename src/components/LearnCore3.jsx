@@ -15,29 +15,22 @@ export function LearnCore() {
         <div style={{}} className="h-full mx-auto overflow-hidden">
             <div className="px-4 py-4 pb-7 flex my-auto">
 
-                <h1 className='my-auto text-xl flex mt-3 my-auto'>Forensics Interactive Lab</h1>
+                <h1 className='my-auto text-xl flex mt-3 my-auto'>Cryptography Interactive Lab</h1>
                 
                 <div className='ml-auto my-auto mt-3 flex'>
-                <MarkDone  sublesson={4} section={2} href={"../"}/>
+                <MarkDone  sublesson={4} section={3} href={"../"}/>
                 <a href="../" className='my-auto ml-4 px-4 py-1 text-white bg-red-600 rounded-lg my-auto'>Exit Lab</a>
                  
                 </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-0   max-h-screen h-screen  resize-x">
                 <div id="1" style={{backgroundColor: "#212121"}} className=" px-4 py-4 h-100 resize-x">
-                    <h1 className="text-2xl font-bold text-white">I spy with my little eyes</h1>
+                    <h1 className="text-2xl font-bold text-white">Using John the Ripper to Scan a Text File with Fake Insecure Passwords</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
                     <h1 className='mt-4 text-xl text-white font-semibold'>Introduction </h1>
-                    <p className='text-white'>As you've probably learned, forensics is an essential part of cybersecurity. Rumor has it that you've done pretty stellar on your forensics mastery task. Some agents in the FBI heard about your skills and need your help.<br></br><br></br>It looks like there's been a notorious hacker that has been going around encrypting a bunch of computers.<br></br><br></br>Rumor has it, he likes playing games.</p>
-
-                    <br></br>We've gotten a load of his payload, but when try running the program. It says "I spy something [color]". The color keeps changing everytime we try deploying the payload. 
-                    <div className='bg-black text-white p-4 mt-4' style={{fontFamily: "Arial"}}>
-                        <p>undefined@ctfguide:~$ <span className='text-yellow-400'>node hackerman.js</span></p>
-                        <p>undefined@ctfguide:~$ <span className='text-blue-500'>I spy something red.</span></p>
-
-                    </div>
-
+                    <p className='text-white'>
+                    We created a text file containing fake insecure passwords. Now, we will use John the Ripper to scan this file and identify any vulnerabilities. John the Ripper is a password cracking tool that can be used for testing password strength and identifying weak passwords. It uses several methods for cracking passwords including dictionary attacks and brute-force attacks.</p>
                  
 
                     <div className='fixed bottom-0 left-0 right-0 mb-5'>
@@ -59,46 +52,58 @@ export function LearnCore() {
                 </div>
 
                 <div id="2" style={{backgroundColor: "#212121"}} className="overflow-y-auto max-h-screen h-screen hidden px-4 py-4  ">
-                <h1 className="text-2xl font-bold text-white">I spy with my little eyes</h1>
+                <h1 className="text-2xl font-bold text-white">Using John the Ripper to Scan a Text File with Fake Insecure Passwords</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
-                    <h1 className='mt-4 text-xl text-white font-semibold'>Understanding the payload </h1>
-                    <p className='text-white'>It looks like this payload is just a malicious node.js file. Strange. Usually, payloads are super hidden - but in this case we have access to the actual payload file.</p>
+                    <h1 className='mt-4 text-xl text-white font-semibold'>Procedure </h1>
+                    <p className='text-white'>
 
-                    <br></br>Let's go ahead and take a look at the code of the payload.
+                        <ul>
+                            <li>Open the terminal on your computer.</li>
+
+                            <li>Navigate to the directory where the text file containing the fake insecure passwords is located.</li>
+                       
+                        </ul>
+                    </p>
+
+                    <br></br>Type the following command to open John the Ripper:
                     <div className='bg-black text-white p-4 mt-4' style={{fontFamily: "Arial"}}>
-                        <p>undefined@ctfguide:~$ <span className='text-yellow-400'>nano hackerman.js</span></p>
+                        <p>undefined@ctfguide:~$ <span className='text-yellow-400'>john</span></p>
 
 
                     </div>
 
-                    <br></br>
-                    <p className='text-white'>The code for this payload seems relatively simple.</p>
+             
+                    <br></br>To use John the Ripper to scan the text file, type the following command:
+
+
                     <div className='bg-black text-white p-4 mt-4' style={{fontFamily: "Arial"}}>
-                        <p>
-                            var colors = ["red", "blue", "green", "yellow", "orange", "purple"];<br></br>
-                            var color = colors[Math.floor(Math.random() * colors.length)];<br></br>
-                            console.log("I spy something " + color);<br></br>
-                            var key = colors[1] + colors[2] + 21;<br></br>
-                            // console.log(key)
+                        <p>undefined@ctfguide:~$ <span className='text-yellow-400'>john filename.txt
+</span></p>
 
 
-                        </p>
+
+
                     </div>
 
-                    <br></br>
-
-                    <p className='text-white'>Are you seeing what I'm seeing?!</p>
-                    <div className='bg-black text-white p-4 mt-4' style={{fontFamily: "Arial"}}>
-                        <p>
-                            var key = colors[1] + colors[2] + 21;<br></br>
-                            // console.log(key)
+                    <br></br>Replace "filename.txt" with the name of the text file you want to scan.
+                    <br></br><br></br> John the Ripper will start scanning the text file and attempting to crack the passwords. This process may take some time depending on the size of the file and the complexity of the passwords.
+                    <br></br><br></br> Once John the Ripper has finished scanning the file, it will display a list of any passwords that it was able to crack.
 
 
-                        </p>
-                    </div>
-                    <p className='text-white mt-4'>It looks like the decryption key is just the second color + the third color + "21". Looking at the array of colors it seems like the key is bluegreen21.</p>
 
+
+
+
+
+              
+                    <br></br><br></br>
+
+                    Review the list of cracked passwords to identify any vulnerabilities in the password policy or user behavior. Take note of any passwords that were cracked and consider ways to improve password security.
+                    <h1 className='mt-4 text-xl text-white font-semibold'>Conclusion </h1>
+                    <p className='text-white'>
+                    John the Ripper is a powerful tool for identifying weak passwords and vulnerabilities in password policies. By scanning a text file containing fake insecure passwords, we were able to use John the Ripper to identify any weaknesses in our password policy. This information can be used to improve password security and protect sensitive information.
+                    </p>
 
 
 

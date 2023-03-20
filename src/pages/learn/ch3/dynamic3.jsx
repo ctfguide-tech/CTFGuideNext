@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer'
 import { StandardNav } from '@/components/StandardNav'
 import { useEffect, useState } from 'react'
 import { LearnNav } from '@/components/learn/LearnNav'
-import { LearnCore } from '@/components/LearnCore'
+import { LearnCore } from '@/components/LearnCore3'
 import { MarkDone } from '@/components/learn/MarkDone'
 
 export default function Dashboard() {
@@ -24,7 +24,7 @@ export default function Dashboard() {
     return (
         <>
             <Head>
-                <title>Cryptography! - CTFGuide</title>
+                <title>Learn - CTFGuide</title>
                 <meta
                     name="description"
                     content="Cybersecurity made easy for everyone"
@@ -33,27 +33,19 @@ export default function Dashboard() {
                     @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
                 </style>
             </Head>
-            <StandardNav />
-            <main>
-                <div className='max-w-6xl mx-auto'>
-                    <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Cryptography!</h1>
-                    <div className="flex  max-w-7xl mx-auto ">
-                    {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "Cryptography!"}, {href: "./video3", title: "PKI Introduction"}, {href: "./activity3", title: "Knees Deep into TLS"}, {href: "./dynamic3", title: "Password Dump"}]}/>
+       
+                <div className='mx-auto'>
 
-                    {/* Main content area */}
-                    <div className="flex-1 text-white">
+           
+                    <div className="text-white">
 
                         {/* Load in markdown from a github url */}
                         <LearnCore/>
-                        <div className="ml-6 mt-2">
-                            <MarkDone sublesson={12} section={1} href={"../"}/>
+                        <div className="ml-6">
                         </div>
                     </div>
-                    </div>
+         
                 </div>
-            </main>
-            <Footer />
         </>
     )
 }

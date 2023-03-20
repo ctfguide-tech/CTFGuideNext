@@ -44,7 +44,7 @@ export default function Dashboard() {
                     <div className="flex-1 text-white ">
 
                         {/* Load in markdown from a github url */}
-                        <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/embed/P5DtOOkCFM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        <iframe className='mx-auto mt-10' width="800" height="415" src="https://www.youtube.com/watch?v=t0F7fe5Alwg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                         <div className='flex'>
                             <motion.h1
                             className='mt-4 ml-12 mr-6 text-3xl font-semibold animate-slide-in-right'
