@@ -28,7 +28,7 @@ export default function Pratice() {
                 
                 setChallenges([...result]);
             } catch (err) {
-                throw err;
+                console.log (err);
             }
         };
         fetchData();        

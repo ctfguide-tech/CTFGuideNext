@@ -35,9 +35,10 @@ export default function ProblemsPage() {
         fetch(process.env.NEXT_PUBLIC_API_URL + "/challenges")
         .then((response) => response.json())
         .then((data) => {
-            console.log(data.result);
+            if (result) {
             const {result} = data;
             setComponents(result);
+            }
         })
         .catch((error) => {
             console.error(error);
