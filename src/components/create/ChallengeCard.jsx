@@ -1,4 +1,4 @@
-import { EyeIcon, PencilIcon, DocumentMagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { EyeIcon, PencilIcon } from '@heroicons/react/20/solid';
 
 export function ChallengeCard({challenge}) {
     return (

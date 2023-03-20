@@ -251,9 +251,6 @@ export default function Login() {
                     <p className='ml-2'>Login with Google</p>
                   </a>
                 </div>
-
-
-
               </div>
             </div>
           </div>

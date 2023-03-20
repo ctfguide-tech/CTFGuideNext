@@ -1,10 +1,8 @@
-import { Fragment, useEffect, useState, useRef, useContext } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon, Cog6ToothIcon, PencilSquareIcon, ShieldExclamationIcon, UserCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Logo } from '@/components/Logo'
-import { app } from '../config/firebaseConfig';
-import { getAuth, onAuthStateChanged, signOut, getIdToken} from "firebase/auth";
-import { redirect } from 'next/navigation';
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
@@ -24,7 +22,6 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav() {
-
   function logout() { 
     signOut(auth).then(() => {
       window.location.replace("/login")
@@ -42,7 +39,6 @@ export function StandardNav() {
     });
   }, [])
 
-
   const [notification, showNotifications] = useState(false)
   const [notificationData, setNotificationData] = useState([DEFAULT_NOTIFICATION]);
   const [username, setUsername] = useState(null);
@@ -57,61 +53,67 @@ export function StandardNav() {
               'Authorization': 'Bearer ' + localStorage.getItem('idToken'),
           },
       };
-      const response = await fetch(endPoint, requestOptions);
-      const result = await response.json();
-      if(!result || !result.length) return;
+      try {
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+        if(!result || !result.length) return;
 
-      setNotificationData(result.map(notification => {
-        const currentDate = new Date();
-        const createdAt = new Date(notification.createdAt)
-        const timedelta = currentDate - createdAt;
-        console.log(notification)
-        let noti = "";
+        setNotificationData(result.map(notification => {
+          const currentDate = new Date();
+          const createdAt = new Date(notification.createdAt)
+          const timedelta = currentDate - createdAt;
+          console.log(notification)
+          let noti = "";
 
-        let seconds = Math.floor(timedelta / 1000);
-        let minutes = Math.floor(seconds / 60);
-        seconds = seconds % 60;
-        let hours = Math.floor(minutes / 60);
-        minutes = minutes % 60;
-        let days = Math.floor(hours / 24);
-        hours = hours % 24;
+          let seconds = Math.floor(timedelta / 1000);
+          let minutes = Math.floor(seconds / 60);
+          seconds = seconds % 60;
+          let hours = Math.floor(minutes / 60);
+          minutes = minutes % 60;
+          let days = Math.floor(hours / 24);
+          hours = hours % 24;
 
-        if(days) noti = days + ' days';
-        else if(hours) noti = hours + ' hours';
-        else if (minutes) noti = minutes + ' minutes';
-        else noti = seconds = ' seconds';
+          if(days) noti = days + ' days';
+          else if(hours) noti = hours + ' hours';
+          else if (minutes) noti = minutes + ' minutes';
+          else noti = seconds = ' seconds';
 
-        return {
-          message: notification.message,
-          receivedTime: noti + " ago",
-          detailPage: '/events',
-          image: "https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png",
-        }
-      }));
+          return {
+            message: notification.message,
+            receivedTime: noti + " ago",
+            detailPage: '/events',
+            image: "https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png",
+          }
+        }));
+      } catch (error) {
+
+      }
     };
     fetchNotification();
   }, []);
 
   useEffect(() => {
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("idToken"),
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsername(data.username)
+    try {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("idToken"),
+        },
       })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          setUsername(data.username)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch {
+
+    }
 }, [])
 
   return (
-    
     <Disclosure as="nav" className=" shadow">
       {({ open }) => (
         <>

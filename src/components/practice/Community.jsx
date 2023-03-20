@@ -1,6 +1,5 @@
-import { useState,useEffect } from "react"
+import { useState } from "react"
 import Challenge from "../challenge/ChallengeComponent";
-
 
 export function Community({challenges}) {
     const [difficulty, setDifficulty] = useState('all');

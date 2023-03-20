@@ -1,10 +1,4 @@
 import Head from 'next/head'
-
-import { Footer } from '@/components/Footer'
-
-import { StandardNav } from '@/components/StandardNav'
-import { Container } from '@/components/Container'
-
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
 
 export default function Onboarding() {

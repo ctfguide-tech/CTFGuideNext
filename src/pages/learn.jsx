@@ -2,18 +2,17 @@ import Head from 'next/head'
 import { Footer } from '@/components/Footer'
 import { StandardNav } from '@/components/StandardNav'
 import { useEffect } from 'react'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { LearningModule } from '@/components/learn/LearningModule'
 
 export default function Dashboard() {
     const [open, setOpen] = useState(true)
-
-
     /*
     Code to check if onboarding has been complete
   */
     useEffect(() => {
-        fetch("api.ctfguide.com/dashboard")
+        try {
+            fetch("api.ctfguide.com/dashboard")
             .then((res) => res.json())
 
             .then((data) => {
@@ -21,17 +20,24 @@ export default function Dashboard() {
                 }
             }
             )
+        } catch (error) {
+
+        }
     }, [])
 
     const [loggedIn, setLoggedIn] = useState(null);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/ami`)
-        .then((response) => response.json())
-        .then((data) => setLoggedIn(data))
-        .catch((error) => {
-            console.log(error)
-        });
+        try {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/ami`)
+                .then((response) => response.json())
+                .then((data) => setLoggedIn(data))
+                .catch((error) => {
+                    console.log(error)
+                });
+        } catch (error) {
+
+        }
     }, []);
 
     return (

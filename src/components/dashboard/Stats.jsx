@@ -1,10 +1,3 @@
-import Link from 'next/link'
-
-import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
-import { Divider, DonutChart } from "@tremor/react";
-import { Card } from "@tremor/react";
 import { useState, useEffect } from 'react'
 
 const cities = [

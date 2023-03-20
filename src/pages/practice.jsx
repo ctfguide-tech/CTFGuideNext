@@ -1,10 +1,4 @@
 import Head from 'next/head'
-import Link from 'next/link'
-import { Button } from '@/components/Button'
-import { TextField } from '@/components/Fields'
-import { Logo } from '@/components/Logo'
-import { Alert } from '@/components/Alert'
-import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
@@ -12,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { LearningModule } from '@/components/learn/LearningModule'
 export default function Pratice() {
     function loadChallenges() {
+      try {
         fetch('https://api.ctfguide.com/challenges/type/all')
             .then(response => response.json())
             .then(data => {
@@ -39,15 +34,18 @@ export default function Pratice() {
             .catch(error => {
                 console.log(error)
         });
+      } catch {
+
+      }
     }
+
     loadChallenges();
     const [streak, setStreak] = useState("");
     const [rank, setRank] = useState("");
     const [points, setPoints] = useState("")
+
     useEffect(() => {
-      
-
-
+      try {
             fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
                 method: "GET",
                 headers: {
@@ -67,20 +65,23 @@ export default function Pratice() {
 
                 // fetch user challenge data
            
-    const fetchData = async () => {
-        const response = await fetch(`${localStorage.getItem("userChallengesUrl")}`);
-        const data = await response.json();
-        console.log(data)
+        const fetchData = async () => {
+          try {
+            const response = await fetch(`${localStorage.getItem("userChallengesUrl")}`);
+            const data = await response.json();
+            console.log(data)
 
-        const response2 = await fetch(`https://PastNaturalLine.laphatize.repl.co?data=${JSON.stringify(data)}`);
-        const data2 = await response2.text();
-        document.getElementById("insight").innerHTML = "Heads up! If you haven't solved a challenge - this response will be incorrect. " + data2;
-       
-        
-      };
-      fetchData();
+            const response2 = await fetch(`https://PastNaturalLine.laphatize.repl.co?data=${JSON.stringify(data)}`);
+            const data2 = await response2.text();
+            document.getElementById("insight").innerHTML = "Heads up! If you haven't solved a challenge - this response will be incorrect. " + data2; 
+          } catch {
 
-    
+          }
+        };
+        fetchData();
+      } catch {
+
+      }
     }, []);
 
     return (

@@ -24,41 +24,52 @@ export default function Dashboard() {
   const [challenges, setchallenges] = useState([]);
 
   useEffect(() => {
-    const fetchBadges = async () => {
-      const response = await fetch(`${localStorage.getItem("userBadgesUrl")}`);
-      const data = await response.json();
-      console.log(data)
-      setbadges(data);
-    };
-    fetchBadges();
-    setbadges([
+      const fetchBadges = async () => {
+        try {
+          const response = await fetch(`${localStorage.getItem("userBadgesUrl")}`);
+          const data = await response.json();
+          console.log(data)
+          setbadges(data);
+        } catch {
 
-    ])
+        }
+      };
+      fetchBadges();
+      setbadges([
 
-    const fetchChallenges = async () => {
-      const response = await fetch(`${localStorage.getItem("userChallengesUrl")}`);
-      const data = await response.json();
-      console.log(data)
-      setchallenges(data);
-    };
-    fetchChallenges();
-    setchallenges([
-    ])
+      ])
 
-    const fetchData = async () => {
-      const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
-      const data = await response.json();
-      console.log(data)
-      setLikes(data);
-      likes.map((like) => (
-        console.log(like.challenge.slug)
-      ));
+      const fetchChallenges = async () => {
+        try {
+          const response = await fetch(`${localStorage.getItem("userChallengesUrl")}`);
+          const data = await response.json();
+          console.log(data)
+          setchallenges(data);
+        } catch (error) {
+          
+        }
+      };
+      fetchChallenges();
+      setchallenges([
+      ])
 
-    };
-    fetchData();
-    setLikes([
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
+          const data = await response.json();
+          console.log(data)
+          setLikes(data);
+          likes.map((like) => (
+            console.log(like.challenge.slug)
+          ));
+        } catch (error) {
+          
+        }
+      };
+      fetchData();
+      setLikes([
 
-    ])
+      ])
   }, []);
 
   return (

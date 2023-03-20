@@ -1,6 +1,5 @@
 import { Container } from '@/components/Container';
 
-
 export function Hero() {
   return (
     <Container>

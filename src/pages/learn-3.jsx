@@ -1,10 +1,6 @@
 import Head from 'next/head'
-
-
-import { Footer } from '@/components/Footer'
-
-import { StandardNav } from '@/components/StandardNav'
 import { LearnCore } from '@/components/LearnCore'
+
 export default function Dashboard() {
   return (
     <>

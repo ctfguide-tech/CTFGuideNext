@@ -1,27 +1,9 @@
-
-/*
-
-
-    2/4 User Experience
-  
-
-
-*/
-import Link from 'next/link'
-
 import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
-import { userAgent } from 'next/server';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router'
 
-
-
-
 export function DataAsk({ props }) {
     const router = useRouter()
-
 
     useEffect(() => {
         if (router.query.part == "1") {

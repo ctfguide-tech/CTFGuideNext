@@ -1,7 +1,3 @@
-
-import Container from '@/components/Container';
-
-
 export function Friends() {
     return (
         <>

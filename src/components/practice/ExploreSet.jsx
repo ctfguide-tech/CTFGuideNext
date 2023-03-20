@@ -1,5 +1,3 @@
-import Link from 'next/link'
-
 export function GroupCard({ title, description, views, imageUrl, href }) {
   return (
       <a href={href} className="block rounded-lg shadow-md overflow-hidden transition-colors duration-300 hover:bg-gray-50">

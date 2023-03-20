@@ -4,6 +4,7 @@
 
 
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 //import { getAnalytics } from "firebase/analytics";
 
 /*
@@ -20,6 +21,11 @@ const firebaseConfig = {
   appId: "1:792987058367:web:c48935325e46043c3cc60a"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-//const analytics = getAnalytics(app);
+try {
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  //const analytics = getAnalytics(app);
+  getAuth(app)
+} catch (error) {
+
+}

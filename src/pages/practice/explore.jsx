@@ -1,14 +1,7 @@
 import Head from 'next/head'
-import Link from 'next/link'
-import { Button } from '@/components/Button'
-import { TextField } from '@/components/Fields'
-import { Logo } from '@/components/Logo'
-import { Alert } from '@/components/Alert'
-import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
-import { GroupCard } from '@/components/practice/ExploreSet'
 
 export default function Pratice() {
     return (

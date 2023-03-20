@@ -1,20 +1,5 @@
-
-/*
-
-
-    2/4 User Experience
-  
-
-
-*/
-import Link from 'next/link'
-
 import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
 export function DataAskPart2() {
-
-
     function submitData() {
         if (!document.getElementById("legal").value || !document.getElementById("country").value) {
             window.alert("Please fill out all fields.");

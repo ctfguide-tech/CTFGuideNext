@@ -1,16 +1,6 @@
-import Link from 'next/link'
-
-import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
-import { useState } from 'react'
 import { MarkDone } from '@/components/learn/MarkDone'
 
 export function LearnCore() {
-
-    const [navbarOpen, setNavbarOpen] = useState(false);
-
-
     return (
         <div style={{}} className="h-full mx-auto overflow-hidden">
             <div className="px-4 py-4 pb-7 flex my-auto">
@@ -18,7 +8,7 @@ export function LearnCore() {
                 <h1 className='my-auto text-xl flex mt-3 my-auto'>Forensics Interactive Lab</h1>
                 
                 <div className='ml-auto my-auto mt-3 flex'>
-                <MarkDone  sublesson={8} section={1} href={"../"}/>
+                <MarkDone sublesson={8} section={1} href={"../"}/>
                 <a href="../" className='my-auto ml-4 px-4 py-1 text-white bg-red-600 rounded-lg my-auto'>Exit Lab</a>
                  
                 </div>

@@ -1,5 +1,4 @@
 import { CloudIcon, BookOpenIcon, TrophyIcon } from '@heroicons/react/20/solid'
-import { MapIcon } from '@heroicons/react/20/solid'
 
 const features = [
     {

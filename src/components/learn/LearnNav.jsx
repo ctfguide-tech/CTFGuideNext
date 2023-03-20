@@ -1,9 +1,6 @@
-
-import Container from '@/components/Container';
-import { ProgressBar, DonutChart } from '@tremor/react'
+import { DonutChart } from '@tremor/react'
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import CountUpNumber from './CountUp';
 import CountUp from 'react-countup';
 
 export function LearnNav({navElements}) {

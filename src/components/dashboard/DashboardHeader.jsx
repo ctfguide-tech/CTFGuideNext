@@ -1,9 +1,4 @@
-import { EnvelopeIcon, CogIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { app } from '../../config/firebaseConfig';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth"
-import { Link } from 'next/link';
 
 export function DashboardHeader() {
 
@@ -16,25 +11,29 @@ export function DashboardHeader() {
   const [rank, setRank] = useState("...");
 
   useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + localStorage.getItem("idToken"),
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setUsername(data.username)
-          setLocation(data.location)
-          setJoin(data.createdAt.substring(0, 10))
-          setGithub(`https://github.com/${data.githubUrl}`)
-          setPoints(data.points)
-          setRank(data.leaderboardNum+1)
+      try {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("idToken"),
+          },
         })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => res.json())
+          .then((data) => {
+            setUsername(data.username)
+            setLocation(data.location)
+            setJoin(data.createdAt.substring(0, 10))
+            setGithub(`https://github.com/${data.githubUrl}`)
+            setPoints(data.points)
+            setRank(data.leaderboardNum+1)
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch {
+
+      }
   }, [])
 
   return (

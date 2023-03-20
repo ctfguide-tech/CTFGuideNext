@@ -10,30 +10,34 @@ export default function ReportForm() {
   const [showError, setErrorPopup] = useState(false);
 
   function handleSubmit(event) {
-    event.preventDefault();
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/report?type=USER`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("idToken"),
-      },
-      body: JSON.stringify({message: text, itemid: ""}),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Report Sent", data);
-        if (data?.error) {
+    try {
+      event.preventDefault();
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/report?type=USER`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("idToken"),
+        },
+        body: JSON.stringify({message: text, itemid: ""}),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Report Sent", data);
+          if (data?.error) {
+            setErrorPopup(true);
+            setTimeout(() => setErrorPopup(false), 4000);
+          } else {
+            setShowPopup(true);
+            setTimeout(() => setShowPopup(false), 4000);
+          }
+        })
+        .catch((error) => {
           setErrorPopup(true);
           setTimeout(() => setErrorPopup(false), 4000);
-        } else {
-          setShowPopup(true);
-          setTimeout(() => setShowPopup(false), 4000);
-        }
-      })
-      .catch((error) => {
-        setErrorPopup(true);
-        setTimeout(() => setErrorPopup(false), 4000);
-      });
+        });
+    } catch {
+      
+    }
   }
 
   return (

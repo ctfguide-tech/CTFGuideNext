@@ -1,14 +1,7 @@
 import Head from 'next/head'
 
 import { Footer } from '@/components/Footer'
-
-import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { Stats } from '@/components/dashboard/Stats'
-import { Developer } from '@/components/dashboard/Developer'
 import { useEffect } from 'react'
-
-import { Image } from 'next/image'
 import { Header } from '@/components/Header'
 export default function Careers() {
   /*
@@ -17,7 +10,6 @@ export default function Careers() {
 
   {/* Each person will be an object in an array team */ }
   const team = [
-
     {
       personName: "Pranav Ramesh",
       position: "CEO",
@@ -25,10 +17,9 @@ export default function Careers() {
       width: "200",
       height: "200"
     },
-
     {
       personName: "Raymond Yan",
-      position: "Co-Founder",
+      position: "Co-Founder, CTO",
       image: "../Raymond.jpeg",
       width: "200"
     },
@@ -39,7 +30,6 @@ export default function Careers() {
       width: "200",
       height: "200"
     },
-
     {
       personName: "Mish Adelanwa",
       position: "Advisor",
@@ -47,11 +37,6 @@ export default function Careers() {
       width: "200",
       height: "200"
     },
-  
-  
-
-
-
   ]
 
   const listings = [
@@ -69,13 +54,11 @@ export default function Careers() {
       listingPosted: "Feb 11th",
       type: "Remote"
     },
-
   ]
 
-
-
   useEffect(() => {
-    fetch("api.ctfguide.com/dashboard")
+    try {
+      fetch("api.ctfguide.com/dashboard")
       .then((res) => res.json())
 
       .then((data) => {
@@ -83,8 +66,10 @@ export default function Careers() {
         }
       }
       )
-  })
+    } catch (error) {
 
+    }
+  })
 
   return (
     <>

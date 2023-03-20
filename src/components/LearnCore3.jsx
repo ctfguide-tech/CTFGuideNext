@@ -1,16 +1,7 @@
-import Link from 'next/link'
-
-import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
 import { useState } from 'react'
 import { MarkDone } from '@/components/learn/MarkDone'
 
 export function LearnCore() {
-
-    const [navbarOpen, setNavbarOpen] = useState(false);
-
-
     return (
         <div style={{}} className="h-full mx-auto overflow-hidden">
             <div className="px-4 py-4 pb-7 flex my-auto">

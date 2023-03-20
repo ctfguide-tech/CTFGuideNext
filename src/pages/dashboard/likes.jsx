@@ -1,7 +1,6 @@
 import Head from 'next/head'
 
 import { Footer } from '@/components/Footer'
-
 import { StandardNav } from '@/components/StandardNav'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { useEffect } from 'react'
@@ -13,14 +12,17 @@ export default function Dashboard() {
   
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
-      const data = await response.json();
-      console.log(data)    
-        setLikes(data);
-      likes.map((like) => (
-        console.log(like.challenge.slug)
-      ));
+      try {
+        const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
+        const data = await response.json();
+        console.log(data)    
+          setLikes(data);
+        likes.map((like) => (
+          console.log(like.challenge.slug)
+        ));
+      } catch {
 
+      }
     };
     fetchData();
     setLikes([

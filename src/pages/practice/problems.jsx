@@ -1,18 +1,10 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import React, { useState, useEffect } from "react";
-import { Button } from '@/components/Button'
-import { TextField } from '@/components/Fields'
-import { Logo } from '@/components/Logo'
-import { Alert } from '@/components/Alert'
-import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
 import { ProblemSetCards } from '@/components/practice/GoToCreate'
 import ProblemSet from '@/components/practice/ProblemSet'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { KeyIcon, LockOpenIcon } from '@heroicons/react/24/outline'
 
 export default function ProblemsPage() {
     const [components, setComponents] = useState([]);
@@ -32,17 +24,21 @@ export default function ProblemsPage() {
     ];
 
     useEffect(() => {
-        fetch(process.env.NEXT_PUBLIC_API_URL + "/challenges")
-        .then((response) => response.json())
-        .then((data) => {
-            if (result) {
-            const {result} = data;
-            setComponents(result);
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+        try {
+            fetch(process.env.NEXT_PUBLIC_API_URL + "/challenges")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (result) {
+                    const {result} = data;
+                    setComponents(result);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } catch {
+
+        }
     }, []);
 
     const filterData = (category) => {

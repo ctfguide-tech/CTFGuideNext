@@ -2,17 +2,10 @@ import React, {useEffect, useState} from 'react';
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
 
 import Head from 'next/head'
-import Link from 'next/link'
-import { Button } from '@/components/Button'
-import { TextField } from '@/components/Fields'
-import { Logo } from '@/components/Logo'
-import { Alert } from '@/components/Alert'
-import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
 import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
 import { Community } from '@/components/practice/community'
-import { GoToCreate } from '@/components/practice/GoToCreate'
 
 export default function Pratice() {
     const [challenges, setChallenges] = useState([]);

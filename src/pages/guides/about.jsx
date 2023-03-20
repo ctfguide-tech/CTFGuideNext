@@ -1,10 +1,8 @@
 import Head from 'next/head';
-import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
-import Link from 'next/link';
 import { useRef } from "react";
-import { motion, useScroll } from "framer-motion";
+import { useScroll } from "framer-motion";
 import { PracticeNav } from '@/components/practice/PracticeNav';
 const pages = [
   { name: 'Hub', href: '../practice', current: false },

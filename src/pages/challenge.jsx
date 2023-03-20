@@ -1,16 +1,7 @@
 import Head from 'next/head'
-import Link from 'next/link'
-import { Button } from '@/components/Button'
-import { TextField } from '@/components/Fields'
-import { Logo } from '@/components/Logo'
-import { Alert } from '@/components/Alert'
-import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
-import { useRouter } from 'next/router'
 import { useEffect, useState, Fragment } from 'react'
-import { faL } from '@fortawesome/free-solid-svg-icons'
-import { Disclosure, Menu, Transition, Dialog } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon, FireIcon, StarIcon } from '@heroicons/react/outline'
+import { Transition, Dialog } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Collapsible from 'react-collapsible';
 

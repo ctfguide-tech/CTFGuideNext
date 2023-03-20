@@ -1,5 +1,4 @@
 import { useState, useEffect, use } from 'react';
-
 import Link from 'next/link';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
@@ -21,14 +20,6 @@ export function AuthPopup() {
     }
   });
     });
-    
-
-  
-    
-
-
-
-
   if (user) {
     return <div>{/*User logged in*/}</div>;
   } else {

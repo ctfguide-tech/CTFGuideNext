@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export function Quiz({ page, sublesson, quizData }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);

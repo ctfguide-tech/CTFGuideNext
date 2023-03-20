@@ -1,4 +1,3 @@
-import { Callout, Card, Metric, Text } from "@tremor/react";
 import Link from 'next/link';
 
 const Challenge = ({data, inCarousel}) => {

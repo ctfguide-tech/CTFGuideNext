@@ -31,74 +31,86 @@ export default function Create() {
   };
 
   useEffect(() => {
+    try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-          method: "GET",
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + localStorage.getItem("idToken"),
-          },
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("idToken"),
+        },
       })
-          .then((res) => res.json())
-          .then((data) => {
-              setUsername(data.username)
-              setDate(data.createdAt)
-          })
-          .catch((err) => {
-              console.log(err);
-          });
+        .then((res) => res.json())
+        .then((data) => {
+            setUsername(data.username)
+            setDate(data.createdAt)
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 
-    fetchChallenges();
+      fetchChallenges();
+    } catch (error) {
+
+    }
   }, [activeTab]);
 
   const fetchChallenges = async (selection) => {
-    let response;
+    let response = [];
+    try {
+      switch (selection) {
+        case 'unverified':
+          setTitle("Unverified");
+          setInfoText("Please wait for admins to approve unverified challenges!");
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
+          break;
+        case 'pending':
+          setTitle("Pending Changes");
+          setInfoText("These challenges are awaiting changes!");
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
+          break;
+        case 'published':
+          setTitle("Published");
+          setInfoText("These challenges are live! Share them with your friends!");
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
+          break;
+        default:
+          setTitle("Unverified");
+          response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("idToken"),
+            }
+          });
+      }
+    } catch (error) {
 
-    switch (selection) {
-      case 'unverified':
-        setTitle("Unverified");
-        setInfoText("Please wait for admins to approve unverified challenges!");
-        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("idToken"),
-          }
-        });
-        break;
-      case 'pending':
-        setTitle("Pending Changes");
-        setInfoText("These challenges are awaiting changes!");
-        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("idToken"),
-          }
-        });
-        break;
-      case 'published':
-        setTitle("Published");
-        setInfoText("These challenges are live! Share them with your friends!");
-        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("idToken"),
-          }
-        });
-        break;
-      default:
-        setTitle("Unverified");
-        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("idToken"),
-          }
-        });
     }
 
-    const data = await response.json();
+    let data = []
+    try {
+      data = await response.json();
+    } catch {
+      
+    }
     if (Array.isArray(data) && data.length > 0) {
       setChallenges(data);
       setHasChallenges(true);
@@ -107,10 +119,6 @@ export default function Create() {
       setHasChallenges(false);
     }
   };
-
-  function handleTabClick(tab) {
-    setActiveTab(tab);
-  }
 
   function InfoPopup({activeTab}) {
     return (

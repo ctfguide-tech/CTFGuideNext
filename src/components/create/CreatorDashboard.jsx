@@ -1,7 +1,3 @@
-import Link from "next/link";
-import { PlusCircleIcon } from '@heroicons/react/20/solid'
-import { Card, Title, AreaChart } from "@tremor/react";
-
 export function CreatorDashboard() {
     const dummyData = [
         {

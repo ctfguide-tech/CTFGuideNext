@@ -1,8 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { app } from '../config/firebaseConfig';
 
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
 
 
 export default function Register() {

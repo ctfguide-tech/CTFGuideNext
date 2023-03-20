@@ -1,10 +1,5 @@
-import Link from 'next/link'
+import { DonutChart, AreaChart } from "@tremor/react";
 
-import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
-import { Divider, DonutChart, Text, LineChart, AreaChart } from "@tremor/react";
-import { Card } from "@tremor/react";
 const cities = [
     {
         name: 'Forensics',

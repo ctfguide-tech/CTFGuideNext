@@ -1,16 +1,8 @@
 import Head from 'next/head'
-
 import { Footer } from '@/components/Footer'
-
 import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { Stats } from '@/components/dashboard/Stats'
-import { Developer } from '@/components/dashboard/Developer'
-import { Performance } from '@/components/dashboard/Performance'
 import { useEffect } from 'react'
-import { Friends } from '@/components/dashboard/Friends'
-import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
+import { useState } from 'react'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updatePassword, getAuth, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth'
 import { useRouter } from 'next/router'
@@ -37,18 +29,13 @@ export default function Dashboard() {
   const user = auth.currentUser;
 
   useEffect(() => {
-
     const fileInput = document.getElementById('fileInput');
-
-
   }, []);
 
   function pfpChange() {
     pfpChanged = true;
   }
   useEffect(() => {
-
-
     console.log(router.query.loc)
     if (router.query.loc == "general" || router.query.loc == undefined) {
       setGeneral(true)

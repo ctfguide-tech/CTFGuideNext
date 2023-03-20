@@ -4,20 +4,24 @@ export function QuickSettings() {
     const [banner, bannerState] = useState(false);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("idToken"),
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                document.getElementById("bio").value = data.bio;
+        try {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("idToken"),
+                },
             })
-            .catch((err) => {
-                console.log(err);
-            });
+                .then((res) => res.json())
+                .then((data) => {
+                    document.getElementById("bio").value = data.bio;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } catch {
+
+        }
     }, [])
 
     function saveBio() {

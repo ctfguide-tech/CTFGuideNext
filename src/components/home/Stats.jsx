@@ -1,6 +1,5 @@
 import { HomeModernIcon, CommandLineIcon, SparklesIcon } from '@heroicons/react/20/solid'
 import CountUp from "react-countup";
-import { CountUpScroll } from './CountUpOnScroll';
 import VisibilitySensor from 'react-visibility-sensor';
 
 export function Stats() {

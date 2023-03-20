@@ -1,14 +1,6 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import { useState } from 'react'
-import { Button } from '@/components/Button'
-import { TextField } from '@/components/Fields'
-import { Logo } from '@/components/Logo'
-import { Alert } from '@/components/Alert'
-import { Container } from '@/components/Container'
 import { StandardNav } from '@/components/StandardNav'
-import CreatorNavTab from '@/components/challenge/CreatorDashboardTab'
-import { DocumentCheckIcon, DocumentChartBarIcon, DocumentMagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Footer } from '@/components/Footer'
 const pages = [
     { name: 'Creator Dashboard', href: '../create', current: false },

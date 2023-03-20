@@ -1,7 +1,6 @@
 import Head from 'next/head'
 
 import { Footer } from '@/components/Footer'
-
 import { StandardNav } from '@/components/StandardNav'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { useEffect } from 'react'
@@ -13,10 +12,14 @@ export default function Dashboard() {
     let username = "laphatize"
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(`${localStorage.getItem("userBadgesUrl")}`);
-            const data = await response.json();
-            console.log(data)
-            setbadges(data);
+            try {
+                const response = await fetch(`${localStorage.getItem("userBadgesUrl")}`);
+                const data = await response.json();
+                console.log(data)
+                setbadges(data);
+            } catch {
+
+            }
         };
         fetchData();
         setbadges([
