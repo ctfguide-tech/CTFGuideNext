@@ -46,7 +46,13 @@ export function DataAskPart2() {
             if (this.readyState === 4 && this.readyState != 201) {
             
                 var parsed = JSON.parse(this.responseText);
+
+                if (parsed.error == "undefined" || !parsed.error) {
+                    window.location.replace("/login")
+                } else {
+
                 window.location.replace("./onboarding?part=1&error=" + parsed.error)
+                }
             }
             
             
