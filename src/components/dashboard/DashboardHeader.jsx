@@ -9,6 +9,7 @@ export function DashboardHeader() {
 
   const [username, setUsername] = useState("Loading...");
   const [location, setLocation] = useState("Loading...");
+  const [join, setJoin] = useState("");
   const [github, setGithub] = useState("https://github.com");
 
   const [points, setPoints] = useState("...");
@@ -26,6 +27,7 @@ export function DashboardHeader() {
         .then((data) => {
           setUsername(data.username)
           setLocation(data.location)
+          setJoin(data.createdAt.substring(0, 10))
           setGithub(`https://github.com/${data.githubUrl}`)
           setPoints(data.points)
           setRank(data.leaderboardNum+1)
@@ -53,7 +55,6 @@ export function DashboardHeader() {
               <p className='text-white'>
               <i class="mt-2 fas fa-map-marker-alt"></i>  {location}
               </p>
-
             </div>
             <div className="justify-stretch mt-12 flex  ">
            
