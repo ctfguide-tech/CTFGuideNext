@@ -257,7 +257,7 @@ export default function Dashboard() {
     xhr.addEventListener("readystatechange", function () {
       if (this.readyState === 4) {
         console.log(this.responseText);
-
+        console.log("PREFFF")
 try {
         if (JSON.parse(this.responseText)[0].value == true) {
           document.getElementById("friend-notif").checked = true;
@@ -267,7 +267,7 @@ try {
           document.getElementById("challenge-notif").checked = true;
         }
       } catch (error) {
-        console.log(error)
+        // .alert(error)
       }
 
 
