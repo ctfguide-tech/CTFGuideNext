@@ -115,7 +115,7 @@ export default function Pratice() {
                     <div className='mx-auto'>
 
                     <h1 className="text-3xl text-gray-100 tracking-tight mt-10 hover:underline">Hey, {name} 👋</h1>
-                    <div className='bg-neutral-800 px-3 border border-neutral-900 rounded-md mt-10'>
+                    <div className='bg-neutral-800 px-3 border border-neutral-900 rounded-md mt-4'>
                       <h1 className="text-3xl text-gray-100 tracking-tight mt-3 ml-3"></h1>
                       <div className='mx-auto text-center grid lg:grid-cols-6 md:grid-cols-2 sm:grid-cols-1 mb-4 mt-2 gap-4 rounded-lg px-3'>
                           <div className='hidden px-4 py-2 mx-auto my-auto w-full stext-center text-white rounded-lg'>
