@@ -11,7 +11,6 @@ import { initializeApp } from "firebase/app";
         It isn't some secret key or anything. It's just a way for our auth service (Firebase) to identify the app.
 */
 
-/*
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHz1s-UuNhlZ6aKvqwzmzzidzWxBKw9hw",
@@ -22,11 +21,13 @@ const firebaseConfig = {
   appId: "1:792987058367:web:c48935325e46043c3cc60a"
 };
 
+const app = initializeApp(firebaseConfig);  
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 
-*/
 
+/*
 
 const firebaseConfig = {
   apiKey: "AIzaSyBLAN84VP3jSA5dqhrU6Bjmfu5NiUDuNw4",
@@ -38,10 +39,10 @@ const firebaseConfig = {
   appId: "1:166652277588:web:e08b9e19916451e14dcec1",
   measurementId: "G-7ZNKM9VFN2"
 };
+*/
 
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);  
 
 
 
