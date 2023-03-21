@@ -242,7 +242,7 @@ export default function Dashboard() {
       }
     });
     
-    xhr.open("PUT", `${NEXT_PUBLIC_API_URL}/account/preferences`);
+    xhr.open("PUT", `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
     xhr.setRequestHeader("Content-Type", "application/json");
     

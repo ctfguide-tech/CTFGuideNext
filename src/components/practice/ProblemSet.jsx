@@ -13,6 +13,9 @@ const Carousel = ({ data }) => {
     setCurrentIndex(currentIndex + 1);
   };
 
+  console.log("problem set code here")
+  console.log(data)
+
   return (
     <div className="carousel">
       <div className="carousel__container flex p-4">
@@ -36,7 +39,7 @@ const Carousel = ({ data }) => {
           onClick={handleNextClick}
           disabled={currentIndex + 4 >= data.length}
         >
-          <ArrowRightCircleIcon className="text-neutral-500  hover:text-neutral-300  block h-10 w-10" aria-hidden="true" />
+          <ArrowRightCircleIcon className="text-neutral-500  hover:text-neutral-300 block h-10 w-10" aria-hidden="true" />
         </button>
       </div>
     </div>
