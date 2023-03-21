@@ -2,7 +2,10 @@ import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon, Cog6ToothIcon, PencilSquareIcon, ShieldExclamationIcon, UserCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Logo } from '@/components/Logo'
+import { app } from '../config/firebaseConfig';
+
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
@@ -11,7 +14,6 @@ function classNames(...classes) {
 }
 
 const auth = getAuth();
-const user = auth.currentUser;
 
 const DEFAULT_NOTIFICATION = {
   image:

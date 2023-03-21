@@ -6,6 +6,7 @@ import { Logo } from '@/components/Logo'
 import { Alert } from '@/components/Alert'
 import { useState, useEffect } from "react"
 import { app } from '../config/firebaseConfig';
+
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 
 const provider = new GoogleAuthProvider();
@@ -42,7 +43,7 @@ export default function Login() {
           xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
           xhr.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
-              var parsed = JSON.parse(this.responseText);
+              var parsed = JSON.parse(this.responseText); 
 
               // Store Token in local storage.
               localStorage.setItem("idToken", idToken);

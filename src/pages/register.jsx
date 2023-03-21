@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
+import { app } from '../config/firebaseConfig';
 
 
 export default function Register() {
