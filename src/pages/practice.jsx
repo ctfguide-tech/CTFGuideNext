@@ -123,7 +123,7 @@ export default function Pratice() {
                           </div>
 
                           <div className='col-span-2 mt-2 bg-[#191919] border border-[#222222] px-4 py-2 mx-auto w-full stext-center text-white rounded-lg'>
-                          <div className='my-auto mt-4'>
+                          <div className='my-auto'>
                           <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-blue-500'>{streak} days</h1>
                               <h1 className='text-xl'>Streak</h1>
                             </div>

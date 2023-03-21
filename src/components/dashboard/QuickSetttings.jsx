@@ -48,12 +48,12 @@ export function QuickSettings() {
 
     return (
         <>
-            <h1 className="text-xl text-white tracking-tight mt-10" style={{ color: "#595959" }}> YOUR BIO</h1>
+            <h1 className="text-xl text-gray-100 mt-10"> Your Bio</h1>
             <textarea id="bio" onChange={() => bannerState(true)} style={{ backgroundColor: "#212121" }} readOnly={false} className='mt-1 border-none rounded-lg text-white w-full'>
 
             </textarea>
 
-            <h1 className="text-xl text-white tracking-tight mt-2" style={{ color: "#595959" }}> SITE FEED</h1>
+            <h1 className="text-xl text-gray-100 mt-2"> Site Feed</h1>
 
             <div className='mx-auto gap-y-6 mb-4 mt-1 gap-4 rounded-lg w-full'>
                 <div style={{ backgroundColor: "#212121", borderColor: "#3b3a3a" }} className=' px-4 pt-2 py-2 mx-auto w-full pb-5 text-white rounded-lg  '>
