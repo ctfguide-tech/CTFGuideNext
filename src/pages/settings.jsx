@@ -412,7 +412,7 @@ try {
                         </div>
                       </div>
 
-                      <div className="sm:col-span-6">
+                      <div className="sm:col-span-6 blur-sm ">
                         <label htmlFor="photo" className="block text-sm font-medium leading-6 text-white flex">
                           Photo  (Experimental)
                         </label>
@@ -430,6 +430,7 @@ try {
                               name="user-photo"
                               type="file"
                               className="peer absolute inset-0 h-full w-full rounded-md opacity-0"
+                              disabled
                             />
                             <label
                               htmlFor="user-photo"
