@@ -13,8 +13,6 @@ const Carousel = ({ data }) => {
     setCurrentIndex(currentIndex + 1);
   };
 
-  console.log("problem set code here")
-  console.log(data)
 
   return (
     <div className="carousel">

@@ -318,10 +318,10 @@ export default function Create() {
                       </div>
                     </div>
                     
-                    <AnimatePresence>
+                    <AnimatePresence className="w-full">
                       {hasChallenges && (
                         <motion.div
-                          className="flex flex-wrap justify-center"
+                          className="  lg:min-w-0 lg:flex-1"
                           initial={{ opacity: 0, x: 100 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.2, delay: 0.2 }}
