@@ -67,7 +67,7 @@ export default function ProblemSetCard({categoryName}) {
         <>
             <div className="w-full overflow-x-scroll pb-4">
                                 <div className="flex gap-x-5 mt-3" style={{ width: "fit-content" }}>                             {
-                                    cryptoChallenges.map((data) => (
+                                    cryptoChallenges && cryptoChallenges.map((data) => (
                                         <a
                                             href={`/challenge?slug=${data.slug}`}
                                             className=""

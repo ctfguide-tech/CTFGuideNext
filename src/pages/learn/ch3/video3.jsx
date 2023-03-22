@@ -38,7 +38,7 @@ export default function Dashboard() {
                     <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Cryptography!</h1>
                     <div className="flex  max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "Cryptography!"}, {href: "./video3", title: "PKI Introduction"}, {href: "./activity3", title: "Knees Deep into TLS"}, {href: "./dynamic3", title: "Password Dump"}]}/>
+                    <LearnNav lessonNum={3} navElements={[{href: "./preview", title: "Cryptography!"}, {href: "./video3", title: "PKI Introduction"}, {href: "./activity3", title: "Knees Deep into TLS"}, {href: "./dynamic3", title: "Password Dump"}]}/>
                     
                     {/* Main content area */}
                     <div className="flex-1 text-white ">

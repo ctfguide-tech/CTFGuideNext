@@ -73,7 +73,7 @@ export default function Dashboard() {
                     <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Linux Basics</h1>
                     <div className="flex  max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "/learn/ch1/preview", title: "What is Linux?"}, {href: "/learn/ch1/video1", title: "Command Basics"}, {href: "/learn/ch1/activity1", title: "Mastery Task"}, {href: "/learn/ch1/dynamic1", title: "Using your terminal"}]}/>
+                    <LearnNav lessonNum={1} navElements={[{href: "/learn/ch1/preview", title: "What is Linux?"}, {href: "/learn/ch1/video1", title: "Command Basics"}, {href: "/learn/ch1/activity1", title: "Mastery Task"}, {href: "/learn/ch1/dynamic1", title: "Using your terminal"}]}/>
 
                     {/* Main content area */}
                     <QuizPage totalQuizPages={6} sublesson={3} quizPage={quizPage} quizData={quizData} nextPage={"./dynamic1"}/>
