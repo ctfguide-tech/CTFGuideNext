@@ -418,7 +418,7 @@ function Pratice({slug}) {
               <div className="relative inline-block align-bottom bg-gray-900 border border-gray-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
                   <div className="mx-auto flex items-center justify-center rounded-full ">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-yellow-500">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                     </svg>
 
@@ -445,7 +445,7 @@ function Pratice({slug}) {
                   <button
                     type="button"
                     className="ml-2 w-auto inline-flex justify-center   rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
-                    onClick={() => window.location.href = "../practice/all"}
+                    onClick={() => window.location.href = "../practice"}
                   >
                     Back to Challenges
                   </button>

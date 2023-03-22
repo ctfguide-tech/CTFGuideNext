@@ -11,7 +11,7 @@ import ProblemSetCard from '@/components/practice/ProblemSetCard';
 import Challenge from "@/components/challenge/ChallengeComponent";
 
 export default function ProblemsPage() {
-    const [components, setComponents] = useState([]);
+ //   const [components, setComponents] = useState([]);
     const set = [
         {
             name: "Cryptography",
@@ -32,7 +32,7 @@ export default function ProblemsPage() {
 
     const [cryptoChallenges, setCryptoChallenges] = useState([]);
 
-
+/*
     useEffect(() => {
         try {
             fetch(process.env.NEXT_PUBLIC_API_URL + "/challenges")
@@ -57,6 +57,7 @@ export default function ProblemsPage() {
 
 
     }, []);
+    */
 
     useEffect(() => {
         const fetchData = async () => {

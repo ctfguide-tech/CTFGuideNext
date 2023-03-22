@@ -115,7 +115,7 @@ export default function Pratice() {
                     <div className='mx-auto'>
 
                     <h1 className="text-3xl text-gray-100 tracking-tight mt-10">{name ? `Hey, ${name} 👋` : ""}</h1>
-                    <a href="/login"><h1 className="px-4 py-1 bg-blue-600 hover:bg-blue-500 text-md text-gray-100 tracking-tight mt-10 rounded-md">{name ? "" : "Log in to view progress!"}</h1></a>
+                    {name ? "" :       <a href="/login"><h1 className="px-4 py-1 bg-blue-600 hover:bg-blue-500 text-md text-gray-100 tracking-tight mt-10 rounded-md">Log in to view progress!</h1></a> }
                     <div className='bg-neutral-800 px-3 border border-neutral-900 rounded-md mt-4'>
                       <h1 className="text-3xl text-gray-100 tracking-tight mt-3 ml-3"></h1>
                       <div className='mx-auto text-center grid lg:grid-cols-6 md:grid-cols-2 sm:grid-cols-1 mb-4 mt-2 gap-4 rounded-lg px-3'>
