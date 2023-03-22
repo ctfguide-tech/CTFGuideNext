@@ -114,7 +114,8 @@ export default function Pratice() {
                     <div className='w-full md:w-4/5 px-8 xl:px-16 border-l border-neutral-800'>
                     <div className='mx-auto'>
 
-                    <h1 className="text-3xl text-gray-100 tracking-tight mt-10 hover:underline">Hey, {name} 👋</h1>
+                    <h1 className="text-3xl text-gray-100 tracking-tight mt-10">{name ? `Hey, ${name} 👋` : ""}</h1>
+                    <a href="/login"><h1 className="px-4 py-1 bg-blue-600 hover:bg-blue-500 text-md text-gray-100 tracking-tight mt-10 rounded-md">{name ? "" : "Log in to view progress!"}</h1></a>
                     <div className='bg-neutral-800 px-3 border border-neutral-900 rounded-md mt-4'>
                       <h1 className="text-3xl text-gray-100 tracking-tight mt-3 ml-3"></h1>
                       <div className='mx-auto text-center grid lg:grid-cols-6 md:grid-cols-2 sm:grid-cols-1 mb-4 mt-2 gap-4 rounded-lg px-3'>
@@ -124,7 +125,7 @@ export default function Pratice() {
 
                           <div className='col-span-2 mt-2 bg-[#191919] border border-[#222222] px-4 py-2 mx-auto w-full stext-center text-white rounded-lg'>
                           <div className='my-auto'>
-                          <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-blue-500'>{streak} days</h1>
+                          <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-blue-500'>{streak ? `${streak} days` : '0 days'}</h1>
                               <h1 className='text-xl'>Streak</h1>
                             </div>
                           </div>
@@ -135,12 +136,12 @@ export default function Pratice() {
                           
 
                           <div className='col-span-2 mt-2 bg-[#191919] border border-[#222222] px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
-                              <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-red-400 to-pink-500'>{points}</h1>
+                              <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-red-400 to-pink-500'>{points ? `${points}` : 0}</h1>
 
                               <h1 className='text-xl'>Points</h1>
                           </div>
                           <div className='col-span-1 mt-2 bg-[#191919] border border-[#222222] px-4 py-2 mx-auto w-full text-center text-white rounded-lg '>
-                              <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-green-400 to-blue -500'>{points}</h1>
+                              <h1 className='text-3xl text-transparent bg-clip-text bg-gradient-to-br from-green-400 to-blue -500'>{points ? `${points}` : 0}</h1>
 
                               <h1 className='text-xl'>Solved</h1>
                           </div>

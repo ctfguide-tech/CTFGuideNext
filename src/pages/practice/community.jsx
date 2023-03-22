@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { ArrowRightIcon } from '@heroicons/react/20/solid'
+import { ArrowRightIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 
 import Head from 'next/head'
 import { StandardNav } from '@/components/StandardNav'
@@ -51,16 +51,27 @@ export default function Pratice() {
                         <PracticeNav />
                     </div>
                     <div className='w-full md:w-4/5 px-8 xl:px-16 border-l border-gray-800'>
-                    
-                    <div className='w-1/2 mt-6 px-4 py-2 rounded-lg flex bg-[#212121] hover:bg-[#2c2c2c]'> 
-                        <div className='flex px-0 py-0'>
-                            <div>
-                                <h1 className='text-white text-2xl font-medium'>Did you know?</h1>
-                                <h1 className='text-white text-md italic'>You can contribute challenges too!</h1>
+                    <div className='flex'>
+                        <div className='w-1/2 mt-6 px-4 py-2 rounded-lg flex bg-[#212121]'> 
+                            <div className='flex px-0 py-0'>
+                                <div className='ml-auto my-auto px-2 mr-6'>
+                                    <QuestionMarkCircleIcon className='text-blue-600 h-10'/>
+                                </div>
+                                <div>
+                                    <h1 className='text-white lg:text-lg md:text-md mx-auto'>All of these practice problems are community created!</h1>
+                                </div>
                             </div>
                         </div>
-                        <div className='ml-auto my-auto px-2'>
-                            <a href="../create" className='bg-blue-700 text-lg px-2 rounded-lg text-white flex'>Check it out<ArrowRightIcon className='h-6 mt-1 ml-1'/></a>
+                        <div className='w-1/2 mt-6 ml-6 px-4 py-2 rounded-lg flex bg-[#212121] hover:bg-[#2c2c2c]'> 
+                            <div className='flex px-0 py-0'>
+                                <div>
+                                    <h1 className='text-white text-2xl font-medium'>Did you know?</h1>
+                                    <h1 className='text-white text-md italic'>You can contribute challenges too!</h1>
+                                </div>
+                            </div>
+                            <div className='ml-auto my-auto px-2'>
+                                <a href="../create" className='bg-blue-700 hover:bg-blue-600 text-lg px-2 rounded-lg text-white flex'>Check it out<ArrowRightIcon className='h-6 mt-1 ml-1'/></a>
+                            </div>
                         </div>
                     </div>
                         <Community challenges={challenges} />

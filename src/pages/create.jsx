@@ -215,7 +215,7 @@ export default function Create() {
              
                 <a href="/guides/approve">
                   <div class="max-w-sm mt-8 rounded-lg shadow bg-[#212121] hover:bg-[#303030] px-4 py-4 rounded-md">
-                      <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">The Creation Process</h5>
+                    <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">The Creation Process</h5>
                     <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Everything to know about the challenge creation, approval, and management process.</p>
                     <p class="inline-flex items-center text-blue-600 hover:underline">
                       Read More

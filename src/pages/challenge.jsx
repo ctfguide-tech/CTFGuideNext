@@ -4,6 +4,7 @@ import { useEffect, useState, Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Collapsible from 'react-collapsible';
+import { Footer } from '@/components/Footer'
 
 function Pratice({slug}) {
     const NO_PLACE = "Not placed";
@@ -297,10 +298,14 @@ function Pratice({slug}) {
                     <h1 className='text-white text-3xl font-semibold inline-block'> Challenge Description </h1>
                 </div>
 
-                <div>
-                    <button onClick={likeChallenge} className="px-10 py-2  m-1 rounded-md card-body flex bg-neutral-800">
-                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold mr-4">👍</h1>
-                        <p className="text-white text-lg">{likeCount}</p>
+                <div className='flex'>
+                    <button onClick={likeChallenge} className="px-10 py-2 m-1 rounded-md card-body flex bg-neutral-800 hover:bg-neutral-700">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400 mt-1 text-2xl font-semibold mr-4">👍</h1>
+                        <p className="text-white text-lg mt-1">{likeCount}</p>
+                    </button>
+                    <button className="px-4 py-1 m-1 rounded-md card-body bg-neutral-800 hover:bg-neutral-700">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400 text-sm font-semibold">View Submissions</h1>
+                        <p className="text-white text-sm">Coming Soon</p>
                     </button>
                 </div>
             </div>
@@ -507,7 +512,8 @@ function Pratice({slug}) {
                 </div>
             </Dialog>
         </Transition.Root>
-        
+        <p className="mx-auto w-3/5 text-gray-200 mt-1.5 text-sm bg-neutral-800 rounded-lg py-0.5 px-4">ℹ We provide accessible environments for everyone to run cybersecurity tools. Abuse and unnecessary computation is prohibited.</p>
+        <Footer />
         </>
     )
 }
