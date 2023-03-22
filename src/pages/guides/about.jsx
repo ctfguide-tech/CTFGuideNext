@@ -73,19 +73,74 @@ export default function CTFGuide() {
         ))}
       </ol>
     </nav>
-
-
-          <h1 className="text-3xl font-bold mb-4 mt-5">About CTFGuide</h1>
-          <p className="mb-4 text-lg">
-          Hello there, we're so happy to have you here! We are CTFGuide, a platform that helps you master cybersecurity through a personalized and community-based approach. Our platform offers various features like cloud terminals, hundreds of practice problems, and competitions that allow you to enhance your cybersecurity skills. We use AI-driven feedback to help you identify your strengths and weaknesses so you can improve your knowledge. Our website also provides a personalized roadmap based on your skill level and learning goals. We are proud to have reached over 50 schools, with over 10,200 attempts made on our challenges, and more than 1,346 challenges solved. Our approach emphasizes hands-on learning and community engagement, providing a dynamic and supportive environment for you to learn and grow.
-            <br></br>
-
-           
-          </p>
-
-          <p className='mt-10'>Join our <a href="https://discord.gg/q3hgRBvgkX" className='cursor-pointer text-blue-500 hover:underline '>Discord Community</a> to get updates and talk with fellow hackers.</p>
-     
-
+          <div className='px-4 py-4 rounded-md mt-5'>
+            <h1 className="text-3xl font-bold mb-2">What is CTFGuide?</h1>
+            <p className="mb-4 text-xl text-blue-500">
+              Hello there, we're so happy to have you here! 
+            </p>
+            <p className="mb-4 text-lg">
+              We are CTFGuide, a platform that helps you master cybersecurity through a personalized and community-based approach. 
+              <br></br>
+            </p>
+            <p className="mb-4 text-lg">
+              We offer cloud terminals, hundreds of practice problems, and competitions that allow you to enhance your cybersecurity skills. We use AI-driven feedback to help you identify your strengths and weaknesses so you can improve your skills!
+              <br></br>
+            </p>
+          </div>
+          <div className='px-4 py-4 rounded-md'>
+            <h1 className="text-3xl font-bold mb-3 mt-5">What is "CTF"?</h1>
+              <p className="mb-2 text-2xl text-blue-500">
+                CTF = Capture The Flag
+              </p>
+              <p className="mb-4 text-lg">
+                Capture The Flag is type of cybersecurity challenge problem where people use analytical skills, network and security tools, and computer environments to solve problems.
+                <br></br>
+              </p>
+              <p className="mb-4 text-lg">
+                Solving these challenges can help you get familiar with real world cybersecurity tools as well as build your critical thinking and analytical skills!
+                <br></br>
+              </p>
+              <p className="mb-2 text-2xl text-blue-500">
+                State of the CTF World
+              </p>
+              <p className="mb-4 text-lg">
+                A lot of people play CTFs for fun and CTFs are also a cornerstone of competitive cybersecurity events.
+                <br></br>
+                <br></br>
+                In fact, our founding team comes from this background. Our founder, Pranav, was a big time player in University of Delaware's Blue Hen CTF in 2019/2020.
+              </p>
+              <p className="mb-2 text-2xl text-blue-500">
+                Where next?
+              </p>
+              <p className="mb-4 text-lg">
+                Aside from being fun and games, the basic concept of simulating realistic scenarios is incredibly important for evaluating skillsets.
+                <br></br>
+                <br></br>
+                CTFGuide is a data-centric, simplicity-loving team of cyber enthusiasts and cloud engineers aiming to revolutionize these foundational ideas.
+              </p>
+          </div>
+          <div className='px-4 py-4 rounded-md'>
+            <h1 className="text-3xl font-bold mb-3 mt-5">Our Principles 🏆</h1>
+              <p className="text-2xl text-blue-500">
+                Simplicity
+              </p>
+              <p className="mb-4 text-lg text-white">
+                We aim to be as beginner friendly as possible.
+              </p>
+              <p className="text-2xl text-blue-500">
+                Accessibility
+              </p>
+              <p className="mb-4 text-lg text-white">
+                We're free to use, from anywhere, forever.
+              </p>
+              <p className="text-2xl text-blue-500">
+                Data-Driven
+              </p>
+              <p className="mb-4 text-lg text-white">
+                We help everyone discover their strengths and weaknesses. Discover your cybersecurity skills and interests with us!
+              </p>
+            </div>
+          <p className='bg-neutral-800 px-4 py-2 rounded-md mt-10'>Join our <a href="https://discord.gg/q3hgRBvgkX" className='cursor-pointer text-blue-500 hover:underline '>Discord Community</a> to get updates and chat with fellow hackers!</p>
           </div>
         </div>
       </main>

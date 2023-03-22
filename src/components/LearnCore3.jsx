@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { MarkDone } from '@/components/learn/MarkDone'
+import { FlagIcon, CheckCircleIcon } from '@heroicons/react/20/solid'
 
 export function LearnCore() {
     return (
         <div style={{}} className="h-full mx-auto overflow-hidden">
-            <div className="px-4 py-4 pb-7 flex my-auto">
+            <div className="ml-4 px-4 py-4 pb-7 flex my-auto">
 
-                <h1 className='my-auto text-xl flex mt-3 my-auto'>Cryptography Interactive Lab</h1>
+                <h1 className='my-auto text-xl flex mt-3 my-auto'>Cryptography Interactive Lab<FlagIcon className='h-6 mt-1 ml-2 text-blue-500'/></h1>
                 
                 <div className='ml-auto my-auto mt-3 flex'>
                 <MarkDone sublesson={12} section={1} href={"../"}/>
@@ -14,8 +15,8 @@ export function LearnCore() {
                  
                 </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-0   max-h-screen h-screen  resize-x">
-                <div id="1" style={{backgroundColor: "#212121"}} className=" px-4 py-4 h-100 resize-x">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-0 max-h-screen h-screen resize-x">
+                <div id="1" style={{backgroundColor: "#212121"}} className="px-8 py-4 h-100 resize-x">
                     <h1 className="text-2xl font-bold text-white">Using John the Ripper to Scan a Text File with Fake Insecure Passwords</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
@@ -42,7 +43,7 @@ export function LearnCore() {
 
                 </div>
 
-                <div id="2" style={{backgroundColor: "#212121"}} className="overflow-y-auto max-h-screen h-screen hidden px-4 py-4  ">
+                <div id="2" style={{backgroundColor: "#212121"}} className="overflow-y-auto max-h-screen h-screen hidden px-8 py-4  ">
                 <h1 className="text-2xl font-bold text-white">Using John the Ripper to Scan a Text File with Fake Insecure Passwords</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
@@ -120,9 +121,10 @@ export function LearnCore() {
                 </div>
 
                 <div id="3" style={{backgroundColor: "#212121"}} className=" hidden px-4 py-4 h-100 resize-x">
-                    <h1 className='text-white text-6xl font-semibold mt-4 mx-auto text-center mt-20'>Nice work.</h1>
+                    <h1 className='text-white text-6xl font-semibold mt-4 mx-auto text-center mt-20'>Nice work!</h1>
                     <h1 className='text-white text-xl font-semibold mt-4 mx-auto text-center '>You've finished this lesson.</h1>
-<div>
+                    <CheckCircleIcon className='mx-auto mt-6 h-36 text-green-500'/>
+                <div>
     </div>
 
  

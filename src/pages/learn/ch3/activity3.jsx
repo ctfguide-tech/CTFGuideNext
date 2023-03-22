@@ -96,7 +96,7 @@ export default function Dashboard() {
                     <h1 className='text-white text-5xl mt-4 font-semibold mt-6'>Cryptography!</h1>
                     <div className="flex  max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "/learn/ch3/preview", title: "Cryptography!"}, {href: "/learn/ch3/video3", title: "PKI Introduction"}, {href: "/learn/ch3/activity3", title: "Knees Deep into TLS"}, {href: "/learn/ch3/dynamic3", title: "Password Dump"}]}/>
+                    <LearnNav lessonNum={3} navElements={[{href: "/learn/ch3/preview", title: "Cryptography!"}, {href: "/learn/ch3/video3", title: "PKI Introduction"}, {href: "/learn/ch3/activity3", title: "Knees Deep into TLS"}, {href: "/learn/ch3/dynamic3", title: "Password Dump"}]}/>
 
                     {/* Main content area */}
                     <QuizPage totalQuizPages={6} sublesson={11} quizPage={quizPage} quizData={quizData} nextPage={"./dynamic3"}/>

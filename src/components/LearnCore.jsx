@@ -1,25 +1,24 @@
 import { useState } from 'react'
 import { MarkDone } from '@/components/learn/MarkDone'
+import { FlagIcon, CheckCircleIcon } from '@heroicons/react/20/solid'
 
 export function LearnCore() {
-
     const [navbarOpen, setNavbarOpen] = useState(false);
-
 
     return (
         <div style={{}} className="h-full mx-auto overflow-hidden">
-            <div className="px-4 py-4 pb-7 flex my-auto">
+            <div className="ml-4 px-4 py-4 pb-7 flex my-auto">
 
-                <h1 className='my-auto text-xl flex mt-3 my-auto'>Linux Basics Interactive Lab</h1>
+                <h1 className='my-auto text-2xl flex mt-3 my-auto'>Linux Basics Interactive Lab<FlagIcon className='h-6 mt-1 ml-2 text-blue-500'/></h1>
                 
                 <div className='ml-auto my-auto mt-3 flex'>
                 <MarkDone sublesson={4} section={1} href={"../"}/>
-                <a href="../" className='my-auto ml-4 px-4 py-1 text-white bg-red-600 rounded-lg my-auto'>Exit Lab</a>
-                 
+
+                <button href="../" className="ml-4 my-auto bg-red-600 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md text-sm">Exit Lab</button>
                 </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-0   max-h-screen h-screen  resize-x">
-                <div id="1" style={{backgroundColor: "#212121"}} className=" px-4 py-4 h-100 resize-x">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-0 max-h-screen h-screen resize-x">
+                <div id="1" style={{backgroundColor: "#212121"}} className="px-8 py-4 h-100 resize-x">
                     <h1 className="text-2xl font-bold text-white">Using your terminal</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
@@ -60,7 +59,7 @@ export function LearnCore() {
 
                 </div>
 
-                <div id="2" style={{backgroundColor: "#212121"}} className="overflow-y-auto max-h-screen h-screen hidden px-4 py-4  ">
+                <div id="2" style={{backgroundColor: "#212121"}} className="overflow-y-auto max-h-screen h-screen hidden px-8 py-4">
                     <h1 className="text-2xl font-bold text-white">Using your terminal</h1>
                     <p className="text-white text-blue-500">@pranavramesh</p>
 
@@ -116,7 +115,7 @@ export function LearnCore() {
 
                     <p className='text-white mt-4'>You can view a the file by running the command <span className='text-white text-sm bg-black rounded-lg px-2'>cat /NanoFun.txt</span>.</p>
 
-                    {/* boottom footer */}
+                    {/* bottom footer */}
 
                     <div className='fixed bottom-0 left-0 right-0 mb-5'>
                     <div className='mt-4 flex'>
@@ -138,8 +137,9 @@ export function LearnCore() {
                 </div>
 
                 <div id="3" style={{backgroundColor: "#212121"}} className=" hidden px-4 py-4 h-100 resize-x">
-                    <h1 className='text-white text-6xl font-semibold mt-4 mx-auto text-center mt-20'>Nice work.</h1>
+                    <h1 className='text-white text-6xl font-semibold mt-4 mx-auto text-center mt-20'>Nice work!</h1>
                     <h1 className='text-white text-xl font-semibold mt-4 mx-auto text-center '>You've finished this lesson.</h1>
+                    <CheckCircleIcon className='mx-auto mt-6 h-36 text-green-500'/>
 <div>
     </div>
 

@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
 
-export function LearnNav({navElements}) {
+export function LearnNav({navElements, lessonNum}) {
   const [lessonProgress, setLessonProgress] = useState(null);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/1/progress`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonNum}/progress`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

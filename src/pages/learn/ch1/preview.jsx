@@ -37,7 +37,7 @@ export default function Dashboard() {
                 </div>
                     <div className="flex max-w-7xl mx-auto ">
                     {/* Sidebar */}
-                    <LearnNav navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
+                    <LearnNav lessonNum={1} navElements={[{href: "./preview", title: "What is Linux?"}, {href: "./video1", title: "Command Basics"}, {href: "./activity1", title: "Mastery Task"}, {href: "./dynamic1", title: "Logging into a server"}]}/>
 
                     {/* Main content area */}
                     <div className=" text-white">

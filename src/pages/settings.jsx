@@ -468,10 +468,14 @@ try {
                         </label>
                         <input
                           type="text"
+                          onChange={handleInputChange}
                           name="url"
                           id="url"
                           className="mt-2 bg-neutral-800 border-none block w-full rounded-md  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
                         />
+                        <label htmlFor="url" className="block mt-0.5 text-xs font-medium leading-6 text-white">
+                          Your GitHub link: github.com/{inputText}
+                        </label>
                       </div>
                     </div>
 
@@ -500,7 +504,7 @@ try {
 
                       <div className="sm:col-span-3">
                         <label htmlFor="country" className="block text-sm font-medium leading-6 text-white">
-                          Country
+                          Location
                         </label>
                         <select
                           id="location"
@@ -509,9 +513,13 @@ try {
                           className="mt-2 bg-neutral-800 border-none block w-full rounded-md  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
                         >
                           <option />
-                          <option>United States</option>
-                          <option>Canada</option>
-                          <option>Mexico</option>
+                          <option>North America</option>
+                          <option>South America</option>
+                          <option>Europe</option>
+                          <option>Africa</option>
+                          <option>Asia</option>
+                          <option>Oceania</option>
+                          <option>Antarctica</option>
                         </select>
                       </div>
 
