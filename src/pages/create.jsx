@@ -215,7 +215,7 @@ export default function Create() {
              
                 <a href="/guides/approve">
                   <div class="max-w-sm mt-8 rounded-lg shadow bg-[#212121] hover:bg-[#303030] px-4 py-4 rounded-md">
-                      <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">The Creation Process</h5>
+                    <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">The Creation Process</h5>
                     <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Everything to know about the challenge creation, approval, and management process.</p>
                     <p class="inline-flex items-center text-blue-600 hover:underline">
                       Read More
@@ -318,10 +318,10 @@ export default function Create() {
                       </div>
                     </div>
                     
-                    <AnimatePresence>
+                    <AnimatePresence className="w-full">
                       {hasChallenges && (
                         <motion.div
-                          className="flex flex-wrap justify-center"
+                          className="  lg:min-w-0 lg:flex-1"
                           initial={{ opacity: 0, x: 100 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.2, delay: 0.2 }}

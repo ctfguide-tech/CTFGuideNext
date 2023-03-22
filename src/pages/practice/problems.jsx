@@ -5,40 +5,75 @@ import { Footer } from '@/components/Footer'
 import { PracticeNav } from '@/components/practice/PracticeNav'
 import { ProblemSetCards } from '@/components/practice/GoToCreate'
 import ProblemSet from '@/components/practice/ProblemSet'
+import { ChallengeCard } from '@/components/create/ChallengeCard';
+import { Community } from '@/components/practice/community'
+import ProblemSetCard from '@/components/practice/ProblemSetCard';
+import Challenge from "@/components/challenge/ChallengeComponent";
 
 export default function ProblemsPage() {
-    const [components, setComponents] = useState([]);
+ //   const [components, setComponents] = useState([]);
     const set = [
         {
-            name: "Cryptography", 
-            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity."
+            name: "Cryptography",
+            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity.",
+            category: "cryptography"
         },
         {
-            name: "Forensics", 
-            description: "Sometimes, secrets are hidden in plain site. Can you crack these challenges?"
+            name: "Forensics",
+            description: "Sometimes, secrets are hidden in plain site. Can you crack these challenges?",
+            category: "forensics"
         },
         {
-            name: "Web", 
-            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity."
+            name: "Web",
+            description: "Cryptography deals with algorithms to secure info. Encryption/decryption are the foundation of cybersecurity.",
+            category: "web"
         }
     ];
 
+    const [cryptoChallenges, setCryptoChallenges] = useState([]);
+
+/*
     useEffect(() => {
         try {
             fetch(process.env.NEXT_PUBLIC_API_URL + "/challenges")
                 .then((response) => response.json())
                 .then((data) => {
                     if (result) {
-                    const {result} = data;
-                    setComponents(result);
+                        const { result } = data;
+                        setComponents(result);
                     }
                 })
                 .catch((error) => {
                     console.error(error);
                 });
+
+
+
         } catch {
 
         }
+
+
+
+
+    }, []);
+    */
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // const response = await fetch('https://api.ctfguide.com/challenges/type/all');
+                // const data = await response.json();
+                // setChallenges([...data]);
+                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges?category=cryptography');
+                const { result } = await response.json();
+
+                setCryptoChallenges([...result]);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        fetchData();
     }, []);
 
     const filterData = (category) => {
@@ -48,6 +83,19 @@ export default function ProblemsPage() {
             })
         });
     }
+
+    const badgeColor = {
+        'easy': 'bg-[#28a745] text-[#212529] ',
+        'medium': 'bg-[#f0ad4e] text-[#212529] ',
+        'hard': 'bg-[#dc3545] ',
+    }
+
+    const borderColor = {
+        'easy': 'border-[#28a745] text-[#212529] ',
+        'medium': 'border-[#f0ad4e] text-[#212529] ',
+        'hard': 'border-[#dc3545] ',
+    }
+
 
     return (
         <>
@@ -77,11 +125,11 @@ export default function ProblemsPage() {
                             <ProblemSetCards />
                         </div>
                         {set.map((setInfo, index) => (
-                            <div key={index} className="rounded-lg overflow-hidden shadow-lg mb-16 mr-4 border-2 border-[#212121]">
-                                <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-white">{setInfo.name}</h2>
-                                <p className="text-gray-300 text-center mt-2">{setInfo.description}</p>
-                                <div className="container mx-auto">
-                                    <ProblemSet data={filterData(setInfo.name)}/>
+                            <div key={index} className="rounded-lg overflow-hidden shadow-lg mb-16 mr-4 border-2 border-[#323232]">
+                                <h2 className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-100">{setInfo.name}</h2>
+                                <p className="text-gray-200 text-center mt-2 py-2">{setInfo.description}</p>
+                                <div className='border border-2 border-[#212121]'>
+                                    <ProblemSetCard categoryName={setInfo.category}/>
                                 </div>
                             </div>
                         ))}

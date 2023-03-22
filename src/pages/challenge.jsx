@@ -4,6 +4,7 @@ import { useEffect, useState, Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Collapsible from 'react-collapsible';
+import { Footer } from '@/components/Footer'
 
 function Pratice({slug}) {
     const NO_PLACE = "Not placed";
@@ -297,10 +298,14 @@ function Pratice({slug}) {
                     <h1 className='text-white text-3xl font-semibold inline-block'> Challenge Description </h1>
                 </div>
 
-                <div>
-                    <button onClick={likeChallenge} className="px-10 py-2  m-1 rounded-md card-body flex bg-neutral-800">
-                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400  text-2xl font-semibold mr-4">👍</h1>
-                        <p className="text-white text-lg">{likeCount}</p>
+                <div className='flex'>
+                    <button onClick={likeChallenge} className="px-10 py-2 m-1 rounded-md card-body flex bg-neutral-800 hover:bg-neutral-700">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400 mt-1 text-2xl font-semibold mr-4">👍</h1>
+                        <p className="text-white text-lg mt-1">{likeCount}</p>
+                    </button>
+                    <button className="px-4 py-1 m-1 rounded-md card-body bg-neutral-800 hover:bg-neutral-700">
+                        <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-yellow-400 text-sm font-semibold">View Submissions</h1>
+                        <p className="text-white text-sm">Coming Soon</p>
                     </button>
                 </div>
             </div>
@@ -413,7 +418,7 @@ function Pratice({slug}) {
               <div className="relative inline-block align-bottom bg-gray-900 border border-gray-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
                   <div className="mx-auto flex items-center justify-center rounded-full ">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-yellow-500">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                     </svg>
 
@@ -440,7 +445,7 @@ function Pratice({slug}) {
                   <button
                     type="button"
                     className="ml-2 w-auto inline-flex justify-center   rounded-md shadow-sm px-4 py-2 bg-gray-800 border border-gray-700 text-base font-medium text-white  focus:outline-none  sm:text-sm"
-                    onClick={() => window.location.href = "../practice/all"}
+                    onClick={() => window.location.href = "../practice"}
                   >
                     Back to Challenges
                   </button>
@@ -507,7 +512,8 @@ function Pratice({slug}) {
                 </div>
             </Dialog>
         </Transition.Root>
-        
+        <p className="mx-auto w-3/5 text-gray-200 mt-1.5 text-sm bg-neutral-800 rounded-lg py-0.5 px-4">ℹ We provide accessible environments for everyone to run cybersecurity tools. Abuse and unnecessary computation is prohibited.</p>
+        <Footer />
         </>
     )
 }

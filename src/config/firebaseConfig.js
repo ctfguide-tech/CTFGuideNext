@@ -12,7 +12,6 @@ import { initializeApp } from "firebase/app";
 */
 
 /*
-
 const firebaseConfig = {
   apiKey: "AIzaSyAHz1s-UuNhlZ6aKvqwzmzzidzWxBKw9hw",
   authDomain: "ctfguide-dev.firebaseapp.com",
@@ -20,12 +19,13 @@ const firebaseConfig = {
   storageBucket: "ctfguide-dev.appspot.com",
   messagingSenderId: "792987058367",
   appId: "1:792987058367:web:c48935325e46043c3cc60a"
-};
+};*/
+
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 
-*/
+
 
 
 const firebaseConfig = {
@@ -40,8 +40,11 @@ const firebaseConfig = {
 };
 
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);  
+
+
+
+// Initialize Firebase
 
 
 

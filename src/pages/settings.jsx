@@ -242,7 +242,7 @@ export default function Dashboard() {
       }
     });
     
-    xhr.open("PUT", `${NEXT_PUBLIC_API_URL}/account/preferences`);
+    xhr.open("PUT", `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
     xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("idToken"));
     xhr.setRequestHeader("Content-Type", "application/json");
     
@@ -257,7 +257,7 @@ export default function Dashboard() {
     xhr.addEventListener("readystatechange", function () {
       if (this.readyState === 4) {
         console.log(this.responseText);
-
+        console.log("PREFFF")
 try {
         if (JSON.parse(this.responseText)[0].value == true) {
           document.getElementById("friend-notif").checked = true;
@@ -267,7 +267,7 @@ try {
           document.getElementById("challenge-notif").checked = true;
         }
       } catch (error) {
-        console.log(error)
+        // .alert(error)
       }
 
 
@@ -412,7 +412,7 @@ try {
                         </div>
                       </div>
 
-                      <div className="sm:col-span-6">
+                      <div className="sm:col-span-6 blur-sm ">
                         <label htmlFor="photo" className="block text-sm font-medium leading-6 text-white flex">
                           Photo  (Experimental)
                         </label>
@@ -430,6 +430,7 @@ try {
                               name="user-photo"
                               type="file"
                               className="peer absolute inset-0 h-full w-full rounded-md opacity-0"
+                              disabled
                             />
                             <label
                               htmlFor="user-photo"
