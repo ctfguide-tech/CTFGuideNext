@@ -5,7 +5,7 @@ export function ChallengeCard({challenge}) {
         <>
             <div className='pl-5 w-full  mt-4'>
                 <div className="border-l-4 border-blue-600 px-6 py-2.5 mx-auto rounded-lg hover:outline-neutral-700 bg-[#212121] hover:bg-[#2c2c2c] flex">
-                    <div className="text-white text-2xl my-auto mr-6">{challenge.title}</div>
+                    <div className="text-white text-lg my-auto mr-6">{challenge.title}</div>
                     <div className="bg-neutral-900 border-blue-700 border hover:bg-neutral-800 rounded-md my-auto">
                         <div className="px-3 my-auto mx-auto text-center text-md text-white rounded-lg">
                             {challenge.category[0]}
