@@ -185,15 +185,15 @@ export default function Login() {
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-200">
-                  Username
+                  Email
                 </label>
                 <div className="mt-1">
                   <input
                     style={{ backgroundColor: "#161716", borderWidth: "0px" }}
                     id="username"
-                    name="username"
+                    name="email"
                     type="text"
-                    autoComplete="username"
+                    autoComplete="email"
                     required
                     className="text-white block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                   />

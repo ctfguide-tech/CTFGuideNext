@@ -1,11 +1,73 @@
 import Head from 'next/head'
 import Link from 'next/link'
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { app } from '../config/firebaseConfig';
+const provider = new GoogleAuthProvider();
 
 
 export default function Register() {
+  async function loginGoogle() {
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+
+
+        // Fetch ID Token
+        result.user.getIdToken().then((idToken) => {
+          // Send token to backend via HTTPS
+          console.log(idToken)
+          localStorage.setItem("idToken", idToken);
+
+
+          var data = new FormData();
+          var xhr = new XMLHttpRequest();
+
+
+
+          xhr.open("GET", `${process.env.NEXT_PUBLIC_API_URL}/account`);
+          xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+              try {
+                var parsed = JSON.parse(this.responseText);
+
+
+                if (!parsed.email) {
+                  // User hasn't finished onboarding.
+                  window.location.replace("/onboarding");
+                  return;
+                }
+
+                // Store related API endpoints in local storage.
+                localStorage.setItem("userLikesUrl", parsed.userLikesUrl);
+                localStorage.setItem("userChallengesUrl", parsed.userChallengesUrl);
+                localStorage.setItem("userBadgesUrl", parsed.userBadgesUrl);
+                localStorage.setItem("notificationsUrl", parsed.notificationsUrl);
+                localStorage.setItem("email", parsed.email);
+                localStorage.setItem("role", parsed.role);
+
+                window.location.replace("/dashboard")
+              } catch (error) {
+                console.log("Error parsing JSON data:", error);
+              }
+            }
+          });
+          xhr.setRequestHeader("Authorization", "Bearer " + idToken);
+          xhr.send(data);
+        }
+        );
+
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        const credential = GoogleAuthProvider.credentialFromError(error);
+
+        document.getElementById("error").classList.remove("hidden");
+        document.getElementById("errorMessage").innerHTML = errorMessage;
+      });
+  }
 
   async function registerUser() {
     const auth = getAuth();
@@ -34,7 +96,7 @@ export default function Register() {
             });
             xhr.setRequestHeader("Authorization", `Bearer ${idToken}`);
             xhr.send();
-            
+
 
           }
           );
@@ -61,7 +123,7 @@ export default function Register() {
       </Head>
 
       <div style={{ fontFamily: "Poppins, sans-serif", height: "100vh" }} className="flex min-h-full animate__animated animate__fadeIn">
-        <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="flex flex-1 flex-col justify-center  sm:px-6 px-4  lg:flex-none lg:px-20 xl:px-24">
           <div className=" mx-auto w-full max-w-sm lg:w-96">
             <div>
               <Link href="../" className="my-auto flex">
@@ -83,30 +145,30 @@ export default function Register() {
 
             <div className="mt-8">
               <div>
-                <div hidden>
-                  <p className="text-sm font-medium text-white">Sign up with</p>
+                <div >
 
-                  <div className="mt-2 grid grid-cols-1 gap-3 hidden">
+                  <div className="mt-2 grid grid-cols-1 gap-3 ">
 
 
-                    <div>
-                      <a
-                        style={{ backgroundColor: "#212121" }}
-                        href="#"
-                        className="inline-flex w-full justify-center rounded-md   py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                      >
-                        <span className="sr-only">Sign up with Google</span>
-                        <svg className="h-5 w-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                          <clipPath id="p.0"> <path d="m0 0l20.0 0l0 20.0l-20.0 0l0 -20.0z" clipRule="nonzero" /> </clipPath> <g clipPath="url(#p.0)"> <path fill="currentColor" fillOpacity="0.0" d="m0 0l20.0 0l0 20.0l-20.0 0z" fillRule="evenodd" /> <path fill="currentColor" d="m19.850197 8.270351c0.8574047 4.880001 -1.987587 9.65214 -6.6881847 11.218641c-4.700598 1.5665016 -9.83958 -0.5449295 -12.08104 -4.963685c-2.2414603 -4.4187555 -0.909603 -9.81259 3.1310139 -12.6801605c4.040616 -2.867571 9.571754 -2.3443127 13.002944 1.2301085l-2.8127813 2.7000687l0 0c-2.0935059 -2.1808972 -5.468274 -2.500158 -7.933616 -0.75053835c-2.4653416 1.74962 -3.277961 5.040613 -1.9103565 7.7366734c1.3676047 2.6960592 4.5031037 3.9843292 7.3711267 3.0285425c2.868022 -0.95578575 4.6038647 -3.8674583 4.0807285 -6.844941z" fillRule="evenodd" /> <path fill="currentColor" d="m10.000263 8.268785l9.847767 0l0 3.496233l-9.847767 0z" fillRule="evenodd" /> </g>
-                        </svg>
-                      </a>
-                    </div>
+
+  <div>
+    <a
+      href="#"
+      className="inline-flex w-full bg-neutral-800 justify-center rounded-md  bg-white py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-700"
+      onClick={loginGoogle}
+    >
+      <span className="sr-only">Sign in with Google</span>
+      <svg className='h-6 w-6' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" /><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" /><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" /><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" /></svg>
+      <p className='ml-2'>Sign up with Google</p>
+    </a>
+
+</div>
                   </div>
                 </div>
 
-                <div className="hidden relative mt-6">
+                <div className=" relative mt-6">
                   <div className="relative flex justify-center text-sm">
-                    <span className=" px-2 text-gray-500">Or use your email</span>
+                    <span className=" px-2 text-gray-200">Or use your email</span>
                   </div>
                 </div>
               </div>
@@ -198,12 +260,14 @@ export default function Register() {
                       Create an account
                     </button>
                   </div>
+
+            
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="relative  w-0 flex-1 lg:block">
+        <div className="relative hidden md:visible lg:visible  w-0 flex-1 lg:block">
           <img
             className="absolute inset-0 h-full w-full object-cover "
             src="https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
