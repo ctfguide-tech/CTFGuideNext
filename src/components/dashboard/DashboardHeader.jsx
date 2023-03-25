@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 export function DashboardHeader() {
 
-  const [username, setUsername] = useState("Loading...");
-  const [location, setLocation] = useState("Loading...");
+  const [username, setUsername] = useState("");
+  const [location, setLocation] = useState("");
   const [join, setJoin] = useState("");
   const [github, setGithub] = useState("https://github.com");
 
-  const [points, setPoints] = useState("...");
-  const [rank, setRank] = useState("...");
+  const [points, setPoints] = useState("");
+  const [rank, setRank] = useState("");
 
   useEffect(() => {
       try {
@@ -45,14 +48,21 @@ export function DashboardHeader() {
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
           <div className="flex">
             <a href="./settings">
+              {
+              username && (
               <img style={{ borderColor: "#ffbf00" }} className="hover:bg-[#212121] h-24 w-24 rounded-full sm:h-32 sm:w-32" src={`https://robohash.org/` + username + `.png?set=set1&size=150x150`} alt="" />
-            </a>
+              ) || (
+                <Skeleton circle={true} height={150} width={150} baseColor="#262626" highlightColor="#262626"/>
+              )
+              }
+              
+              </a>
           </div>
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
-              <h1 className="truncate text-2xl font-bold text-white mt-8">{username}</h1>
+              <h1 className="truncate text-2xl font-bold text-white mt-8">{username || <Skeleton baseColor="#262626" highlightColor="#262626"/>}</h1>
               <p className='text-white'>
-              <i class="mt-2 fas fa-map-marker-alt"></i>  {location}
+              <i class="mt-2 fas fa-map-marker-alt"></i>  {location || <Skeleton baseColor="#262626" highlightColor="#262626"/>}
               </p>
             </div>
             <div className="justify-stretch mt-12 flex  ">
@@ -80,7 +90,7 @@ export function DashboardHeader() {
           </div>
         </div>
         <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
-          <h1 className="truncate text-2xl font-bold text-gray-900">{username}</h1>
+          <h1 className="truncate text-2xl font-bold text-gray-900">{username || <Skeleton baseColor="#262626" highlightColor="#262626"/>}</h1>
         </div>
       </div>
     </div>

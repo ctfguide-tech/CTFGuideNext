@@ -16,6 +16,10 @@ import { Likes } from '@/components/dashboard/Likes'
 import { Badges } from '@/components/dashboard/Badges'
 import { useRouter } from 'next/router'
 
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+
 export default function Dashboard() {
   const router = useRouter()
 
@@ -85,7 +89,7 @@ export default function Dashboard() {
         </style>
       </Head>
       <StandardNav />
-      <main>
+      <main className='animate__animated animate__fadeIn'>
         <DashboardHeader />
         <div className="flex  max-w-7xl mx-auto ">
           {/* Sidebar */}
