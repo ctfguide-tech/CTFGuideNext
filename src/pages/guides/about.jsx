@@ -4,6 +4,7 @@ import { Footer } from '@/components/Footer';
 import { useRef } from "react";
 import { useScroll } from "framer-motion";
 import { PracticeNav } from '@/components/practice/PracticeNav';
+import { Bars3Icon, BellIcon, XMarkIcon, Cog6ToothIcon, PencilSquareIcon, ShieldExclamationIcon, UserCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 const pages = [
   { name: 'Hub', href: '../practice', current: false },
   { name: "About CTFGuide", href: './create', current: true },
@@ -75,30 +76,27 @@ export default function CTFGuide() {
     </nav>
           <div className='px-4 py-4 rounded-md mt-5'>
             <h1 className="text-3xl font-bold mb-2">What is CTFGuide?</h1>
-            <p className="mb-4 text-xl text-blue-500">
+            <p className="mb-8 text-xl text-blue-500">
               Hello there, we're so happy to have you here! 
             </p>
             <p className="mb-4 text-lg">
-              We are CTFGuide, a platform that helps you master cybersecurity through a personalized and community-based approach. 
+              We are CTFGuide, a platform to help you master cybersecurity through a personalized and community-based approach. 
               <br></br>
             </p>
             <p className="mb-4 text-lg">
               We offer cloud terminals, hundreds of practice problems, and competitions that allow you to enhance your cybersecurity skills. We use AI-driven feedback to help you identify your strengths and weaknesses so you can improve your skills!
               <br></br>
             </p>
+            <img className="w-3/5" src="../roadmap.png"></img>
           </div>
           <div className='px-4 py-4 rounded-md'>
             <h1 className="text-3xl font-bold mb-3 mt-5">What is "CTF"?</h1>
               <p className="mb-2 text-2xl text-blue-500">
                 CTF = Capture The Flag
               </p>
-              <p className="mb-4 text-lg">
-                Capture The Flag is type of cybersecurity challenge problem where people use analytical skills, network and security tools, and computer environments to solve problems.
-                <br></br>
-              </p>
-              <p className="mb-4 text-lg">
+              <p className="mb-8 text-lg">
+                <span className='font-semibold'>Capture The Flag</span> is a type of cybersecurity challenge problem where people use analytical skills, network and security tools, and computer environments to solve problems.<br></br><br></br>
                 Solving these challenges can help you get familiar with real world cybersecurity tools as well as build your critical thinking and analytical skills!
-                <br></br>
               </p>
               <p className="mb-2 text-2xl text-blue-500">
                 State of the CTF World
@@ -106,39 +104,63 @@ export default function CTFGuide() {
               <p className="mb-4 text-lg">
                 A lot of people play CTFs for fun and CTFs are also a cornerstone of competitive cybersecurity events.
                 <br></br>
-                <br></br>
                 In fact, our founding team comes from this background. Our founder, Pranav, was a big time player in University of Delaware's Blue Hen CTF in 2019/2020.
               </p>
+              <img className="mb-8 mt-4 w-1/6" src="../organization.png"></img>
               <p className="mb-2 text-2xl text-blue-500">
                 Where next?
               </p>
               <p className="mb-4 text-lg">
-                Aside from being fun and games, the basic concept of simulating realistic scenarios is incredibly important for evaluating skillsets.
+                Aside from competitive cybersecurity and education, the concept of simulating realistic scenarios is incredibly important for evaluating skillsets.
                 <br></br>
                 <br></br>
-                CTFGuide is a data-centric, simplicity-loving team of cyber enthusiasts and cloud engineers aiming to revolutionize these foundational ideas.
+                CTFGuide is a data-centric, simplicity-loving team of cyber enthusiasts and cloud engineers aiming to revolutionize skills evaluation in cybersecurity.
               </p>
           </div>
           <div className='px-4 py-4 rounded-md'>
             <h1 className="text-3xl font-bold mb-3 mt-5">Our Principles 🏆</h1>
-              <p className="text-2xl text-blue-500">
+              <p className="mt-6 text-2xl text-blue-500">
                 Simplicity
               </p>
               <p className="mb-4 text-lg text-white">
                 We aim to be as beginner friendly as possible.
               </p>
+              <img className="mb-8 h-16" src="../practice.png"></img>
               <p className="text-2xl text-blue-500">
-                Accessibility
+                  Accessibility
               </p>
               <p className="mb-4 text-lg text-white">
-                We're free to use, from anywhere, forever.
+                  We're free to use, from anywhere, forever.
               </p>
+              <img className="mb-8 h-16" src="../free.png"></img>
               <p className="text-2xl text-blue-500">
                 Data-Driven
               </p>
               <p className="mb-4 text-lg text-white">
-                We help everyone discover their strengths and weaknesses. Discover your cybersecurity skills and interests with us!
+                We use data to help you discover your skills and interests with us!
               </p>
+              <img className="mb-8 h-16" src="../stats.png"></img>
+            </div>
+          <div className='px-4 py-4 rounded-md'>
+            <h1 className="text-3xl font-bold mb-3 mt-5">Get Started!</h1>
+              <a href="/guides/solve" className='flex'>
+                <p className="mt-4 text-2xl text-blue-400 hover:text-blue-300">
+                  Learn how to solve your first CTF
+                </p>
+                <ArrowRightIcon className="block text-blue-400 h-6 w-6 ml-2 mt-5 hover:text-blue-300" aria-hidden="true" />
+              </a>
+              <a href="/guides/create" className='flex'>
+                <p className="mt-4 text-2xl text-blue-400 hover:text-blue-300">
+                  Create a CTF challenge
+                </p>
+                <ArrowRightIcon className="block text-blue-400 h-6 w-6 ml-2 mt-5 hover:text-blue-300" aria-hidden="true" />
+              </a>
+              <a href="/guides/approve" className='flex'>
+                <p className="mt-4 text-2xl text-blue-400 hover:text-blue-300">
+                  Getting a CTF challenge approved
+                </p>
+                <ArrowRightIcon className="block text-blue-400 h-6 w-6 ml-2 mt-5 hover:text-blue-300" aria-hidden="true" />
+              </a>
             </div>
           <p className='bg-neutral-800 px-4 py-2 rounded-md mt-10'>Join our <a href="https://discord.gg/q3hgRBvgkX" className='cursor-pointer text-blue-500 hover:underline '>Discord Community</a> to get updates and chat with fellow hackers!</p>
           </div>
