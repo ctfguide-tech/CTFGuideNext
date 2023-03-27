@@ -45,7 +45,7 @@ export function LearningPanel() {
                         Get a personalized learning roadmap based on your skill level and learning goals.
                         </p>
                     </div>
-                    <div className='text-white text-4xl font-semibold mx-auto'>
+                    <div className='w-full text-white text-4xl font-semibold mx-auto'>
                         <img src="./group21.png"></img>
                     </div>
                 </div>
