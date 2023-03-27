@@ -14,7 +14,7 @@ export function Stats() {
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
 
               <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Perfect for Beginners and Pros Alike</p>
-              <p className="mt-6 text-lg leading-8 text-white mb-10">At CTFGuide, our community provides a supportive environment for skills development, collaboration, and knowledge sharing. The diversity of perspectives enriches the learning experience and contributes to CTFGuide's growth and success.
+              <p className="mt-6 text-lg leading-8 text-white mb-10">At CTFGuide, our community provides a supportive environment for skills development, collaboration, and knowledge sharing. <br></br><br></br>The diversity of perspectives enriches the learning experience and contributes to CTFGuide's growth and success.
 
 
 
