@@ -70,11 +70,25 @@ function Pratice({slug}) {
 
                 setTerminalUsername(result.username);
                 setTerminalPassword(result.password);
+
+
+
+
             } catch (err) {
-                throw err;
+                console.log(err);
+                setTerminalUsername("Something went wrong.")
+                setTerminalPassword("Something went wrong.")
+
             }
         };
+
+        try {
         fetchTerminalData();
+        } catch(err) {
+            console.log(err)
+            setTerminalUsername("Something went wrong.")
+            setTerminalPassword("Something went wrong.")
+        }
     }, []);
 
 
