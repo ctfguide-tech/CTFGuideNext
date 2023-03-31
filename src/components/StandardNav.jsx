@@ -226,6 +226,7 @@ export function StandardNav() {
                         <img
                           className="h-8 w-8 rounded-full border bg-neutral-900 "
                           src={`https://robohash.org/` + username + `.png?set=set1&size=150x150`} 
+                          loading="lazy" 
                           alt=""
                         />
                       </Menu.Button>

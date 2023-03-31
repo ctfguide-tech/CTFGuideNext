@@ -19,6 +19,9 @@ function Pratice({slug}) {
     const [comments, setComments] = useState([]);
     const [leaderboards, setLeaderboards] = useState([NO_PLACE, NO_PLACE, NO_PLACE]);
     const [award, setAward] = useState("");
+    const [terminalUsername, setTerminalUsername] = useState("...");
+    const [terminalPassword, setTerminalPassword] = useState("...");
+    
 
     const [userData, setUserData] = useState({
         points: 0,
@@ -52,6 +55,43 @@ function Pratice({slug}) {
         };
         fetchData();
     }, []);
+
+
+    // contact the terminal gateway
+    useEffect(() => {
+        const fetchTerminalData = async () => {
+            try {
+                const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
+                const requestOptions = {
+                    method: 'GET',
+                }
+                const response = await fetch(endPoint, requestOptions);
+                const result = await response.json();
+
+                setTerminalUsername(result.username);
+                setTerminalPassword(result.password);
+
+
+
+
+            } catch (err) {
+                console.log(err);
+                setTerminalUsername("Something went wrong.")
+                setTerminalPassword("Something went wrong.")
+
+            }
+        };
+
+        try {
+        fetchTerminalData();
+        } catch(err) {
+            console.log(err)
+            setTerminalUsername("Something went wrong.")
+            setTerminalPassword("Something went wrong.")
+        }
+    }, []);
+
+
 
     useEffect(() => {
         const fetchLikeUrl  = async () => {
@@ -358,7 +398,7 @@ function Pratice({slug}) {
         </div>
 
         <div id="terminal" className=" mt-6 ">
-            <p className="text-gray-400 mb-2 hint"><span className="text-white ">Terminal (Beta)</span> Login as <span className="text-yellow-400">{userData.susername}</span> using the password <span className="text-yellow-400">{userData.spassword}</span><a style={{ cursor: 'pointer' }} className="hidden hover:bg-black text-gray-300">Need help?</a></p>
+            <p className="text-gray-400 mb-2 hint"><span className="text-white ">Terminal (Beta)</span> Login as <span className="text-yellow-400">{terminalUsername}</span> using the password <span className="text-yellow-400">{terminalPassword}</span><a style={{ cursor: 'pointer' }} className="hidden hover:bg-black text-gray-300">Need help?</a></p>
             <iframe className="w-full" height="500" src="https://terminal.ctfguide.com/wetty/ssh/root?pass=" ></iframe>
         </div>
         <div className="mt-5 rounded-lg px-5 pb-20">
