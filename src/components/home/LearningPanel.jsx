@@ -38,14 +38,14 @@ export function LearningPanel() {
                     </div>
                     <div className='mx-auto my-auto'>
                         <div className='flex'>
-                            <h1 className='font-semibold text-white text-4xl mb-5'>          Dynamic Roadmaps</h1><LightBulbIcon className='w-10 h-10 mt-2 ml-4 text-yellow-500'/>
+                            <h1 className='font-semibold text-white text-4xl mb-5'>          Dynamic Roadmaps</h1>
                         </div>
                         
                         <p className="text-white text-xl">
                         Get a personalized learning roadmap based on your skill level and learning goals.
                         </p>
                     </div>
-                    <div className='text-white text-4xl font-semibold mx-auto'>
+                    <div className='ml-16 w-full text-white text-4xl font-semibold mx-auto'>
                         <img src="./group21.png"></img>
                     </div>
                 </div>

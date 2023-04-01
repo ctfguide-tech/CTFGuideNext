@@ -14,7 +14,7 @@ export function Footer() {
               <NavLink href="../terms-of-service">Terms of Service</NavLink>
               <NavLink href="../privacy-policy">Privacy Policy</NavLink>
               <NavLink href="https://status.ctfguide.com/">Status</NavLink>
-              <NavLink href="../careers">Careers</NavLink>
+              <NavLink href="../careers">Join our Team!</NavLink>
               
 
 

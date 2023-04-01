@@ -87,7 +87,6 @@ export default function CTFGuide() {
               We offer cloud terminals, hundreds of practice problems, and competitions that allow you to enhance your cybersecurity skills. We use AI-driven feedback to help you identify your strengths and weaknesses so you can improve your skills!
               <br></br>
             </p>
-            <img className="w-3/5" src="../roadmap.png"></img>
           </div>
           <div className='px-4 py-4 rounded-md'>
             <h1 className="text-3xl font-bold mb-3 mt-5">What is "CTF"?</h1>

@@ -14,6 +14,7 @@ function Pratice({slug}) {
     const [likeCount, setLikeCount] = useState(0);
     const [open, setOpen] = useState(false);
     const [hintOpen, setHintOpen] = useState(false);
+    const [hints, setHints] = useState([]);
     const [flag, setFlag] = useState("");
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
@@ -126,6 +127,11 @@ function Pratice({slug}) {
     }, []);
 
     useEffect(() => {
+        fetchHints();
+    }, []);
+
+
+    useEffect(() => {
         if(challenge.upvotes) {
             setLikeCount(challenge.upvotes);
         }
@@ -192,6 +198,26 @@ function Pratice({slug}) {
 
             if(result && result.length) {
                 setComments([...result]);
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const fetchHints = async () => {
+        try {
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('idToken'),
+                },
+            };
+            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint', requestOptions);
+            const result = await response.json()
+            if(result && result.length > 0) {
+                setHints(result);
+                console.log(result)
             }
         } catch (error) {
             throw error;
@@ -518,6 +544,7 @@ function Pratice({slug}) {
                             <div className="flex items-start justify-between">
                                 <Dialog.Title className="text-base font-semibold leading-6 text-gray-300">
                                 <h2>Hints</h2>
+                                <hr></hr>
                                 </Dialog.Title>
                                 <div className="ml-3 flex h-7 items-center">
                                 <button
@@ -530,13 +557,16 @@ function Pratice({slug}) {
                                 </button>
                                 </div>
                             </div>
+                            <div className='bg-neutral-800 rounded-md border border-neutral-900 mt-3'>
+                                <h2 className='mx-4 text-gray-200 text-md mt-2 mb-2'><i class="far fa-lightbulb text-yellow-400"></i> On our main platform, each hint incurs a 10% penalty and each submission a 3% penalty.</h2>
                             </div>
-                            <div className="relative mt-6 flex-1 px-4 sm:px-6  text-yellow-400 font-medium">
-                                {challenge.Hints ? challenge.Hints.map((hint, index) => (
+                            </div>
+                            <div className="relative mt-6 flex-1 px-4 sm:px-6 text-yellow-400 font-medium">
+                                {hints ? hints.map((hint, index) => (
                                     <div key={index} className='w-full p-2 border-2 border-gray-300 border-solid text-lg bg-[#212121]'>
                                     <Collapsible trigger={"Hint #" + (index + 1)} >
                                         <p className='text-base text-white font-normal'>
-                                            {hint.message}
+                                            {hint.hintMessage}
                                         </p>
                                     </Collapsible>
                                 </div>
