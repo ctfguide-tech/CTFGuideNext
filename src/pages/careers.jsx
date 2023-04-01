@@ -12,7 +12,7 @@ export default function Careers() {
   const team = [
     {
       personName: "Pranav Ramesh",
-      position: "CEO",
+      position: "Founder, CEO",
       image: "../pranavCTF.jpeg",
       width: "200",
       height: "200"
@@ -90,8 +90,8 @@ export default function Careers() {
 
         <div className='mx-auto text-center w-full mt-20 mb-20 max-w-6xl'>
 
-          <p className="mt-2 text-4xl font-bold text-white sm:text-4xl">Meet the team behind <span className='mt-2 text-4xl font-bold tracking-tight text-blue-600 sm:text-4xl'>CTFGuide</span></p>
-          <p className="mt-2 text-2xl font-bold  text-white ">A group of students dedicated to providing a space where students can learn, teachers can teach, and professionals can compete in the ever-emerging field of Cybersecurity</p>
+          <p className="mt-2 text-4xl font-bold text-white sm:text-4xl">Meet the team behind <span className='mt-2 text-4xl font-bold tracking-tight text-blue-500 sm:text-4xl'>CTFGuide</span></p>
+          <p className="mt-2 text-2xl font-bold  text-white ">We're dedicated to providing a space where students can learn, teachers can teach, and professionals can compete in the ever-emerging field of Cybersecurity</p>
 
         </div>
 

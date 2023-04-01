@@ -59,6 +59,7 @@ export default function Pratice() {
                                 </div>
                                 <div>
                                     <h1 className='text-white lg:text-lg md:text-md mx-auto'>All of these practice problems are community created!</h1>
+                                    <h1 className='text-white text-sm italic'>As of March 2023, we are still migrating the data from our old site! Some challenges won't show below.</h1>
                                 </div>
                             </div>
                         </div>
