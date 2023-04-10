@@ -50,7 +50,7 @@ export default function Create() {
           console.log(err);
         });
 
-      fetchChallenges();
+      fetchChallenges("unverified");
     } catch (error) {}
   }, [activeTab]);
 
