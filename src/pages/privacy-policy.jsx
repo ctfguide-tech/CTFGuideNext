@@ -1,11 +1,10 @@
-import Head from 'next/head'
-import { useEffect } from 'react'
-import { Header } from '@/components/Header'
+import Head from 'next/head';
+import { useEffect } from 'react';
+import { Header } from '@/components/Header';
 
 export default function TermsOfService() {
-useEffect(() => {
-
-document.getElementById("tos").innerHTML = `
+  useEffect(() => {
+    document.getElementById('tos').innerHTML = `
 <h1 class='text-4xl font-semibold mb-4'>Privacy Policy</h1>
 <p class="mb-4">Last updated: March 17, 2023</p>
 <p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
@@ -195,24 +194,24 @@ document.getElementById("tos").innerHTML = `
 <ul>
 <li>By email: staff@ctfguide.com</li>
 </ul>
-`
-
-}
-);
+`;
+  });
   return (
     <>
       <Head>
         <title>Terms of Service</title>
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+          @import
+          url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
       <Header />
 
-      <div id="tos" style={{listStyleType: "circle"}} className='text-white max-w-7xl mx-auto text-left mt-10 pb-10'>
-
-      </div>
-      
+      <div
+        id="tos"
+        style={{ listStyleType: 'circle' }}
+        className="mx-auto mt-10 max-w-7xl pb-10 text-left text-white"
+      ></div>
     </>
-  )
+  );
 }

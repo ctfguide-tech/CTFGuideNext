@@ -1,90 +1,106 @@
-import Head from 'next/head'
-import React, { useState, useEffect } from "react";
-import { StandardNav } from '@/components/StandardNav'
-import { Footer } from '@/components/Footer'
-import { PracticeNav } from '@/components/practice/PracticeNav'
-import { ProblemSetCards } from '@/components/practice/GoToCreate'
-import ProblemSet from '@/components/practice/ProblemSet'
+import Head from 'next/head';
+import React, { useState, useEffect } from 'react';
+import { StandardNav } from '@/components/StandardNav';
+import { Footer } from '@/components/Footer';
+import { PracticeNav } from '@/components/practice/PracticeNav';
+import { ProblemSetCards } from '@/components/practice/GoToCreate';
+import ProblemSet from '@/components/practice/ProblemSet';
 
-export default function ProblemSetCard({categoryName}) {
-    const [components, setComponents] = useState([]);
-    const [cryptoChallenges, setCryptoChallenges] = useState([]);
+export default function ProblemSetCard({ categoryName }) {
+  const [components, setComponents] = useState([]);
+  const [cryptoChallenges, setCryptoChallenges] = useState([]);
 
-    useEffect(() => {
-        try {
-            fetch(process.env.NEXT_PUBLIC_API_URL + `/challenges?category=${categoryName}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data)
-                    if (result) {
-                    const {result} = data;
-                    setComponents(result);
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        } catch {
-
-        }
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/challenges?category=${categoryName}`);
-                const { result } = await response.json();
-                setCryptoChallenges(result);
-                console.log(cryptoChallenges)
-            } catch (err) {
-                console.log (err);
-            }
-        };
-        fetchData();        
-    }, []);
-
-    const filterData = (category) => {
-        return components.filter(component => {
-            return component.category.some(categoryName => {
-                return categoryName.toLowerCase() === category.toLowerCase();
-            })
+  useEffect(() => {
+    try {
+      fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/challenges?category=${categoryName}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (result) {
+            const { result } = data;
+            setComponents(result);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
         });
-    }
+    } catch {}
+  }, []);
 
-    const badgeColor = {
-        'easy': 'bg-[#28a745] text-[#212529] ',
-        'medium': 'bg-[#f0ad4e] text-[#212529] ',
-        'hard': 'bg-[#dc3545] ',
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_API_URL +
+            `/challenges?category=${categoryName}`
+        );
+        const { result } = await response.json();
+        setCryptoChallenges(result);
+        console.log(cryptoChallenges);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
 
-    const borderColor = {
-        'easy': 'border-[#28a745] text-[#212529] ',
-        'medium': 'border-[#f0ad4e] text-[#212529] ',
-        'hard': 'border-[#dc3545] ',
-    }
+  const filterData = (category) => {
+    return components.filter((component) => {
+      return component.category.some((categoryName) => {
+        return categoryName.toLowerCase() === category.toLowerCase();
+      });
+    });
+  };
 
-    return (
-        <>
-            <div className="w-full overflow-x-scroll pb-4">
-                                <div className="flex gap-x-5 mt-3" style={{ width: "fit-content" }}>                             {
-                                    cryptoChallenges && cryptoChallenges.map((data) => (
-                                        <a
-                                            href={`/challenge?slug=${data.slug}`}
-                                            className=""
-                                        >
-                                            <div className={"min-h-[190px] min-w-[200px] w-full ml-4 flex-shrink-0 cursor-pointer text-white bg-neutral-800 hover:bg-neutral-800 font-semibold rounded-lg px-3 py-2  backdrop-blur-lg py-4 border-t-8 " + borderColor[data.difficulty.toLowerCase()]}
-                                            >
-                                                { /* difficulty in red, green or yellow */}
-                                                <span className={'text-white px-2 rounded-lg font-semibold bg-blue-900 text-sm mr-2 mt-1 ' + badgeColor[data.difficulty.toLowerCase()]}>{data.difficulty}</span>
+  const badgeColor = {
+    easy: 'bg-[#28a745] text-[#212529] ',
+    medium: 'bg-[#f0ad4e] text-[#212529] ',
+    hard: 'bg-[#dc3545] ',
+  };
 
-                                                <h3 className='text-white  font-bold truncate mt-2 text-2xl'>{data.title.substring(0, 45)}</h3>
-                                                <p className='text-white truncate text-md mt-1'>{data.content.substring(0, 40)}</p>
+  const borderColor = {
+    easy: 'border-[#28a745] text-[#212529] ',
+    medium: 'border-[#f0ad4e] text-[#212529] ',
+    hard: 'border-[#dc3545] ',
+  };
 
-                                            </div>
-                                        </a>))
-                                }
-                                </div>
-                            </div>
-        </>
-    )
+  return (
+    <>
+      <div className="w-full overflow-x-scroll pb-4">
+        <div className="mt-3 flex gap-x-5" style={{ width: 'fit-content' }}>
+          {' '}
+          {cryptoChallenges &&
+            cryptoChallenges.map((data) => (
+              <a href={`/challenge?slug=${data.slug}`} className="">
+                <div
+                  className={
+                    'ml-4 min-h-[190px] w-full min-w-[200px] flex-shrink-0 cursor-pointer rounded-lg border-t-8 bg-neutral-800 px-3 py-2 py-4 font-semibold  text-white backdrop-blur-lg hover:bg-neutral-800 ' +
+                    borderColor[data.difficulty.toLowerCase()]
+                  }
+                >
+                  {/* difficulty in red, green or yellow */}
+                  <span
+                    className={
+                      'mr-2 mt-1 rounded-lg bg-blue-900 px-2 text-sm font-semibold text-white ' +
+                      badgeColor[data.difficulty.toLowerCase()]
+                    }
+                  >
+                    {data.difficulty}
+                  </span>
+
+                  <h3 className="mt-2  truncate text-2xl font-bold text-white">
+                    {data.title.substring(0, 45)}
+                  </h3>
+                  <p className="text-md mt-1 truncate text-white">
+                    {data.content.substring(0, 40)}
+                  </p>
+                </div>
+              </a>
+            ))}
+        </div>
+      </div>
+    </>
+  );
 }

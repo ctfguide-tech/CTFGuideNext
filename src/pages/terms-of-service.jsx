@@ -1,15 +1,14 @@
-import Head from 'next/head'
-import Link from 'next/link'
-import { StandardNav } from '@/components/StandardNav'
-import { Button } from '@/components/Button'
-import Report from '../components/dashboard/Report'
-import { useEffect } from 'react'
-import { Header } from '@/components/Header'
+import Head from 'next/head';
+import Link from 'next/link';
+import { StandardNav } from '@/components/StandardNav';
+import { Button } from '@/components/Button';
+import Report from '../components/dashboard/Report';
+import { useEffect } from 'react';
+import { Header } from '@/components/Header';
 
 export default function TermsOfService() {
-useEffect(() => {
-
-document.getElementById("tos").innerHTML = `
+  useEffect(() => {
+    document.getElementById('tos').innerHTML = `
 <h1 class="text-4xl font-semibold">CTFGuide Terms of Service</h1>
   <p>Welcome to CTFGuide. By accessing or using the CTFGuide website or any services made available through the website, you agree to be bound by these Terms of Service ("Terms"). Please read these Terms carefully before using the website or any services. If you do not agree to all the Terms, then you may not access the website or use any services. These Terms apply to all users of the website, including without limitation users who are browsers, vendors, customers, merchants, and/or contributors of content.</p>
 
@@ -51,24 +50,21 @@ document.getElementById("tos").innerHTML = `
 
 
 
-`
-
-}
-);
+`;
+  });
   return (
     <>
       <Head>
         <title>Terms of Service</title>
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+          @import
+          url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
       <Header />
-<div className='text-white max-w-7xl mx-auto pb-10'>
-      <div id="tos" className='text-white max-w-7xl  '>
+      <div className="mx-auto max-w-7xl pb-10 text-white">
+        <div id="tos" className="max-w-7xl text-white  "></div>
       </div>
-      </div>
-      
     </>
-  )
+  );
 }

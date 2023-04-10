@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
+import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export default function GitHubMarkdown({ url }) {
-  const [markdown, setMarkdown] = useState("");
+  const [markdown, setMarkdown] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,4 +14,4 @@ export default function GitHubMarkdown({ url }) {
   }, [url]);
 
   return <ReactMarkdown>{markdown}</ReactMarkdown>;
-};
+}

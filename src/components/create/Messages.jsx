@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 
-function MessagesMenu({slug}) {
+function MessagesMenu({ slug }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [messages, setMessages] = useState([]);
 
   const handleClick = async () => {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${slug}/messages`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + localStorage.getItem("idToken"),
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
       })
-      .then(res => res.json())
-      .then(data => {
-        setMessages(response.data);
-        setMenuOpen(true);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          setMessages(response.data);
+          setMenuOpen(true);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (error) {
       console.error(error);
     }
@@ -28,13 +28,15 @@ function MessagesMenu({slug}) {
 
   return (
     <div>
-    <div className="rounded-md bg-[#3B82F6] hover:bg-[#468dff]">
+      <div className="rounded-md bg-[#3B82F6] hover:bg-[#468dff]">
         <button onClick={handleClick}>
-            <div className="flex mx-auto text-center h-10 my-auto">
-                <h1 className='text-lg text-white mx-auto my-auto font-semibold'>See Admin Messages</h1>
-            </div>
+          <div className="mx-auto my-auto flex h-10 text-center">
+            <h1 className="mx-auto my-auto text-lg font-semibold text-white">
+              See Admin Messages
+            </h1>
+          </div>
         </button>
-    </div>
+      </div>
       {menuOpen && (
         <div>
           {messages.map((message, index) => (

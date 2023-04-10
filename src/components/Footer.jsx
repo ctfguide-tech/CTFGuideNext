@@ -1,27 +1,23 @@
-import Link from 'next/link'
-import { Container } from '@/components/Container'
-import { NavLink } from '@/components/NavLink'
+import Link from 'next/link';
+import { Container } from '@/components/Container';
+import { NavLink } from '@/components/NavLink';
 
 export function Footer() {
   return (
-    <footer style={{backgroundColor:"#161716"}} >
+    <footer style={{ backgroundColor: '#161716' }}>
       <Container>
         <div className="py-16">
- 
-       <img src="../../darkLogo.png" className="w-14 mx-auto text-center" /> 
+          <img src="../../darkLogo.png" className="mx-auto w-14 text-center" />
           <nav className="mt-4 text-sm" aria-label="quick links">
             <div className="-my-1 flex place-content-center gap-x-6">
               <NavLink href="../terms-of-service">Terms of Service</NavLink>
               <NavLink href="../privacy-policy">Privacy Policy</NavLink>
               <NavLink href="https://status.ctfguide.com/">Status</NavLink>
               <NavLink href="../careers">Join our Team!</NavLink>
-              
-
-
             </div>
           </nav>
         </div>
-        <div className="max-w-4xl mx-auto flex flex-col items-center border-t border-slate-400/10 py-10 sm:flex-row-reverse sm:justify-between">
+        <div className="mx-auto flex max-w-4xl flex-col items-center border-t border-slate-400/10 py-10 sm:flex-row-reverse sm:justify-between">
           <div className="flex gap-x-6">
             <Link
               href="https://twitter.com/ctfguideapp"
@@ -56,5 +52,5 @@ export function Footer() {
         </div>
       </Container>
     </footer>
-  )
+  );
 }

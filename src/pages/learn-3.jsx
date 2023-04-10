@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import { LearnCore } from '@/components/LearnCore'
+import Head from 'next/head';
+import { LearnCore } from '@/components/LearnCore';
 
 export default function Dashboard() {
   return (
@@ -10,17 +10,15 @@ export default function Dashboard() {
           name="description"
           content="Cybersecurity made easy for everyone"
         />
-                <style>
-          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+        <style>
+          @import
+          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
 
-
       <main>
-      
-        <LearnCore/>
+        <LearnCore />
       </main>
-     
     </>
-  )
+  );
 }
