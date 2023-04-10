@@ -1,11 +1,11 @@
-import { useState } from "react";
-import Head from "next/head";
-import { Button } from "@/components/Button";
-import { TextField } from "@/components/Fields";
+import { useState } from 'react';
+import Head from 'next/head';
+import { Button } from '@/components/Button';
+import { TextField } from '@/components/Fields';
 import { motion } from 'framer-motion';
 
 export default function ReportForm() {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showError, setErrorPopup] = useState(false);
 
@@ -13,16 +13,16 @@ export default function ReportForm() {
     try {
       event.preventDefault();
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/report?type=USER`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + localStorage.getItem("idToken"),
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
-        body: JSON.stringify({message: text, itemid: ""}),
+        body: JSON.stringify({ message: text, itemid: '' }),
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Report Sent", data);
+          console.log('Report Sent', data);
           if (data?.error) {
             setErrorPopup(true);
             setTimeout(() => setErrorPopup(false), 4000);
@@ -35,9 +35,7 @@ export default function ReportForm() {
           setErrorPopup(true);
           setTimeout(() => setErrorPopup(false), 4000);
         });
-    } catch {
-      
-    }
+    } catch {}
   }
 
   return (
@@ -45,7 +43,8 @@ export default function ReportForm() {
       <Head>
         <title>Report a Bug</title>
         <style>
-          @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+          @import
+          url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
         </style>
       </Head>
       <div className="flex min-h-full flex-col py-12 sm:px-6 lg:px-8">
@@ -56,11 +55,16 @@ export default function ReportForm() {
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div
-            style={{ backgroundColor: "#212121" }}
+            style={{ backgroundColor: '#212121' }}
             className="py-8 px-4 shadow sm:rounded-lg sm:px-10"
           >
             <form onSubmit={handleSubmit} className="space-y-2">
-              <label for="difficulty" className="block text-sm leading-5 font-medium text-gray-200">Message</label>
+              <label
+                for="difficulty"
+                className="block text-sm font-medium leading-5 text-gray-200"
+              >
+                Message
+              </label>
               <div>
                 <TextField
                   id="text"
@@ -71,13 +75,22 @@ export default function ReportForm() {
                   className="mb-6"
                 />
               </div>
-              <label for="difficulty" className="block text-sm leading-5 font-medium text-gray-200">Report Type</label>
-                    <select style={{ backgroundColor: "#363636" }} id="type" className="border-none text-white rounded block w-full pr-40 pl-3 pr-10 text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
-                      <option disabled="">General</option>
-                      <option>User</option>
-                      <option>Challenge</option>
-                      <option>Bug</option>
-                    </select>
+              <label
+                for="difficulty"
+                className="block text-sm font-medium leading-5 text-gray-200"
+              >
+                Report Type
+              </label>
+              <select
+                style={{ backgroundColor: '#363636' }}
+                id="type"
+                className="block w-full rounded border-none pr-40 pl-3 pr-10 text-base leading-6 text-white focus:outline-none sm:text-sm sm:leading-5"
+              >
+                <option disabled="">General</option>
+                <option>User</option>
+                <option>Challenge</option>
+                <option>Bug</option>
+              </select>
               <div>
                 <button
                   type="submit"
@@ -89,22 +102,24 @@ export default function ReportForm() {
             </form>
           </div>
         </div>
-        {showPopup && 
+        {showPopup && (
           <motion.h1
-          className='py-2 px-4 fixed center bottom-6 right-6 bg-blue-400 p-2 rounded-md animate-slide-in-right'
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+            className="center animate-slide-in-right fixed bottom-6 right-6 rounded-md bg-blue-400 p-2 py-2 px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
           >
-          <div>Submitted Report!</div>
-        </motion.h1>}
-        {showError && 
+            <div>Submitted Report!</div>
+          </motion.h1>
+        )}
+        {showError && (
           <motion.h1
-          className='py-2 px-4 fixed center bottom-6 right-6 bg-blue-400 p-2 rounded-md animate-slide-in-right'
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+            className="center animate-slide-in-right fixed bottom-6 right-6 rounded-md bg-blue-400 p-2 py-2 px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
           >
-          <div>Failed to send Report!</div>
-        </motion.h1>}
+            <div>Failed to send Report!</div>
+          </motion.h1>
+        )}
       </div>
     </>
   );

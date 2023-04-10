@@ -1,9 +1,7 @@
 export function MyFriends() {
-
-    return (
+  return (
     <>
-        <h1 className='text-white text-4xl mt-5'>My Friends</h1>
-
+      <h1 className="mt-5 text-4xl text-white">My Friends</h1>
     </>
-    )
+  );
 }

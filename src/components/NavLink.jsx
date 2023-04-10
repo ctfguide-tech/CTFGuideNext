@@ -6,5 +6,5 @@ export function NavLink({ href, children }) {
     >
       {children}
     </a>
-  )
+  );
 }

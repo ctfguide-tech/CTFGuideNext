@@ -1,18 +1,18 @@
-import { Fragment } from 'react'
-import Link from 'next/link'
-import { Popover, Transition } from '@headlessui/react'
-import clsx from 'clsx'
-import { Button } from '@/components/Button'
-import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
-import { NavLink } from '@/components/NavLink'
+import { Fragment } from 'react';
+import Link from 'next/link';
+import { Popover, Transition } from '@headlessui/react';
+import clsx from 'clsx';
+import { Button } from '@/components/Button';
+import { Container } from '@/components/Container';
+import { Logo } from '@/components/Logo';
+import { NavLink } from '@/components/NavLink';
 
 function MobileNavLink({ href, children }) {
   return (
     <Popover.Button as={Link} href={href} className="block w-full p-2">
       {children}
     </Popover.Button>
-  )
+  );
 }
 
 function MobileNavIcon({ open }) {
@@ -39,7 +39,7 @@ function MobileNavIcon({ open }) {
         )}
       />
     </svg>
-  )
+  );
 }
 
 function MobileNavigation() {
@@ -76,42 +76,40 @@ function MobileNavigation() {
             as="div"
             className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-black p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
           >
-          
             <hr className="m-2 border-slate-300/40" />
             <MobileNavLink href="/login">Sign in</MobileNavLink>
           </Popover.Panel>
         </Transition.Child>
       </Transition.Root>
     </Popover>
-  )
+  );
 }
 
 export function Header() {
   return (
-    <header className="py-4 " style={{fontFamily: 'Poppins, sans-serif'}}>
+    <header className="py-4 " style={{ fontFamily: 'Poppins, sans-serif' }}>
       <Container>
         <nav className="relative z-50 flex justify-between">
-          <div className="flex items-center md:gap-x-12"> 
+          <div className="flex items-center md:gap-x-12">
             <Link href="../" aria-label="Home">
               <Logo className="h-10 w-auto" />
             </Link>
-        
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div>
-              <NavLink className="text-white" href="/login">Sign in</NavLink>
+              <NavLink className="text-white" href="/login">
+                Sign in
+              </NavLink>
             </div>
-            <Button href="/register"  color="blue">
+            <Button href="/register" color="blue">
               <span>
                 Get started <span className="hidden lg:inline">today</span>
               </span>
             </Button>
-            <div className="-mr-1 md:hidden">
-            </div>
+            <div className="-mr-1 md:hidden"></div>
           </div>
         </nav>
       </Container>
     </header>
-  )
+  );
 }
-

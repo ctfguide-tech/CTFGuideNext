@@ -1,33 +1,27 @@
-import Head from 'next/head'
+import Head from 'next/head';
 
-import { Footer } from '@/components/Footer'
-import { StandardNav } from '@/components/StandardNav'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import { SideNavContent } from '@/components/dashboard/SideNavContents'
+import { Footer } from '@/components/Footer';
+import { StandardNav } from '@/components/StandardNav';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { SideNavContent } from '@/components/dashboard/SideNavContents';
 
 export default function Dashboard() {
   const [likes, setLikes] = useState([]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${localStorage.getItem("userLikesUrl")}`);
+        const response = await fetch(`${localStorage.getItem('userLikesUrl')}`);
         const data = await response.json();
-        console.log(data)    
-          setLikes(data);
-        likes.map((like) => (
-          console.log(like.challenge.slug)
-        ));
-      } catch {
-
-      }
+        console.log(data);
+        setLikes(data);
+        likes.map((like) => console.log(like.challenge.slug));
+      } catch {}
     };
     fetchData();
-    setLikes([
-      
-    ])
+    setLikes([]);
   }, []);
 
   return (
@@ -39,51 +33,55 @@ export default function Dashboard() {
           content="Cybersecurity made easy for everyone"
         />
         <style>
-          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+          @import
+          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
       <StandardNav />
       <main>
-
         <DashboardHeader />
 
-        <div className="flex h-screen max-w-7xl mx-auto ">
+        <div className="mx-auto flex h-screen max-w-7xl ">
           {/* Sidebar */}
           <SideNavContent />
 
           {/* Main content area */}
           <div className="flex-1">
-
-            <h1 className='text-white text-4xl mt-5'>My Likes</h1>
+            <h1 className="mt-5 text-4xl text-white">My Likes</h1>
             {/* Fetch likes from API */}
 
-              {likes.length === 0 && (
-                <div className='mt-3'>
-                  <h1 className='text-white text-lg bg-neutral-800 border border-neutral-700 px-6 py-3 rounded-lg'>
-                    🤔 Hmm, looks like you haven't liked a challenge yet.</h1>
-                  </div>
-              )}
-
-
-            <div className="flex flex-col mt-5">
-            {likes.map((like) => (
-            <div>
-              <a href={`/challenge?slug=${like.challenge.slug}`} className='border border-blue-500 hover:border-blue-400 bg-[#212121] hover:bg-[#262626] mb-4 flex rounded-lg px-5 py-3 text-white align-center'>
-                <h2 className='text-xl font-semibold align-middcenterle'>{like.challenge.title}</h2>
-
-                <div className='ml-auto flex align-center'>
-                  <div className='bg-blue-500 px-3 py-1 rounded-md'>
-                    <p> {like.challenge.category.join(", ")}</p>
-                  </div>
+            {likes.length === 0 && (
+              <div className="mt-3">
+                <h1 className="rounded-lg border border-neutral-700 bg-neutral-800 px-6 py-3 text-lg text-white">
+                  🤔 Hmm, looks like you haven't liked a challenge yet.
+                </h1>
               </div>
-              </a>
+            )}
+
+            <div className="mt-5 flex flex-col">
+              {likes.map((like) => (
+                <div>
+                  <a
+                    href={`/challenge?slug=${like.challenge.slug}`}
+                    className="align-center mb-4 flex rounded-lg border border-blue-500 bg-[#212121] px-5 py-3 text-white hover:border-blue-400 hover:bg-[#262626]"
+                  >
+                    <h2 className="align-middcenterle text-xl font-semibold">
+                      {like.challenge.title}
+                    </h2>
+
+                    <div className="align-center ml-auto flex">
+                      <div className="rounded-md bg-blue-500 px-3 py-1">
+                        <p> {like.challenge.category.join(', ')}</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              ))}
             </div>
-          ))}
-          </div> 
           </div>
         </div>
       </main>
       <Footer />
     </>
-  )
+  );
 }
