@@ -7,10 +7,9 @@ import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 
 const navigation = [
-  { name: 'Enterprise', href: '#' },
-  { name: 'Careers', href: '#' },
-  { name: '', href: '#' },
-  { name: 'Company', href: '#' },
+  { name: 'Enterprise', href: 'https://enterprise.ctfguide.com' },
+  { name: 'Careers', href: '../careers' },
+  { name: 'Open Source', href: 'https://github.com/ctfguide-tech' },
 ]
 
 
