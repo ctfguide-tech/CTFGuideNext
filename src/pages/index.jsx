@@ -19,7 +19,7 @@ export default function Home() {
         </style>
       </Head>
 
-      <Header />
+     
 
       <Hero />
 

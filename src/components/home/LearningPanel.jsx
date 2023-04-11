@@ -15,12 +15,22 @@ export function LearningPanel() {
       style={{ backgroundColor: '#161716' }}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-y-16 gap-x-8 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          <div className="mx-auto mr-24 text-4xl font-semibold text-white">
-            <img className="mr-24 w-full" src="./group14.png"></img>
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-y-40 gap-x-8 sm:gap-y-40 lg:visible sm:visible md:visible  lg:mx-0 lg:max-w-none lg:grid-cols-2">
+          <div className="col-span-1 mx-auto mr-24 text-4xl font-semibold text-white">
+            <video
+              muted
+              autoPlay
+              width={2432}
+              height={1442}
+              className=" rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10  mt-4 "
+         
+              >
+                <source src="../video2.mp4" type="video/mp4" />
+
+              </video>
           </div>
           <div className="mx-auto my-auto">
-            <h1 className="mb-5 text-4xl font-semibold tracking-tight text-white">
+            <h1 className="mb-5 text-2xl font-semibold tracking-tight text-white">
               {' '}
               Get AI driven feedback during your sessions
             </h1>
@@ -67,21 +77,21 @@ export function LearningPanel() {
               </div>
             </dl>
           </div>
-          <div className="mx-auto my-auto">
-            <div className="flex">
+          <div className=" mx-auto my-auto mt-10">
+            <div className="">
               <h1 className="mb-5 text-4xl font-semibold text-white">
                 {' '}
                 Dynamic Roadmaps
               </h1>
             </div>
 
-            <p className="text-xl text-white">
+            <p className="text-xl  text-white">
               Get a personalized learning roadmap based on your skill level and
               learning goals.
             </p>
           </div>
-          <div className="mx-auto ml-16 w-full text-4xl font-semibold text-white">
-            <img src="./group21.png"></img>
+          <div className=" mx-auto text-center ml-16 w-full text-4xl font-semibold text-white">
+            <img  src="./group24.png"></img>
           </div>
         </div>
       </div>
