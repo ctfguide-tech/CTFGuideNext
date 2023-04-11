@@ -136,6 +136,7 @@ function Pratice({ slug }) {
     const slug = challenge.slug;
     console.log(flag.length);
 
+
     if (!flag) {
       document
         .getElementById('enteredFlag')
@@ -154,7 +155,7 @@ function Pratice({ slug }) {
           process.env.NEXT_PUBLIC_API_URL +
           '/challenges/' +
           slug +
-          '/submissions';
+          '/submissions'; 
         const requestOptions = {
           method: 'POST',
           headers: {

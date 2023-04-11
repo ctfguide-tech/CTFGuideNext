@@ -7,9 +7,9 @@ import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 
 const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
+  { name: 'Enterprise', href: '#' },
+  { name: 'Careers', href: '#' },
+  { name: '', href: '#' },
   { name: 'Company', href: '#' },
 ]
 

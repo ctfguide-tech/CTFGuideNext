@@ -78,10 +78,10 @@ export function Stats() {
       </div>
 
     
-        <h2 className="text-center mt-10 text-lg font-semibold leading-8 text-white">
+        <h2 className="hidden text-center mt-10 text-lg font-semibold leading-8 text-white">
           Trusted by the people from these organizations
         </h2>
-        <div className="mx-auto mx-auto text-center mt-10 gap-0 grid max-w-6xl   grid-cols-3 items-center gap-y-10 sm:max-w-xl sm:grid-cols-3 -0 lg:max-w-none lg:grid-cols-3">
+        <div className="hidden mx-auto mx-auto text-center mt-10 gap-0 grid    grid-cols-3 items-center   sm:grid-cols-3 -0 lg:max-w-3xl lg:grid-cols-3">
           <img
             className="col-span-2 w-1/4 object-contain lg:col-span-1 text-center mx-auto"
             src="https://1000logos.net/wp-content/uploads/2017/11/penn-state-logo.png"
