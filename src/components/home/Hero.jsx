@@ -45,7 +45,7 @@ export function Hero() {
               ))}
             </div>
             <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              <a href="#" className="text-sm font-semibold leading-6 text-white">
+              <a href="../login" className="text-sm font-semibold leading-6 text-white">
                 Log in <span aria-hidden="true">&rarr;</span>
               </a>
             </div>
@@ -123,14 +123,14 @@ export function Hero() {
                 </p>
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <a
-                    href="#"
+                    href="../register"
                     className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                   >
                     Get started
                   </a>
-                  <a href="#" className="text-lg font-semibold leading-6 text-white">
+                  <p onClick={() => window.scrollTo(0, 1500)} className="cursor-pointer text-lg font-semibold leading-6 text-white">
                     Learn more <span aria-hidden="true">→</span>
-                  </a>
+                  </p>
                 </div>
               </div>
               <img
