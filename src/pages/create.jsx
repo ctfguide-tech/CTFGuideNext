@@ -139,14 +139,10 @@ export default function Create() {
           <div>
             <Button
               variant="contained"
-              sx={{
-                '&:hover': {
-                  backgroundColor: 'grey',
-                },
-              }}
+
               {...bindTrigger(popupState)}
             >
-              <div className="flex">
+              <div className="flex ml-1 mr-1">
                 <FontAwesomeIcon
                   className="h-4 text-white"
                   icon={faInfoCircle}

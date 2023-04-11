@@ -76,6 +76,36 @@ export function Stats() {
           ))}
         </dl>
       </div>
-    </div>
+
+    
+        <h2 className="hidden text-center mt-10 text-lg font-semibold leading-8 text-white">
+          Trusted by the people from these organizations
+        </h2>
+        <div className="hidden mx-auto mx-auto text-center mt-10 gap-0 grid    grid-cols-3 items-center   sm:grid-cols-3 -0 lg:max-w-3xl lg:grid-cols-3">
+          <img
+            className="col-span-2 w-1/4 object-contain lg:col-span-1 text-center mx-auto"
+            src="https://1000logos.net/wp-content/uploads/2017/11/penn-state-logo.png"
+            alt="Transistor"
+            width={258}
+            height={100}
+          />
+          <img
+            className="col-span-2 w-1/5 object-contain lg:col-span-1 text-center mx-auto"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Northeastern_seal.svg/1200px-Northeastern_seal.svg.png"
+            alt="Reform"
+            width={108}
+            height={100}
+          />
+          <img
+            className="col-span-2 w-1/4 object-contain lg:col-span-1 text-center mx-auto"
+            src="https://seeklogo.com/images/G/gigamon-logo-47DF4F3B58-seeklogo.com.png"
+            alt="Tuple"
+            width={228}
+            height={100}
+          />
+      
+        </div>
+      </div>
+ 
   );
 }
