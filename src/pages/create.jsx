@@ -137,18 +137,19 @@ export default function Create() {
       <PopupState variant="popover" popupId="demo-popup-popover">
         {(popupState) => (
           <div>
-            <Button
-              variant="contained"
-
+            <p
+              variant=""
+              className='mt-3'
               {...bindTrigger(popupState)}
             >
-              <div className="flex ml-1 mr-1">
+              <div className="flex ml-3 mr-1">
                 <FontAwesomeIcon
                   className="h-4 text-white"
                   icon={faInfoCircle}
+                  
                 />
               </div>
-            </Button>
+            </p>
             <Popover
               {...bindPopover(popupState)}
               anchorOrigin={{
