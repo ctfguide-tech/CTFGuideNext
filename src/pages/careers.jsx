@@ -39,6 +39,48 @@ export default function Careers() {
       width: '200',
       height: '200',
     },
+    {
+      personName: 'Jaiming Wang',
+      position: 'Advisor',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Ryan Zanoni',
+      position: 'Advisor',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Dax Patel',
+      position: 'Advisor',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Ashni Voleti',
+      position: 'Advisor',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Abhi Byreddy',
+      position: 'Advisor',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Almond Milk',
+      position: 'Advisor',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
   ];
 
   const listings = [

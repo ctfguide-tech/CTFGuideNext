@@ -69,7 +69,7 @@ const Challenge = ({ data, inCarousel }) => {
             <div className="flex">
               <p
                 id={index}
-                className="mt-1 mr-3 rounded-md bg-blue-700 px-2 text-sm text-white"
+                className="mr-3 mt-2 rounded-md bg-blue-700 px-2 text-[12px] text-white"
               >
                 {category}
               </p>

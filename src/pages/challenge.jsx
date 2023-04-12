@@ -682,9 +682,14 @@ function Pratice({ slug }) {
                         </div>
                         <div className="mt-3 rounded-md border border-neutral-900 bg-neutral-800">
                           <h2 className="text-md mx-4 mt-2 mb-2 text-gray-200">
-                            <i class="far fa-lightbulb text-yellow-400"></i> On
+                            <i class="far fa-lightbulb text-yellow-400 mr-1"></i> On
                             our main platform, each hint incurs a 10% penalty
                             and each submission a 3% penalty.
+                          </h2>
+                        </div>
+                        <div className="w-4/5 mt-3 rounded-md border border-neutral-900 bg-neutral-800 absolute bottom-4 mx-auto">
+                          <h2 className="text-md mx-4 mt-2 mb-2 text-gray-200">
+                            <i class="far fa-star text-blue-500 mr-1"></i> You must be logged in to see hints!
                           </h2>
                         </div>
                       </div>
