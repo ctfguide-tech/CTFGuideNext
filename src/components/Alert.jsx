@@ -1,9 +1,9 @@
-import { Fragment, useState } from 'react'
-import { Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/20/solid'
+import { Fragment, useState } from 'react';
+import { Transition } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 
 export function Alert() {
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   return (
     <>
@@ -24,19 +24,23 @@ export function Alert() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div style={{ backgroundColor: "#212121" }}  className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+            <div
+              style={{ backgroundColor: '#212121' }}
+              className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+            >
               <div className="p-4">
                 <div className="flex items-center">
                   <div className="flex w-0 flex-1 justify-between">
-                    <p className="w-0 flex-1 text-sm font-medium text-gray-100">Something went wrong</p>
-
+                    <p className="w-0 flex-1 text-sm font-medium text-gray-100">
+                      Something went wrong
+                    </p>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
                     <button
                       type="button"
                       className="inline-flex rounded-md  text-gray-100 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       onClick={() => {
-                        setShow(false)
+                        setShow(false);
                       }}
                     >
                       <span className="sr-only">Close</span>
@@ -50,5 +54,5 @@ export function Alert() {
         </div>
       </div>
     </>
-  )
+  );
 }

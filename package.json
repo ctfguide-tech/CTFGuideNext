@@ -1,7 +1,7 @@
 {
   "name": "ctfguide-next",
   "version": "0.1.0",
-  "private": true,
+  "author": "CTFGuide",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
@@ -19,9 +19,6 @@
     "@headlessui/react": "^1.7.2",
     "@heroicons/react": "^2.0.13",
     "@mui/material": "^5.11.13",
-    "@ory/client": "^1.1.5",
-    "@ory/integrations": "^1.1.0",
-    "@oryd/kratos-client": "^0.0.0-next.5212bbfcf5dc",
     "@tailwindcss/forms": "^0.5.3",
     "@tremor/react": "^1.8.1",
     "autoprefixer": "^10.4.12",
@@ -47,6 +44,8 @@
     "react-markdown": "^8.0.5",
     "react-router-dom": "^6.9.0",
     "react-simplemde-editor": "^5.2.0",
+    "react-text-loop": "^2.3.0",
+    "react-text-transition": "^3.1.0",
     "react-visibility-sensor": "^5.1.1",
     "reactjs-popup": "^2.0.5",
     "simplemde": "^1.11.2",
@@ -55,6 +54,7 @@
   "devDependencies": {
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.2",
+    "eslint-config-prettier": "^8.8.0",
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13"
   }

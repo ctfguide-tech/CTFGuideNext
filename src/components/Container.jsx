@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import clsx from 'clsx';
 
 export function Container({ className, ...props }) {
   return (
@@ -6,5 +6,5 @@ export function Container({ className, ...props }) {
       className={clsx('mx-auto  px-4 sm:px-6 lg:px-8', className)}
       {...props}
     />
-  )
+  );
 }

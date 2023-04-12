@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import CountUp from "react-countup";
+import { useEffect, useState } from 'react';
+import CountUp from 'react-countup';
 
 const CountUpNumber = ({ className, end, duration }) => {
   const [start, setStart] = useState(0);

@@ -1,20 +1,19 @@
 export function GroupCard({ title, description, views, imageUrl, href }) {
   return (
-      <a href={href} className="block rounded-lg shadow-md overflow-hidden transition-colors duration-300 hover:bg-gray-50">
-        <button>
+    <a
+      href={href}
+      className="block overflow-hidden rounded-lg shadow-md transition-colors duration-300 hover:bg-gray-50"
+    >
+      <button>
         <div className="relative h-48">
-          <img
-            className="object-cover w-full h-full"
-            src={imageUrl}
-            alt=""
-          />
-          <div className="absolute bottom-0 left-0 p-2 bg-gray-900 bg-opacity-75 text-gray-50">
+          <img className="h-full w-full object-cover" src={imageUrl} alt="" />
+          <div className="absolute bottom-0 left-0 bg-gray-900 bg-opacity-75 p-2 text-gray-50">
             <h3 className="text-xl font-semibold">{title}</h3>
             <p className="text-sm">{description}</p>
-            <div className="flex items-center mt-2 text-sm">
+            <div className="mt-2 flex items-center text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 mr-1 text-gray-400"
+                className="mr-1 h-4 w-4 text-gray-400"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -33,7 +32,7 @@ export function GroupCard({ title, description, views, imageUrl, href }) {
             </div>
           </div>
         </div>
-        </button>
-      </a>
-  )
-};
+      </button>
+    </a>
+  );
+}

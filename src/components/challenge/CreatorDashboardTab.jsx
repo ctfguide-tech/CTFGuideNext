@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function TabContent({ activeTab }) {
   const [data, setData] = useState([]);
@@ -8,19 +8,19 @@ function TabContent({ activeTab }) {
     const fetchData = async () => {
       let response;
 
-      console.log(activeTab)
+      console.log(activeTab);
       switch (activeTab) {
-        case "Tab 1":
-          response = await axios.get("https://api.example.com/tab1");
+        case 'Tab 1':
+          response = await axios.get('https://api.example.com/tab1');
           break;
-        case "Tab 2":
-          response = await axios.get("https://api.example.com/tab2");
+        case 'Tab 2':
+          response = await axios.get('https://api.example.com/tab2');
           break;
-        case "Tab 3":
-          response = await axios.get("https://api.example.com/tab3");
+        case 'Tab 3':
+          response = await axios.get('https://api.example.com/tab3');
           break;
         default:
-          response = await axios.get("https://api.example.com/default");
+          response = await axios.get('https://api.example.com/default');
           break;
       }
 

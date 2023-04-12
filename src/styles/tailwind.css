@@ -7,6 +7,47 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
+.bg-gradient-custom {
+  @apply bg-gradient-to-br from-blue-600 to-indigo-900;
+}
+
+.blur-20 {
+  filter: blur(20px);
+}
+
+.box-blur {
+  --box-blur-opacity: 0.7;
+  position: relative;
+}
+
+.box-blur::before {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  @apply bg-gradient-custom blur-20;
+  transform: translate3d(0px, 20px, 0) scale(0.95);
+  opacity: var(--box-blur-opacity);
+  transition: opacity 0.3s;
+  border-radius: inherit;
+}
+
+.box-blur::after {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: inherit;
+  border-radius: inherit;
+}
+
+
 #__next {
   min-height: 100%;
   background-color:#161716;

@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState } from "react";
-import CountUp from "react-countup";
+import { useRef, useEffect, useState } from 'react';
+import CountUp from 'react-countup';
 
 export function CountUpScroll({ item }) {
   const [isInView, setIsInView] = useState(false);
@@ -8,7 +8,7 @@ export function CountUpScroll({ item }) {
   useEffect(() => {
     const options = {
       root: null,
-      rootMargin: "0px",
+      rootMargin: '0px',
       threshold: 0.5,
     };
 
@@ -44,7 +44,7 @@ export function CountUpScroll({ item }) {
           ref={countUpRef}
         />
       ) : (
-        "0"
+        '0'
       )}
       + {item.sttype}
     </dd>
