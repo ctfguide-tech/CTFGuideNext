@@ -2,7 +2,7 @@ export function SideNavContent() {
   return (
     <>
       <div
-        className="mt-10 mr-6 w-1/6 flex-none border-r text-gray-900"
+        className="mt-10 mr-6 w-1/6 flex-none border-r text-gray-900 hidden md:block lg:block"
         style={{ borderColor: '#212121' }}
       >
         <ul className="mr-2 py-2">

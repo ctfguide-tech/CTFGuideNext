@@ -129,7 +129,7 @@ export default function Pratice() {
                 ''
               ) : (
                 <a href="/login">
-                  <h1 className="text-md mt-10 rounded-md bg-blue-600 px-4 py-1 tracking-tight text-gray-100 hover:bg-blue-500">
+                  <h1 className="hidden text-md mt-10 rounded-md bg-blue-600 px-4 py-1 tracking-tight text-gray-100 hover:bg-blue-500">
                     Log in to view progress!
                   </h1>
                 </a>
@@ -179,7 +179,7 @@ export default function Pratice() {
                   </div>
                 </div>
                 <div className="mb-5 px-3">
-                  <h1 className="my-auto mt-6 flex truncate text-2xl tracking-tight text-gray-100">
+                  <h1 className="my-auto mt-6 flex truncate text-2xl tracking-tight text-gray-100 hidden">
                     {' '}
                     Your Insights{' '}
                     <p className="my-auto ml-2 rounded-lg bg-blue-500 px-2.5 text-sm tracking-[.016em] text-white">
@@ -188,7 +188,7 @@ export default function Pratice() {
                   </h1>
                   <div>
                     <p
-                      className="mt-3 mb-3 rounded-md border-2 border-neutral-700 px-2 py-1 text-xl  text-white text-neutral-300"
+                      className="hidden mt-3 mb-3 rounded-md border-2 border-neutral-700 px-2 py-1 text-xl  text-white text-neutral-300"
                       id="insight"
                     >
                       <i class="fas fa-spinner fa-spin mr-2"></i>

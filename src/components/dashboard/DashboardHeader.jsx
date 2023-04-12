@@ -87,10 +87,10 @@ export function DashboardHeader() {
                 )}
               </p>
             </div>
-            <div className="justify-stretch mt-12 flex  ">
+            <div className="justify-stretch mt-12 flex sm:px-4 px-4 md:px-0 lg:px-0 ">
               <div className="mr-4">
                 {github && (
-                  <a href={github}>
+                  <a className='hidden md:block lg:block sm:hidden' href={github}>
                     <div className="mt-9 mb-0 rounded-lg bg-[#212121] px-6 py-1 hover:bg-[#262626]">
                       <svg
                         viewBox="0 0 98 96"

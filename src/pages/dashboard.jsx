@@ -84,12 +84,13 @@ export default function Dashboard() {
         <DashboardHeader />
         <div className="mx-auto  flex max-w-7xl ">
           {/* Sidebar */}
+
           <SideNavContent />
 
           {/* Main content area */}
           <div className="flex-1">
             {router.pathname === '/dashboard' ? (
-              <div>
+              <div className='sm:px-10 px-10 md:px-0 lg:px-0'>
                 <QuickSettings />
                 <Stats />
                 <Suggest />

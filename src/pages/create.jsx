@@ -137,7 +137,7 @@ export default function Create() {
       <PopupState variant="popover" popupId="demo-popup-popover">
         {(popupState) => (
           <div>
-            <p
+            <div
               variant=""
               className='mt-3'
               {...bindTrigger(popupState)}
@@ -149,7 +149,7 @@ export default function Create() {
                   
                 />
               </div>
-            </p>
+            </div>
             <Popover
               {...bindPopover(popupState)}
               anchorOrigin={{
