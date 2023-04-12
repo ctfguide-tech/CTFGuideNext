@@ -191,66 +191,8 @@ export function StandardNav() {
               </div>
               <div className="flex items-center">
                 <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-                  <Popup
-                    trigger={
-                      <button
-                        id="bell-button"
-                        type="button"
-                        class="mr-3 rounded-full p-1 text-gray-200 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      >
-                        <span class="sr-only">View notifications</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                          />
-                        </svg>
-                      </button>
-                    }
-                    position="bottom right"
-                    contentStyle={{
-                      width: '400px',
-                      fontSize: '13px',
-                      maxHeight: '400px',
-                      overflowY: 'scroll',
-                    }}
-                  >
-                    <a href="#" className="block pt-2 text-right">
-                      Clear All
-                    </a>
-                    {notificationData.map((notification) => (
-                      <div className="flex items-center border-b p-2 py-3">
-                        <img
-                          className="mx-2"
-                          src={notification.image}
-                          alt="Icon"
-                          width="45"
-                          height="45"
-                        />
-                        <div className="ml-2">
-                          <p className="truncate text-sm">
-                            {notification.message.substring(0, 45)}
-                          </p>
-                          <p>{notification.receivedTime}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </Popup>
+               
 
-                  {notification && (
-                    <div
-                      id="dropdown"
-                      class="relative mt-20 mt-2 rounded-md bg-white py-2 shadow-lg"
-                    ></div>
-                  )}
 
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
@@ -425,13 +367,7 @@ export function StandardNav() {
                     anon@ctfguide.com
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
+           
               </div>
               <div className="mt-3 space-y-1">
                 <Disclosure.Button
