@@ -237,7 +237,7 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <div className="mx-auto text-center text-sm">
                   <a
-                    href="#"
+                    href="./forgot-password"
                     className="text-center font-medium text-blue-600 hover:text-blue-500"
                   >
                     Forgot your password?
