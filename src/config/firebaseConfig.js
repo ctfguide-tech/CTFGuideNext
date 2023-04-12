@@ -11,15 +11,20 @@ import { initializeApp } from 'firebase/app';
 */
 
 //
+
+
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAHz1s-UuNhlZ6aKvqwzmzzidzWxBKw9hw",
-  authDomain: "ctfguide-dev.firebaseapp.com",
-  projectId: "ctfguide-dev",
-  storageBucket: "ctfguide-dev.appspot.com",
-  messagingSenderId: "792987058367",
-  appId: "1:792987058367:web:c48935325e46043c3cc60a"
+  apiKey: process.env.NEXT_PUBLIC_APP_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_APP_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_APP_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  measurmentId: process.env.NEXT_PUBLIC_APP_MEASURMENT_ID,
 };
 
+console.log(firebaseConfig);
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 
