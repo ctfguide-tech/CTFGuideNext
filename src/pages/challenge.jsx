@@ -54,6 +54,7 @@ function Pratice({ slug }) {
         const response = await fetch(endPoint, requestOptions);
         const result = await response.json();
         setChallenge(result);
+        
       } catch (err) {
         throw err;
       }

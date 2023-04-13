@@ -66,13 +66,7 @@ export default function Createchall() {
       <StandardNav />
 
       <main>
-        <div className=" w-full " style={{ backgroundColor: '#212121' }}>
-          <div className="mx-auto my-auto flex h-28 text-center">
-            <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
-              Challenge Creation
-            </h1>
-          </div>
-        </div>
+ 
 
         <nav
           className="mx-auto mt-10 flex max-w-7xl text-center"
@@ -120,7 +114,7 @@ export default function Createchall() {
 
           <h1
             id="challengeName"
-            className="w-3/4 rounded-lg bg-neutral-800 py-2 px-4 text-3xl font-semibold text-white"
+            className="w-3/4 rounded-sm shadow-lg bg-neutral-900/90 py-2 px-4 text-3xl font-semibold text-white"
             contentEditable
           >
             Untitled Challenge
@@ -130,7 +124,7 @@ export default function Createchall() {
             <select
               id="difficulty"
               name="difficulty"
-              className="mt-1 mb-4  w-1/3 rounded-md border-neutral-900 bg-neutral-800 py-2 pl-3 pr-20 text-base  text-white  focus:outline-none sm:text-sm"
+              className="mt-1 mb-4  w-1/3 rounded-md border-neutral-900 bg-neutral-900/90 py-2 pl-3 pr-20 text-base  text-white  focus:outline-none sm:text-sm"
               defaultValue="easy"
             >
               <option value="easy">Easy</option>
@@ -141,7 +135,7 @@ export default function Createchall() {
             <select
               id="category"
               name="category"
-              className="ml-4 mt-1 mb-4  w-1/3 rounded-md border-neutral-900  bg-neutral-800 py-2 pl-3 pr-20  text-base  text-white  focus:outline-none sm:text-sm"
+              className="ml-4 mt-1 mb-4  w-1/3 rounded-md border-neutral-900  bg-neutral-900/90 py-2 pl-3 pr-20  text-base  text-white  focus:outline-none sm:text-sm"
               defaultValue="forensics"
             >
               <option value="forensics">forensics</option>
@@ -157,21 +151,21 @@ export default function Createchall() {
             </select>
           </div>
 
-          <div className="mt-5 rounded-lg   bg-neutral-800">
-            <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
-              <i class="fas fa-align-left"></i> Challenge Content
+          <div className="mt-5 rounded-sm shadow-lg border border-gray-900 bg-neutral-800/40  shadow-lg ring-1 ring-black ring-opacity-5">
+            <h3 className=" rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+           Challenge Content
             </h3>
-            <div className="px-5 py-5">
+            <div className="px-5 py-5 ">
               <textarea
                 id="content"
-                className="h-40 w-full rounded-lg  border-none bg-neutral-900 px-5 py-4 text-white"
+                className="h-40 w-full rounded-sm shadow-lg  border-none bg-neutral-900 px-5 py-4 text-white"
               ></textarea>
             </div>
           </div>
 
-          <div className="mt-5 rounded-lg   bg-neutral-800">
-            <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
-              <i class="far fa-lightbulb"></i> Challenge Hints
+          <div className="mt-5 rounded-sm shadow-lg 900 bg-neutral-800/40">
+            <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+            Challenge Hints
             </h3>
             <div className="px-5 py-5">
               <dt className="truncate text-xl font-medium text-white">
@@ -179,7 +173,7 @@ export default function Createchall() {
               </dt>
               <textarea
                 id="hint1"
-                className="mt-1 w-full rounded-lg border-none bg-neutral-900 text-white"
+                className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 text-white"
               >
                 No hint set
               </textarea>
@@ -189,7 +183,7 @@ export default function Createchall() {
               </dt>
               <textarea
                 id="hint2"
-                className="mt-1 w-full rounded-lg border-none bg-neutral-900   text-white"
+                className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900   text-white"
               >
                 No hint set
               </textarea>
@@ -199,33 +193,34 @@ export default function Createchall() {
               </dt>
               <textarea
                 id="hint3"
-                className="mt-1 w-full rounded-lg border-none bg-neutral-900  text-white"
+                className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white"
               >
                 No hint set
               </textarea>
             </div>
           </div>
 
-          <div className="mt-5 rounded-lg   bg-neutral-800">
-            <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
-              <i class="far fa-flag"></i> Challenge Solution
+          <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40">
+            <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+           Challenge Solution
             </h3>
             <div className="px-5 py-5">
               <input
                 id="solution"
-                className="mb-4 mt-1 w-full rounded-lg border-none bg-neutral-900 px-2 py-2  text-white"
+                value="Nothing set"
+                className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"
               ></input>
             </div>
           </div>
 
           <button
             onClick={uploadChallenge}
-            className="mr-2 mt-6 rounded-lg border-green-600 bg-green-700 px-4 py-2 text-2xl text-white hover:bg-green-800"
+            className="mr-2 mt-6 rounded-lg shadow-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white hover:bg-green-800"
           >
             <i class="fas fa-send"></i> Send for approval
           </button>
 
-          <button className="mr-2 mt-6 hidden rounded-lg border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white hover:bg-blue-800">
+          <button className="mr-2 mt-6 hidden rounded-sm shadow-lg border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white hover:bg-blue-800">
             <i class="fas fa-save"></i> Save as draft
           </button>
         </div>
@@ -236,7 +231,7 @@ export default function Createchall() {
           className="pointer-events-none fixed inset-0 flex hidden items-end px-4 py-6 sm:items-start sm:p-6"
         >
           <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
-            <div className="pointer-events-auto w-full  max-w-sm overflow-hidden rounded-lg border border-gray-700 shadow-lg ring-1 ring-black ring-opacity-5">
+            <div className="pointer-events-auto w-full  max-w-sm overflow-hidden rounded-sm shadow-lg border border-gray-700 shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
