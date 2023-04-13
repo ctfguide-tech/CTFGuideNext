@@ -59,6 +59,7 @@ function Pratice({ slug }) {
         result["content"] = paragraphs;
         console.log("Rendering challenge with new result: "+result.content)
         setChallenge(result);
+        
       } catch (err) {
         throw err;
       }

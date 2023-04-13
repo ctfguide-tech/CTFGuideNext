@@ -31,7 +31,12 @@ export default function Create() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
+  const stats = [
+    { id: 1, name: 'Challenegs Created', value: '20' },
+    { id: 2, name: 'Challenge Views', value: '7.4K' },
+    { id: 3, name: 'Challenge Attempts', value: '12.5K' },
+    { id: 4, name: 'Challenge Solves', value: '2.3K' },
+  ]
   useEffect(() => {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
@@ -197,11 +202,11 @@ export default function Create() {
           className="fixed top-0 left-0 mt-10 h-full w-1/2 "
           aria-hidden="true"
         ></div>
-        <div className=" top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
+        <div className="  top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
         <div className="relative flex min-h-full flex-col">
           <div className="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
             <div className="min-w-0 flex-1 xl:flex">
-              <div className=" xl:w-64 xl:flex-shrink-0 xl:border-neutral-700">
+              <div className="hidden  xl:w-64 xl:flex-shrink-0 xl:border-neutral-700">
                 <div className="py-6 pl-4 pr-6 sm:pl-6 lg:pl-8 xl:pl-0">
                   <div className="flex items-center justify-between ">
                     <div className="flex-1 space-y-8">
@@ -336,65 +341,63 @@ export default function Create() {
                   </div>
                 </div>
               </div>
-              <div className=" lg:min-w-0 lg:flex-1 mt-6 rounded-lg bg-[#1f2940]">
-                <div className="my-auto flex h-28 text-center">
-                  <h1 className="px-6 py-6 text-3xl font-normal text-white">
-                    Creator Dashboard
-                  </h1>
-                </div>
-                <div className="mx-auto mb-4 grid gap-4 rounded-lg pl-4 pr-6 pt-4 pb-4 text-center sm:grid-cols-1 sm:pl-6 md:grid-cols-3 lg:grid-cols-3 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6">
-                  <div
-                    style={{
-                      backgroundColor: '#212121',
-                      borderColor: '#3b3a3a',
-                    }}
-                    className=" stext-center mx-auto w-full rounded-lg px-4 py-2 text-white  "
-                  >
-                    <h1 className="bg-gradient-to-br from-indigo-500 to-blue-200 bg-clip-text text-3xl text-transparent">
-                      -
-                    </h1>
-                    <h1 className="text-xl">Total Views</h1>
-                  </div>
+              <div className=" lg:min-w-0 lg:flex-1 mt-6 rounded-lg ">
+          
 
-                  <div
-                    style={{
-                      backgroundColor: '#212121',
-                      borderColor: '#3b3a3a',
-                    }}
-                    className=" mx-auto w-full rounded-lg px-4 py-2 text-center text-white "
-                  >
-                    <h1 className="bg-gradient-to-br from-orange-400 to-yellow-500 bg-clip-text text-3xl text-transparent">
-                      -
-                    </h1>
-                    <h1 className="text-xl ">Total Attempts</h1>
-                  </div>
-
-                  <div
-                    style={{
-                      backgroundColor: '#212121',
-                      borderColor: '#3b3a3a',
-                    }}
-                    className=" mx-auto w-full rounded-lg px-4 py-2 text-center text-white "
-                  >
-                    <h1 className="bg-gradient-to-br from-green-200 to-green-400 bg-clip-text text-3xl text-transparent">
-                      -
-                    </h1>
-                    <h1 className="text-xl">Total Valid Attempts</h1>
-                  </div>
-                </div>
-
-                <div className="border-b border-t border-neutral-700 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6">
+          <div className='mx-auto max-w-7xl'>
+          <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
+     
+     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+       <div
+         className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
+         aria-hidden="true"
+       >
+         <div
+           className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
+           style={{
+             clipPath:
+               'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+           }}
+         />
+       </div>
+       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
+         <h2 className="text-base font-semibold leading-8 text-blue-600">IMPACT AT A GLANCE</h2>
+         <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+         Your impact on cybersecurity education
+         </p>
+         <p className="mt-4 text-lg leading-8 text-gray-300">
+           It's contributions from people like you that is creating a generation of cybersecurity professionals.
+         </p>
+       </div>
+       <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-10 text-white sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+         {stats.map((stat) => (
+           <div key={stat.id} className="flex flex-col gap-y-3 border-l border-white/10 pl-6">
+             <dt className="text-sm leading-6">{stat.name}</dt>
+             <dd className="order-first text-3xl font-semibold tracking-tight">{stat.value}</dd>
+           </div>
+         ))}
+       </dl>
+     </div>
+   </div></div>
+       
+                <div className="mt-10  pb-4 xl:border-t-0 ">
                   <div className="flex items-center">
-                    <h1 className="flex-1 text-3xl font-medium font-semibold text-white">
-                      <div className="flex">
-                        {title}
-                        <InfoPopup />
+                    <h1 className="flex-1 text-2xl font-medium  text-white">
+                      <div className="">
+                        {title} <br></br>
+                     <div className='text-sm flex-none w-2/3'>
+                      <p>
+                          {infoText}
+                      </p>
+                      </div>
                       </div>
                     </h1>
+
+                    <a href="/create/new" className='bg-blue-700 shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
                     <div className="relative">
                       <button
                         type="button"
-                        className="inline-flex w-full justify-center gap-x-1.5 rounded-md  border border-neutral-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  hover:bg-neutral-800"
+                        className="inline-flex w-full justify-center gap-x-1.5 rounded-md   px-3 py-2 text-sm font-semibold text-white shadow-sm  hover:bg-neutral-800"
                         id="sort-menu-button"
                         aria-expanded={isOpen}
                         aria-haspopup="true"
@@ -415,6 +418,8 @@ export default function Create() {
                           />
                         </svg>
                       </button>
+
+                
 
                       <div
                         className={`absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md  border border-neutral-600 bg-neutral-800  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
@@ -485,14 +490,16 @@ export default function Create() {
 
                   {!hasChallenges && (
                     <motion.div
-                      className="mx-auto w-4/5 rounded-md"
+                      className="mx-auto w-full rounded-md"
                       initial={{ opacity: 0, x: 100 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="mx-auto mt-6 flex rounded-md bg-neutral-800 px-6 py-2.5 hover:bg-neutral-700">
-                        <div className="my-auto mx-auto pt-4 pb-4 text-2xl text-white">
-                          Nothing to display!
+                      <div className="mx-auto mt-6 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
+                        <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+                        <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
+                          <p>Looks like you have no {title.toLowerCase().split(" ")[0]} challenges yet.</p>
+                          <p className='mx-auto text-center text-sm text-blue-600'>First time creating CTF's?</p>
                         </div>
                       </div>
                     </motion.div>
