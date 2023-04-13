@@ -33,6 +33,13 @@ export default function Careers() {
       height: '200',
     },
     {
+      personName: 'Brody Pearlman',
+      position: 'Business',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
       personName: 'Mish Adelanwa',
       position: 'Advisor',
       image: '../mish.jpg',
@@ -40,43 +47,50 @@ export default function Careers() {
       height: '200',
     },
     {
+      personName: 'Jackson Ferris',
+      position: 'Cybersecurity',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
       personName: 'Jaiming Wang',
-      position: 'Advisor',
+      position: 'Fullstack Engineer',
       image: '../mish.jpg',
       width: '200',
       height: '200',
     },
     {
       personName: 'Ryan Zanoni',
-      position: 'Advisor',
+      position: 'Backend Engineer',
       image: '../mish.jpg',
       width: '200',
       height: '200',
     },
     {
       personName: 'Dax Patel',
-      position: 'Advisor',
+      position: 'Frontend Developer',
       image: '../mish.jpg',
       width: '200',
       height: '200',
     },
     {
       personName: 'Ashni Voleti',
-      position: 'Advisor',
+      position: 'Marketing',
       image: '../mish.jpg',
       width: '200',
       height: '200',
     },
     {
       personName: 'Abhi Byreddy',
-      position: 'Advisor',
+      position: 'Backend Engineer',
       image: '../mish.jpg',
       width: '200',
       height: '200',
     },
     {
       personName: 'Almond Milk',
-      position: 'Advisor',
+      position: 'Content',
       image: '../mish.jpg',
       width: '200',
       height: '200',
@@ -145,16 +159,26 @@ export default function Careers() {
         {/*
          sm is for "smaller" devices
          */}
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-4 lg:grid-cols-4">
           {team.map((person) => {
             return (
               <div className="py-8 text-white ">
                 <img
-                  className={' mx-auto rounded-full '}
+                  className={' mx-auto rounded-full hidden '}
                   width={person.width}
                   height={person.width}
                   src={person.image}
                 ></img>
+                <img
+                  className="mx-auto h-42 w-42 rounded-full border bg-neutral-900 "
+                  src={
+                    `https://robohash.org/` +
+                    person.personName +
+                    `.png?set=set1&size=150x150`
+                  }
+                  loading="lazy"
+                  alt=""
+                />
                 <h1 className={'mt-4 text-xl text-xl font-bold text-blue-500'}>
                   {person.personName}
                 </h1>
