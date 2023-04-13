@@ -108,7 +108,7 @@ export default function Pratice() {
       </Head>
       <StandardNav />
       <main>
-        <div className=" w-full " style={{ backgroundColor: '#212121' }}>
+        <div className=" w-full hidden " style={{ backgroundColor: '#212121' }}>
           <div className="mx-auto my-auto flex h-28 text-center">
             <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
               Hub
