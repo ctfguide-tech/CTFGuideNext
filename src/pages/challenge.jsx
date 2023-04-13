@@ -53,6 +53,11 @@ function Pratice({ slug }) {
         };
         const response = await fetch(endPoint, requestOptions);
         const result = await response.json();
+        const paragraphs = result["content"].split("%linebreak%").map((paragraph, index) => {
+          return <p key={index}>{paragraph}</p>;
+        });
+        result["content"] = paragraphs;
+        console.log("Rendering challenge with new result: "+result.content)
         setChallenge(result);
       } catch (err) {
         throw err;
@@ -155,7 +160,7 @@ function Pratice({ slug }) {
           process.env.NEXT_PUBLIC_API_URL +
           '/challenges/' +
           slug +
-          '/submissions'; 
+          '/submissions';
         const requestOptions = {
           method: 'POST',
           headers: {
@@ -413,7 +418,7 @@ function Pratice({ slug }) {
           <p
             id="challengeDetails"
             style={{ color: '#8c8c8c' }}
-            className="w-5/6 text-lg text-white"
+            className="w-5/6 text-lg text-white whitespace-pre-wrap"
           >
             {challenge.content}
           </p>
