@@ -191,7 +191,7 @@ export default function Create() {
       </Head>
       <StandardNav />
       <main>
-        <CreatorDashboard />
+        {/*<CreatorDashboard />*/}
         <br></br>
         <div
           className="fixed top-0 left-0 mt-10 h-full w-1/2 "
@@ -201,78 +201,57 @@ export default function Create() {
         <div className="relative flex min-h-full flex-col">
           <div className="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
             <div className="min-w-0 flex-1 xl:flex">
-              <div className=" xl:w-64 xl:flex-shrink-0 xl:border-r xl:border-neutral-700">
+              <div className=" xl:w-64 xl:flex-shrink-0 xl:border-neutral-700">
                 <div className="py-6 pl-4 pr-6 sm:pl-6 lg:pl-8 xl:pl-0">
                   <div className="flex items-center justify-between ">
                     <div className="flex-1 space-y-8">
                       <div className="space-y-8 sm:flex sm:items-center sm:justify-between sm:space-y-0 xl:block xl:space-y-8">
-                        <div className="flex items-center space-x-3">
-                          <div className="h-12 w-12 flex-shrink-0">
-                            <img
-                              className="h-12 w-12 rounded-full"
-                              src={
-                                'https://robohash.org/' +
-                                username +
-                                '.png?set=set1&size=150x150'
-                              }
-                              alt=""
-                            />
+                        <div className='border rounded-lg py-8 border-[#1f2940] bg-[#1f2940]'>
+                          <div class="w-24 h-24 mx-auto border-2 border-white rounded-full bg-gradient-to-tr from-blue-500 to-blue-600">
+                              <img
+                                className="h-24 w-24 rounded-full"
+                                src={
+                                  'https://robohash.org/' +
+                                  username +
+                                  '.png?set=set1&size=150x150'
+                                }
+                                alt=""
+                              />
                           </div>
-                          <div className="space-y-1">
-                            <div className="text-xl font-medium text-white">
-                              {username ? (
-                                username
-                              ) : (
-                                <h1 className="rounded-md border border-neutral-700 bg-[#323232] px-3 py-2 text-xs hover:bg-neutral-700">
-                                  <a href="/login">You are not logged in!</a>
-                                </h1>
-                              )}
+                          <div className="flex flex-col sm:flex-row xl:flex-col">
+                            <div className="space-y-1 mx-auto">
+                              <div className="mt-6 text-2xl font-bold text-white">
+                                {username ? (
+                                  username
+                                ) : (
+                                  <h1 className="rounded-md border border-neutral-700 bg-[#323232] px-3 py-2 text-xs hover:bg-neutral-700">
+                                    <a href="/login">You are not logged in!</a>
+                                  </h1>
+                                )}
+                              </div>
                             </div>
-                            <div className="text-sm text-white">
-                              Joined:{' '}
-                              {date ? date.toString().substring(0, 10) : '-'}
+                            <div className="space-y-1 mx-auto">
+                              <div className="mb-4 text-sm text-gray-300">
+                                Joined:{' '}
+                                {date ? date.toString().substring(0, 10) : '-'}
+                              </div>
                             </div>
-                            <a
-                              href="#"
-                              className="group flex hidden items-center space-x-2.5"
-                            >
-                              <svg
-                                className="h-5 w-5 text-white group-hover:text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                aria-hidden="true"
+                          </div>
+                          <div className="flex flex-col sm:flex-row xl:flex-col">
+                            <Link href="/create/new" className="text-center">
+                              <button
+                                type="button"
+                                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 xl:w-3/4"
                               >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
-                                  clip-rule="evenodd"
-                                />
-                              </svg>
-                              <span className="text-sm font-medium text-white group-hover:text-white">
-                                debbielewis
-                              </span>
-                            </a>
+                                Create New
+                              </button>
+                            </Link>
                           </div>
                         </div>
-
                         <div className="flex flex-col sm:flex-row xl:flex-col">
-                          <Link href="/create/new" className="text-center">
-                            <button
-                              type="button"
-                              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 xl:w-3/4"
-                            >
-                              Create New
-                            </button>
-                          </Link>
-                          <button
-                            type="button"
-                            className="mt-3 inline-flex hidden items-center justify-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-neutral-800 sm:mt-0 sm:ml-3 xl:ml-0 xl:mt-3 xl:w-full"
-                          >
-                            Invite Team
-                          </button>
-
                           <a href="/guides/approve">
-                            <div class="mt-8 max-w-sm rounded-lg rounded-md bg-[#212121] px-4 py-4 shadow hover:bg-[#303030]">
+                            <div class="max-w-sm rounded-lg rounded-md px-4 py-4 shadow hover:bg-[#303030]">
+                              <hr className='mb-8 border border-neutral-700 hidden'></hr>
                               <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
                                 The Creation Process
                               </h5>
@@ -296,7 +275,7 @@ export default function Create() {
                           </a>
 
                           <a href="/guides/create">
-                            <div class="mt-6 max-w-sm rounded-lg rounded-md bg-[#212121] px-4 py-4 shadow hover:bg-[#303030]">
+                            <div class="mt-6 max-w-sm rounded-lg rounded-md px-4 py-4 shadow hover:bg-[#303030]">
                               <i class="fas fa-book-open mb-2 h-10 w-10 text-2xl text-blue-500 dark:text-blue-500"></i>
                               <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
                                 Not sure where to start?
@@ -357,8 +336,13 @@ export default function Create() {
                   </div>
                 </div>
               </div>
-              <div className=" lg:min-w-0 lg:flex-1">
-                <div className="mx-auto mb-4 grid gap-4 rounded-lg pl-4 pr-6   pt-4 pb-4  text-center sm:grid-cols-1 sm:pl-6 md:grid-cols-3 lg:grid-cols-3 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6">
+              <div className=" lg:min-w-0 lg:flex-1 mt-6 rounded-lg bg-[#1f2940]">
+                <div className="my-auto flex h-28 text-center">
+                  <h1 className="px-6 py-6 text-3xl font-normal text-white">
+                    Creator Dashboard
+                  </h1>
+                </div>
+                <div className="mx-auto mb-4 grid gap-4 rounded-lg pl-4 pr-6 pt-4 pb-4 text-center sm:grid-cols-1 sm:pl-6 md:grid-cols-3 lg:grid-cols-3 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6">
                   <div
                     style={{
                       backgroundColor: '#212121',
