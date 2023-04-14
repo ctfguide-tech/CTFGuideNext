@@ -140,7 +140,7 @@ export default function ProblemsPage() {
                   {setInfo.description}
                 </p>
                 <div className="border border-2 border-[#212121]">
-                  <ProblemSetCard categoryName={setInfo.category} />
+                    <ProblemSetCard categoryName={setInfo.category} />
                 </div>
               </div>
             ))}

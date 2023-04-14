@@ -363,6 +363,7 @@ export default function Challenge() {
         </style>
       </Head>
       <main>
+      <StandardNav />
       <div className=" w-full py-10 " style={{ backgroundColor: '#212121' }}>
           <div className="mx-auto my-auto flex  text-center">
             <h1 className="mx-auto my-auto text-4xl font-semibold text-white">

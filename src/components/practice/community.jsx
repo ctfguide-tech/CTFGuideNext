@@ -52,7 +52,7 @@ export function Community({ challenges }) {
       </div>
 
       <div className="mt-6 max-w-6xl text-left">
-        <h1 className="text-3xl font-semibold text-white"> 🔥 Popular </h1>
+        <h1 className="text-3xl font-semibold text-white"> Community Challenges </h1>
         <div className="mt-4 grid grid-cols-1 gap-4 gap-y-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {challenges
             .filter((challenge) => {

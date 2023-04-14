@@ -31,14 +31,14 @@ const Challenge = ({ data, inCarousel }) => {
       }}
       className={
         classStyle +
-        'duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:ring-1 hover:ring-blue-600'
+        'duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-800/40'
       }
     >
       <div className="relative h-full">
         <div className="flex">
           <span
             className={
-              'mr-2 mt-1 rounded-md bg-blue-900 px-2 text-sm font-semibold ' +
+              'mr-2 mt-1 rounded-md text-white mb-1 px-2 text-sm font-semibold ' +
               badgeColor[difficulty.toLowerCase()]
             }
           >
