@@ -27,10 +27,7 @@ const Challenge = ({ data, inCarousel }) => {
   return (
     <Link
       href={{
-        pathname: '/challenge',
-        query: {
-          slug: data.slug,
-        },
+        pathname: `/challenges/${data.slug}`
       }}
       className={
         classStyle +
