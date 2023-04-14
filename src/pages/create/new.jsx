@@ -1,11 +1,13 @@
 import Head from 'next/head';
-import { useState } from 'react';
-import { StandardNav } from '@/components/StandardNav';
-import { Footer } from '@/components/Footer';
-const pages = [
-    { name: 'Creator Dashboard', href: '../create', current: false },
-    { name: 'Challenge Creation', href: './', current: true },
-];
+import {useState} from 'react';
+import {StandardNav} from '@/components/StandardNav';
+import {Footer} from '@/components/Footer';
+
+const pages = [{name: 'Creator Dashboard', href: '../create', current: false}, {
+    name: 'Challenge Creation',
+    href: './',
+    current: true
+},];
 
 export default function Createchall() {
     const [activeTab, setActiveTab] = useState('created');
@@ -24,11 +26,7 @@ export default function Createchall() {
             difficulty: document.getElementById('difficulty').value.toUpperCase(),
             keyword: document.getElementById('solution').value,
             challengeType: 'STANDARD',
-            hints: [
-                document.getElementById('hint1').value,
-                document.getElementById('hint2').value,
-                document.getElementById('hint3').value,
-            ],
+            hints: [document.getElementById('hint1').value, document.getElementById('hint2').value, document.getElementById('hint3').value,],
             penalties: [10, 15, 20],
         });
 
@@ -45,17 +43,13 @@ export default function Createchall() {
         });
 
         xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/challenges`);
-        xhr.setRequestHeader(
-            'Authorization',
-            'Bearer ' + localStorage.getItem('idToken')
-        );
+        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('idToken'));
         xhr.setRequestHeader('Content-Type', 'application/json');
 
         xhr.send(data);
     }
 
-    return (
-        <>
+    return (<>
             <Head>
                 <title>Create - CTFGuide</title>
                 <style>
@@ -63,7 +57,7 @@ export default function Createchall() {
                     url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
                 </style>
             </Head>
-            <StandardNav />
+            <StandardNav/>
 
             <main>
 
@@ -82,8 +76,7 @@ export default function Createchall() {
                                 </a>
                             </div>
                         </li>
-                        {pages.map((page) => (
-                            <li key={page.name}>
+                        {pages.map((page) => (<li key={page.name}>
                                 <div className="flex items-center">
                                     <svg
                                         className="h-5 w-5 flex-shrink-0 text-gray-200"
@@ -91,7 +84,7 @@ export default function Createchall() {
                                         viewBox="0 0 20 20"
                                         aria-hidden="true"
                                     >
-                                        <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                                        <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z"/>
                                     </svg>
                                     <a
                                         href={page.href}
@@ -101,8 +94,7 @@ export default function Createchall() {
                                         {page.name}
                                     </a>
                                 </div>
-                            </li>
-                        ))}
+                            </li>))}
                     </ol>
                 </nav>
 
@@ -151,7 +143,8 @@ export default function Createchall() {
                         </select>
                     </div>
 
-                    <div className="mt-5 rounded-sm shadow-lg border border-gray-900 bg-neutral-800/40  shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div
+                        className="mt-5 rounded-sm shadow-lg border border-gray-900 bg-neutral-800/40  shadow-lg ring-1 ring-black ring-opacity-5">
                         <h3 className=" rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
                             Challenge Content
                         </h3>
@@ -181,22 +174,14 @@ export default function Createchall() {
                             <dt className="mt-4 truncate text-xl font-medium text-white">
                                 Hint 2
                             </dt>
-                            <textarea
-                                id="hint2"
-                                className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900   text-white"
-                            >
-                No hint set
-              </textarea>
+                            <textarea id="hint2" className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900   text-white">No hint set</textarea>
 
                             <dt className="mt-4 truncate text-xl font-medium text-white">
                                 Hint 3
                             </dt>
-                            <textarea
-                                id="hint3"
-                                className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white"
-                            >
-                No hint set
-              </textarea>
+                            <textarea id="hint3" className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white">
+                                No hint set
+                            </textarea>
                         </div>
                     </div>
 
@@ -205,11 +190,10 @@ export default function Createchall() {
                             Challenge Solution
                         </h3>
                         <div className="px-5 py-5">
-                            <input
+                            <textarea
                                 id="solution"
-                                value="Nothing set"
                                 className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"
-                            ></input>
+                            >Nothing Set</textarea>
                         </div>
                     </div>
 
@@ -220,7 +204,8 @@ export default function Createchall() {
                         <i class="fas fa-send"></i> Send for approval
                     </button>
 
-                    <button className="mr-2 mt-6 hidden rounded-sm shadow-lg border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white hover:bg-blue-800">
+                    <button
+                        className="mr-2 mt-6 hidden rounded-sm shadow-lg border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white hover:bg-blue-800">
                         <i class="fas fa-save"></i> Save as draft
                     </button>
                 </div>
@@ -231,7 +216,8 @@ export default function Createchall() {
                     className="pointer-events-none fixed inset-0 flex hidden items-end px-4 py-6 sm:items-start sm:p-6"
                 >
                     <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
-                        <div className="pointer-events-auto w-full  max-w-sm overflow-hidden rounded-sm shadow-lg border border-gray-700 shadow-lg ring-1 ring-black ring-opacity-5">
+                        <div
+                            className="pointer-events-auto w-full  max-w-sm overflow-hidden rounded-sm shadow-lg border border-gray-700 shadow-lg ring-1 ring-black ring-opacity-5">
                             <div className="p-4">
                                 <div className="flex items-start">
                                     <div className="flex-shrink-0">
@@ -265,7 +251,6 @@ export default function Createchall() {
                     </div>
                 </div>
             </main>
-            <Footer />
-        </>
-    );
+            <Footer/>
+        </>);
 }
