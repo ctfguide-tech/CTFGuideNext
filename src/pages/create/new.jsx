@@ -1,7 +1,7 @@
 import Head from 'next/head';
-import {useState} from 'react';
-import {StandardNav} from '@/components/StandardNav';
-import {Footer} from '@/components/Footer';
+import { useState } from 'react';
+import { StandardNav } from '@/components/StandardNav';
+import { Footer } from '@/components/Footer';
 
 const pages = [{name: 'Creator Dashboard', href: '../create', current: false}, {
     name: 'Challenge Creation',

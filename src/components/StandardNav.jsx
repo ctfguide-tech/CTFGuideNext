@@ -2,7 +2,6 @@ import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
-  BellIcon,
   XMarkIcon,
   Cog6ToothIcon,
   PencilSquareIcon,
@@ -11,11 +10,11 @@ import {
   ArrowRightIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
+
+// Do not remove, even if detected as unused by vscode!
 import { app } from '../config/firebaseConfig';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
 function classNames(...classes) {

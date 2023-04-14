@@ -3,15 +3,11 @@ import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { ChallengeCard } from '@/components/create/ChallengeCard';
-import { CreatorDashboard } from '@/components/create/CreatorDashboard';
 import Link from 'next/link';
-import { InformationCircleIcon } from '@heroicons/react/20/solid';
-import { Card } from '@/components/create/Card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 

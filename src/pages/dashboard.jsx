@@ -1,5 +1,4 @@
 import Head from 'next/head';
-
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -10,7 +9,6 @@ import { useState } from 'react';
 import { SideNavContent } from '@/components/dashboard/SideNavContents';
 import { QuickSettings } from '@/components/dashboard/QuickSetttings';
 import { Suggest } from '@/components/dashboard/Suggest';
-
 import { YourChallenges } from '@/components/dashboard/YourChallenges';
 import { Likes } from '@/components/dashboard/Likes';
 import { Badges } from '@/components/dashboard/Badges';

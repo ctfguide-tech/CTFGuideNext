@@ -9,7 +9,7 @@ export default function PersonCard({ person }) {
   return (
     <motion.div
       className="py-8 text-white"
-      whileHover={{ rotate: 360 }}
+      // whileHover={{ rotate: 360 }}
     >
       <img
         className="mx-auto h-42 w-42 rounded-full border bg-neutral-900"
@@ -25,7 +25,7 @@ export default function PersonCard({ person }) {
         variants={variants}
         initial="hidden"
         animate="visible"
-        transition={{ duration: 2 }}
+        transition={{ duration: 0 }}
       >
         {person.bio}
       </motion.p>

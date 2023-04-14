@@ -4,16 +4,8 @@ import { Footer } from '@/components/Footer';
 import { useRef } from 'react';
 import { useScroll } from 'framer-motion';
 import { PracticeNav } from '@/components/practice/PracticeNav';
-import {
-  Bars3Icon,
-  BellIcon,
-  XMarkIcon,
-  Cog6ToothIcon,
-  PencilSquareIcon,
-  ShieldExclamationIcon,
-  UserCircleIcon,
-  ArrowRightIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+
 const pages = [
   { name: 'Hub', href: '../practice', current: false },
   { name: 'About CTFGuide', href: './create', current: true },

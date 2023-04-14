@@ -1,10 +1,4 @@
-import Head from 'next/head';
 import React, { useState, useEffect } from 'react';
-import { StandardNav } from '@/components/StandardNav';
-import { Footer } from '@/components/Footer';
-import { PracticeNav } from '@/components/practice/PracticeNav';
-import { ProblemSetCards } from '@/components/practice/GoToCreate';
-import ProblemSet from '@/components/practice/ProblemSet';
 
 export default function ProblemSetCard({ categoryName }) {
   const [components, setComponents] = useState([]);

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CheckCircleIcon, EyeIcon } from '@heroicons/react/20/solid';
+import { CheckCircleIcon } from '@heroicons/react/20/solid';
 
 const Challenge = ({ data, inCarousel }) => {
   const { difficulty } = data;

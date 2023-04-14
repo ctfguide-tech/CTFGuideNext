@@ -1,10 +1,7 @@
 import Head from 'next/head';
-import Link from 'next/link';
-import { StandardNav } from '@/components/StandardNav';
-import { Button } from '@/components/Button';
-import Report from '../components/dashboard/Report';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 export default function TermsOfService() {
   useEffect(() => {
@@ -65,6 +62,7 @@ export default function TermsOfService() {
       <div className="mx-auto max-w-7xl pb-10 text-white">
         <div id="tos" className="max-w-7xl text-white  "></div>
       </div>
+      <Footer />
     </>
   );
 }

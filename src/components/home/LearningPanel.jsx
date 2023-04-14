@@ -1,11 +1,7 @@
 import {
-  CloudIcon,
-  BookOpenIcon,
-  TrophyIcon,
   ClockIcon,
   Battery50Icon,
   CheckBadgeIcon,
-  LightBulbIcon,
 } from '@heroicons/react/20/solid';
 
 export function LearningPanel() {

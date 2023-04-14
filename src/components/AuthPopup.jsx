@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 

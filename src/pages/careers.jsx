@@ -35,6 +35,7 @@ export default function Careers() {
       image: '../srihari.jpg',
       width: '200',
       height: '200',
+      bio: "Srihari is a data-oriented business leader that joined the CTF team in early 2022. With his experience in data analysis, machine learning, and management, Srihari has supported the CTF team in making key marketing and financial decisions. He is currently a Data Science and Business Administration combined major at Northeastern University."
     },
     {
       personName: 'Brody Pearlman',

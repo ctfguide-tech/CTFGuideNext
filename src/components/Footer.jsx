@@ -47,7 +47,6 @@ export function Footer() {
           <p className="mt-6 text-sm text-white sm:mt-0">
             Copyright &copy; {new Date().getFullYear()} CTFGuide. All rights
             reserved. <br></br>
-            Made with love in Happy Valley, PA.
           </p>
         </div>
       </Container>

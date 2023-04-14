@@ -4,11 +4,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { ProblemSetCards } from '@/components/practice/GoToCreate';
-import ProblemSet from '@/components/practice/ProblemSet';
-import { ChallengeCard } from '@/components/create/ChallengeCard';
-import { Community } from '@/components/practice/community';
 import ProblemSetCard from '@/components/practice/ProblemSetCard';
-import Challenge from '@/components/challenge/ChallengeComponent';
 
 export default function ProblemsPage() {
   //   const [components, setComponents] = useState([]);

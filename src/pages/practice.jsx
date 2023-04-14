@@ -3,12 +3,8 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { useState, useEffect } from 'react';
-import { LearningModule } from '@/components/learn/LearningModule';
-import { Community } from '@/components/practice/community';
-import ProblemSetCard from '@/components/practice/ProblemSetCard';
 
-
-export default function Pratice() {
+export default function Practice() {
   
   function loadChallenges() {
     try {

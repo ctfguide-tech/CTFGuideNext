@@ -1,7 +1,5 @@
 import Head from 'next/head';
-import Link from 'next/link';
 import { StandardNav } from '@/components/StandardNav';
-import { Button } from '@/components/Button';
 import { Footer } from '@/components/Footer';
 
 export default function ComingSoon() {
