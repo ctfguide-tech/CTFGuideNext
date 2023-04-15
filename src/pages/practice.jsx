@@ -221,7 +221,7 @@ export default function Practice() {
                 </div>
               </div>
 
-              <div className=" mt-6 rounded-lg lg:min-w-0 lg:flex-1 ">
+              <div className=" mt-12 rounded-lg lg:min-w-0 lg:flex-1 ">
                 <div className="mx-auto max-w-7xl">
                   <div className="  relative isolate overflow-hidden  rounded-lg bg-black/10 bg-neutral-900 py-14 shadow-2xl ring-1 ring-white/10 sm:py-12">
                     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">

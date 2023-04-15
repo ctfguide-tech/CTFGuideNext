@@ -209,6 +209,17 @@ export default function Dashboard() {
               ]}
             />
           </div>
+          <div className='bg-neutral-800/50 px-8 py-6 rounded-md mt-16'>
+            <h1 className="mb-1 text-3xl font-semibold text-white">
+              Explore a Tool
+            </h1>
+            <h2 className="text-base font-semibold leading-8 text-blue-600">
+              See how a tool works in action.
+            </h2>
+            <div className="mt-4 grid grid-cols-4 gap-x-6 gap-y-6">
+
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
