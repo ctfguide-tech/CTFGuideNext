@@ -8,6 +8,7 @@ export function PracticeNav() {
         className=" mt-8 flex-none text-neutral-900 w-full   mx-auto rounded-sm shadow-lg"
         style={{ borderColor: '#212121' }}
       >
+        <hr className='border-white/10 mb-3'></hr>
         <h2 className="flex text-blue-600 px-4 mb-3 ml-4 mx-auto">NAVIGATION<ArrowPathRoundedSquareIcon className='ml-4 h-6'/></h2>
         <ul className="">
           <li className="py-1 px-2 hover:bg-neutral-800/60 rounded-sm border border-white/10 hover:border-white/30">

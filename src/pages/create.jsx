@@ -10,6 +10,7 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import Typography from '@mui/material/Typography';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
@@ -495,7 +496,9 @@ export default function Create() {
                         <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
                         <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
                           <p>Looks like you have no {title.toLowerCase().split(" ")[0]} challenges yet.</p>
-                          <p className='mx-auto text-center text-sm text-blue-600'>First time creating CTF's?</p>
+                          <a href="/guides/create" className='mx-auto'>
+                            <p className='mx-auto text-center text-sm text-blue-600 underline'>Want to create CTF's? Learn more here<ArrowRightIcon className='ml-1 mt-0.5 h-5 hidden' /></p>
+                          </a>
                         </div>
                       </div>
                     </motion.div>
