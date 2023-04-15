@@ -188,10 +188,10 @@ export default function Login() {
             <div className="space-y-6">
               <div
                 id="error"
-                className="tex†-white hidden rounded bg-red-500 px-4 py-1"
+                className="tex†-white  rounded bg-red-500 px-4 py-1"
               >
                 <h1 className="text-center text-white" id="errorMessage">
-                  Something went wrong.
+                  Temporarily down for maintenance
                 </h1>
               </div>
               <div>
