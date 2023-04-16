@@ -64,6 +64,7 @@ export default function Challenge() {
         };
         const response = await fetch(endPoint, requestOptions);
         const result = await response.json();
+        //result["content"] = result["content"].replace()
         setChallenge(result);
       } catch (err) {
         throw err;
@@ -448,9 +449,9 @@ export default function Challenge() {
           <p
   id="challengeDetails"
   style={{ color: '#8c8c8c' }}
-  className="w-5/6 text-lg text-white"
+  className="w-5/6 text-lg text-white whitespace-pre-wrap"
 >
-  {challenge.content && challenge.content.replace("\n", <br/>)}
+  {challenge.content}
 </p>
           <div className="flex ">
             <div className="mt-4 rounded-lg">
