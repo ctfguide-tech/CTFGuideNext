@@ -52,7 +52,7 @@ export function QuickSettings() {
 
   return (
     <>
-      <h1 className="mt-10 text-xl text-gray-100"> Your Bio</h1>
+      <h1 className="mt-10 text-xl text-gray-300"> Your Bio</h1>
       <textarea
         id="bio"
         onChange={() => bannerState(true)}
@@ -61,7 +61,7 @@ export function QuickSettings() {
         className="mt-1 w-full rounded-lg border-none text-white"
       ></textarea>
 
-      <h1 className="mt-2 text-xl text-gray-100"> Site Feed</h1>
+      <h1 className="mt-2 text-xl text-gray-300"> Site Feed</h1>
 
       <div className="mx-auto mb-4 mt-1 w-full gap-4 gap-y-6 rounded-lg">
         <div
