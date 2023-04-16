@@ -47,11 +47,13 @@ export default function Practice() {
   }
 
   const [challenges, setChallenges] = useState([]);
-  const stats = [
+
+
+  const [stats, setStats] = useState([
     { id: 1, name: 'Challenges Solved', value: '0' },
     { id: 2, name: 'Challenges Viewed', value: '0' },
     { id: 3, name: 'Challenges Attempted', value: '0' },
-  ];
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +95,12 @@ export default function Practice() {
           setRank(data.leaderboardNum + 1);
           setPoints(data.points);
           setName(data.username);
+
+          setStats([
+            { id: 1, name: 'Challenge Streak', value: data.streak },
+            { id: 2, name: 'Leaderboard Placement', value: ('#' + (data.leaderboardNum + 1)) },
+            { id: 3, name: 'Challenges Attempted', value: 0 },
+          ]);
         })
         .catch((err) => {
           console.log(err);

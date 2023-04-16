@@ -45,11 +45,46 @@ export default function Pratice() {
       <StandardNav />
       <main>
  
-        <div className="flex flex-col sm:flex-row">
-          <div className="flex w-full max-w-7xl px-8 md:mx-auto md:h-screen md:w-1/5 md:justify-center md:px-16">
-            <PracticeNav />
-          </div>
-          <div className="w-full border-l border-neutral-800 px-8 md:w-4/5 xl:px-16">
+      <div className='mx-auto max-w-7xl mt-10'>
+          <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-10 sm:py-12 rounded-lg">
+     
+     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+       <div
+         className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
+         aria-hidden="true"
+       >
+         <div
+           className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
+           style={{
+             clipPath:
+               'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+           }}
+         />
+       </div>
+       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
+         <p className="mt-2 text-xl font-semibold tracking-tight text-white">
+         All of these practice problems are community created!
+
+         </p>
+         <p className="mt-4 text-lg leading-8 text-gray-300">
+          As of March 2023, we are still migrating the data from our old site. Some challenges won't show below.
+          <br>
+          </br>
+          <br>
+          </br>
+
+          Want to create your own challenges? Check out our <a href="../create" className="font-semibold">creator dashboard</a>.
+         </p>
+       </div>
+    
+     </div>
+   </div></div>
+      <div className="mx-auto grid max-w-7xl grid-cols-6 gap-x-4">
+                <div className="col-span-1">
+                  <PracticeNav />
+                </div>
+                <div className="col-span-5 ml-4">
+          <div className=" w-full border-l border-neutral-800 ">
             <div className="flex hidden">
               <div className="mt-6 flex w-1/2 rounded-lg bg-[#212121] px-4 py-2">
                 <div className="flex px-0 py-0">
@@ -91,41 +126,8 @@ export default function Pratice() {
             </div>
 
 
-          <div className='mx-auto max-w-7xl mt-10'>
-          <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-10 sm:py-12 rounded-lg">
-     
-     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-       <div
-         className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
-         aria-hidden="true"
-       >
-         <div
-           className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
-           style={{
-             clipPath:
-               'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-           }}
-         />
-       </div>
-       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
-         <p className="mt-2 text-xl font-semibold tracking-tight text-white">
-         All of these practice problems are community created!
-
-         </p>
-         <p className="mt-4 text-lg leading-8 text-gray-300">
-          As of March 2023, we are still migrating the data from our old site. Some challenges won't show below.
-          <br>
-          </br>
-          <br>
-          </br>
-
-          Want to create your own challenges? Check out our <a href="../create" className="font-semibold">creator dashboard</a>.
-         </p>
-       </div>
-    
-     </div>
-   </div></div>
             <Community challenges={challenges} />
+          </div>
           </div>
         </div>
       </main>

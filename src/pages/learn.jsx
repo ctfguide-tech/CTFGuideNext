@@ -13,7 +13,9 @@ export default function Dashboard() {
   */
   useEffect(() => {
     try {
-      fetch('api.ctfguide.com/dashboard')
+      //fetch('api.ctfguide.com/dashboard')
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
+
         .then((res) => res.json())
 
         .then((data) => {

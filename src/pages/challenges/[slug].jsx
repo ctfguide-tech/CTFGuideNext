@@ -97,27 +97,32 @@ export default function Challenge() {
   }, []);
 
   useEffect(() => {
-    const fetchLikeUrl = async () => {
-      const userLikesUrl = localStorage.getItem('userLikesUrl');
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
-      };
-      const response = await fetch(userLikesUrl, requestOptions);
-      const result = await response.json();
+    try {
+      const fetchLikeUrl = async () => {
+        const userLikesUrl = localStorage.getItem('userLikesUrl');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+          },
+        };
 
-      const likes = result.filter((item) => {
-        return item.challenge.slug === slug;
-      });
-      setLiked(likes.length ? true : false);
-      if (likes.length) {
-        setLikeCount(likeCount + 1);
-      }
-    };
-    fetchLikeUrl();
+        const response = await fetch(userLikesUrl, requestOptions);
+        const result = await response.json();
+
+        const likes = result.filter((item) => {
+          return item.challenge.slug === slug;
+        });
+        setLiked(likes.length ? true : false);
+        if (likes.length) {
+          setLikeCount(likeCount + 1);
+        }
+      };
+      fetchLikeUrl();
+    } catch (err) {
+      throw err;
+    }
   }, []);
 
   useEffect(() => {
@@ -418,12 +423,12 @@ export default function Challenge() {
           {/* ***************************************** */}
           <div></div>
           <p
-            id="challengeDetails"
-            style={{ color: '#8c8c8c' }}
-            className="w-5/6 text-lg text-white"
-          >
-            {challenge.content}
-          </p>
+  id="challengeDetails"
+  style={{ color: '#8c8c8c' }}
+  className="w-5/6 text-lg text-white"
+>
+  {challenge.content && challenge.content.replace("\n", <br/>)}
+</p>
           <div className="flex ">
             <div className="mt-4 rounded-lg">
               <div className="flex    rounded-lg   rounded-lg text-sm">
