@@ -10,30 +10,63 @@ export function Suggest() {
       </h1>
 
       <div className="mb-5 grid grid-cols-2 gap-x-4">
-        <div
-          style={{
-            backgroundImage:
-              "url('http://jasonlong.github.io/geo_pattern/examples/octogons.png')",
-          }}
-          className="flex cursor-pointer rounded-lg px-4 py-3 hover:shadow-md hover:shadow-blue-600/40"
-        >
-          <div className="">
-            <h1 className=" text-xl text-white">Continue solving </h1>
-            <h1 className="text-3xl font-semibold text-white">Hackabit</h1>
-          </div>
+        <div className="">
+          <a href='../challenges/cypher_decoding'>
+            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4 shadow-2xl ring-1 ring-white/10 hover:ring-white/40">
+              <div className="relative mx-auto max-w-7xl  px-5">
+                <div
+                  className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
+                  aria-hidden="true"
+                >
+                  <div
+                    className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
+                    style={{
+                      clipPath:
+                        'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                    }}
+                  />
+                </div>
+                <div className="mx-auto  lg:mx-0 lg:max-w-3xl">
+                  <div className="mt-4 text-lg leading-8 text-gray-300">
+                    <h1 className=" text-xl text-white">Suggested for you </h1>
+                    <h1 className="text-3xl font-semibold text-white">Cypher Decoding</h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
         </div>
-        <div
-          style={{
-            backgroundImage:
-              "url('https://camo.githubusercontent.com/95d341ea62cba982026e6d468e90f0369fcf989cd89aa9a0f89fa7fa2ebd19b8/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f6f7665726c617070696e675f636972636c65732e706e67')",
-          }}
-          className="flex cursor-pointer rounded-lg px-4 py-3 hover:shadow-md hover:shadow-yellow-600/40"
-        >
-          <div className="">
-            <h1 className=" text-xl text-white">Suggested for you </h1>
-            <h1 className="text-3xl font-semibold text-white">Gobustme!</h1>
-          </div>
+
+
+        <div className="">
+          <a href='../challenges/obedient_cat'>
+            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4 shadow-2xl ring-1 ring-white/10 hover:ring-white/40">
+              <div className="relative mx-auto max-w-7xl  px-5">
+                <div
+                  className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
+                  aria-hidden="true"
+                >
+                  <div
+                    className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
+                    style={{
+                      clipPath:
+                        'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                    }}
+                  />
+                </div>
+                <div className="mx-auto  lg:mx-0 lg:max-w-3xl">
+                  <div className="mt-4 text-lg leading-8 text-gray-300">
+                    <h1 className=" text-xl text-white">Popular on CTFGuide </h1>
+                    <h1 className="text-3xl font-semibold text-white">Obedient Cat</h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
         </div>
+
+
+
       </div>
     </>
   );

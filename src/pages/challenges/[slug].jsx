@@ -40,6 +40,11 @@ export default function Challenge() {
 
   // The Challenge
   useEffect(() => {
+    //window.alert(slug)
+
+    if (!slug) {
+      return;
+    }
     const award = localStorage.getItem('award');
 
     if (award) {
@@ -65,10 +70,13 @@ export default function Challenge() {
       }
     };
     fetchData();
-  }, []);
+  }, [slug]);
 
   // Start Terminal
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     const fetchTerminalData = async () => {
       try {
         const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
@@ -94,9 +102,12 @@ export default function Challenge() {
       setTerminalUsername('Something went wrong.');
       setTerminalPassword('Something went wrong.');
     }
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     try {
       const fetchLikeUrl = async () => {
         const userLikesUrl = localStorage.getItem('userLikesUrl');
@@ -123,21 +134,33 @@ export default function Challenge() {
     } catch (err) {
       throw err;
     }
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     fetchLeaderboard();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     fetchComments();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     fetchHints();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     if (challenge.upvotes) {
       setLikeCount(challenge.upvotes);
     }

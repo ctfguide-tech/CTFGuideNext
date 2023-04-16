@@ -41,7 +41,8 @@ export function SideNavContent() {
           {/*<li className="mb-4 py-1"><a href="../dashboard/my-friends" className="px-2 py-1 text-white hover:text-gray-400 font-medium text-lg"><i class="fas fa-user-friends mr-2"></i>Friends</a></li>*/}
         </ul>
 
-        <hr className="mx-auto border border-[#323232]"></hr>
+        <hr className="mx-auto border border-[#212121]"></hr>
+
         <a href="/guides/about">
           <div class="mt-6 mr-4 max-w-sm rounded-lg shadow">
             <i class="fas fa-seedling mb-2 h-10 w-10 text-3xl text-green-500 dark:text-green-500"></i>

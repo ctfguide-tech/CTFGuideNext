@@ -42,10 +42,18 @@ export function DashboardHeader() {
     <div>
       <div>
         <div
-          style={{ backgroundColor: '#212121' }}
+          style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
           className="h-20 w-full object-cover lg:h-20"
           alt=""
-        />
+        > 
+     
+      
+      
+      
+      </div>
+        
+
+        
       </div>
       <div className="mx-auto max-w-7xl ">
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
