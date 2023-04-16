@@ -34,6 +34,8 @@ export default function Create() {
     { id: 3, name: 'Challenge Attempts', value: '12.5K' },
     { id: 4, name: 'Challenge Solves', value: '2.3K' },
   ]
+
+
   useEffect(() => {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {

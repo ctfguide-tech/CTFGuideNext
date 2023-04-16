@@ -6,6 +6,29 @@ import { useState, useEffect } from 'react';
 import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 
 export default function Practice() {
+
+
+  useEffect(() => {
+    try {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/dashboard`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          window.alert(JSON.stringify(data));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch {}
+  }, []);
+
+
+
   function loadChallenges() {
     try {
       fetch('https://api.ctfguide.com/challenges/type/all')
