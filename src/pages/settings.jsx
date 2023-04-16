@@ -149,15 +149,28 @@ export default function Dashboard() {
               var github = document.getElementById('url').value;
               var location = document.getElementById('location').value;
 
-              var data = JSON.stringify({
-                bio: bio,
-                githubUrl: github,
-                firstName: firstName,
-                lastName: lastName,
-                location: location,
-                profileImage: downloadURL,
-              });
-
+              var data = {};
+              if (bio !== "") {
+                data.bio = bio;
+              }
+              if (github !== "") {
+                data.githubUrl = github;
+              }
+              if (firstName !== "") {
+                data.firstName = firstName;
+              }
+              if (lastName !== "") {
+                data.lastName = lastName;
+              }
+              if (location !== "") {
+                data.location = location;
+              }
+              if (downloadURL !== "") {
+                data.profileImage = downloadURL;
+              }
+              
+              var gooddata = JSON.stringify(data);
+              
               var xhr = new XMLHttpRequest();
 
               xhr.addEventListener('readystatechange', function () {
@@ -174,7 +187,7 @@ export default function Dashboard() {
               );
               xhr.setRequestHeader('Content-Type', 'application/json');
 
-              xhr.send(data);
+              xhr.send(gooddata);
             });
           });
         }
