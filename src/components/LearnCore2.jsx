@@ -47,7 +47,7 @@ useEffect(() => {
           <MarkDone sublesson={8} section={1} href={'../'} />
           <a
             href="../"
-            className="my-auto my-auto ml-4 rounded-lg bg-red-600 px-4 py-1 text-white"
+            className="my-auto my-auto ml-4 rounded-sm text-xl bg-red-600 px-4 py-1 text-white"
           >
             Exit Lab
           </a>
@@ -63,10 +63,14 @@ useEffect(() => {
             I spy with my little eyes
           </h1>
           <p className="text-white text-blue-500">@pranavramesh</p>
-
-          <h1 className="mt-4 text-xl font-semibold text-white">
-            Log into your terminal
+<div className='bg-neutral-900 px-4 py-2 shadow-lg mt-4 border-l-4 border-blue-600'>
+          <h1 className="mt-2 text-xl font-semibold text-white">
+            Prerequsites
           </h1>
+
+          <p className="text-white">
+            Login to the terminal with the follow credentials
+          </p>
           <div className="mt-4 bg-black p-4 text-white" style={{fontFamily: 'Arial'}}>
                             <p>
                                 ctfguide login: <span className="text-yellow-400">{terminalUsername}</span>
@@ -74,6 +78,16 @@ useEffect(() => {
                             <p>
                                 Password: <span className="text-yellow-400">{terminalPassword}</span>
                             </p>
+                        </div>
+
+                        <p className="text-white mt-4">
+            Run the setup for this challenge. (Just copy and paste this command)
+          </p>
+          <div className="mt-4 bg-black p-4 text-white" style={{fontFamily: 'Arial'}}>
+                            <p>
+                                curl -o hackerman.js https://raw.githubusercontent.com/ctfguide-tech/CTFGuideLessons/main/download/hackerman.js
+                            </p>
+                            </div>
                         </div>
           <h1 className="mt-4 text-xl font-semibold text-white">
             Introduction{' '}
