@@ -97,19 +97,32 @@ export default function Dashboard() {
       </Head>
       <StandardNav />
       <main>
-        <div className="mx-auto max-w-6xl">
-          <h1 className="mt-4 mt-6 text-5xl font-semibold text-white">
-            Cryptography!
-          </h1>
+        <div className="mx-auto ">
+        <div
+            className="  w-full backdrop-blur-lg"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80')",
+            }}
+          >
+            <div className="mx-auto my-auto flex h-28 text-center backdrop-blur-md">
+              <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
+                Cryptography
+              </h1>
+            </div>
+            <div className='text-center text-white bg-yellow-800 py-2'>
+                <h1>This lesson will temporarily serve a general overview until our content creation team finishes the new/updated lesson. We aren't exactly pleased with the current state of this learning module.</h1>
+            </div>
+          </div>
           <div className="mx-auto  flex max-w-7xl ">
             {/* Sidebar */}
             <LearnNav
               lessonNum={3}
               navElements={[
-                { href: '/learn/ch3/preview', title: 'Cryptography!' },
-                { href: '/learn/ch3/video3', title: 'PKI Introduction' },
-                { href: '/learn/ch3/activity3', title: 'Knees Deep into TLS' },
-                { href: '/learn/ch3/dynamic3', title: 'Password Dump' },
+                { href: './preview', title: 'Introduction to Cryptography' },
+                { href: './video3', title: 'Cryptography Outline' },
+                { href: './activity3', title: 'Mastery Task' },
+                { href: './dynamic3', title: 'Password Dump' },
               ]}
             />
 

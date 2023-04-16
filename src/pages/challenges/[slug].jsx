@@ -3,9 +3,11 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect, useState, Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, HeartIcon } from '@heroicons/react/24/outline';
+
 import Collapsible from 'react-collapsible';
 import { Footer } from '@/components/Footer';
+import { CheckCircleIcon, CheckIcon, FlagIcon } from '@heroicons/react/20/solid';
 
 export default function Challenge() {
   const router = useRouter()
@@ -126,10 +128,10 @@ export default function Challenge() {
         const likes = result.filter((item) => {
           return item.challenge.slug === slug;
         });
-        setLiked(likes.length ? true : false);
-        if (likes.length) {
-          setLikeCount(likeCount + 1);
-        }
+     //   setLiked(likes.length ? true : false);
+      //  if (likes.length) {
+       //   setLikeCount(likeCount + 1);
+       // }
       };
       fetchLikeUrl();
     } catch (err) {
@@ -285,6 +287,8 @@ export default function Challenge() {
     // Call comment report API
   };
 
+
+
   const fetchLeaderboard = async () => {
     try {
       const response = await fetch(
@@ -296,10 +300,10 @@ export default function Challenge() {
       if (!leaderboards.length) return;
 
       const user1 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 1;
+        return leaderboard.id == 5;
       });
       const user2 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 2;
+        return leaderboard.id == 4;
       });
       const user3 = leaderboards.filter((leaderboard) => {
         return leaderboard.id == 3;
@@ -385,15 +389,19 @@ export default function Challenge() {
   return (
     <>
       <Head>
-        <title>{challenge ? challenge.title : ""}</title>
+        <title>{challenge ? challenge.title : ""} - CTFGuide</title>
         <style>
           @import
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
       <main>
+      <div id="reportalert"  className="hidden text-white flex bg-blue-900 center fixed bottom-6 right-6 rounded-md bg-[#7cd313] p-2">
+          <CheckCircleIcon className='w-6 h-6 mr-2'> </CheckCircleIcon>We'll investigate this challenge and take appropriate action.
+        </div>
       <StandardNav />
-      <div className=" w-full py-10 " style={{ backgroundColor: '#212121' }}>
+      <div className=" w-full py-10 "           style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
+>
           <div className="mx-auto my-auto flex  text-center">
             <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
               {' '}
@@ -431,12 +439,20 @@ export default function Challenge() {
                 onClick={likeChallenge}
                 className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
               >
-                <h1 className="mt-1 mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
-                  👍
+                <h1 className=" mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
+                  <HeartIcon className="h-8 w-8 text-red-500" />
                 </h1>
-                <p className="mt-1 text-lg text-white">{likeCount}</p>
+                <p className=" text-2xl text-white">{likeCount}</p>
               </button>
-              <button className="card-body m-1 rounded-md bg-neutral-800 px-4 py-1 hover:bg-neutral-700">
+              <button
+              onClick={() => {document.getElementById("reportalert").classList.remove("hidden");setTimeout(function(){ document.getElementById("reportalert").classList.add("hidden"); }, 5000);}}
+                className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
+              >
+                <h1 className="  bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
+                  <FlagIcon  className="h-8 w-8 text-yellow-600" />
+                </h1>
+              </button>
+              <button className="hidden card-body m-1 rounded-md bg-neutral-800 px-4 py-1 hover:bg-neutral-700">
                 <h1 className="bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-sm font-semibold text-transparent">
                   View Submissions
                 </h1>
@@ -449,7 +465,7 @@ export default function Challenge() {
           <p
   id="challengeDetails"
   style={{ color: '#8c8c8c' }}
-  className="w-5/6 text-lg text-white whitespace-pre-wrap"
+  className="w-full text-lg text-white whitespace-pre-wrap border-l-4 border-blue-700 px-4 bg-neutral-800/50 py-2"
 >
   {challenge.content}
 </p>
