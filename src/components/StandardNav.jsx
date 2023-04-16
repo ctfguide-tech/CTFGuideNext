@@ -16,7 +16,8 @@ import { app } from '../config/firebaseConfig';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import 'reactjs-popup/dist/index.css';
-
+import { Router } from 'react-router-dom';
+import { useRouter } from 'next/router';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -32,6 +33,8 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav() {
+  const router = useRouter();
+
   function logout() {
     signOut(auth)
       .then(() => {
@@ -43,20 +46,14 @@ export function StandardNav() {
   }
 
   // if user signed out redirect
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.replace('/login');
-      }
-    });
-  }, []);
 
+  
   const [notification, showNotifications] = useState(false);
   const [notificationData, setNotificationData] = useState([
     DEFAULT_NOTIFICATION,
   ]);
   const [username, setUsername] = useState(null);
-
+/*
   useEffect(() => {
     const fetchNotification = async () => {
       const endPoint =
@@ -107,9 +104,13 @@ export function StandardNav() {
     };
     fetchNotification();
   }, []);
-
+*/
   useEffect(() => {
     try {
+
+
+
+
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
         method: 'GET',
         headers: {
@@ -119,13 +120,22 @@ export function StandardNav() {
       })
         .then((res) => res.json())
         .then((data) => {
+      
+          if (data.error) {
+            router.push('/login');
+          }
+
           setUsername(data.username);
         })
         .catch((err) => {
           console.log(err);
+
         });
-    } catch {}
+    } catch {
+    }
   }, []);
+
+  
 
   return (
     <Disclosure as="nav" className=" shadow">

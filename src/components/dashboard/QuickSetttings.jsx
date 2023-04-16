@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export function QuickSettings() {
   const [banner, bannerState] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -14,12 +17,16 @@ export function QuickSettings() {
       })
         .then((res) => res.json())
         .then((data) => {
+   
           document.getElementById('bio').value = data.bio;
         })
         .catch((err) => {
-          console.log(err);
+     
+
         });
-    } catch {}
+    } catch(err) {
+      window.alert('You are not logged in')
+    }
   }, []);
 
   function saveBio() {

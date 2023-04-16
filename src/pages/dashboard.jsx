@@ -16,15 +16,27 @@ import { useRouter } from 'next/router';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { onAuthStateChanged, getAuth, verifyIdToken } from 'firebase/auth';
 
 export default function Dashboard() {
+
+
   const router = useRouter();
+  const auth = getAuth();
+
+   
+
 
   const [likes, setLikes] = useState([]);
   const [badges, setbadges] = useState([]);
   const [challenges, setchallenges] = useState([]);
 
   useEffect(() => {
+    
+    // verify id token if not logout
+    
+
+
     const fetchBadges = async () => {
       try {
         const response = await fetch(
@@ -50,6 +62,11 @@ export default function Dashboard() {
     };
     fetchChallenges();
     setchallenges([]);
+
+
+
+ 
+      
 
     const fetchData = async () => {
       try {
