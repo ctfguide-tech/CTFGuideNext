@@ -32,7 +32,7 @@ export default function Practice() {
             },
             {
               id: 3,
-              name: 'Challenges Attempted',
+              name: 'Total Attempts',
               value: data.submissions,
             }
 

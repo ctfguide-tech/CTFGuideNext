@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect, useState, Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import { XMarkIcon, HeartIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, HeartIcon , ArrowPathIcon} from '@heroicons/react/24/outline';
 
 import Collapsible from 'react-collapsible';
 import { Footer } from '@/components/Footer';
@@ -448,8 +448,8 @@ export default function Challenge() {
               onClick={() => {document.getElementById("reportalert").classList.remove("hidden");setTimeout(function(){ document.getElementById("reportalert").classList.add("hidden"); }, 5000);}}
                 className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
               >
-                <h1 className="  bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
-                  <FlagIcon  className="h-8 w-8 text-yellow-600" />
+                <h1 className=" flex bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
+                  <FlagIcon  className="h-8 w-8 text-yellow-600 mr-2" /> <p className='text-white font-normal text-lg'>Report Challenge</p>
                 </h1>
               </button>
               <button className="hidden card-body m-1 rounded-md bg-neutral-800 px-4 py-1 hover:bg-neutral-700">
@@ -541,6 +541,8 @@ export default function Challenge() {
               <span className="text-yellow-400">{terminalUsername}</span> using
               the password{' '}
               <span className="text-yellow-400">{terminalPassword}</span>
+
+              <span onClick={() => {window.location.reload()}} className='float-right ml-auto flex hover:text-neutral-300 cursor-pointer'> <ArrowPathIcon className='h-6 w-6 mr-2'/> Reset Terminal</span>
               <a
                 style={{ cursor: 'pointer' }}
                 className="hidden text-gray-300 hover:bg-black"
