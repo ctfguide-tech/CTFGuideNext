@@ -126,8 +126,7 @@ export default function Dashboard() {
                 src="https://www.youtube.com/embed/D7sp_vv9db4"
                 title="YouTube video player"
                 frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen;"
               ></iframe>
 
 <div id="terminal" className=" mt-6 ">

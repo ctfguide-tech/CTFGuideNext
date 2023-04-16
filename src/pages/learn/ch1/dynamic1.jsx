@@ -13,7 +13,37 @@ import {CheckCircleIcon} from "@heroicons/react/20/solid";
 export default function Dashboard() {
     const [open, setOpen] = useState(true);
     const [markdown, setMarkdown] = useState('');
+    const [terminalUsername, setTerminalUsername] = useState('...');
+    const [terminalPassword, setTerminalPassword] = useState('...');
+      // Start Terminal
+  useEffect(() => {
 
+    const fetchTerminalData = async () => {
+      try {
+        const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
+        const requestOptions = {
+          method: 'GET',
+        };
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+
+        setTerminalUsername(result.username);
+        setTerminalPassword(result.password);
+      } catch (err) {
+        console.log(err);
+        setTerminalUsername('Something went wrong.');
+        setTerminalPassword('Something went wrong.');
+      }
+    };
+
+    try {
+      fetchTerminalData();
+    } catch (err) {
+      console.log(err);
+      setTerminalUsername('Something went wrong.');
+      setTerminalPassword('Something went wrong.');
+    }
+  }, []);
     useEffect(() => {
         const fetchData = async () => {
             const response = await fetch('https://gist.githubusercontent.com/rt2zz/e0a1d6ab2682d2c47746950b84c0b6ee/raw/83b8b4814c3417111b9b9bef86a552608506603e/markdown-sample.md');
@@ -54,10 +84,10 @@ export default function Dashboard() {
                         </p>
                         <div className="mt-4 bg-black p-4 text-white" style={{fontFamily: 'Arial'}}>
                             <p>
-                                ctfguide login: <span className="text-yellow-400">username</span>
+                                ctfguide login: <span className="text-yellow-400">{terminalUsername}</span>
                             </p>
                             <p>
-                                Password: <span className="text-yellow-400">oldPassword</span>
+                                Password: <span className="text-yellow-400">{terminalPassword}</span>
                             </p>
                         </div>
 
@@ -74,7 +104,7 @@ export default function Dashboard() {
                             style={{fontFamily: 'Arial'}}
                         >
                             <p>
-                                undefined@ctfguide:~$ <span className="text-yellow-400">ls</span>
+                                {terminalUsername}@ctfguide:~$ <span className="text-yellow-400">ls</span>
                             </p>
                         </div>
 
@@ -86,7 +116,7 @@ export default function Dashboard() {
                             style={{fontFamily: 'Arial'}}
                         >
                             <p>
-                                undefined@ctfguide:~${' '}
+                                {terminalUsername}@ctfguide:~${' '}
                                 <span className="text-yellow-400">mkdir chapter1</span>
                             </p>
                         </div>
@@ -135,7 +165,7 @@ export default function Dashboard() {
                             style={{fontFamily: 'Arial'}}
                         >
                             <p>
-                                undefined@ctfguide:~$ <span className="text-yellow-400">ls</span>
+                                {terminalUsername}@ctfguide:~$ <span className="text-yellow-400">ls</span>
                             </p>
                         </div>
 
@@ -147,7 +177,7 @@ export default function Dashboard() {
                             style={{fontFamily: 'Arial'}}
                         >
                             <p>
-                                undefined@ctfguide:~${' '}
+                                {terminalUsername}@ctfguide:~${' '}
                                 <span className="text-yellow-400">cd chapter1</span>
                             </p>
                         </div>
@@ -205,7 +235,7 @@ export default function Dashboard() {
                             style={{fontFamily: 'Arial'}}
                         >
                             <p>
-                                undefined@ctfguide:~${' '}
+                                {terminalUsername}@ctfguide:~${' '}
                                 <span className="text-yellow-400">nano NanoFun.txt</span>
                             </p>
                         </div>

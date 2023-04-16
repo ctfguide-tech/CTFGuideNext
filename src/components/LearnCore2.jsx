@@ -1,7 +1,40 @@
 import { MarkDone } from '@/components/learn/MarkDone';
 import { FlagIcon, CheckCircleIcon } from '@heroicons/react/20/solid';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 export function LearnCore() {
+  const [terminalUsername, setTerminalUsername] = useState('...');
+  const [terminalPassword, setTerminalPassword] = useState('...');
+    // Start Terminal
+useEffect(() => {
+
+  const fetchTerminalData = async () => {
+    try {
+      const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
+      const requestOptions = {
+        method: 'GET',
+      };
+      const response = await fetch(endPoint, requestOptions);
+      const result = await response.json();
+
+      setTerminalUsername(result.username);
+      setTerminalPassword(result.password);
+    } catch (err) {
+      console.log(err);
+      setTerminalUsername('Something went wrong.');
+      setTerminalPassword('Something went wrong.');
+    }
+  };
+
+  try {
+    fetchTerminalData();
+  } catch (err) {
+    console.log(err);
+    setTerminalUsername('Something went wrong.');
+    setTerminalPassword('Something went wrong.');
+  }
+}, []);
   return (
     <div style={{}} className="mx-auto h-full overflow-hidden">
       <div className="my-auto ml-4 flex px-4 py-4 pb-7">
@@ -29,7 +62,19 @@ export function LearnCore() {
           <h1 className="text-2xl font-bold text-white">
             I spy with my little eyes
           </h1>
-          <p className="text-white text-blue-500">@pranavramesh @ray</p>
+          <p className="text-white text-blue-500">@pranavramesh</p>
+
+          <h1 className="mt-4 text-xl font-semibold text-white">
+            Log into your terminal
+          </h1>
+          <div className="mt-4 bg-black p-4 text-white" style={{fontFamily: 'Arial'}}>
+                            <p>
+                                ctfguide login: <span className="text-yellow-400">{terminalUsername}</span>
+                            </p>
+                            <p>
+                                Password: <span className="text-yellow-400">{terminalPassword}</span>
+                            </p>
+                        </div>
           <h1 className="mt-4 text-xl font-semibold text-white">
             Introduction{' '}
           </h1>
@@ -50,11 +95,11 @@ export function LearnCore() {
             style={{ fontFamily: 'Arial' }}
           >
             <p>
-              undefined@ctfguide:~${' '}
+              {terminalUsername}@ctfguide:~${' '}
               <span className="text-yellow-400">node hackerman.js</span>
             </p>
             <p>
-              undefined@ctfguide:~${' '}
+              {terminalUsername}@ctfguide:~${' '}
               <span className="text-blue-500">I spy something red.</span>
             </p>
           </div>
@@ -105,7 +150,7 @@ export function LearnCore() {
             style={{ fontFamily: 'Arial' }}
           >
             <p>
-              undefined@ctfguide:~${' '}
+              {terminalUsername}@ctfguide:~${' '}
               <span className="text-yellow-400">nano hackerman.js</span>
             </p>
           </div>
