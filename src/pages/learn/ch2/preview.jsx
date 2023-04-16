@@ -9,9 +9,13 @@ import { motion } from 'framer-motion';
 import { useState, useEffect, Fragment } from 'react';
 import { Disclosure, Menu, Transition, Dialog } from '@headlessui/react';
 
+import { useRouter } from 'next/router';
+
+
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
   const [markdown, setMarkdown] = useState('');
+  const router = useRouter();
 
   return (
     <>
@@ -28,17 +32,17 @@ export default function Dashboard() {
       </Head>
       <StandardNav />
       <main>
-        <div className="mx-auto max-w-6xl">
-          <div
-            className="mt-10 w-full backdrop-blur-sm"
+        <div className="mx-auto ">
+        <div
+            className="  w-full backdrop-blur-lg"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1579684288538-c76a2fab9617?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1715&q=80')",
+                "url('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80')",
             }}
           >
             <div className="mx-auto my-auto flex h-28 text-center backdrop-blur-md">
               <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
-                What is Forensics?
+                Forensics
               </h1>
             </div>
           </div>
@@ -57,14 +61,24 @@ export default function Dashboard() {
             {/* Main content area */}
             <div className="text-white">
               {/* Load in markdown from a github url */}
+              <div className='bg-neutral-800/100 my-auto  align-center flex px-4 py-4 mb-4 mt-10 border-t-4 border-blue-700'>
               <motion.h1
-                className="animate-slide-in-right mt-10 text-3xl font-semibold"
+                className="animate-slide-in-left  text-3xl font-semibold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                🔎 What is Forensics?
+                What is Forensics
               </motion.h1>
-              <hr className="mb-5 mt-2"></hr>
+              <div className='ml-auto '>
+              <button  onClick={() => { router.push('../learn') }} className='bg-neutral-900 hover:bg-blue-800/100 px-4 py-1 text-xl rounded-l-sm'>←</button>
+              <button className=' bg-neutral-900  px-4 py-1 text-xl rounded-l-sm' disabled>1</button>
+
+                <button  onClick={() => { router.push('./video2') }} className='mr-4 bg-neutral-900  hover:bg-blue-800 px-4 py-1 text-xl rounded-r-sm'>→</button>
+             
+                <MarkDone sublesson={5} section={1} href={'./video2'} />
+
+              </div>
+              </div>
               <h1 className="mt-2 text-2xl text-blue-500">Intro: Forensics</h1>
               Forensics, in the context of cybersecurity, refers to the process
               of analyzing digital data in order to gather evidence or
@@ -110,10 +124,9 @@ export default function Dashboard() {
               <img
                 width="300"
                 className="mx-auto mt-10 text-center"
-                src="https://www.ctfguide.com/arch2.png"
+                src="https://github.com/ctfguide-tech/CTFGuideNext/blob/main/public/solve1.png?raw=true"
               ></img>
               <div className="mt-6 ml-6">
-                <MarkDone sublesson={5} section={1} href={'./video2'} />
               </div>
             </div>
           </div>

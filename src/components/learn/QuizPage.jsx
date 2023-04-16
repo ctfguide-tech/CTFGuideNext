@@ -29,14 +29,7 @@ function QuizPage({ totalQuizPages, sublesson, quizData, nextPage }) {
 
   return (
     <div className="flex-1 text-white">
-      <motion.h1
-        className="animate-slide-in-right mt-10 text-3xl font-semibold"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        Mastery Task
-      </motion.h1>
-      <hr className="mb-5 mt-2"></hr>
+     
       <SectionsNav
         currentPage={page}
         cpv={new Array(totalQuizPages).fill(pagePercentage)}

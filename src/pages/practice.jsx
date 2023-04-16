@@ -3,7 +3,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { useState, useEffect } from 'react';
-import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
+import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 
 export default function Practice() {
 
@@ -19,7 +19,25 @@ export default function Practice() {
       })
         .then((res) => res.json())
         .then((data) => {
-          window.alert(JSON.stringify(data));
+          setStats([
+            {
+              id: 1,
+              name: 'Challenges Solved',
+              value: data.solved,
+            },
+            {
+              id: 2,
+              name: 'Challenges Viewed',
+              value: data.viewed,
+            },
+            {
+              id: 3,
+              name: 'Challenges Attempted',
+              value: data.submissions,
+            }
+
+          ]);
+
         })
         .catch((err) => {
           console.log(err);
@@ -73,9 +91,9 @@ export default function Practice() {
 
 
   const [stats, setStats] = useState([
-    { id: 1, name: 'Challenges Solved', value: '0' },
-    { id: 2, name: 'Challenges Viewed', value: '0' },
-    { id: 3, name: 'Challenges Attempted', value: '0' },
+    { id: 1, name: '...', value: '...' },
+    { id: 2, name: '...', value: '...' },
+    { id: 3, name: '...', value: '...' },
   ]);
 
   useEffect(() => {
@@ -120,8 +138,8 @@ export default function Practice() {
           setName(data.username);
 
           setStats([
-            { id: 1, name: 'Challenge Streak', value: data.streak },
-            { id: 2, name: 'Leaderboard Placement', value: ('#' + (data.leaderboardNum + 1)) },
+            { id: 1, name: 'Challenge Streak', value: 0 },
+            { id: 2, name: 'Leaderboard Placement', value: 0 },
             { id: 3, name: 'Challenges Attempted', value: 0 },
           ]);
         })

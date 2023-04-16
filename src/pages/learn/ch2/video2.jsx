@@ -6,8 +6,12 @@ import { useEffect, useState } from 'react';
 import { LearnNav } from '@/components/learn/LearnNav';
 import { MarkDone } from '@/components/learn/MarkDone';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+
 
 export default function Dashboard() {
+
+  const router = useRouter();
   const [open, setOpen] = useState(true);
   const [markdown, setMarkdown] = useState('');
 
@@ -56,31 +60,46 @@ export default function Dashboard() {
             {/* Main content area */}
             <div className="flex-1 text-white ">
               {/* Load in markdown from a github url */}
+            <div className='bg-neutral-800/100 my-auto  align-center flex px-4 py-4 mb-4 mt-10 border-t-4 border-blue-700'>
+              <motion.h1
+                className="animate-slide-in-left  text-3xl font-semibold"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                Cyberchef 101
+              </motion.h1>
+              <div className='ml-auto '>
 
+              <button onClick={() => { router.push('./preview') }} className='bg-neutral-900 hover:bg-blue-800/100 px-4 py-1 text-xl rounded-l-sm'>←</button>
+              <button  className=' bg-neutral-900  px-4 py-1 text-xl rounded-l-sm' disabled>2</button>
+    <button onClick={() => { router.push('./dynamic2') }}  className='mr-4 bg-neutral-900  hover:bg-blue-800 px-4 py-1 text-xl rounded-r-sm'>→</button>
+            
+    <MarkDone sublesson={6} section={1} href="./activity2" />
+
+              </div>
+              </div>
               <iframe
-                className="mx-auto mt-10"
-                width="800"
+              className="text-center mx-auto rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10"
+              width="1000"
                 height="415"
-                src="https://www.youtube.com/embed/P5DtOOkCFM0"
+                src="https://www.youtube.com/embed/6S0v8lIk9oA"
                 title="YouTube video player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
               ></iframe>
-              <div className="flex">
-                <motion.h1
-                  className="animate-slide-in-right mt-4 ml-12 mr-6 text-3xl font-semibold"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+  
+          
+              <div className='mt-10' >
+                <iframe
+                   width="1000"
+                   height="600"
+                src="https://gchq.github.io/CyberChef/"
+
+                
                 >
-                  Cyberchef 101
-                </motion.h1>
-              </div>
-              <h1 className=" ml-12 text-lg font-semibold text-blue-500">
-                @CTFGuideTeam
-              </h1>
-              <div className="ml-6 mt-2">
-                <MarkDone sublesson={6} section={1} href="./activity2" />
+
+                </iframe>
               </div>
             </div>
           </div>

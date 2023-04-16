@@ -9,8 +9,14 @@ import { motion } from 'framer-motion';
 import { useState, useEffect, Fragment } from 'react';
 import { Disclosure, Menu, Transition, Dialog } from '@headlessui/react';
 
+
+import { useRouter } from 'next/router';
+
+
+
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const [markdown, setMarkdown] = useState('');
 
@@ -29,12 +35,12 @@ export default function Dashboard() {
       </Head>
       <StandardNav />
       <main>
-        <div className="mx-auto max-w-6xl ">
+        <div className="mx-auto ">
           <div
-            className=" mt-10 w-full backdrop-blur-lg"
+            className="  w-full backdrop-blur-lg"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80')",
+                "url('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80')",
             }}
           >
             <div className="mx-auto my-auto flex h-28 text-center backdrop-blur-md">
@@ -58,17 +64,31 @@ export default function Dashboard() {
             {/* Main content area */}
             <div className=" text-white">
               {/* Load in markdown from a github url */}
+
+                <div className='bg-neutral-800/100 my-auto  align-center flex px-4 py-4 mb-4 mt-10 border-t-4 border-blue-700'>
               <motion.h1
-                className="animate-slide-in-left mt-10 text-3xl font-semibold"
+                className="animate-slide-in-left  text-3xl font-semibold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
                 What is Linux
               </motion.h1>
-              <hr className="mb-5 mt-2"></hr>
-              <h1 className="mt-2 text-2xl text-blue-500">What is Linux?</h1>
+              <div className='ml-auto '>
+              <button  onClick={() => { router.push('../learn') }} className='bg-neutral-900 hover:bg-blue-800/100 px-4 py-1 text-xl rounded-l-sm'>←</button>
+              <button className=' bg-neutral-900  px-4 py-1 text-xl rounded-l-sm' disabled>1</button>
+
+                <button  onClick={() => { router.push('./video1') }} className='mr-4 bg-neutral-900  hover:bg-blue-800 px-4 py-1 text-xl rounded-r-sm'>→</button>
+             
+                <MarkDone sublesson={1} section={1} href={'./video1'} />
+
+              </div>
+              </div>
+
+<div className='grid grid-cols-8 gap-x-10'>
+<div className='col-span-6'>
+              <h1 className=" mt-2 text-2xl font-semibold text-blue-500">A brief introduction...</h1>
               Linux is a free and{' '}
-              <span className="text-yellow-400" onClick={() => setOpen(true)}>
+              <span className="text-yellow-400 cursor-pointer" onClick={() => setOpen(true)}>
                 <i class="fas fa-star"></i> open source
               </span>{' '}
               operating system. It is developed by Linus Torvalds, a programmer
@@ -83,7 +103,14 @@ export default function Dashboard() {
               many Linux Distributions that you can use, the most popular one
               for cybersecurity is Kali Linux. It's advised that if you're new
               to Linux you use a distribution like Ubuntu.
-              <h1 className="mt-6 text-2xl text-blue-500">
+              </div>
+          <div className='col-span-2 text-center'>
+          <img className='mt-10' src="https://i.insider.com/60da111936cf170019de8431?width=1136&format=jpeg"></img>
+           <p className='mt-2 text-sm text-neutral-300'>  Picture of Linus Torwalds, the creator of Linux</p>
+            </div>
+            </div>
+            
+              <h1 className="font-semibold mt-6 text-2xl text-blue-500">
                 Understanding the Linux architecture.
               </h1>
               Linux architecture is based on a modular approach. The kernel,
@@ -98,11 +125,9 @@ export default function Dashboard() {
               <img
                 width="300"
                 className="mx-auto mt-10 text-center"
-                src="https://www.ctfguide.com/arch2.png"
+                src="../../arch2.png"
               ></img>
-              <div className="mt-6 ml-6">
-                <MarkDone sublesson={1} section={1} href={'./video1'} />
-              </div>
+      
             </div>
           </div>
         </div>

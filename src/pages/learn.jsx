@@ -211,7 +211,7 @@ export default function Dashboard() {
               ]}
             />
           </div>
-          <div className='bg-neutral-800/50 px-8 py-6 rounded-md mt-16'>
+          <div className='hidden bg-neutral-800/50 px-8 py-6 rounded-md mt-16'>
             <h1 className="mb-1 text-3xl font-semibold text-white">
               Explore a Tool
             </h1>

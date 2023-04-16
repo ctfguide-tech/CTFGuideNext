@@ -44,20 +44,20 @@ export function LearnNav({ navElements, lessonNum }) {
               parseInt(lessonProgress.sublessons[i].progresses[0]?.progress)
             : 100,
       });
-      colorArray.push('gray');
+      colorArray.push('stone');
     }
   }
 
   return (
     <>
       <div
-        className="mt-10 mr-6 w-1/5 flex-none border-r text-gray-900"
+        className="mt-10 mr-6 w-1/5 flex-none "
         style={{ borderColor: '#212121' }}
       >
-        <ul className="mr-2 py-3">
+        <ul className="mr-2">
           <div
             style={{ backgroundColor: '#212121' }}
-            className="rounded-lg py-4 px-4"
+            className="rounded-sm py-4 px-4 border-t-4 border-blue-700"
           >
             <DonutChart
               height="h-36"
