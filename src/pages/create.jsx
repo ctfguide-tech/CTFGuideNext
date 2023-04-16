@@ -29,10 +29,10 @@ export default function Create() {
     setIsOpen(!isOpen);
   };
   const stats = [
-    { id: 1, name: 'Challenegs Created', value: '20' },
-    { id: 2, name: 'Challenge Views', value: '7.4K' },
-    { id: 3, name: 'Challenge Attempts', value: '12.5K' },
-    { id: 4, name: 'Challenge Solves', value: '2.3K' },
+    { id: 1, name: 'Challenegs Created', value: '0' },
+    { id: 2, name: 'Challenge Views', value: '0' },
+    { id: 3, name: 'Challenge Attempts', value: '0' },
+    { id: 4, name: 'Challenge Solves', value: '0' },
   ]
 
 
