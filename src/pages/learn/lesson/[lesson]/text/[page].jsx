@@ -9,23 +9,29 @@ import { LearnNav } from '@/components/learn/LearnNav';
 import { MarkDone } from '@/components/learn/MarkDone';
 import { motion } from 'framer-motion';
 import { Disclosure, Menu, Transition, Dialog } from '@headlessui/react';
+import LessonConfig from '@/config/lessonConfigs'
 
 const TextPage = () => {
   const router = useRouter();
-  const [markdown, setMarkdown] = useState(null)
   const [html, setHtml] = useState(null)
+  const [contentConfig, setContentConfig] = useState(null)
   const [error, setError] = useState(null)
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const lesson = router.query.lesson;
-        const page = router.query.page;
+        // Actual Content
         const url = `https://raw.githubusercontent.com/ctfguide-tech/CTFGuideLessons/main/${router.query.lesson}/text/${router.query.page}.html`
+        // Config Content
+        // const configurl = `https://raw.githubusercontent.com/ctfguide-tech/CTFGuideLessons/main/${router.query.lesson}/config.json`
         const response = await fetch(url)
-        const markdown = await response.text()
-        // setMarkdown(markdown)
-        setHtml(markdown)
+        // const configresponse = await fetch(configurl)
+        const htmlcontent = await response.text()
+        // const configcontent = await configresponse.json()
+        setHtml(htmlcontent)
+        // setContentConfig(configcontent)
+        setContentConfig(LessonConfig[parseInt(router.query.lesson) - 1])
       } catch (error) {
         setError(error)
       }
@@ -33,25 +39,15 @@ const TextPage = () => {
     fetchData()
   }, [router.query.lesson, router.query.page])
 
-  useEffect(() => {
-    async function parseMarkdown() {
-      if (markdown) {
-        try {
-          const html = marked.parse(markdown)
-          setHtml(html)
-        } catch (error) {
-          setError(error)
-        }
-      }
-    }
-    // parseMarkdown()
-  }, [markdown])
-
   if (error) {
     return <div>Error: {error.message}</div>
   }
 
-  if (!markdown) {
+  if (!html) {
+    return <div>Loading...</div>
+  }
+
+  if (!contentConfig) {
     return <div>Loading...</div>
   }
 
@@ -64,8 +60,41 @@ const TextPage = () => {
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
-      <div className="text-white" dangerouslySetInnerHTML={{ __html: html }} />
-      <p className="text-white">{router.query.lesson} {router.query.page}</p>
+      <StandardNav />
+      <main>
+        <div className="mx-auto max-w-6xl ">
+          <div
+            className=" mt-10 w-full backdrop-blur-lg"
+            style={{
+              backgroundImage:
+                `url(${contentConfig.bgimage})`,
+            }}
+          >
+            <div className="mx-auto my-auto flex h-28 text-center backdrop-blur-md">
+              <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
+                {contentConfig.title}
+              </h1>
+            </div>
+          </div>
+          <div className="mx-auto flex max-w-7xl ">
+            {/* Sidebar */}
+            <LearnNav
+              lessonNum={contentConfig.lessonNum}
+              navElements={[
+                { href: contentConfig.navHrefs[0], title: contentConfig.navTitles[0] },
+                { href: contentConfig.navHrefs[1], title: contentConfig.navTitles[1] },
+                { href: contentConfig.navHrefs[2], title: contentConfig.navTitles[2] },
+                { href: contentConfig.navHrefs[3], title: contentConfig.navTitles[3] },
+              ]}
+            />
+
+            {/* Main content area, Load from content repo */}
+            <div className="text-white" dangerouslySetInnerHTML={{ __html: html }} />
+          </div>
+        </div>
+      </main>
+
+      <Footer />
     </>
   )
 }
