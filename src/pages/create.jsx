@@ -28,13 +28,53 @@ export default function Create() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  const stats = [
-    { id: 1, name: 'Challenegs Created', value: '0' },
+
+  useEffect(() => {
+    try {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setStats([
+            {
+              id: 1,
+              name: 'Challenges Created',
+              value: data.challengesCreated,
+            },
+            {
+              id: 2,
+              name: 'Challenge Views',
+              value: data.challengeViews,
+            },
+            {
+              id: 3,
+              name: 'Challenge Attempts',
+              value: data.challengeAttempts,
+            },
+            {
+              id: 4,
+              name: 'Challenge Solves',
+              value: data.challengeSolves,
+            }
+          ]);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch {}
+  }, []);
+
+  const [stats, setStats] = useState([
+    { id: 1, name: 'Challenges Created', value: '0' },
     { id: 2, name: 'Challenge Views', value: '0' },
     { id: 3, name: 'Challenge Attempts', value: '0' },
     { id: 4, name: 'Challenge Solves', value: '0' },
-  ]
-
+  ]);
 
   useEffect(() => {
     try {

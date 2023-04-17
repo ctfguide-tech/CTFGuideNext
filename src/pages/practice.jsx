@@ -6,8 +6,6 @@ import { useState, useEffect } from 'react';
 import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 
 export default function Practice() {
-
-
   useEffect(() => {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/dashboard`, {
@@ -44,8 +42,6 @@ export default function Practice() {
         });
     } catch {}
   }, []);
-
-
 
   function loadChallenges() {
     try {
@@ -99,9 +95,6 @@ export default function Practice() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await fetch('https://api.ctfguide.com/challenges/type/all');
-        // const data = await response.json();
-        // setChallenges([...data]);
         const response = await fetch(
           process.env.NEXT_PUBLIC_API_URL + '/challenges'
         );
