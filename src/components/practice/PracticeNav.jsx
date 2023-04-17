@@ -27,7 +27,7 @@ export function PracticeNav() {
               <i class="fas fa-list mr-2"></i>All Challenges
             </a>
           </li>
-          <li className="mb-1 py-3 px-2 border border-white/10 hover:border-white/50 bg-neutral-800/50 rounded-md mt-8 mx-auto my-auto text-center ">
+          <li className="hidden mb-1 py-3 px-2 border border-white/10 hover:border-white/50 bg-neutral-800/50 rounded-md mt-8 mx-auto my-auto text-center ">
             <a
               href="https://discord.gg/q3hgRBvgkX"
               className="text-lg font-medium text-white tracking-tight flex"
