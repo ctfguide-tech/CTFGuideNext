@@ -3,17 +3,14 @@ import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { ChallengeCard } from '@/components/create/ChallengeCard';
-import { CreatorDashboard } from '@/components/create/CreatorDashboard';
 import Link from 'next/link';
-import { InformationCircleIcon } from '@heroicons/react/20/solid';
-import { Card } from '@/components/create/Card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
@@ -31,6 +28,53 @@ export default function Create() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    try {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setStats([
+            {
+              id: 1,
+              name: 'Challenges Created',
+              value: data.challengesCreated,
+            },
+            {
+              id: 2,
+              name: 'Challenge Views',
+              value: data.challengeViews,
+            },
+            {
+              id: 3,
+              name: 'Challenge Attempts',
+              value: data.challengeAttempts,
+            },
+            {
+              id: 4,
+              name: 'Challenge Solves',
+              value: data.challengeSolves,
+            }
+          ]);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch {}
+  }, []);
+
+  const [stats, setStats] = useState([
+    { id: 1, name: 'Challenges Created', value: '0' },
+    { id: 2, name: 'Challenge Views', value: '0' },
+    { id: 3, name: 'Challenge Attempts', value: '0' },
+    { id: 4, name: 'Challenge Solves', value: '0' },
+  ]);
 
   useEffect(() => {
     try {
@@ -191,88 +235,67 @@ export default function Create() {
       </Head>
       <StandardNav />
       <main>
-        <CreatorDashboard />
+        {/*<CreatorDashboard />*/}
         <br></br>
         <div
           className="fixed top-0 left-0 mt-10 h-full w-1/2 "
           aria-hidden="true"
         ></div>
-        <div className=" top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
+        <div className="  top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
         <div className="relative flex min-h-full flex-col">
           <div className="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
             <div className="min-w-0 flex-1 xl:flex">
-              <div className=" xl:w-64 xl:flex-shrink-0 xl:border-r xl:border-neutral-700">
+              <div className="hidden  xl:w-64 xl:flex-shrink-0 xl:border-neutral-700">
                 <div className="py-6 pl-4 pr-6 sm:pl-6 lg:pl-8 xl:pl-0">
                   <div className="flex items-center justify-between ">
                     <div className="flex-1 space-y-8">
                       <div className="space-y-8 sm:flex sm:items-center sm:justify-between sm:space-y-0 xl:block xl:space-y-8">
-                        <div className="flex items-center space-x-3">
-                          <div className="h-12 w-12 flex-shrink-0">
-                            <img
-                              className="h-12 w-12 rounded-full"
-                              src={
-                                'https://robohash.org/' +
-                                username +
-                                '.png?set=set1&size=150x150'
-                              }
-                              alt=""
-                            />
+                        <div className='border rounded-lg py-8 border-[#1f2940] bg-[#1f2940]'>
+                          <div class="w-24 h-24 mx-auto border-2 border-white rounded-full bg-gradient-to-tr from-blue-500 to-blue-600">
+                              <img
+                                className="h-24 w-24 rounded-full"
+                                src={
+                                  'https://robohash.org/' +
+                                  username +
+                                  '.png?set=set1&size=150x150'
+                                }
+                                alt=""
+                              />
                           </div>
-                          <div className="space-y-1">
-                            <div className="text-xl font-medium text-white">
-                              {username ? (
-                                username
-                              ) : (
-                                <h1 className="rounded-md border border-neutral-700 bg-[#323232] px-3 py-2 text-xs hover:bg-neutral-700">
-                                  <a href="/login">You are not logged in!</a>
-                                </h1>
-                              )}
+                          <div className="flex flex-col sm:flex-row xl:flex-col">
+                            <div className="space-y-1 mx-auto">
+                              <div className="mt-6 text-2xl font-bold text-white">
+                                {username ? (
+                                  username
+                                ) : (
+                                  <h1 className="rounded-md border border-neutral-700 bg-[#323232] px-3 py-2 text-xs hover:bg-neutral-700">
+                                    <a href="/login">You are not logged in!</a>
+                                  </h1>
+                                )}
+                              </div>
                             </div>
-                            <div className="text-sm text-white">
-                              Joined:{' '}
-                              {date ? date.toString().substring(0, 10) : '-'}
+                            <div className="space-y-1 mx-auto">
+                              <div className="mb-4 text-sm text-gray-300">
+                                Joined:{' '}
+                                {date ? date.toString().substring(0, 10) : '-'}
+                              </div>
                             </div>
-                            <a
-                              href="#"
-                              className="group flex hidden items-center space-x-2.5"
-                            >
-                              <svg
-                                className="h-5 w-5 text-white group-hover:text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                aria-hidden="true"
+                          </div>
+                          <div className="flex flex-col sm:flex-row xl:flex-col">
+                            <Link href="/create/new" className="text-center">
+                              <button
+                                type="button"
+                                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 xl:w-3/4"
                               >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
-                                  clip-rule="evenodd"
-                                />
-                              </svg>
-                              <span className="text-sm font-medium text-white group-hover:text-white">
-                                debbielewis
-                              </span>
-                            </a>
+                                Create New
+                              </button>
+                            </Link>
                           </div>
                         </div>
-
                         <div className="flex flex-col sm:flex-row xl:flex-col">
-                          <Link href="/create/new" className="text-center">
-                            <button
-                              type="button"
-                              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 xl:w-3/4"
-                            >
-                              Create New
-                            </button>
-                          </Link>
-                          <button
-                            type="button"
-                            className="mt-3 inline-flex hidden items-center justify-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-neutral-800 sm:mt-0 sm:ml-3 xl:ml-0 xl:mt-3 xl:w-full"
-                          >
-                            Invite Team
-                          </button>
-
                           <a href="/guides/approve">
-                            <div class="mt-8 max-w-sm rounded-lg rounded-md bg-[#212121] px-4 py-4 shadow hover:bg-[#303030]">
+                            <div class="max-w-sm rounded-lg rounded-md px-4 py-4 shadow hover:bg-[#303030]">
+                              <hr className='mb-8 border border-neutral-700 hidden'></hr>
                               <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
                                 The Creation Process
                               </h5>
@@ -296,7 +319,7 @@ export default function Create() {
                           </a>
 
                           <a href="/guides/create">
-                            <div class="mt-6 max-w-sm rounded-lg rounded-md bg-[#212121] px-4 py-4 shadow hover:bg-[#303030]">
+                            <div class="mt-6 max-w-sm rounded-lg rounded-md px-4 py-4 shadow hover:bg-[#303030]">
                               <i class="fas fa-book-open mb-2 h-10 w-10 text-2xl text-blue-500 dark:text-blue-500"></i>
                               <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
                                 Not sure where to start?
@@ -357,60 +380,63 @@ export default function Create() {
                   </div>
                 </div>
               </div>
-              <div className=" lg:min-w-0 lg:flex-1">
-                <div className="mx-auto mb-4 grid gap-4 rounded-lg pl-4 pr-6   pt-4 pb-4  text-center sm:grid-cols-1 sm:pl-6 md:grid-cols-3 lg:grid-cols-3 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6">
-                  <div
-                    style={{
-                      backgroundColor: '#212121',
-                      borderColor: '#3b3a3a',
-                    }}
-                    className=" stext-center mx-auto w-full rounded-lg px-4 py-2 text-white  "
-                  >
-                    <h1 className="bg-gradient-to-br from-indigo-500 to-blue-200 bg-clip-text text-3xl text-transparent">
-                      -
-                    </h1>
-                    <h1 className="text-xl">Total Views</h1>
-                  </div>
+              <div className=" lg:min-w-0 lg:flex-1 mt-6 rounded-lg ">
+          
 
-                  <div
-                    style={{
-                      backgroundColor: '#212121',
-                      borderColor: '#3b3a3a',
-                    }}
-                    className=" mx-auto w-full rounded-lg px-4 py-2 text-center text-white "
-                  >
-                    <h1 className="bg-gradient-to-br from-orange-400 to-yellow-500 bg-clip-text text-3xl text-transparent">
-                      -
-                    </h1>
-                    <h1 className="text-xl ">Total Attempts</h1>
-                  </div>
-
-                  <div
-                    style={{
-                      backgroundColor: '#212121',
-                      borderColor: '#3b3a3a',
-                    }}
-                    className=" mx-auto w-full rounded-lg px-4 py-2 text-center text-white "
-                  >
-                    <h1 className="bg-gradient-to-br from-green-200 to-green-400 bg-clip-text text-3xl text-transparent">
-                      -
-                    </h1>
-                    <h1 className="text-xl">Total Valid Attempts</h1>
-                  </div>
-                </div>
-
-                <div className="border-b border-t border-neutral-700 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6">
+          <div className='mx-auto max-w-7xl'>
+          <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
+     
+     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+       <div
+         className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
+         aria-hidden="true"
+       >
+         <div
+           className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
+           style={{
+             clipPath:
+               'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+           }}
+         />
+       </div>
+       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
+         <h2 className="text-base font-semibold leading-8 text-blue-600">IMPACT AT A GLANCE</h2>
+         <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+         Your impact on cybersecurity education
+         </p>
+         <p className="mt-4 text-lg leading-8 text-gray-300">
+           It's contributions from people like you that is creating a generation of cybersecurity professionals.
+         </p>
+       </div>
+       <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-10 text-white sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+         {stats.map((stat) => (
+           <div key={stat.id} className="flex flex-col gap-y-3 border-l border-white/10 pl-6">
+             <dt className="text-sm leading-6">{stat.name}</dt>
+             <dd className="order-first text-3xl font-semibold tracking-tight">{stat.value}</dd>
+           </div>
+         ))}
+       </dl>
+     </div>
+   </div></div>
+       
+                <div className="mt-10  pb-4 xl:border-t-0 ">
                   <div className="flex items-center">
-                    <h1 className="flex-1 text-3xl font-medium font-semibold text-white">
-                      <div className="flex">
-                        {title}
-                        <InfoPopup />
+                    <h1 className="flex-1 text-2xl font-medium  text-white">
+                      <div className="">
+                        {title} <br></br>
+                     <div className='text-sm flex-none w-2/3'>
+                      <p>
+                          {infoText}
+                      </p>
+                      </div>
                       </div>
                     </h1>
+
+                    <a href="/create/new" className='bg-blue-700 shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
                     <div className="relative">
                       <button
                         type="button"
-                        className="inline-flex w-full justify-center gap-x-1.5 rounded-md  border border-neutral-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  hover:bg-neutral-800"
+                        className="inline-flex w-full justify-center gap-x-1.5 rounded-md   px-3 py-2 text-sm font-semibold text-white shadow-sm  hover:bg-neutral-800"
                         id="sort-menu-button"
                         aria-expanded={isOpen}
                         aria-haspopup="true"
@@ -431,6 +457,8 @@ export default function Create() {
                           />
                         </svg>
                       </button>
+
+                
 
                       <div
                         className={`absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md  border border-neutral-600 bg-neutral-800  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
@@ -501,14 +529,18 @@ export default function Create() {
 
                   {!hasChallenges && (
                     <motion.div
-                      className="mx-auto w-4/5 rounded-md"
+                      className="mx-auto w-full rounded-md"
                       initial={{ opacity: 0, x: 100 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="mx-auto mt-6 flex rounded-md bg-neutral-800 px-6 py-2.5 hover:bg-neutral-700">
-                        <div className="my-auto mx-auto pt-4 pb-4 text-2xl text-white">
-                          Nothing to display!
+                      <div className="mx-auto mt-6 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
+                        <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+                        <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
+                          <p>Looks like you have no {title.toLowerCase().split(" ")[0]} challenges yet.</p>
+                          <a href="/guides/create" className='mx-auto'>
+                            <p className='mx-auto text-center text-sm text-blue-600 underline'>Want to create CTF's? Learn more here<ArrowRightIcon className='ml-1 mt-0.5 h-5 hidden' /></p>
+                          </a>
                         </div>
                       </div>
                     </motion.div>

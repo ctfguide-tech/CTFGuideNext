@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CheckCircleIcon, EyeIcon } from '@heroicons/react/20/solid';
+import { CheckCircleIcon } from '@heroicons/react/20/solid';
 
 const Challenge = ({ data, inCarousel }) => {
   const { difficulty } = data;
@@ -27,21 +27,18 @@ const Challenge = ({ data, inCarousel }) => {
   return (
     <Link
       href={{
-        pathname: '/challenge',
-        query: {
-          slug: data.slug,
-        },
+        pathname: `/challenges/${data.slug}`
       }}
       className={
         classStyle +
-        'duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:ring-1 hover:ring-blue-600'
+        'duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-800/40'
       }
     >
       <div className="relative h-full">
         <div className="flex">
           <span
             className={
-              'mr-2 mt-1 rounded-md bg-blue-900 px-2 text-sm font-semibold ' +
+              'mr-2 mt-1 rounded-md text-white mb-1 px-2 text-sm font-semibold ' +
               badgeColor[difficulty.toLowerCase()]
             }
           >
@@ -69,7 +66,7 @@ const Challenge = ({ data, inCarousel }) => {
             <div className="flex">
               <p
                 id={index}
-                className="mt-1 mr-3 rounded-md bg-blue-700 px-2 text-sm text-white"
+                className="mr-3 mt-2 rounded-md bg-blue-700 px-2 text-[12px] text-white"
               >
                 {category}
               </p>

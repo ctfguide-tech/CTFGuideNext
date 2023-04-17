@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 export default function TermsOfService() {
   useEffect(() => {
@@ -212,6 +213,7 @@ export default function TermsOfService() {
         style={{ listStyleType: 'circle' }}
         className="mx-auto mt-10 max-w-7xl pb-10 text-left text-white"
       ></div>
+      <Footer />
     </>
   );
 }

@@ -1,11 +1,7 @@
 import {
-  CloudIcon,
-  BookOpenIcon,
-  TrophyIcon,
   ClockIcon,
   Battery50Icon,
   CheckBadgeIcon,
-  LightBulbIcon,
 } from '@heroicons/react/20/solid';
 
 export function LearningPanel() {
@@ -30,7 +26,7 @@ export function LearningPanel() {
               </video>
           </div>
           <div className="mx-auto my-auto">
-            <h1 className="mb-5 text-2xl font-semibold tracking-tight text-white">
+            <h1 className="mb-5 text-4xl font-semibold tracking-tight text-white">
               {' '}
               Get AI driven feedback during your sessions
             </h1>

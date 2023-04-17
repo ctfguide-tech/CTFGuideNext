@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import Container from '@/components/Container';
 import { ProgressBar } from '@tremor/react';
-import { CategoryBar, Card, Flex, Text } from '@tremor/react';
 
 export function SectionsNav({ currentPage, cpv, colors, sublesson }) {
   const [lessonProgress, setLessonProgress] = useState(null);

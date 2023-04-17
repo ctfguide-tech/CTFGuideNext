@@ -1,9 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@/components/Button';
-import { TextField } from '@/components/Fields';
-import { Logo } from '@/components/Logo';
-import { Alert } from '@/components/Alert';
 import { useState, useEffect } from 'react';
 import { app } from '../config/firebaseConfig';
 

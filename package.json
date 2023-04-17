@@ -23,6 +23,7 @@
     "@tremor/react": "^1.8.1",
     "autoprefixer": "^10.4.12",
     "babel-plugin-macros": "^3.1.0",
+    "chart.js": "^4.2.1",
     "clsx": "^1.2.1",
     "corepack": "^0.17.0",
     "dotenv": "^16.0.3",
@@ -32,6 +33,7 @@
     "focus-visible": "^5.2.0",
     "framer-motion": "^10.2.4",
     "heroicons": "^2.0.13",
+    "marked": "^4.3.0",
     "material-ui-popup-state": "^5.0.5",
     "next": "13.0.2",
     "postcss-focus-visible": "^6.0.4",
@@ -48,6 +50,7 @@
     "react-text-transition": "^3.1.0",
     "react-visibility-sensor": "^5.1.1",
     "reactjs-popup": "^2.0.5",
+    "recharts": "^2.5.0",
     "simplemde": "^1.11.2",
     "tailwindcss": "^3.2.1"
   },

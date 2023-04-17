@@ -6,10 +6,12 @@ import { useState } from 'react';
 import { LearnNav } from '@/components/learn/LearnNav';
 import { MarkDone } from '@/components/learn/MarkDone';
 import { motion } from 'framer-motion';
-
+import { useRouter } from 'next/router';
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
   const [markdown, setMarkdown] = useState('');
+  const router = useRouter();
+
 
   return (
     <>
@@ -26,18 +28,21 @@ export default function Dashboard() {
       </Head>
       <StandardNav />
       <main>
-        <div className="mx-auto max-w-6xl">
-          <div
-            className="mt-10 w-full backdrop-blur-sm"
+        <div className="mx-auto ">
+        <div
+            className="  w-full backdrop-blur-lg"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1644088379091-d574269d422f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80')",
+                "url('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80')",
             }}
           >
             <div className="mx-auto my-auto flex h-28 text-center backdrop-blur-md">
               <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
-                Cryptography!
+                Cryptography
               </h1>
+            </div>
+            <div className='text-center text-white bg-yellow-800 py-2'>
+                <h1>This lesson will temporarily serve a general overview until our content creation team finishes the new/updated lesson. We aren't exactly pleased with the current state of this learning module.</h1>
             </div>
           </div>
           <div className="mx-auto flex max-w-7xl ">
@@ -45,9 +50,9 @@ export default function Dashboard() {
             <LearnNav
               lessonNum={3}
               navElements={[
-                { href: './preview', title: 'Cryptography!' },
-                { href: './video3', title: 'PKI Introduction' },
-                { href: './activity3', title: 'Knees Deep into TLS' },
+                { href: './preview', title: 'Introduction to Cryptography' },
+                { href: './video3', title: 'Cryptography Outline' },
+                { href: './activity3', title: 'Mastery Task' },
                 { href: './dynamic3', title: 'Password Dump' },
               ]}
             />
@@ -55,13 +60,24 @@ export default function Dashboard() {
             {/* Main content area */}
             <div className="text-white">
               {/* Load in markdown from a github url */}
+              <div className='bg-neutral-800/100 my-auto  align-center flex px-4 py-4 mb-4 mt-10 border-t-4 border-blue-700'>
               <motion.h1
-                className="animate-slide-in-right mt-10 text-3xl font-semibold"
+                className="animate-slide-in-left  text-3xl font-semibold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                🔑 Cryptography!
+                Introduction to Cryptography
               </motion.h1>
+              <div className='ml-auto '>
+              <button  onClick={() => { router.push('../learn') }} className='bg-neutral-900 hover:bg-blue-800/100 px-4 py-1 text-xl rounded-l-sm'>←</button>
+              <button className=' bg-neutral-900  px-4 py-1 text-xl rounded-l-sm' disabled>1</button>
+
+                <button  onClick={() => { router.push('./video3') }} className='mr-4 bg-neutral-900  hover:bg-blue-800 px-4 py-1 text-xl rounded-r-sm'>→</button>
+             
+                <MarkDone sublesson={9} section={1} href={'./video3'} />
+
+              </div>
+              </div>
               <hr className="mt-2 mb-4 border-gray-500"></hr>
               <h1 className="mt-2 text-2xl text-blue-500">
                 What is Cryptography?
@@ -129,7 +145,7 @@ export default function Dashboard() {
               Authentication is used to verify the identity of a user or system
               before granting access to protected resources.
               <div className="mx-auto mt-8 mb-4 w-2/3 rounded-sm bg-[#212121]">
-                <h1 className="px-6 py-4 leading-relaxed">
+                <h1 className="px-6 pt-4 pb-2 leading-relaxed">
                   To succeed in CTF cryptography challenges, participants need a
                   strong understanding of cryptographic principles and
                   techniques, as well as proficiency in using a range of tools
@@ -142,9 +158,7 @@ export default function Dashboard() {
                   valuable experience for those pursuing careers in these
                   fields.
                 </h1>
-                <div className="ml-4 mb-4">
-                  <MarkDone sublesson={9} section={1} href={'./video3'} />
-                </div>
+           
               </div>
             </div>
           </div>

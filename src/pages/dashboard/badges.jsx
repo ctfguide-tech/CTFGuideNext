@@ -47,14 +47,14 @@ export default function Dashboard() {
           <SideNavContent />
 
           {/* Main content area */}
-          <div className="flex-1">
-            <h1 className="mt-5 text-4xl text-white">My Badges</h1>
+          <div className="flex-1 mt-5">
+            <h1 className="mt-5 text-3xl text-white">My Badges</h1>
             {/* Fetch badges from API */}
 
             {badges.length === 0 && (
               <div className="mt-3">
-                <h1 className="rounded-lg border border-neutral-700 bg-neutral-800 px-6 py-3 text-lg text-white">
-                  🤔 Hmm, looks like you haven't earned any badges yet.
+                <h1 className="rounded-sm border border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white">
+                  🤔 Hmm, looks like you haven't earned any badges yet!
                 </h1>
               </div>
             )}

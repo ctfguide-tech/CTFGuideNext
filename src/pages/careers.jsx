@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
+import PersonCard from '@/components/PersonCard';
+
 export default function Careers() {
   /*
         Code to check if onboarding has been complete
@@ -18,17 +20,27 @@ export default function Careers() {
       image: '../pranavCTF.jpeg',
       width: '200',
       height: '200',
+      bio: "Pranav comes from a competitive cyber background, winning respected CTF's like UD's Bluehen CTF. Pranav has advocated for widespread cybersecurity education in highschools and universities; he started the first cyber student org in Garnet Valley."
     },
     {
       personName: 'Raymond Yan',
       position: 'Co-Founder, CTO',
       image: '../Raymond.jpeg',
       width: '200',
+      bio: "An engineering leader focusing in data infrastructure and cloud security, Raymond followed the rise of cloud native technologies in the 2010's. He previously led cloud education at Nittany Data Labs and also writes for the Northeast Big Data Innovation Hub."
     },
     {
       personName: 'Srihari Raman',
       position: 'CFO',
       image: '../srihari.jpg',
+      width: '200',
+      height: '200',
+      bio: "Srihari is a data-oriented business leader that joined the CTF team in early 2022. With his experience in data analysis, machine learning, and management, Srihari has supported the CTF team in making key marketing and financial decisions. He is currently a Data Science and Business Administration combined major at Northeastern University."
+    },
+    {
+      personName: 'Brody Pearlman',
+      position: 'Business',
+      image: '../mish.jpg',
       width: '200',
       height: '200',
     },
@@ -38,6 +50,57 @@ export default function Careers() {
       image: '../mish.jpg',
       width: '200',
       height: '200',
+      bio: "Mishael Adelanwa, a current Bunton-Waller fellow at Penn State University and an innovative investor with an eye for emerging technologies, invested in CTFGuide in a Pre Seed Round in January 2023. Adept at identifying and supporting promising ventures, Mishael brings expertise and curiosity to the world of blockchain technology and cybersecurity."
+    },
+    {
+      personName: 'Jackson Ferris',
+      position: 'Cybersecurity',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Jaiming Wang',
+      position: 'Fullstack Engineer',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Ryan Zanoni',
+      position: 'Backend Engineer',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Dax Patel',
+      position: 'Frontend Developer',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Ashni Voleti',
+      position: 'Marketing',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Abhi Byreddy',
+      position: 'Backend Engineer',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+    },
+    {
+      personName: 'Almond Milk',
+      position: 'Content',
+      image: '../mish.jpg',
+      width: '200',
+      height: '200',
+      bio: "Almond Force is a team dedicated to providing the cyber security and IT community with training on different platforms and events such as CTFs, Hack the Box, TryHackMe, and more! The team's founder is Almond Milk, and we strive to grow enough to where we can release content as our full-time career."
     },
   ];
 
@@ -60,8 +123,11 @@ export default function Careers() {
 
   useEffect(() => {
     try {
-      fetch('api.ctfguide.com/dashboard')
-        .then((res) => res.json())
+     // fetch('api.ctfguide.com/dashboard')
+      
+     fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
+
+     .then((res) => res.json())
 
         .then((data) => {
           if (data.onboardingComplete == false) {
@@ -103,21 +169,10 @@ export default function Careers() {
         {/*
          sm is for "smaller" devices
          */}
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
+        <div className="mb-12 mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
           {team.map((person) => {
             return (
-              <div className="py-8 text-white ">
-                <img
-                  className={' mx-auto rounded-full '}
-                  width={person.width}
-                  height={person.width}
-                  src={person.image}
-                ></img>
-                <h1 className={'mt-4 text-xl text-xl font-bold text-blue-500'}>
-                  {person.personName}
-                </h1>
-                <h2>{person.position}</h2>
-              </div>
+              <PersonCard person={person} />
             );
           })}
         </div>

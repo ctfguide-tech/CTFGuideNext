@@ -1,18 +1,25 @@
+import { useRouter } from 'next/router'
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect, useState, Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, HeartIcon , ArrowPathIcon} from '@heroicons/react/24/outline';
+
 import Collapsible from 'react-collapsible';
 import { Footer } from '@/components/Footer';
+import { CheckCircleIcon, CheckIcon, FlagIcon } from '@heroicons/react/20/solid';
 
-function Pratice({ slug }) {
+export default function Challenge() {
+  const router = useRouter()
+  const { slug } = router.query
+
   const NO_PLACE = 'Not placed';
 
   const [challenge, setChallenge] = useState({});
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [open, setOpen] = useState(false);
+  const [submissionMsg, setSubmissionMsg] = useState(false);
   const [hintOpen, setHintOpen] = useState(false);
   const [hints, setHints] = useState([]);
   const [flag, setFlag] = useState('');
@@ -33,7 +40,13 @@ function Pratice({ slug }) {
     spassword: 'Loading...',
   });
 
+  // The Challenge
   useEffect(() => {
+    //window.alert(slug)
+
+    if (!slug) {
+      return;
+    }
     const award = localStorage.getItem('award');
 
     if (award) {
@@ -53,16 +66,20 @@ function Pratice({ slug }) {
         };
         const response = await fetch(endPoint, requestOptions);
         const result = await response.json();
+        //result["content"] = result["content"].replace()
         setChallenge(result);
       } catch (err) {
         throw err;
       }
     };
     fetchData();
-  }, []);
+  }, [slug]);
 
-  // contact the terminal gateway
+  // Start Terminal
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     const fetchTerminalData = async () => {
       try {
         const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
@@ -88,45 +105,65 @@ function Pratice({ slug }) {
       setTerminalUsername('Something went wrong.');
       setTerminalPassword('Something went wrong.');
     }
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
-    const fetchLikeUrl = async () => {
-      const userLikesUrl = localStorage.getItem('userLikesUrl');
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
+    if (!slug) {
+      return;
+    }
+    try {
+      const fetchLikeUrl = async () => {
+        const userLikesUrl = localStorage.getItem('userLikesUrl');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+          },
+        };
+
+        const response = await fetch(userLikesUrl, requestOptions);
+        const result = await response.json();
+
+        const likes = result.filter((item) => {
+          return item.challenge.slug === slug;
+        });
+     //   setLiked(likes.length ? true : false);
+      //  if (likes.length) {
+       //   setLikeCount(likeCount + 1);
+       // }
       };
-      const response = await fetch(userLikesUrl, requestOptions);
-      const result = await response.json();
-
-      const likes = result.filter((item) => {
-        return item.challenge.slug === slug;
-      });
-      setLiked(likes.length ? true : false);
-      if (likes.length) {
-        setLikeCount(likeCount + 1);
-      }
-    };
-    fetchLikeUrl();
-  }, []);
+      fetchLikeUrl();
+    } catch (err) {
+      throw err;
+    }
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     fetchLeaderboard();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     fetchComments();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     fetchHints();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
+    if (!slug) {
+      return;
+    }
     if (challenge.upvotes) {
       setLikeCount(challenge.upvotes);
     }
@@ -134,8 +171,7 @@ function Pratice({ slug }) {
 
   const submitFlag = async () => {
     const slug = challenge.slug;
-    console.log(flag.length);
-
+    // console.log(flag.length);
 
     if (!flag) {
       document
@@ -167,17 +203,18 @@ function Pratice({ slug }) {
           }),
         };
         const response = await fetch(endPoint, requestOptions);
-        const { success, error } = await response.json();
+        const { success, incorrect, error } = await response.json();
 
         if (error) {
-          alert(error);
-        }
-
-        if (success) {
+          document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
+          setSubmissionMsg("error");
+          setOpen(true);
+        } else if (success) {
           document
             .getElementById('enteredFlag')
             .classList.add('border-green-600');
           document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
+          setSubmissionMsg("success");
           setOpen(true);
 
           setTimeout(function () {
@@ -190,6 +227,8 @@ function Pratice({ slug }) {
             .getElementById('enteredFlag')
             .classList.add('border-red-600');
           document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
+          setSubmissionMsg("incorrect");
+          setOpen(true);
 
           setTimeout(function () {
             document
@@ -248,6 +287,8 @@ function Pratice({ slug }) {
     // Call comment report API
   };
 
+
+
   const fetchLeaderboard = async () => {
     try {
       const response = await fetch(
@@ -259,10 +300,10 @@ function Pratice({ slug }) {
       if (!leaderboards.length) return;
 
       const user1 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 1;
+        return leaderboard.id == 5;
       });
       const user2 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 2;
+        return leaderboard.id == 4;
       });
       const user3 = leaderboards.filter((leaderboard) => {
         return leaderboard.id == 3;
@@ -348,16 +389,19 @@ function Pratice({ slug }) {
   return (
     <>
       <Head>
-        <title>Practice - CTFGuide</title>
+        <title>{challenge ? challenge.title : ""} - CTFGuide</title>
         <style>
           @import
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-
-      <StandardNav />
       <main>
-        <div className=" w-full py-10 " style={{ backgroundColor: '#212121' }}>
+      <div id="reportalert"  className="hidden text-white flex bg-blue-900 center fixed bottom-6 right-6 rounded-md bg-[#7cd313] p-2">
+          <CheckCircleIcon className='w-6 h-6 mr-2'> </CheckCircleIcon>We'll investigate this challenge and take appropriate action.
+        </div>
+      <StandardNav />
+      <div className=" w-full py-10 "           style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
+>
           <div className="mx-auto my-auto flex  text-center">
             <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
               {' '}
@@ -395,12 +439,20 @@ function Pratice({ slug }) {
                 onClick={likeChallenge}
                 className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
               >
-                <h1 className="mt-1 mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
-                  👍
+                <h1 className=" mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
+                  <HeartIcon className="h-8 w-8 text-red-500" />
                 </h1>
-                <p className="mt-1 text-lg text-white">{likeCount}</p>
+                <p className=" text-2xl text-white">{likeCount}</p>
               </button>
-              <button className="card-body m-1 rounded-md bg-neutral-800 px-4 py-1 hover:bg-neutral-700">
+              <button
+              onClick={() => {document.getElementById("reportalert").classList.remove("hidden");setTimeout(function(){ document.getElementById("reportalert").classList.add("hidden"); }, 5000);}}
+                className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
+              >
+                <h1 className=" flex bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
+                  <FlagIcon  className="h-8 w-8 text-yellow-600 mr-2" /> <p className='text-white font-normal text-lg'>Report Challenge</p>
+                </h1>
+              </button>
+              <button className="hidden card-body m-1 rounded-md bg-neutral-800 px-4 py-1 hover:bg-neutral-700">
                 <h1 className="bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-sm font-semibold text-transparent">
                   View Submissions
                 </h1>
@@ -411,12 +463,12 @@ function Pratice({ slug }) {
           {/* ***************************************** */}
           <div></div>
           <p
-            id="challengeDetails"
-            style={{ color: '#8c8c8c' }}
-            className="w-5/6 text-lg text-white"
-          >
-            {challenge.content}
-          </p>
+  id="challengeDetails"
+  style={{ color: '#8c8c8c' }}
+  className="w-full text-lg text-white whitespace-pre-wrap border-l-4 border-blue-700 px-4 bg-neutral-800/50 py-2"
+>
+  {challenge.content}
+</p>
           <div className="flex ">
             <div className="mt-4 rounded-lg">
               <div className="flex    rounded-lg   rounded-lg text-sm">
@@ -489,6 +541,8 @@ function Pratice({ slug }) {
               <span className="text-yellow-400">{terminalUsername}</span> using
               the password{' '}
               <span className="text-yellow-400">{terminalPassword}</span>
+
+              <span onClick={() => {window.location.reload()}} className='float-right ml-auto flex hover:text-neutral-300 cursor-pointer'> <ArrowPathIcon className='h-6 w-6 mr-2'/> Reset Terminal</span>
               <a
                 style={{ cursor: 'pointer' }}
                 className="hidden text-gray-300 hover:bg-black"
@@ -609,11 +663,14 @@ function Pratice({ slug }) {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-100"
                     >
-                      Nice hackin', partner!
+                      {(submissionMsg == "success") ? "Nice hackin', partner!" : ""}
+                      {(submissionMsg == "incorrect") ? "Submission incorrect!" : ""}
+                      {(submissionMsg == "error") ? "Login to submit a flag" : ""}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-gray-200">
-                        You were awarded <span>{award}</span> points.
+                        {(submissionMsg == "success") ? `You were awarded ${award} points.` : ""}
+                        {(submissionMsg == "incorrect") ? `Incorrect submission, no points awarded.` : ""}
                       </p>
                     </div>
                   </div>
@@ -682,9 +739,14 @@ function Pratice({ slug }) {
                         </div>
                         <div className="mt-3 rounded-md border border-neutral-900 bg-neutral-800">
                           <h2 className="text-md mx-4 mt-2 mb-2 text-gray-200">
-                            <i class="far fa-lightbulb text-yellow-400"></i> On
+                            <i class="far fa-lightbulb text-yellow-400 mr-1"></i> On
                             our main platform, each hint incurs a 10% penalty
                             and each submission a 3% penalty.
+                          </h2>
+                        </div>
+                        <div className="w-4/5 mt-3 rounded-md border border-neutral-900 bg-neutral-800 absolute bottom-4 mx-auto">
+                          <h2 className="text-md mx-4 mt-2 mb-2 text-gray-200">
+                            <i class="far fa-star text-blue-500 mr-1"></i> You must be logged in to see hints!
                           </h2>
                         </div>
                       </div>
@@ -722,13 +784,5 @@ function Pratice({ slug }) {
       </p>
       <Footer />
     </>
-  );
+  )
 }
-
-Pratice.getInitialProps = async ({ pathname, req, query }) => {
-  const slug = query.slug;
-  console.log(pathname);
-  return { slug: slug };
-};
-
-export default Pratice;

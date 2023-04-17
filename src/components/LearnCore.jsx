@@ -16,12 +16,8 @@ export function LearnCore() {
         <div className="my-auto ml-auto mt-3 flex">
           <MarkDone sublesson={4} section={1} href={'../'} />
 
-          <button
-            href="../"
-            className="my-auto ml-4 rounded-md bg-red-600 py-1 px-3 text-sm font-bold text-white hover:bg-red-600"
-          >
-            Exit Lab
-          </button>
+          className="my-auto my-auto ml-4 rounded-sm text-xl bg-red-600 px-4 py-1 text-white"
+
         </div>
       </div>
       <div className="grid h-screen max-h-screen resize-x grid-cols-2 gap-0 md:grid-cols-2 lg:grid-cols-2">

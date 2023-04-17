@@ -11,7 +11,7 @@ const pages = [
 
 export default function Createchall() {
   const router = useRouter();
-
+  var ogFlag = ""
   const [activeTab, setActiveTab] = useState('created');
 
   function handleTabClick(tab) {
@@ -30,6 +30,7 @@ export default function Createchall() {
         document.getElementById('challengeName').innerText = challenge.title;
         document.getElementById('content').value = challenge.content;
         document.getElementById('category').value = challenge.category;
+
         // document.getElementById("solution").value = challenge.keyword;
       }
     });
@@ -48,11 +49,29 @@ export default function Createchall() {
 
   function uploadChallenge() {
     // WARNING: For POST requests, body is set to null by browsers.
+    
     var data = JSON.stringify({
+      title: document.getElementById('challengeName').innerText,
+      content: document.getElementById('content').value,
+    });
+   
+
+    if (document.getElementById('solution').value == "" || document.getElementById('solution').value == null) {
+    
+    
+    
+       data = JSON.stringify({
+      title: document.getElementById('challengeName').innerText,
+      content: document.getElementById('content').value,
+    });
+
+  } else {
+    data = JSON.stringify({
       title: document.getElementById('challengeName').innerText,
       content: document.getElementById('content').value,
       keyword: document.getElementById('solution').value,
     });
+  }
 
     var xhr = new XMLHttpRequest();
 
@@ -92,14 +111,7 @@ export default function Createchall() {
       <StandardNav />
 
       <main>
-        <div className=" w-full " style={{ backgroundColor: '#212121' }}>
-          <div className="mx-auto my-auto flex h-28 text-center">
-            <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
-              Challenge Edit
-            </h1>
-          </div>
-        </div>
-
+  
         <nav
           className="mx-auto mt-10 flex max-w-7xl text-center"
           aria-label="Breadcrumb"
@@ -183,17 +195,18 @@ export default function Createchall() {
             </select>
           </div>
 
-          <div className="mt-5 rounded-lg   bg-neutral-800">
-            <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
-              <i class="fas fa-align-left"></i> Challenge Content
-            </h3>
-            <div className="px-5 py-5">
+          <div
+                        className="mt-5 rounded-sm shadow-lg border border-gray-900 bg-neutral-800/40  shadow-lg ring-1 ring-black ring-opacity-5">
+                        <h3 className=" rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+                            Challenge Content
+                        </h3>
+                        <div className="px-5 py-5 ">
               <textarea
-                id="content"
-                className="h-40 w-full rounded-lg  border-none bg-neutral-900 px-5 py-4 text-white"
+                  id="content"
+                  className="h-40 w-full rounded-sm shadow-lg  border-none bg-neutral-900 px-5 py-4 text-white"
               ></textarea>
-            </div>
-          </div>
+                        </div>
+                    </div>
 
           <div className="mt-5 hidden   rounded-lg bg-neutral-800">
             <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
@@ -232,17 +245,19 @@ export default function Createchall() {
             </div>
           </div>
 
-          <div className="mt-5 rounded-lg   bg-neutral-800">
-            <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
-              <i class="far fa-flag"></i> Challenge Solution
-            </h3>
-            <div className="px-5 py-5">
-              <input
-                id="solution"
-                className="mb-4 mt-1 w-full rounded-lg border-none bg-neutral-900 px-2 py-2  text-white"
-              ></input>
-            </div>
-          </div>
+       
+          <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40">
+                        <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+                            Challenge Solution
+                        </h3>
+                        <div className="px-5 py-5">
+                            <textarea
+                                id="solution"
+                                placeholder="Leave this blank if you do not want to change the solution."
+                                className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"
+                            ></textarea>
+                        </div>
+                    </div>
 
           <button
             onClick={uploadChallenge}
