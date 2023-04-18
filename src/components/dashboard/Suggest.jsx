@@ -2,8 +2,7 @@ export function Suggest() {
   return (
     <>
       <h1
-        className="mt-6 mb-2 mt-2 text-xl tracking-tight text-white    "
-        style={{ color: '#595959' }}
+        className="mt-6 mb-2 mt-2 text-xl tracking-tight text-gray-300    "
       >
         {' '}
         RECOMMENDATIONS

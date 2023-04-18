@@ -43,7 +43,7 @@ export function MarkDone({ sublesson, section, href }) {
       <Link href={href ? href : './'} className="my-auto">
         <button
           onClick={handleSubmit}
-          className="my-auto rounded-md bg-[#3B82F6] py-1 px-3 text-sm font-bold text-white hover:bg-blue-700"
+          className='bg-blue-700 hover:bg-blue-800 hover:bg-blue-800/100 px-4 py-1 text-xl rounded-l-sm'
         >
           Mark Done
         </button>

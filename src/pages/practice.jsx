@@ -3,11 +3,9 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { useState, useEffect } from 'react';
-import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
+import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 
 export default function Practice() {
-
-
   useEffect(() => {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/dashboard`, {
@@ -19,15 +17,31 @@ export default function Practice() {
       })
         .then((res) => res.json())
         .then((data) => {
-          window.alert(JSON.stringify(data));
+          setStats([
+            {
+              id: 1,
+              name: 'Challenges Solved',
+              value: data.solved,
+            },
+            {
+              id: 2,
+              name: 'Challenges Viewed',
+              value: data.viewed,
+            },
+            {
+              id: 3,
+              name: 'Total Attempts',
+              value: data.submissions,
+            }
+
+          ]);
+
         })
         .catch((err) => {
           console.log(err);
         });
     } catch {}
   }, []);
-
-
 
   function loadChallenges() {
     try {
@@ -73,17 +87,14 @@ export default function Practice() {
 
 
   const [stats, setStats] = useState([
-    { id: 1, name: 'Challenges Solved', value: '0' },
-    { id: 2, name: 'Challenges Viewed', value: '0' },
-    { id: 3, name: 'Challenges Attempted', value: '0' },
+    { id: 1, name: '...', value: '...' },
+    { id: 2, name: '...', value: '...' },
+    { id: 3, name: '...', value: '...' },
   ]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await fetch('https://api.ctfguide.com/challenges/type/all');
-        // const data = await response.json();
-        // setChallenges([...data]);
         const response = await fetch(
           process.env.NEXT_PUBLIC_API_URL + '/challenges'
         );
@@ -120,8 +131,8 @@ export default function Practice() {
           setName(data.username);
 
           setStats([
-            { id: 1, name: 'Challenge Streak', value: data.streak },
-            { id: 2, name: 'Leaderboard Placement', value: ('#' + (data.leaderboardNum + 1)) },
+            { id: 1, name: 'Challenge Streak', value: 0 },
+            { id: 2, name: 'Leaderboard Placement', value: 0 },
             { id: 3, name: 'Challenges Attempted', value: 0 },
           ]);
         })
@@ -166,92 +177,9 @@ export default function Practice() {
       </Head>
       <StandardNav />
       <main>
-        <div className=" hidden w-full " style={{ backgroundColor: '#212121' }}>
-          <div className="mx-auto my-auto flex h-28 text-center">
-            <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
-              Hub
-            </h1>
-          </div>
-        </div>
         <div className="">
           <div className="w-full border-l border-neutral-800 px-8 ">
             <div className="mx-auto">
-              <h1 className="mt-10 hidden text-3xl tracking-tight text-gray-100">
-                {name ? `Welcome back, ${name}.` : ''}
-              </h1>
-              {name ? (
-                ''
-              ) : (
-                <a href="/login">
-                  <h1 className="text-md mt-10 hidden rounded-md bg-blue-600 px-4 py-1 tracking-tight text-gray-100 hover:bg-blue-500">
-                    Log in to view progress!
-                  </h1>
-                </a>
-              )}
-              <div className="mt-4 hidden rounded-sm border-t-4 border-blue-700 bg-neutral-800/60  px-3 py-1">
-                <h1 className="ml-3 mt-3 text-3xl tracking-tight text-gray-100"></h1>
-                <div className="px-3">
-                  <h1 className="my-auto mt-3 flex truncate text-2xl tracking-tight text-gray-100">
-                    {' '}
-                    Progress Summary
-                  </h1>
-                </div>
-                <div className="mx-auto mb-4 mt-2 grid gap-4 rounded-lg px-3 text-center sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-6">
-                  <div className="stext-center mx-auto my-auto hidden w-full rounded-lg px-4 py-2 text-white">
-                    <h1 className="text-xl">Your Performance</h1>
-                  </div>
-
-                  <div className="stext-center col-span-2 mx-auto mt-2 w-full rounded-lg border border-[#222222] bg-[#191919] px-4 py-2 text-white">
-                    <div className="my-auto">
-                      <h1 className="bg-gradient-to-br from-blue-400 to-blue-500 bg-clip-text text-3xl text-transparent">
-                        {streak ? `${streak} days` : '0 days'}
-                      </h1>
-                      <h1 className="text-xl">Streak</h1>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 mx-auto mt-2 w-full rounded-lg border border-[#222222] bg-[#191919] px-4 py-2 text-center text-white ">
-                    <h1 className="bg-gradient-to-br from-red-400 to-pink-500 bg-clip-text text-3xl text-transparent">
-                      {points ? `${points}` : 0}
-                    </h1>
-
-                    <h1 className="text-xl">Points</h1>
-                  </div>
-                  <div className="col-span-1 mx-auto mt-2 w-full rounded-lg border border-[#222222] bg-[#191919] px-4 py-2 text-center text-white ">
-                    <h1 className="to-blue -500 bg-gradient-to-br from-green-400 bg-clip-text text-3xl text-transparent">
-                      {points ? `${points}` : 0}
-                    </h1>
-
-                    <h1 className="text-xl">Solved</h1>
-                  </div>
-
-                  <div className="stext-center mx-auto mt-2 w-full rounded-lg border border-[#222222] bg-[#191919] px-4 py-2 text-white">
-                    <h1 className="bg-gradient-to-br from-orange-400 to-yellow-500 bg-clip-text text-3xl text-transparent">
-                      {rank}
-                    </h1>
-                    <h1 className="text-xl ">Attempts</h1>
-                  </div>
-                </div>
-                <div className="mb-5 px-3">
-                  <h1 className="my-auto mt-6 flex hidden truncate text-2xl tracking-tight text-gray-100">
-                    {' '}
-                    Your Insights{' '}
-                    <p className="my-auto ml-2 rounded-lg bg-blue-500 px-2.5 text-sm tracking-[.016em] text-white">
-                      EXPERIMENTAL
-                    </p>
-                  </h1>
-                  <div>
-                    <p
-                      className="mb-3 mt-3 hidden rounded-md border-2 border-neutral-700 px-2 py-1 text-xl  text-neutral-300 text-white"
-                      id="insight"
-                    >
-                      <i class="fas fa-spinner fa-spin mr-2"></i>
-                      Generating insights, this can take up to 10 seconds.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               <div className=" mt-12 rounded-lg lg:min-w-0 lg:flex-1 ">
                 <div className="mx-auto max-w-7xl">
                   <div className="  relative isolate overflow-hidden  rounded-lg bg-black/10 bg-neutral-900 py-14 shadow-2xl ring-1 ring-white/10 sm:py-12">

@@ -184,19 +184,19 @@ export default function Dashboard() {
               }
               link={'../learn/ch2/preview'}
               sectionHrefs={[
-                '../learn/ch1/preview',
-                '../learn/ch1/video1',
-                '../learn/ch1/activity1',
-                '../learn/ch1/dynamic1',
+                '../learn/ch2/preview',
+                '../learn/ch2/video2',
+                '../learn/ch2/activity2',
+                '../learn/ch2/dynamic2',
               ]}
             />
             <LearningModule
               lessonId={3}
               title={'Cryptography'}
               sections={[
-                'What is Cryptography?',
-                'PKI Introduction',
-                'Knees deep into TLS',
+                'Introduction to Cryptography',
+                'Cryptography Outline Video',
+                'Mastery Task',
                 'Password Dump',
               ]}
               imgSrc={
@@ -204,14 +204,14 @@ export default function Dashboard() {
               }
               link={'../learn/ch3/preview'}
               sectionHrefs={[
-                '../learn/ch1/preview',
-                '../learn/ch1/video1',
-                '../learn/ch1/activity1',
-                '../learn/ch1/dynamic1',
+                '../learn/ch3/preview',
+                '../learn/ch3/video3',
+                '../learn/ch3/activity3',
+                '../learn/ch3/dynamic3',
               ]}
             />
           </div>
-          <div className='bg-neutral-800/50 px-8 py-6 rounded-md mt-16'>
+          <div className='hidden bg-neutral-800/50 px-8 py-6 rounded-md mt-16'>
             <h1 className="mb-1 text-3xl font-semibold text-white">
               Explore a Tool
             </h1>

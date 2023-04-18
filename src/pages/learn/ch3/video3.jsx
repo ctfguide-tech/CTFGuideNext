@@ -37,18 +37,31 @@ export default function Dashboard() {
       </Head>
       <StandardNav />
       <main>
-        <div className="mx-auto max-w-6xl">
-          <h1 className="mt-4 mt-6 text-5xl font-semibold text-white">
-            Cryptography!
-          </h1>
+        <div className="mx-auto ">
+        <div
+            className="  w-full backdrop-blur-lg"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80')",
+            }}
+          >
+            <div className="mx-auto my-auto flex h-28 text-center backdrop-blur-md">
+              <h1 className="mx-auto my-auto text-4xl font-semibold text-white">
+                Cryptography
+              </h1>
+            </div>
+            <div className='text-center text-white bg-yellow-800 py-2'>
+                <h1>This lesson will temporarily serve a general overview until our content creation team finishes the new/updated lesson. We aren't exactly pleased with the current state of this learning module.</h1>
+            </div>
+          </div>
           <div className="mx-auto  flex max-w-7xl ">
             {/* Sidebar */}
             <LearnNav
               lessonNum={3}
               navElements={[
-                { href: './preview', title: 'Cryptography!' },
-                { href: './video3', title: 'PKI Introduction' },
-                { href: './activity3', title: 'Knees Deep into TLS' },
+                { href: './preview', title: 'Introduction to Cryptography' },
+                { href: './video3', title: 'Cryptography Outline' },
+                { href: './activity3', title: 'Mastery Task' },
                 { href: './dynamic3', title: 'Password Dump' },
               ]}
             />
@@ -56,31 +69,43 @@ export default function Dashboard() {
             {/* Main content area */}
             <div className="flex-1 text-white ">
               {/* Load in markdown from a github url */}
+
+              <div className='bg-neutral-800/100 my-auto  align-center flex px-4 py-4 mb-4 mt-10 border-t-4 border-blue-700'>
+              <motion.h1
+                className="animate-slide-in-left  text-3xl font-semibold"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                Cryptography Outline
+              </motion.h1>
+              <div className='ml-auto '>
+
+              <button onClick={() => { router.push('./preview') }} className='bg-neutral-900 hover:bg-blue-800/100 px-4 py-1 text-xl rounded-l-sm'>←</button>
+              <button  className=' bg-neutral-900  px-4 py-1 text-xl rounded-l-sm' disabled>2</button>
+    <button onClick={() => { router.push('./dynamic3') }}  className='mr-4 bg-neutral-900  hover:bg-blue-800 px-4 py-1 text-xl rounded-r-sm'>→</button>
+            
+    <MarkDone sublesson={10} section={1} href="./activity3" />
+
+
+              </div>
+              </div>
               <iframe
-                className="mx-auto mt-10"
-                width="800"
+           
+
+className="text-center mx-auto rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10"
+              width="1000"
                 height="415"
-                src="https://www.youtube.com/watch?v=t0F7fe5Alwg"
+                src="https://www.youtube.com/embed/fX433eTDVVA?start=645"
                 title="YouTube video player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
               ></iframe>
-              <div className="flex">
-                <motion.h1
-                  className="animate-slide-in-right mt-4 ml-12 mr-6 text-3xl font-semibold"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  PKI Introduction
-                </motion.h1>
-              </div>
-              <h1 className=" ml-12 text-lg font-semibold text-blue-500">
-                @CTFGuideTeam
-              </h1>
-              <div className="ml-6 mt-2">
-                <MarkDone sublesson={10} section={1} href="./activity3" />
-              </div>
+
+  
+              <p className='mt-4'>This is a video sourced from <a href="https://infosecucalgary.ca/" className='text-blue-500 font-semibold'>University of Calgary's Information Security Club</a>.</p>
+
+
             </div>
           </div>
         </div>
