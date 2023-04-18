@@ -2594,7 +2594,7 @@ __metadata:
     react-dom: 18.2.0
     react-firebase-hooks: ^5.1.1
     react-loading-skeleton: ^3.2.0
-    react-markdown: ^8.0.5
+    react-markdown: ^8.0.7
     react-router-dom: ^6.9.0
     react-simplemde-editor: ^5.2.0
     react-text-loop: ^2.3.0
@@ -5743,7 +5743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-markdown@npm:^8.0.5":
+"react-markdown@npm:^8.0.7":
   version: 8.0.7
   resolution: "react-markdown@npm:8.0.7"
   dependencies:

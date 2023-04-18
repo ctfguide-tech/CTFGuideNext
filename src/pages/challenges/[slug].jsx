@@ -6,6 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Collapsible from 'react-collapsible';
 import { Footer } from '@/components/Footer';
+import {MarkdownViewer} from "@/components/MarkdownViewer";
 
 export default function Challenge() {
   const router = useRouter()
@@ -451,7 +452,10 @@ export default function Challenge() {
   style={{ color: '#8c8c8c' }}
   className="w-5/6 text-lg text-white whitespace-pre-wrap"
 >
-  {challenge.content}
+              <div contentEditable={false}>
+                <MarkdownViewer content={challenge.content}/>
+              </div>
+
 </p>
           <div className="flex ">
             <div className="mt-4 rounded-lg">
