@@ -77,7 +77,7 @@ export default function Createchall() {
 
     xhr.addEventListener('readystatechange', function () {
       if (this.readyState === 4 || this.status === 201) {
-        //window.location.replace("/create")
+        router.push('/create')
       }
 
       if (this.readyState === 4 && this.status != 201) {
