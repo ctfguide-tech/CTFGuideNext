@@ -128,7 +128,17 @@ export default function Challenge() {
         const likes = result.filter((item) => {
           return item.challenge.slug === slug;
         });
-     //   setLiked(likes.length ? true : false);
+
+
+
+        
+
+
+        // check if user has liked challenge based on likes array
+        // if so, set liked to true
+
+
+      // setLiked(likes.length ? true : false);
       //  if (likes.length) {
        //   setLikeCount(likeCount + 1);
        // }
@@ -166,6 +176,7 @@ export default function Challenge() {
     }
     if (challenge.upvotes) {
       setLikeCount(challenge.upvotes);
+     
     }
   }, [challenge]);
 
@@ -300,13 +311,13 @@ export default function Challenge() {
       if (!leaderboards.length) return;
 
       const user1 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 5;
+        return leaderboard[0];
       });
       const user2 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 4;
+        return leaderboard[1];
       });
       const user3 = leaderboards.filter((leaderboard) => {
-        return leaderboard.id == 3;
+        return leaderboard[2];
       });
 
       setLeaderboards([
@@ -347,8 +358,10 @@ export default function Challenge() {
   const flagChanged = (event) => {
     setFlag(event.target.value);
   };
+
   const likeChallenge = async () => {
-    console.log(liked);
+    
+  
     if (!liked) {
       const endPoint =
         process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/like';
@@ -363,8 +376,10 @@ export default function Challenge() {
       if (error) {
         alert(error);
       } else {
-        setLikeCount(likeCount + 1);
-        setLiked(true);
+        // pull likes from web
+     window.location.reload();
+       
+
       }
     } else {
       const endPoint =
