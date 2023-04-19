@@ -28,7 +28,7 @@ export function Suggest() {
                 <div className="mx-auto  lg:mx-0 lg:max-w-3xl">
                   <div className="mt-4 text-lg leading-8 text-gray-300">
                     <h1 className=" text-xl text-white">Suggested for you </h1>
-                    <h1 className="text-3xl font-semibold text-white">Cypher Decoding</h1>
+                    <h1 className="text-2xl font-semibold text-white">Cypher Decoding</h1>
                   </div>
                 </div>
               </div>
@@ -56,7 +56,7 @@ export function Suggest() {
                 <div className="mx-auto  lg:mx-0 lg:max-w-3xl">
                   <div className="mt-4 text-lg leading-8 text-gray-300">
                     <h1 className=" text-xl text-white">Popular on CTFGuide </h1>
-                    <h1 className="text-3xl font-semibold text-white">Obedient Cat</h1>
+                    <h1 className="text-2xl font-semibold text-white">Obedient Cat</h1>
                   </div>
                 </div>
               </div>
