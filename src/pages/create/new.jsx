@@ -119,9 +119,12 @@ export default function Createchall() {
                         className="mt-1 mb-4  w-1/3 rounded-md border-neutral-900 bg-neutral-900/90 py-2 pl-3 pr-20 text-base  text-white  focus:outline-none sm:text-sm"
                         defaultValue="easy"
                     >
+                        <option value="beginner">Beginner</option>
                         <option value="easy">Easy</option>
                         <option value="medium">Medium</option>
                         <option value="hard">Hard</option>
+                        <option value="insane">Insane</option>
+
                     </select>
 
                     <select
@@ -136,7 +139,6 @@ export default function Createchall() {
                         <option value="reverse engineering">reverse engineering</option>
                         <option value="programming">programming</option>
                         <option value="pwn">pwn</option>
-                        <option value="steganography">steganography</option>
                         <option value="basic">basic</option>
 
                         <option value="other">other</option>

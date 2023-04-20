@@ -33,9 +33,12 @@ export function Community({ challenges }) {
             value={difficulty}
           >
             <option value="all">All</option>
+            <option value="beginner">Beginner</option>
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
+            <option value="insane">Insane</option>
+
           </select>
         </div>
        
