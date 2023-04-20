@@ -20,9 +20,11 @@ import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
+
 }
 
 const auth = getAuth();
+
 
 const DEFAULT_NOTIFICATION = {
   image:
@@ -33,6 +35,8 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const router = useRouter();
 
   function logout() {
@@ -191,11 +195,27 @@ export function StandardNav() {
                     Create
                   </a>
                   <a
+                    href="../../create"
+                    className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                  >
+                    Create
+                  </a>
+                  <a
                     href="../../live"
                     className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                   >
                     Live
                   </a>
+                  {
+                  isAdmin && (
+                  <a
+                    href="../../live"
+                    className="text-yellow-400 font-semibold inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                  >
+                    Admin Panel
+                  </a>
+                  )
+}
                 </div>
               </div>
               <div className="flex items-center">
