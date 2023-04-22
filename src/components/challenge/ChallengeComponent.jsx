@@ -19,9 +19,11 @@ const Challenge = ({ data, inCarousel }) => {
   }
 
   const badgeColor = {
+    beginer: 'bg-[#28a745] text-[#212529] ',
     easy: 'bg-[#28a745] text-[#212529] ',
     medium: 'bg-[#f0ad4e] text-[#212529] ',
     hard: 'bg-[#dc3545] ',
+    insane: 'bg-[#dc3545] '
   };
 
   return (
