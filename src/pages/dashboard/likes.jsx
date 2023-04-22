@@ -62,7 +62,7 @@ export default function Dashboard() {
               {likes.map((like) => (
                 <div>
                   <a
-                    href={`/challenge/${like.challenge.slug}`}
+                    href={`/challenges/${like.challenge.slug}`}
                     className="align-center mb-4 flex rounded-sm border-l-4 border-blue-700 bg-[#212121] px-5 py-3 text-white hover:border-blue-800 hover:bg-[#262626]"
                   >
                     <h2 className="align-middcenterle text-xl font-semibold">
