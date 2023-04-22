@@ -454,7 +454,7 @@ export default function Challenge() {
                                 </button>
                                 <button
                                     onClick={() => setHintOpen(true)}
-                                    className="mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
+                                    className="hidden mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
                                 >
                                     Stuck?
                                 </button>
@@ -462,7 +462,7 @@ export default function Challenge() {
                         </div>
                     </div>
                 </div>
-                <div className="mt-6 grid gap-10 sm:grid-cols-1 lg:grid-cols-3">
+                <div className="hidden mt-6 grid gap-10 sm:grid-cols-1 lg:grid-cols-3">
                     <div
                         style={{backgroundColor: '#212121'}}
                         className="card mx-auto w-full rounded-lg py-3 text-center shadow-lg"
