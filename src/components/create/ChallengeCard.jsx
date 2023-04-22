@@ -25,7 +25,7 @@ export function ChallengeCard({ challenge }) {
           <div className="ml-auto flex">
             {challenge.state == 'STANDARD_VERIFIED' && (
               <div className="mx-auto mx-auto flex rounded-lg bg-neutral-900 py-2.5 pl-5 pr-3 text-center text-center text-white">
-                <a href={`/challenge?slug=${challenge.slug}`}>
+                <a href={`/challenges/${challenge.slug}`}>
                   <EyeIcon className="mr-2 h-5 text-white " />{' '}
                 </a>
               </div>
