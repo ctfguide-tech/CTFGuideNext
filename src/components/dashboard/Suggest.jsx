@@ -11,7 +11,7 @@ export function Suggest() {
       <div className="mb-5 grid grid-cols-2 gap-x-4">
         <div className="">
           <a href='../challenges/cypher_decoding'>
-            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4 shadow-2xl ring-1 ring-white/10 hover:ring-white/40">
+            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4  ring-1 ring-white/10 hover:ring-white/40">
               <div className="relative mx-auto max-w-7xl  px-5">
                 <div
                   className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
@@ -28,7 +28,7 @@ export function Suggest() {
                 <div className="mx-auto  lg:mx-0 lg:max-w-3xl">
                   <div className="mt-4 text-lg leading-8 text-gray-300">
                     <h1 className=" text-xl text-white">Suggested for you </h1>
-                    <h1 className="text-3xl font-semibold text-white">Cypher Decoding</h1>
+                    <h1 className="text-2xl font-semibold text-white">Cypher Decoding</h1>
                   </div>
                 </div>
               </div>
@@ -39,7 +39,7 @@ export function Suggest() {
 
         <div className="">
           <a href='../challenges/obedient_cat'>
-            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4 shadow-2xl ring-1 ring-white/10 hover:ring-white/40">
+            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4  ring-1 ring-white/10 hover:ring-white/40">
               <div className="relative mx-auto max-w-7xl  px-5">
                 <div
                   className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
@@ -56,7 +56,7 @@ export function Suggest() {
                 <div className="mx-auto  lg:mx-0 lg:max-w-3xl">
                   <div className="mt-4 text-lg leading-8 text-gray-300">
                     <h1 className=" text-xl text-white">Popular on CTFGuide </h1>
-                    <h1 className="text-3xl font-semibold text-white">Obedient Cat</h1>
+                    <h1 className="text-2xl font-semibold text-white">Obedient Cat</h1>
                   </div>
                 </div>
               </div>

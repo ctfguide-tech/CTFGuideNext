@@ -20,10 +20,12 @@ import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
+
 }
 
 const auth = getAuth();
 
+const adminList = ["pranav,"]
 const DEFAULT_NOTIFICATION = {
   image:
     'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
@@ -33,6 +35,8 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const router = useRouter();
 
   function logout() {
@@ -146,7 +150,7 @@ export function StandardNav() {
               <div className="flex">
                 <div className="-ml-2 mr-2 flex items-center md:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover-bg-neutral-900 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
@@ -190,12 +194,23 @@ export function StandardNav() {
                   >
                     Create
                   </a>
+               
                   <a
                     href="../../live"
                     className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                   >
                     Live
                   </a>
+                  {
+                  isAdmin && (
+                  <a
+                    href="../../live"
+                    className="text-yellow-400 font-semibold inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                  >
+                    Admin Panel
+                  </a>
+                  )
+}
                 </div>
               </div>
               <div className="flex items-center">
@@ -324,72 +339,58 @@ export function StandardNav() {
           </div>
 
           <Disclosure.Panel className="md:hidden">
-            <div className="space-y-1 pt-2 pb-3">
+            <div className="space-y-1 pt-2 pb-3 bg-neutral-800/50">
               {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300 hover:bg-gray-50 hover:font-bold" */}
               <Disclosure.Button
                 as="a"
-                href="#"
-                className="block border-l-4 border-blue-500 bg-blue-50 py-2 pl-3 pr-4 text-base font-medium text-blue-700 sm:pl-5 sm:pr-6"
+                href="../dashboard"
+                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Dashboard
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
-                href="#"
+                href="../learn"
+                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+              >
+                Learn
+              </Disclosure.Button>
+              <Disclosure.Button
+                as="a"
+                href="../groups"
                 className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Groups
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
-                href="#"
+                href="../practice"
                 className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Practice
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
-                href="live.ctfguide.com"
+                href="../live"
                 className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Live
               </Disclosure.Button>
             </div>
-            <div className="border-t border-gray-200 pt-4 pb-3">
-              <div className="flex items-center px-4 sm:px-6">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src={
-                      `https://robohash.org/` +
-                      username +
-                      `.png?set=set1&size=150x150`
-                    }
-                    alt=""
-                  />
-                </div>
-                <div className="ml-3">
-                  <div className="text-base font-medium text-gray-800">
-                    Anonymous
-                  </div>
-                  <div className="text-sm font-medium text-gray-300">
-                    anon@ctfguide.com
-                  </div>
-                </div>
-           
-              </div>
-              <div className="mt-3 space-y-1">
+            <div className="border-t border-neutral-800 pt-4 pb-3 bg-neutral-800/50">
+            
+              <div className="space-y-1">
                 <Disclosure.Button
                   as="a"
                   href="#"
-                  className="block px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
+                  className="block px-4 py-2 text-base font-medium text-gray-300 hover-bg-neutral-900 hover:text-gray-800 sm:px-6"
                 >
                   Your Profile
                 </Disclosure.Button>
                 <Disclosure.Button
                   as="a"
                   href="#"
-                  className="block px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
+                  className="block px-4 py-2 text-base font-medium text-gray-300 hover-bg-neutral-900 hover:text-gray-800 sm:px-6"
                 >
                   Settings
                 </Disclosure.Button>
@@ -397,7 +398,7 @@ export function StandardNav() {
                   as="a"
                   href="#"
                   onClick={{ logout }}
-                  className="block px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
+                  className="block px-4 py-2 text-base font-medium text-gray-300 hover-bg-neutral-900 hover:text-gray-800 sm:px-6"
                 >
                   Sign out
                 </Disclosure.Button>
