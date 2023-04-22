@@ -31,6 +31,8 @@ export default function Document(props) {
           integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
           crossorigin="anonymous"
         />
+        <script defer data-domain="ctfguide.com" src="https://plausible.io/js/script.js"></script>
+
       </Head>
       <body className="flex h-full flex-col">
         <Main />
