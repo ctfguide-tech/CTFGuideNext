@@ -7,7 +7,7 @@ export function DashboardHeader() {
   const [username, setUsername] = useState('');
   const [location, setLocation] = useState('');
   const [join, setJoin] = useState('');
-  const [github, setGithub] = useState('https://github.com');
+  const [github, setGithub] = useState('');
   const [githubUsername, setGithubUsername] = useState('.');
 
   const [points, setPoints] = useState('');
@@ -27,8 +27,11 @@ export function DashboardHeader() {
           setUsername(data.username);
           setLocation(data.location);
           setJoin(data.createdAt.substring(0, 10));
-          setGithub(`https://github.com/${data.githubUrl}`);
-          setGithubUsername(data.githubUsername);
+          if (data.githubUrl) {
+            setGithub(`https://github.com/${data.githubUrl}`);
+            setGithubUsername(data.githubUsername);
+            
+          }
           setPoints(data.points);
           setRank(data.leaderboardNum + 1);
         })
