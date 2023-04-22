@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Challenge from '../challenge/ChallengeComponent';
 
 export function Community({ challenges }) {
@@ -7,11 +7,38 @@ export function Community({ challenges }) {
   const [results, setResults] = useState([]);
   const [filter, setFilter] = useState('');
 
-  
+  useEffect(() => {
+    const filteredChallenges = challenges
+      .filter((challenge) => {
+        if (difficulty !== 'all' && challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()) {
+          return false;
+        }
+        if (category !== 'all' && challenge.category[0].toLowerCase() !== category.toLowerCase()) {
+          return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (category === 'all') {
+          return 0;
+        }
+        if (a.category < b.category) {
+          return -1;
+        }
+        if (a.category > b.category) {
+          return 1;
+        }
+        return 0;
+      });
+
+    setResults(filteredChallenges);
+  }, [difficulty, category, challenges]);
 
   const search = (event) => {
     setFilter(event.target.value);
   };
+
+
 
   return (
     <>

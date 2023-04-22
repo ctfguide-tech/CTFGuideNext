@@ -494,7 +494,7 @@ export default function Dashboard() {
                           name="bio"
                           rows={4}
                           className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
-                          defaultValue={''}
+                          defaultValue={'No bio set yet!'}
                         />
                       </div>
                       <p className="mt-3 text-sm text-white">
