@@ -30,7 +30,7 @@ export function DashboardHeader() {
           if (data.githubUrl) {
             setGithub(`https://github.com/${data.githubUrl}`);
             setGithubUsername(data.githubUsername);
-            
+
           }
           setPoints(data.points);
           setRank(data.leaderboardNum + 1);
@@ -40,6 +40,16 @@ export function DashboardHeader() {
         });
     } catch {}
   }, []);
+
+  function createPopupWin(pageURL, pageTitle,
+    popupWinWidth, popupWinHeight) {
+var left = (screen.width ) ;
+var top = (screen.height ) ;
+var myWindow = window.open(pageURL, pageTitle,
+    'resizable=yes, width=' + popupWinWidth
+    + ', height=' + popupWinHeight + ', top='
+    + top + ', left=' + left);
+}
 
   return (
     <div>
@@ -99,10 +109,10 @@ export function DashboardHeader() {
               </p>
             </div>
             <div className="justify-stretch mt-12 flex sm:px-4 px-4 md:px-0 lg:px-0 ">
-              <div className="mr-4">
+              <div className="mr-4 hidden">
                 {github && (
-                  <a className='hidden md:block lg:block sm:hidden' href={github}>
-                    <div className="mt-9 mb-0 rounded-lg bg-[#212121] px-6 py-1 hover:bg-[#262626]">
+                  <a className='' href={github}>
+                    <div className="mt-9 mb-0 rounded-lg bg-[#212121] px-6 py-2 hover:bg-[#262626]">
                       <svg
                         viewBox="0 0 98 96"
                         width="26"
@@ -123,17 +133,29 @@ export function DashboardHeader() {
               </div>
 
               <div
-                className="mt-8 mb-0 rounded-lg px-10 py-1"
+                className="mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-2"
                 style={{ backgroundColor: '#212121', borderWidth: '0px' }}
               >
-                <h1 className="mx-auto mt-0 mb-0 text-center text-xl font-semibold text-white">
+                <h1 className="mx-auto mt-0 mb-0 text-center font-semibold text-white">
                   {points}
                 </h1>
                 <p className="mt-0 text-white">Points</p>
               </div>
-
               <div
-                className="ml-4 mt-8 mb-0 rounded-lg px-10 py-1"
+              onClick={() => {
+
+                createPopupWin('../terminal',
+            'CTFGuide Terminal', 1200, 650);
+
+
+                 }}
+                className="cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
+              >
+          
+                <p className="mt-0 text-white"><i class="fas fa-terminal mr-1"></i> Terminal</p>
+              </div>
+              <div
+                className="ml-4 mt-8 mb-0 rounded-lg px-10 py-1 hidden"
                 style={{ backgroundColor: '#212121', borderWidth: '0px' }}
               >
                 <h1 className="mx-auto  mt-0 text-center text-xl font-semibold text-white">

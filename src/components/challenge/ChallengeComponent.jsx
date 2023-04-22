@@ -4,9 +4,11 @@ import { CheckCircleIcon } from '@heroicons/react/20/solid';
 const Challenge = ({ data, inCarousel }) => {
   const { difficulty } = data;
   const borderColor = {
+    beginner: 'border-[#05ad84] ',
     easy: 'border-green-500 ',
     medium: 'border-yellow-500 ',
     hard: 'border-red-500 ',
+    insane: 'border-red-500 '
   };
 
   let classStyle = 'card rounded-lg px-6 py-4 w-full border-l-4 bg-[#222222] ';
@@ -19,7 +21,7 @@ const Challenge = ({ data, inCarousel }) => {
   }
 
   const badgeColor = {
-    beginer: 'bg-[#28a745] text-[#212529] ',
+    beginner: 'bg-[#05ad84] text-[#212529] ',
     easy: 'bg-[#28a745] text-[#212529] ',
     medium: 'bg-[#f0ad4e] text-[#212529] ',
     hard: 'bg-[#dc3545] ',
@@ -51,32 +53,32 @@ const Challenge = ({ data, inCarousel }) => {
         <h3 className="mt-2 truncate text-2xl font-bold text-white">
           {data.title.substring(0, 45)}
         </h3>
-        <p className="mb-7 truncate text-sm text-white">
+        <p className="mb-3 truncate text-sm text-white text-center ">
           {data.content.substring(0, 40)}
         </p>
-        <p className="mt-2 flex truncate rounded-md text-[14px] tracking-wide text-white">
+        <p className="  text-[12px] truncate rounded-md  tracking-wide text-white">
           By: {data.creator}
-          {data.creator == 'picoctf' ? (
-            <CheckCircleIcon className="ml-1 mt-0.5 h-4 text-pink-400" />
+          {data.creator == 'almondmilk' ? (
+      <i class="fas fa-check-circle text-blue-500 text-sm ml-2"></i>
           ) : (
             <div></div>
           )}
         </p>
 
-        <div className="left-0 bottom-1 mt-1 flex w-full flex-wrap">
+        <div className="left-0 bottom-1  flex w-full flex-wrap">
           {data.category.map((category, index) => (
             <div className="flex">
               <p
                 id={index}
-                className="mr-3 mt-2 rounded-md bg-blue-700 px-2 text-[12px] text-white"
+                className="mr-3 mt-1 rounded-md  text-[12px] text-white"
               >
-                {category}
+               <i class="fas fa-puzzle-piece mr-1"></i> {category}
               </p>
               <p
                 id={index}
-                className="my-auto mt-2 rounded-md bg-blue-700 px-2 text-[12px] text-white"
+                className="my-auto mt-1 rounded-md px-2 text-[12px] text-white"
               >
-                {data.views} views
+               <i class="far fa-eye mr-1"></i> {data.views} 
               </p>
             </div>
           ))}
