@@ -4,6 +4,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import TextLoop from "react-text-loop";
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import Banner from '@/components/home/Banner';
+
 
 const navigation = [
   { name: 'Enterprise', href: 'https://enterprise.ctfguide.com' },
@@ -20,6 +22,8 @@ export function Hero() {
     return (
       <div className="bg-neutral-900">
         <header className="absolute inset-x-0 top-0 z-50">
+        <Banner />
+
           <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
             <div className="flex lg:flex-1">
             <Link href="../" aria-label="Home">
