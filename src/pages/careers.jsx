@@ -81,11 +81,12 @@ export default function Careers() {
       height: '200',
     },
     {
-      personName: 'Ashni Voleti',
-      position: 'Marketing',
-      image: '../mish.jpg',
+      personName: 'Kshitij Kochhar',
+      position: 'Software Engineer',
+      image: '../kkochhar.jpg',
       width: '200',
       height: '200',
+      bio: "Kshitij is a current Computer Science student at the University of Maryland who specializes in full-stack development. Outside of coding he enjoys going to the Gym, playing Tennis, and hanging out with friends."
     },
     {
       personName: 'Abhi Byreddy',
