@@ -8,7 +8,6 @@ import Banner from '@/components/home/Banner';
 
 
 const navigation = [
-  { name: 'Enterprise', href: 'https://enterprise.ctfguide.com' },
   { name: 'Careers', href: '../careers' },
   { name: 'Open Source', href: 'https://github.com/ctfguide-tech' },
 ]

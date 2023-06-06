@@ -13,7 +13,7 @@ export function PracticeNav() {
         <ul className="">
           <li className="py-1 px-2 hover:bg-neutral-800/60 rounded-sm border border-white/10 hover:border-white/30">
             <a
-              href="/practice"
+              href="/practice/hub"
               className="py-2 px-2 text-lg font-medium text-white"
             >
               <i class="fas fa-laptop-code mr-2"></i>Hub
@@ -21,7 +21,7 @@ export function PracticeNav() {
           </li>
           <li className="mb-1 py-1 px-2 hover:bg-neutral-800/60 border border-white/10 hover:border-white/30">
             <a
-              href="../practice/community"
+              href="../practice"
               className="px-2 py-2 text-lg font-medium text-white"
             >
               <i class="fas fa-list mr-2"></i>All Challenges

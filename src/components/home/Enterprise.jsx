@@ -44,13 +44,7 @@ export function Enterprise() {
             <h1 class="text-3xl leading-tight text-white">
               Streamline your onboarding experience.
             </h1>
-            <a
-              href="https://enterprise.ctfguide.com"
-              class="mt-5 flex text-xl text-blue-500"
-            >
-              Learn more about what we can do for your business
-              <ArrowRightIcon className="mt-1 ml-1 h-6" />
-            </a>
+           
           </div>
           <div class="col-span-1 mx-auto my-auto md:flex md:items-center md:justify-center">
             <img width="200" src="rocket.png" alt="Rocket image" />
