@@ -1,4 +1,5 @@
-import {useRouter} from 'next/router'
+import React from 'react';
+import {useRouter} from 'next/router';
 import Head from 'next/head';
 import {StandardNav} from '@/components/StandardNav';
 import {useEffect, useState, Fragment} from 'react';
@@ -30,6 +31,16 @@ export default function Challenge() {
     const [award, setAward] = useState('');
     const [terminalUsername, setTerminalUsername] = useState('...');
     const [terminalPassword, setTerminalPassword] = useState('...');
+    
+    // Kshitij
+    const [hintMessage1, setHintMessage1] = React.useState(null);
+    const [hintMessage2, setHintMessage2] = React.useState(null);
+    const [hintMessage3, setHintMessage3] = React.useState(null);
+    const [hint1View, setHint1View] = React.useState(false);
+    const [hint2View, setHint2View] = React.useState(false);
+    const [hint3View, setHint3View] = React.useState(false);
+
+    const [hintView, setHintView] = useState([false, false, false])
 
     const [userData, setUserData] = useState({
         points: 0, susername: 'Loading...', spassword: 'Loading...',
@@ -147,7 +158,7 @@ export default function Challenge() {
         if (!slug) {
             return;
         }
-        fetchHints();
+        hintAvailable();
     }, [slug]);
 
     useEffect(() => {
@@ -238,23 +249,65 @@ export default function Challenge() {
         }
     };
 
-    const fetchHints = async () => {
+    // Kshitij
+    const updateHintState = (hintId) => {
+        setHintView(prevHints => {
+            const newHints = [...prevHints]
+            newHints[hintId] = true;
+            return newHints
+        })
+    }
+
+    // Kshitij
+    const updateHintView = async (hintId) => {
+        updateHintState(hintId)
+
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
+        const requestOptions = {
+            method: 'GET', headers: {
+                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+            }
+        }
+
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+
+        const hintEndPoint = result[hintId].hintUrl
+            
+        const hintRequestOptions = {
+            method: 'GET', headers: {
+                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+            }
+        }
+        
+        // viewing the hint for the API
+        await fetch(hintEndPoint, hintRequestOptions);
+    };
+
+    // Kshitij
+    async function hintAvailable() {
         try {
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
             const requestOptions = {
                 method: 'GET', headers: {
                     'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-                },
-            };
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint', requestOptions);
-            const result = await response.json();
-            if (result && result.length > 0) {
-                setHints(result);
-                console.log(result);
+                }
             }
+            const response = await fetch(endPoint, requestOptions);
+            const result = await response.json();
+
+            if (result && result.length > 0) {
+                setHints(true);
+                setHintMessage1(result[0].hintMessage)
+                setHintMessage2(result[1].hintMessage)
+                setHintMessage3(result[2].hintMessage)
+            }
+
         } catch (error) {
             throw error;
         }
-    };
+    }
+    
 
     const onCommentReport = async () => {
         alert('Thank you for reporting this comment. Our moderation team will look into this.');
@@ -454,7 +507,7 @@ export default function Challenge() {
                                 </button>
                                 <button
                                     onClick={() => setHintOpen(true)}
-                                    className="hidden mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
+                                    className="mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
                                 >
                                     Stuck?
                                 </button>
@@ -724,16 +777,52 @@ export default function Challenge() {
                                         </div>
                                         <div
                                             className="relative mt-6 flex-1 px-4 font-medium text-yellow-400 sm:px-6">
-                                            {hints ? (hints.map((hint, index) => (<div
-                                                key={index}
-                                                className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg"
-                                            >
-                                                <Collapsible trigger={'Hint #' + (index + 1)}>
-                                                    <p className="text-base font-normal text-white">
-                                                        {hint.hintMessage}
-                                                    </p>
-                                                </Collapsible>
-                                            </div>))) : (<p className="text-base font-normal text-white">
+                                            {hints ? (
+                                            <div>
+                                                <div className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg">
+                                                    <Collapsible 
+                                                        trigger={'Hint #1'}
+                                                        onOpening={() => updateHintView(0)}
+                                                    >
+                                                        <p className="text-base font-normal text-white">
+                                                            {hintMessage1}
+                                                        </p>
+                                                    </Collapsible>
+                                                </div>
+                                                <div className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg">
+                                                    <Collapsible 
+                                                        trigger={'Hint #2'}
+                                                        onOpening={() => updateHintView(1)}
+                                                    >
+                                                        {hintView[0] ? 
+                                                            <p className="text-base font-normal text-white">
+                                                                {hintMessage2}
+                                                            </p>
+                                                        :
+                                                            <p className="text-base font-normal text-white">
+                                                                You must view the previous hint first
+                                                            </p>
+                                                        }
+                                                    </Collapsible>
+                                                </div>
+                                                <div className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg">
+                                                    <Collapsible 
+                                                        trigger={'Hint #3'}
+                                                        onOpening={() => updateHintView(2)}
+                                                    >
+                                                        {hintView[1] && hintView[0] ?
+                                                            <p className="text-base font-normal text-white">
+                                                                {hintMessage3}
+                                                            </p>
+                                                        :
+                                                            <p className="text-base font-normal text-white">
+                                                                You must view the previous hint first
+                                                            </p>
+                                                        }
+                                                    </Collapsible>
+                                                </div>
+                                            </div>
+                                            ) : (<p className="text-base font-normal text-white">
                                                 Oops, no hints for this challenge.
                                             </p>)}
                                         </div>
