@@ -36,10 +36,8 @@ export default function Challenge() {
     const [hintMessage1, setHintMessage1] = React.useState(null);
     const [hintMessage2, setHintMessage2] = React.useState(null);
     const [hintMessage3, setHintMessage3] = React.useState(null);
-    const [hint1View, setHint1View] = React.useState(false);
-    const [hint2View, setHint2View] = React.useState(false);
-    const [hint3View, setHint3View] = React.useState(false);
 
+    const [hintMessages, setHintMessages] = useState([])
     const [hintView, setHintView] = useState([false, false, false])
 
     const [userData, setUserData] = useState({
@@ -250,7 +248,7 @@ export default function Challenge() {
     };
 
     // Kshitij
-    const updateHintState = (hintId) => {
+    const updateHintViewState = (hintId) => {
         setHintView(prevHints => {
             const newHints = [...prevHints]
             newHints[hintId] = true;
@@ -258,9 +256,17 @@ export default function Challenge() {
         })
     }
 
+    const updateHintMessageState = (message, id) => {
+        setHintMessages(prevHints => {
+            const newHints = [...prevHints]
+            newHints[id] = message
+            return newHints
+        })
+    }
+
     // Kshitij
     const updateHintView = async (hintId) => {
-        updateHintState(hintId)
+        updateHintViewState(hintId)
 
         const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
         const requestOptions = {
@@ -298,9 +304,9 @@ export default function Challenge() {
 
             if (result && result.length > 0) {
                 setHints(true);
-                setHintMessage1(result[0].hintMessage)
-                setHintMessage2(result[1].hintMessage)
-                setHintMessage3(result[2].hintMessage)
+                updateHintMessageState(result[0].hintMessage, 0);
+                updateHintMessageState(result[1].hintMessage, 1);
+                updateHintMessageState(result[2].hintMessage, 2);
             }
 
         } catch (error) {
@@ -785,7 +791,7 @@ export default function Challenge() {
                                                         onOpening={() => updateHintView(0)}
                                                     >
                                                         <p className="text-base font-normal text-white">
-                                                            {hintMessage1}
+                                                            {hintMessages[0]}
                                                         </p>
                                                     </Collapsible>
                                                 </div>
@@ -796,7 +802,7 @@ export default function Challenge() {
                                                     >
                                                         {hintView[0] ? 
                                                             <p className="text-base font-normal text-white">
-                                                                {hintMessage2}
+                                                                {hintMessages[1]}
                                                             </p>
                                                         :
                                                             <p className="text-base font-normal text-white">
@@ -812,7 +818,7 @@ export default function Challenge() {
                                                     >
                                                         {hintView[1] && hintView[0] ?
                                                             <p className="text-base font-normal text-white">
-                                                                {hintMessage3}
+                                                                {hintMessages[2]}
                                                             </p>
                                                         :
                                                             <p className="text-base font-normal text-white">
