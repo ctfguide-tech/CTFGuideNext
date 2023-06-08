@@ -45,11 +45,11 @@ export function SideNavContent() {
 
         <a href="/guides/about">
           <div class="mt-6 mr-4 max-w-sm rounded-lg shadow">
-            <i class="fas fa-seedling mb-2 h-10 w-10 text-3xl text-green-500 dark:text-green-500"></i>
-            <h5 class="mb-2 text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            <i class="fas fa-seedling mb-2 h-10 w-10 text-3xl text-green-500 text-green-500"></i>
+            <h5 class="mb-2 text-xl font-semibold tracking-tight  text-white">
               New to CTFGuide?
             </h5>
-            <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">
+            <p class="mb-3 font-normal  text-gray-400">
               See how you can make the most of your cybersecurity journey!
             </p>
             <p class="inline-flex items-center text-blue-600 hover:underline">
@@ -70,11 +70,11 @@ export function SideNavContent() {
 
         <a href="https://discord.gg/q3hgRBvgkX">
           <div class="mt-10 mr-4 max-w-sm rounded-lg shadow">
-            <i class="fab fa-discord mb-2 h-10 w-10 text-3xl text-indigo-500 dark:text-indigo-500"></i>
-            <h5 class="mb-2 text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            <i class="fab fa-discord mb-2 h-10 w-10 text-3xl  text-indigo-500"></i>
+            <h5 class="mb-2 text-xl font-semibold tracking-tight  text-white">
               Join our Discord!
             </h5>
-            <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">
+            <p class="mb-3 font-normal  text-gray-400">
               Talk to other CTF players and get help with challenges!
             </p>
             <p class="inline-flex items-center text-blue-600 hover:underline">

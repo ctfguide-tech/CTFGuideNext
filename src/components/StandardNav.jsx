@@ -142,6 +142,7 @@ export function StandardNav() {
   
 
   return (
+    <>
     <Disclosure as="nav" className=" shadow">
       {({ open }) => (
         <>
@@ -408,5 +409,12 @@ export function StandardNav() {
         </>
       )}
     </Disclosure>
+
+    <div  className='bg-blue-700 py-1 text-center text-white'>
+      <h1>Our team is aware of an issue with terminals. We are investigating this issue and hope to have a fix out soon. <a href='https://status.ctfguide.com/' className='hover:underline font-semibold'> Stay updated on our status page.</a></h1>
+    </div>
+
+  
+    </>
   );
 }
