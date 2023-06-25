@@ -38,14 +38,6 @@ export default function Careers() {
             height: '200',
             bio: "From leading a robotics team to participating in reverse engineering challenges, Jiaming has picked up a diverse set of skills to bring to CTFGuide. Currently studying electrical engineering and computer science, he is always up for new experiences."
         },
-        {
-            personName: 'Srihari Raman',
-            position: 'CFO',
-            image: '../srihari.jpg',
-            width: '200',
-            height: '200',
-            bio: "Srihari is a data-oriented business leader that joined the CTF team in early 2022. With his experience in data analysis, machine learning, and management, Srihari has supported the CTF team in making key marketing and financial decisions. He is currently a Data Science and Business Administration combined major at Northeastern University."
-        },
 
         {
             personName: 'Mish Adelanwa',
