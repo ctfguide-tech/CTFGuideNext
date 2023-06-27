@@ -202,6 +202,13 @@ export function StandardNav() {
                   >
                     Live
                   </a>
+
+                  <a
+                    href="../../edu"
+                    className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                  >
+                    EDU
+                  </a>
                   {
                   isAdmin && (
                   <a

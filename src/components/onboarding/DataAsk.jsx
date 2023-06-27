@@ -46,25 +46,27 @@ export function DataAsk({ props }) {
 
   return (
     <>
-      <div className="flex h-screen items-center justify-center">
-        <Container style={{ backgroundColor: '#161716' }} className=" ">
-          <img src="../onboarding.png" width={60} className="mx-auto"></img>
-          <h1 className="mt-2 text-center text-2xl font-semibold text-white">
-            Onboarding
-          </h1>
-          <hr
-            style={{ borderColor: '#212121' }}
-            className="mt-4 ml-6 mr-6"
-          ></hr>
+
+
+<div className='grid grid-cols-2 max-w-6xl mx-auto mt-20'>
+  
+      <div className="  ">
+
+       
+
+
+        <div style={{ backgroundColor: '#161716' }} className=" ">
+       
+
 
           <div
             style={{ backgroundColor: '#161716' }}
-            className="mx-auto mt-4 max-w-6xl"
+            className=" mt-4 "
           >
-            <div className="my-auto mx-auto px-4 ">
+            <div className="  px-4 ">
               <h1 className="text-xl text-white ">
                 {' '}
-                You seem new around here, tell us about yourself.{' '}
+Finish creating your account
               </h1>
 
               <div
@@ -74,17 +76,20 @@ export function DataAsk({ props }) {
                 Error - Something went wrong.
               </div>
               <div className=" mt-4">
-                <div className="isolate -space-y-px rounded-md shadow-sm">
+                <div className="isolate -space-y-px rounded-md sh
+                adow-sm">
                   <div
                     style={{ borderColor: '#212121' }}
                     className="relative rounded-md rounded-b-none border  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
                   >
-                    <label
-                      htmlFor="name"
+
+<label
+                      htmlFor="job-title"
                       className="block text-xs font-medium text-white"
                     >
                       Username
                     </label>
+             
                     <input
                       type="text"
                       name="name"
@@ -94,25 +99,36 @@ export function DataAsk({ props }) {
                       placeholder="This is what people on CTFGuide will know you as."
                     />
                   </div>
+                  
                   <div
                     style={{ borderColor: '#212121' }}
-                    className="relative rounded-md rounded-t-none rounded-b-none border  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-                  >
-                    <label
-                      htmlFor="name"
-                      className="block text-xs font-medium text-white"
-                    >
-                      Full Name
-                    </label>
+                    className="relative rounded-md rounded-t-none rounded-b-none border gap-x-4  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                  >       <label
+                  htmlFor="job-title"
+                  className="block text-xs font-medium text-white"
+                >
+                  Full Name (optional)
+                </label>
+                   <div className='flex gap-x-4'> 
                     <input
                       type="text"
                       name="name"
-                      id="fullname"
+                      id="firstname"
                       style={{ backgroundColor: '#212121' }}
                       className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
-                      placeholder="This is private to the public by default."
+                      placeholder="First Name"
+                    />
+
+                    <input
+                      type="text"
+                      name="name"
+                      id="lastname"
+                      style={{ backgroundColor: '#212121' }}
+                      className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
+                      placeholder="Last Name"
                     />
                   </div>
+                  </div> 
 
                   <div
                     style={{ borderColor: '#212121' }}
@@ -134,18 +150,42 @@ export function DataAsk({ props }) {
                   </div>
                 </div>
 
+                <div className="mx-auto inline-flex text-center mt-4">
+                    <input
+                      id="legal"
+                      style={{ backgroundColor: '#212121' }}
+                      type="checkbox"
+                      className="mt-1  rounded-lg border border-gray-700 px-2 py-1"
+                    ></input>
+                    <p className="ml-2 text-white">
+                      I agree to the <a href="https://ctfguide.com/terms-of-service" className='text-blue-500'>Terms of Service</a> and <a href="https://ctfguide.com/privacy-policy" className='text-blue-500'>Privacy Policy</a>
+                    </p>
+                  </div>
+
                 <div className="mx-auto mx-auto text-center">
                   <button
                     onClick={submitData}
                     className="button mx-auto mt-8 w-2/3 rounded bg-blue-800 py-2 text-white hover:bg-blue-900"
                   >
-                    Next Step
+                    Start Hacking
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </Container>
+        </div>
+      </div>
+
+      <div className='mx-auto my-auto text-white px-10'>
+        
+
+        <h1> We learned 55% of new signups weren't finishing our onboarding process, so we tried cutting it down to just 4 input boxes. </h1>
+        
+        <h1 className='mt-4'>You don't need to provide us your first name or last name, but we do need a username (to know who you are) and date of birth (COPPA laws). </h1>
+         
+         <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide website."<br/>- Scratch</h1>
+         </div>
+
       </div>
     </>
   );

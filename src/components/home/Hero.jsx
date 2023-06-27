@@ -10,6 +10,7 @@ import Banner from '@/components/home/Banner';
 const navigation = [
   { name: 'Careers', href: '../careers' },
   { name: 'Open Source', href: 'https://github.com/ctfguide-tech' },
+  { name: 'Practice', href: '../practice' },
 ]
 
 

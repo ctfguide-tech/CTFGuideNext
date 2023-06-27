@@ -66,20 +66,15 @@ export function FeaturesPanel() {
               </dl>
             </div>
           </div>
-          <VisibilitySensor onChange={handleVisibilityChange} partialVisibility>
-            <motion.img
+            <img
               ref={imageRef}
               src="./mock2.png"
               alt="Product screenshot"
-              className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
+              className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
               width={2432}
               height={1442}
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              transition={{ duration: 2 }}
-              style={{ visibility: 'hidden' }}
+       
             />
-          </VisibilitySensor>
         </div>
       </div>
     </div>

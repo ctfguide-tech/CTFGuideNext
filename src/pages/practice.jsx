@@ -45,10 +45,10 @@ export default function Pratice() {
       <StandardNav />
       <main>
  
-      <div className='mx-auto max-w-7xl mt-10'>
+      <div className='mx-auto max-w-7xl mt-10 hidden'>
           <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-10 sm:py-12 rounded-lg">
      
-     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+     <div className="relative mx-auto max-w-7xl px-6 lg:px-8 hidden">
        <div
          className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
          aria-hidden="true"
@@ -61,7 +61,7 @@ export default function Pratice() {
            }}
          />
        </div>
-       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
+       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl hidden">
          <p className="mt-2 text-xl font-semibold tracking-tight text-white">
          All of these practice problems are community created!
 
