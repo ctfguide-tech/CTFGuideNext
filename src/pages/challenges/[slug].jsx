@@ -33,12 +33,9 @@ export default function Challenge() {
     const [terminalPassword, setTerminalPassword] = useState('...');
     
     // Kshitij
-    const [hintMessage1, setHintMessage1] = React.useState(null);
-    const [hintMessage2, setHintMessage2] = React.useState(null);
-    const [hintMessage3, setHintMessage3] = React.useState(null);
-
-    const [hintMessages, setHintMessages] = useState([])
-    const [hintView, setHintView] = useState([false, false, false])
+    const [hintMessages, setHintMessages] = useState([]);
+    const [hintId, setHintId] = useState([]);
+    const [hintIndex, setHintIndex] = useState(0);
 
     const [userData, setUserData] = useState({
         points: 0, susername: 'Loading...', spassword: 'Loading...',
@@ -156,7 +153,7 @@ export default function Challenge() {
         if (!slug) {
             return;
         }
-        hintAvailable();
+        fetchHints();
     }, [slug]);
 
     useEffect(() => {
@@ -246,52 +243,9 @@ export default function Challenge() {
             throw error;
         }
     };
-
+    
     // Kshitij
-    const updateHintViewState = (hintId) => {
-        setHintView(prevHints => {
-            const newHints = [...prevHints]
-            newHints[hintId] = true;
-            return newHints
-        })
-    }
-
-    const updateHintMessageState = (message, id) => {
-        setHintMessages(prevHints => {
-            const newHints = [...prevHints]
-            newHints[id] = message
-            return newHints
-        })
-    }
-
-    // Kshitij
-    const updateHintView = async (hintId) => {
-        updateHintViewState(hintId)
-
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
-        const requestOptions = {
-            method: 'GET', headers: {
-                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-            }
-        }
-
-        const response = await fetch(endPoint, requestOptions);
-        const result = await response.json();
-
-        const hintEndPoint = result[hintId].hintUrl
-            
-        const hintRequestOptions = {
-            method: 'GET', headers: {
-                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-            }
-        }
-        
-        // viewing the hint for the API
-        await fetch(hintEndPoint, hintRequestOptions);
-    };
-
-    // Kshitij
-    async function hintAvailable() {
+    async function fetchHints() {
         try {
             const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
             const requestOptions = {
@@ -302,16 +256,66 @@ export default function Challenge() {
             const response = await fetch(endPoint, requestOptions);
             const result = await response.json();
 
-            if (result && result.length > 0) {
+            
+            if (result.status) {
                 setHints(true);
-                updateHintMessageState(result[0].hintMessage, 0);
-                updateHintMessageState(result[1].hintMessage, 1);
-                updateHintMessageState(result[2].hintMessage, 2);
+                result.hintArray.forEach((hint, index) => {
+                    updateHintId(hint.id, index)
+                })
             }
-
         } catch (error) {
             throw error;
         }
+    }
+
+    // Kshitij
+    const fetchHint = async (id) => {
+        try {
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint/' + id;
+            const requestOptions = {
+                method: 'GET', headers: {
+                    'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                }
+            }
+            const response = await fetch(endPoint, requestOptions);
+            const result = await response.json();
+
+            window.alert(hintIndex)
+
+            result.availableHints.forEach((hint, index) => {
+                updateHintMessage(hint.message, index)
+            })
+
+        } catch (error) {
+            throw error; 
+        }
+    }
+
+    // Kshitij
+    const updateHintId = (hintId, index) => {
+        setHintId(prevHints => {
+            const newHints = [...prevHints];
+            newHints[index] = hintId;
+            return newHints;
+        })
+    }
+
+    // Kshitij
+    const updateHintMessage = (message, id) => {
+        setHintMessages(prevHints => {
+            const newHints = [...prevHints]
+            newHints[id] = message
+            return newHints
+        })
+    }
+
+    // Kshitij
+    const handleButtonClick = () => {
+        if (hintIndex > 2) {
+            setHintIndex(1)
+        }
+        fetchHint(hintId[hintIndex])
+        setHintIndex(hintIndex + 1)
     }
     
 
@@ -512,6 +516,7 @@ export default function Challenge() {
                                     Submit Flag
                                 </button>
                                 <button
+                                    hidden={!hints}
                                     onClick={() => setHintOpen(true)}
                                     className="mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
                                 >
@@ -781,56 +786,36 @@ export default function Challenge() {
                                                 </h2>
                                             </div>
                                         </div>
-                                        <div
-                                            className="relative mt-6 flex-1 px-4 font-medium text-yellow-400 sm:px-6">
-                                            {hints ? (
+                                        <div className="mt-6 px-4 font-medium text-yellow-400 sm:px-6">
+                                        {hintMessages ? (
                                             <div>
-                                                <div className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg">
-                                                    <Collapsible 
-                                                        trigger={'Hint #1'}
-                                                        onOpening={() => updateHintView(0)}
-                                                    >
-                                                        <p className="text-base font-normal text-white">
-                                                            {hintMessages[0]}
-                                                        </p>
-                                                    </Collapsible>
+                                            {hintMessages.map((hint, index) => (
+                                                <div
+                                                key={index}
+                                                className="w-full border-2 border-solid border-neutral-500 bg-[#212121] p-2 text-lg"
+                                                >
+                                                <p>
+                                                    Hint #{index + 1}
+                                                    {hint && <p>{hint}</p>}
+                                                </p>
                                                 </div>
-                                                <div className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg">
-                                                    <Collapsible 
-                                                        trigger={'Hint #2'}
-                                                        onOpening={() => updateHintView(1)}
-                                                    >
-                                                        {hintView[0] ? 
-                                                            <p className="text-base font-normal text-white">
-                                                                {hintMessages[1]}
-                                                            </p>
-                                                        :
-                                                            <p className="text-base font-normal text-white">
-                                                                You must view the previous hint first
-                                                            </p>
-                                                        }
-                                                    </Collapsible>
-                                                </div>
-                                                <div className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg">
-                                                    <Collapsible 
-                                                        trigger={'Hint #3'}
-                                                        onOpening={() => updateHintView(2)}
-                                                    >
-                                                        {hintView[1] && hintView[0] ?
-                                                            <p className="text-base font-normal text-white">
-                                                                {hintMessages[2]}
-                                                            </p>
-                                                        :
-                                                            <p className="text-base font-normal text-white">
-                                                                You must view the previous hint first
-                                                            </p>
-                                                        }
-                                                    </Collapsible>
-                                                </div>
+                                            ))}
+                                            <div className="mx-auto text-center my-2">
+                                                <button
+                                                type="button"
+                                                className="text-center mx-auto bg-[#212121] p-2 text-lg"
+                                                onClick={handleButtonClick}
+                                                >
+                                                <span className="sr-only">Close panel</span>
+                                                Open Hint
+                                                </button>
                                             </div>
-                                            ) : (<p className="text-base font-normal text-white">
-                                                Oops, no hints for this challenge.
-                                            </p>)}
+                                            </div>
+                                        ) : (
+                                            <p className="text-base font-normal text-white">
+                                            Oops, no hints for this challenge.
+                                            </p>
+                                        )}
                                         </div>
                                     </div>
                                 </Dialog.Panel>
