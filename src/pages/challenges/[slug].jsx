@@ -6,7 +6,6 @@ import {useEffect, useState, Fragment} from 'react';
 import {Transition, Dialog} from '@headlessui/react';
 import {XMarkIcon, HeartIcon, ArrowPathIcon} from '@heroicons/react/24/outline';
 
-import Collapsible from 'react-collapsible';
 import {Footer} from '@/components/Footer';
 import {MarkdownViewer} from "@/components/MarkdownViewer";
 import {CheckCircleIcon, CheckIcon, FlagIcon} from '@heroicons/react/20/solid';
@@ -23,7 +22,6 @@ export default function Challenge() {
     const [open, setOpen] = useState(false);
     const [submissionMsg, setSubmissionMsg] = useState(false);
     const [hintOpen, setHintOpen] = useState(false);
-    const [hints, setHints] = useState([]);
     const [flag, setFlag] = useState('');
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
@@ -34,8 +32,7 @@ export default function Challenge() {
     
     // Kshitij
     const [hintMessages, setHintMessages] = useState([]);
-    const [hintId, setHintId] = useState([]);
-    const [hintIndex, setHintIndex] = useState(0);
+    const [hideHintButton, setHideHintButton] = useState(false);
 
     const [userData, setUserData] = useState({
         points: 0, susername: 'Loading...', spassword: 'Loading...',
@@ -66,6 +63,11 @@ export default function Challenge() {
                 const result = await response.json();
                 //result["content"] = result["content"].replace()
                 setChallenge(result);
+
+                result.availableHints.forEach((hint, index) => {
+                    updateHintMessage(hint, index);
+                });
+
             } catch (err) {
                 throw err;
             }
@@ -147,13 +149,6 @@ export default function Challenge() {
             return;
         }
         fetchComments();
-    }, [slug]);
-
-    useEffect(() => {
-        if (!slug) {
-            return;
-        }
-        fetchHints();
     }, [slug]);
 
     useEffect(() => {
@@ -256,48 +251,10 @@ export default function Challenge() {
             const response = await fetch(endPoint, requestOptions);
             const result = await response.json();
 
-            
-            if (result.status) {
-                setHints(true);
-                result.hintArray.forEach((hint, index) => {
-                    updateHintId(hint.id, index)
-                })
-            }
+            updateHintMessage(result.hintMessage, result.order)
         } catch (error) {
             throw error;
         }
-    }
-
-    // Kshitij
-    const fetchHint = async (id) => {
-        try {
-            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint/' + id;
-            const requestOptions = {
-                method: 'GET', headers: {
-                    'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-                }
-            }
-            const response = await fetch(endPoint, requestOptions);
-            const result = await response.json();
-
-            window.alert(hintIndex)
-
-            result.availableHints.forEach((hint, index) => {
-                updateHintMessage(hint.message, index)
-            })
-
-        } catch (error) {
-            throw error; 
-        }
-    }
-
-    // Kshitij
-    const updateHintId = (hintId, index) => {
-        setHintId(prevHints => {
-            const newHints = [...prevHints];
-            newHints[index] = hintId;
-            return newHints;
-        })
     }
 
     // Kshitij
@@ -305,17 +262,21 @@ export default function Challenge() {
         setHintMessages(prevHints => {
             const newHints = [...prevHints]
             newHints[id] = message
+            if (newHints.length === 3) {
+                setHideHintButton(true);
+            }
             return newHints
         })
     }
 
     // Kshitij
     const handleButtonClick = () => {
-        if (hintIndex > 2) {
-            setHintIndex(1)
+        if (hintMessages.length < 3) {
+            fetchHints()
+        } 
+        if (hintMessages.length === 3) {
+            setHideHintButton(true);
         }
-        fetchHint(hintId[hintIndex])
-        setHintIndex(hintIndex + 1)
     }
     
 
@@ -516,7 +477,7 @@ export default function Challenge() {
                                     Submit Flag
                                 </button>
                                 <button
-                                    hidden={!hints}
+                                    hidden={!hintMessages}
                                     onClick={() => setHintOpen(true)}
                                     className="mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
                                 >
@@ -794,7 +755,7 @@ export default function Challenge() {
                                                 key={index}
                                                 className="w-full border-2 border-solid border-neutral-500 bg-[#212121] p-2 text-lg"
                                                 >
-                                                <p>
+                                                <p className="text-white">
                                                     Hint #{index + 1}
                                                     {hint && <p>{hint}</p>}
                                                 </p>
@@ -802,12 +763,13 @@ export default function Challenge() {
                                             ))}
                                             <div className="mx-auto text-center my-2">
                                                 <button
+                                                hidden={hideHintButton}
                                                 type="button"
                                                 className="text-center mx-auto bg-[#212121] p-2 text-lg"
                                                 onClick={handleButtonClick}
                                                 >
                                                 <span className="sr-only">Close panel</span>
-                                                Open Hint
+                                                Unlock Hint #{hintMessages.length + 1}
                                                 </button>
                                             </div>
                                             </div>
