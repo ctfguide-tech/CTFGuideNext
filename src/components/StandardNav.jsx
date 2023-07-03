@@ -10,6 +10,7 @@ import {
   ArrowRightIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
+import Link from 'next/link';
 
 // Do not remove, even if detected as unused by vscode!
 import { app } from '../config/firebaseConfig';
@@ -160,7 +161,9 @@ export function StandardNav() {
                   </Disclosure.Button>
                 </div>
                 <div className="flex flex-shrink-0 items-center">
-                  <Logo className=" w-4 lg:hidden" />
+                  <Link href="../dashboard" aria-label="Dashboard">
+                    <Logo className=" w-4 lg:hidden" />
+                  </Link>
                 </div>
                 <div className="hidden md:ml-6 md:flex ">
                   {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:font-bold" */}
