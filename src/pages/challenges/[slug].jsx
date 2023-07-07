@@ -37,8 +37,6 @@ export default function Challenge() {
 
     // The Challenge
     useEffect(() => {
-        //window.alert(slug)
-
         if (!slug) {
             return;
         }
@@ -58,8 +56,11 @@ export default function Challenge() {
                 };
                 const response = await fetch(endPoint, requestOptions);
                 const result = await response.json();
-                //result["content"] = result["content"].replace()
-                setChallenge(result);
+                if (!result) {
+                    router.push('/404');
+                } else {
+                    setChallenge(result);
+                }
             } catch (err) {
                 throw err;
             }
@@ -67,7 +68,6 @@ export default function Challenge() {
         fetchData();
     }, [slug]);
 
-    // Start Terminal
     useEffect(() => {
         if (!slug) {
             return;
@@ -751,4 +751,4 @@ export default function Challenge() {
         </p>
         <Footer/>
     </>)
-}
+
