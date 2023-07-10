@@ -740,7 +740,7 @@ export default function Challenge() {
                                                 </h2>
                                             </div>
                                             <div
-                                                className="w-4/5 mt-3 rounded-md border border-neutral-900 bg-neutral-800 absolute bottom-4 mx-auto">
+                                                className="hidden w-4/5 mt-3 rounded-md border border-neutral-900 bg-neutral-800 absolute bottom-4 mx-auto">
                                                 <h2 className="text-md mx-4 mt-2 mb-2 text-gray-200">
                                                     <i class="far fa-star text-blue-500 mr-1"></i> You must be
                                                     logged in to see hints!
@@ -753,23 +753,30 @@ export default function Challenge() {
                                             {hintMessages.map((hint, index) => (
                                                 <div
                                                 key={index}
-                                                className="w-full border-2 border-solid border-neutral-500 bg-[#212121] p-2 text-lg"
+                                                className="w-full border-l-4  border-blue-600  bg-[#212121] px-4 py-3 mb-2 text-lg"
+                                                enter="transition-opacity duration-75"
+                                                enterFrom="opacity-0"
+                                                enterTo="opacity-100"
+                                                leave="transition-opacity duration-150"
+                                                leaveFrom="opacity-100"
+                                                leaveTo="opacity-0"
+                                              
                                                 >
                                                 <p className="text-white">
-                                                    Hint #{index + 1}
+                                                    <span className='text-xl font-semibold'>Hint #{index + 1}</span>
                                                     {hint && <p>{hint}</p>}
                                                 </p>
                                                 </div>
                                             ))}
-                                            <div className="mx-auto text-center my-2">
+                                            <div className="w-full">
                                                 <button
                                                 hidden={hideHintButton}
                                                 type="button"
-                                                className="text-center mx-auto bg-[#212121] p-2 text-lg"
+                                                className="hover:bg-neutral-800 text-center mx-auto bg-[#212121] w-full py-2 text-lg"
                                                 onClick={handleButtonClick}
                                                 >
-                                                <span className="sr-only">Close panel</span>
-                                                Unlock Hint #{hintMessages.length + 1}
+                                                <span className="sr-only bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-600">View hint</span>
+                                                <i class="fas fa-unlock "></i>&nbsp; Unlock Hint #{hintMessages.length + 1}
                                                 </button>
                                             </div>
                                             </div>
