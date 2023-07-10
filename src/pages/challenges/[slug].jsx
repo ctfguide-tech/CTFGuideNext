@@ -1,11 +1,11 @@
-import {useRouter} from 'next/router'
+import React from 'react';
+import {useRouter} from 'next/router';
 import Head from 'next/head';
 import {StandardNav} from '@/components/StandardNav';
 import {useEffect, useState, Fragment} from 'react';
 import {Transition, Dialog} from '@headlessui/react';
 import {XMarkIcon, HeartIcon, ArrowPathIcon} from '@heroicons/react/24/outline';
 
-import Collapsible from 'react-collapsible';
 import {Footer} from '@/components/Footer';
 import {MarkdownViewer} from "@/components/MarkdownViewer";
 import {CheckCircleIcon, CheckIcon, FlagIcon} from '@heroicons/react/20/solid';
@@ -22,7 +22,6 @@ export default function Challenge() {
     const [open, setOpen] = useState(false);
     const [submissionMsg, setSubmissionMsg] = useState(false);
     const [hintOpen, setHintOpen] = useState(false);
-    const [hints, setHints] = useState([]);
     const [flag, setFlag] = useState('');
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
@@ -30,6 +29,10 @@ export default function Challenge() {
     const [award, setAward] = useState('');
     const [terminalUsername, setTerminalUsername] = useState('...');
     const [terminalPassword, setTerminalPassword] = useState('...');
+    
+    // Kshitij
+    const [hintMessages, setHintMessages] = useState([]);
+    const [hideHintButton, setHideHintButton] = useState(false);
 
     const [userData, setUserData] = useState({
         points: 0, susername: 'Loading...', spassword: 'Loading...',
@@ -60,6 +63,11 @@ export default function Challenge() {
                 const result = await response.json();
                 //result["content"] = result["content"].replace()
                 setChallenge(result);
+
+                result.availableHints.forEach((hint, index) => {
+                    updateHintMessage(hint, index);
+                });
+
             } catch (err) {
                 throw err;
             }
@@ -141,13 +149,6 @@ export default function Challenge() {
             return;
         }
         fetchComments();
-    }, [slug]);
-
-    useEffect(() => {
-        if (!slug) {
-            return;
-        }
-        fetchHints();
     }, [slug]);
 
     useEffect(() => {
@@ -237,24 +238,47 @@ export default function Challenge() {
             throw error;
         }
     };
-
-    const fetchHints = async () => {
+    
+    // Kshitij
+    async function fetchHints() {
         try {
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
             const requestOptions = {
                 method: 'GET', headers: {
                     'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-                },
-            };
-            const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint', requestOptions);
-            const result = await response.json();
-            if (result && result.length > 0) {
-                setHints(result);
-                console.log(result);
+                }
             }
+            const response = await fetch(endPoint, requestOptions);
+            const result = await response.json();
+
+            updateHintMessage(result.hintMessage, result.order)
         } catch (error) {
             throw error;
         }
-    };
+    }
+
+    // Kshitij
+    const updateHintMessage = (message, id) => {
+        setHintMessages(prevHints => {
+            const newHints = [...prevHints]
+            newHints[id] = message
+            if (newHints.length === 3) {
+                setHideHintButton(true);
+            }
+            return newHints
+        })
+    }
+
+    // Kshitij
+    const handleButtonClick = () => {
+        if (hintMessages.length < 3) {
+            fetchHints()
+        } 
+        if (hintMessages.length === 3) {
+            setHideHintButton(true);
+        }
+    }
+    
 
     const onCommentReport = async () => {
         alert('Thank you for reporting this comment. Our moderation team will look into this.');
@@ -453,8 +477,9 @@ export default function Challenge() {
                                     Submit Flag
                                 </button>
                                 <button
+                                    hidden={!hintMessages}
                                     onClick={() => setHintOpen(true)}
-                                    className="hidden mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
+                                    className="mt-4  ml-2  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-yellow-300 text-white hover:bg-yellow-900"
                                 >
                                     Stuck?
                                 </button>
@@ -715,27 +740,51 @@ export default function Challenge() {
                                                 </h2>
                                             </div>
                                             <div
-                                                className="w-4/5 mt-3 rounded-md border border-neutral-900 bg-neutral-800 absolute bottom-4 mx-auto">
+                                                className="hidden w-4/5 mt-3 rounded-md border border-neutral-900 bg-neutral-800 absolute bottom-4 mx-auto">
                                                 <h2 className="text-md mx-4 mt-2 mb-2 text-gray-200">
                                                     <i class="far fa-star text-blue-500 mr-1"></i> You must be
                                                     logged in to see hints!
                                                 </h2>
                                             </div>
                                         </div>
-                                        <div
-                                            className="relative mt-6 flex-1 px-4 font-medium text-yellow-400 sm:px-6">
-                                            {hints ? (hints.map((hint, index) => (<div
+                                        <div className="mt-6 px-4 font-medium text-yellow-400 sm:px-6">
+                                        {hintMessages ? (
+                                            <div>
+                                            {hintMessages.map((hint, index) => (
+                                                <div
                                                 key={index}
-                                                className="w-full border-2 border-solid border-gray-300 bg-[#212121] p-2 text-lg"
-                                            >
-                                                <Collapsible trigger={'Hint #' + (index + 1)}>
-                                                    <p className="text-base font-normal text-white">
-                                                        {hint.hintMessage}
-                                                    </p>
-                                                </Collapsible>
-                                            </div>))) : (<p className="text-base font-normal text-white">
-                                                Oops, no hints for this challenge.
-                                            </p>)}
+                                                className="w-full border-l-4  border-blue-600  bg-[#212121] px-4 py-3 mb-2 text-lg"
+                                                enter="transition-opacity duration-75"
+                                                enterFrom="opacity-0"
+                                                enterTo="opacity-100"
+                                                leave="transition-opacity duration-150"
+                                                leaveFrom="opacity-100"
+                                                leaveTo="opacity-0"
+                                              
+                                                >
+                                                <p className="text-white">
+                                                    <span className='text-xl font-semibold'>Hint #{index + 1}</span>
+                                                    {hint && <p>{hint}</p>}
+                                                </p>
+                                                </div>
+                                            ))}
+                                            <div className="w-full">
+                                                <button
+                                                hidden={hideHintButton}
+                                                type="button"
+                                                className="hover:bg-neutral-800 text-center mx-auto bg-[#212121] w-full py-2 text-lg"
+                                                onClick={handleButtonClick}
+                                                >
+                                                <span className="sr-only bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-600">View hint</span>
+                                                <i class="fas fa-unlock "></i>&nbsp; Unlock Hint #{hintMessages.length + 1}
+                                                </button>
+                                            </div>
+                                            </div>
+                                        ) : (
+                                            <p className="text-base font-normal text-white">
+                                            Oops, no hints for this challenge.
+                                            </p>
+                                        )}
                                         </div>
                                     </div>
                                 </Dialog.Panel>
