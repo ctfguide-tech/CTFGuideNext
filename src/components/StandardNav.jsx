@@ -21,7 +21,6 @@ import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
-
 }
 
 const auth = getAuth();

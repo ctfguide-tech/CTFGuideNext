@@ -14,6 +14,22 @@ export function SideNavContent() {
               <i class="fas fa-chart-line mr-2"></i>Overview
             </a>
           </li>
+          <li className="mb-4 py-1">
+            <a
+              href="../dashboard/profile"
+              className="px-2 py-1 text-lg font-medium text-white hover:text-neutral-300"
+            >
+              <i class="fas fa-user-circle mr-2"></i>Profile
+            </a>
+          </li>
+          <li className="mb-4 py-1">
+            <a
+              href="../dashboard/settings"
+              className="px-2 py-1 text-lg font-medium text-white hover:text-neutral-300"
+            >
+              <i class="fas fa-user-friends mr-2"></i>Friends
+            </a>
+          </li>
           <li className="mb-4 py-1 ">
             <a
               href="../dashboard/likes"

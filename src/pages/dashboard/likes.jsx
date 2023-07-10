@@ -6,6 +6,8 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { SideNavContent } from '@/components/dashboard/SideNavContents';
+import { SideFriendContents } from '@/components/dashboard/SideFriendContents';
+
 
 export default function Dashboard() {
   const [likes, setLikes] = useState([]);
@@ -79,6 +81,8 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
+          <SideFriendContents />
+
         </div>
       </main>
       <Footer />
