@@ -23,38 +23,8 @@ export default function Careers() {
       bio: "Pranav comes from a competitive cyber background, winning respected CTF's like UD's Bluehen CTF. Pranav has advocated for widespread cybersecurity education in highschools and universities; he started the first cyber student org in Garnet Valley."
     },
     {
-      personName: 'Raymond Yan',
-      position: 'Co-Founder, CTO',
-      image: '../Raymond.jpeg',
-      width: '200',
-      bio: "An engineering leader focusing in data infrastructure and cloud security, Raymond followed the rise of cloud native technologies in the 2010's. He previously led cloud education at Nittany Data Labs and also writes for the Northeast Big Data Innovation Hub."
-    },
-    {
-      personName: 'Srihari Raman',
-      position: 'CFO',
-      image: '../srihari.jpg',
-      width: '200',
-      height: '200',
-      bio: "Srihari is a data-oriented business leader that joined the CTF team in early 2022. With his experience in data analysis, machine learning, and management, Srihari has supported the CTF team in making key marketing and financial decisions. He is currently a Data Science and Business Administration combined major at Northeastern University."
-    },
-    {
-      personName: 'Brody Pearlman',
-      position: 'Business',
-      image: '../mish.jpg',
-      width: '200',
-      height: '200',
-    },
-    {
-      personName: 'Mish Adelanwa',
-      position: 'Advisor',
-      image: '../mish.jpg',
-      width: '200',
-      height: '200',
-      bio: "Mishael Adelanwa, a current Bunton-Waller fellow at Penn State University and an innovative investor with an eye for emerging technologies, invested in CTFGuide in a Pre Seed Round in January 2023. Adept at identifying and supporting promising ventures, Mishael brings expertise and curiosity to the world of blockchain technology and cybersecurity."
-    },
-    {
-      personName: 'Jackson Ferris',
-      position: 'Cybersecurity',
+      personName: 'Abhi Byreddy',
+      position: 'Co-Founder, Backend Engineer',
       image: '../mish.jpg',
       width: '200',
       height: '200',
@@ -67,33 +37,20 @@ export default function Careers() {
       height: '200',
     },
     {
-      personName: 'Ryan Zanoni',
-      position: 'Backend Engineer',
-      image: '../mish.jpg',
-      width: '200',
-      height: '200',
-    },
-    {
-      personName: 'Dax Patel',
-      position: 'Frontend Developer',
-      image: '../mish.jpg',
-      width: '200',
-      height: '200',
-    },
-    {
       personName: 'Kshitij Kochhar',
-      position: 'Software Engineer',
+      position: 'Fullstack Engineer',
       image: '../kkochhar.jpg',
       width: '200',
       height: '200',
       bio: "Kshitij is a current Computer Science student at the University of Maryland who specializes in full-stack development. Outside of coding he enjoys going to the Gym, playing Tennis, and hanging out with friends."
     },
     {
-      personName: 'Abhi Byreddy',
-      position: 'Backend Engineer',
+      personName: 'Mish Adelanwa',
+      position: 'Advisor',
       image: '../mish.jpg',
       width: '200',
       height: '200',
+      bio: "Mishael Adelanwa, a current Bunton-Waller fellow at Penn State University and an innovative investor with an eye for emerging technologies, invested in CTFGuide in a Pre Seed Round in January 2023. Adept at identifying and supporting promising ventures, Mishael brings expertise and curiosity to the world of blockchain technology and cybersecurity."
     },
     {
       personName: 'Almond Milk',
