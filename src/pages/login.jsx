@@ -295,6 +295,23 @@ export default function Login() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-6">
+              <div className="mt-6  gap-3 ">
+                <div>
+                  <a
+                    style={{ backgroundColor: '#161716', borderWidth: '0px' }}
+                    href="#"
+                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+                    onClick={loginGoogle}
+                  >
+                    <span className="sr-only">Sign in with Google</span>
+                 
+                    <p className="ml-2">University Login</p>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
