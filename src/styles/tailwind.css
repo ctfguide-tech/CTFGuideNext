@@ -7,6 +7,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
+
 .bg-gradient-custom {
   @apply bg-gradient-to-br from-blue-600 to-indigo-900;
 }

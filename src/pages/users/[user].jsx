@@ -29,7 +29,25 @@ export default function Users() {
 
     const [openBio, setOpenBio] = useState(false);
     const [banner, bannerState] = useState(false);
-
+    const [badges, setbadges] = useState([]);
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+           `${process.env.NEXT_PUBLIC_API_URL}/users/${user}/badges`
+          );
+          const data = await response.json();
+          console.log(data);
+          setbadges(data);
+        } catch {}
+      };
+      fetchData();
+      setbadges([]);
+    }, [user]);
+  
     // Get and store user data
     useEffect(() => {
 
@@ -176,21 +194,25 @@ export default function Users() {
                 <style>
                     @import
                     url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+
+
+        
                 </style>
             </Head>
             <StandardNav />
             <main>
                 <div
                     style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
-                    className="h-20 w-full object-cover lg:h-20"
+                    className=" h-20 w-full object-cover lg:h-20 hidden"
                     alt=""
                 ></div>
                 <div className="mx-auto flex h-screen max-w-7xl ">
-                    {/* Sidebar */}
-                    <SideNavContent />
-
+               
                     {/* Main content area */}
                     <div className="flex-1 mt-5 justify-center items-center">
+                    <div class="h-auto w-full rounded-md bg-gradient-to-r from-red-700 via-red-500 to-orange-700 p-1">
+ 
+                        <div className=' flex  px-10 pb-10 pt-4  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p' style={{backgroundImage: 'url("https://images.unsplash.com/photo-1488554378835-f7acf46e6c98?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80")', backgroundSize: 'cover'}}> 
                         <div className="flex items-center">
                             {(username &&
                                 <img
@@ -214,20 +236,28 @@ export default function Users() {
                                 <p className='text-white'>{followingCount} Following</p>
                             </div>
                         </div>
+
+                        <div className='ml-auto flex items-center'>
                         {(!ownUser &&
-                            <div className="mt-5 flex items-center justify-center space-x-20">
+                            <div className="mt-4">
                                 <button>
-                                    <p className='rounded-md px-3 py-2 text-xl font-semibold bg-neutral-800 leading-6 text-white shadow-sm hover:bg-gray-700'>Follow</p>
+                                    <p className='border-2 border-red-500 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'> <i class="fas fa-user-plus"></i> Follow</p>
                                 </button>
                                 <button>
-                                    <p className='rounded-md px-3 py-2 text-xl font-semibold bg-neutral-800 leading-6 text-white shadow-sm hover:bg-gray-700'>Add Friend</p>
+                                    <p className='border-2 border-red-500 ml-5 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'>Add Friend</p>
                                 </button>
                             </div>
                         )}
+</div></div></div>
+
+
                         {/* Add profile content here */}
-                        <div>
+                    <div className='grid grid-cols-2 gap-x-4 '>
+
+
+                    <div>
                             <div className="flex items-center">
-                                <h1 className="mt-5 text-xl text-gray-300">Your Bio</h1>
+                                <h1 className="mt-5 text-xl text-gray-300">{username}'s Bio</h1>
                                 <div className="ml-auto">
                                     {((!openBio && ownUser) &&
                                         <button 
@@ -268,10 +298,42 @@ export default function Users() {
                         <div>
                         {/* Badge Content */}
                             <h1 className="mt-5 text-xl text-gray-300">Badges</h1>
-                            <h1 className="mt-3 rounded-sm border border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white">
-                                Badge content here.
-                            </h1>
+                            <div className="mt-3 rounded-sm border border-white/10 bg-neutral-800/50 text-lg text-white">
+                              
+                            <div className="mt-4 grid grid-cols-4 gap-x-2 gap-y-4 px-4 pb-10">
+
+                            {badges.map((data) => (
+                <div
+                 
+                  className=" bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4  text-center"
+                >
+                  <img
+                    src={`../badges/level1/${data.badge.badgeName.toLowerCase()}.png`}
+                    width="100"
+                    className="mx-auto mt-2 px-1"
+                  />
+
+                  <h1 class="mx-auto mt-2  text-center text-xl text-white">
+                    {data.badge.badgeName}
+                  </h1>
+                  <h1 class="text-lg text-white ">
+                    {new Date(data.createdAt).toLocaleDateString('en-US', {
+                      month: '2-digit',
+                      day: '2-digit',
+                      year: 'numeric',
+                    })}
+                  </h1>
+                </div>
+              ))}
+
+              </div>
+                            </div>
                         </div>
+
+
+
+                    </div>
+                     
                         <div>
                         {/* Pinned Challenges Content */}
                             <h1 className="mt-5 text-xl text-gray-300">Pinned Challenges</h1>
@@ -287,7 +349,7 @@ export default function Users() {
                             </h1>
                         </div>
                     </div>
-                <RightSideFiller />
+            
                 </div>
             </main>
             <Footer />
