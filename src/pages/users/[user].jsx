@@ -17,44 +17,96 @@ export default function Users() {
     const router = useRouter();
     const { user } = router.query;
 
-    const [invalidUser, setInvalidUser] = useState(false);
-    const [ownUser, setOwnUser] = useState(false);
+    let invalidUser = null;
+    let ownUser = null;
 
     const [username, setUsername] = useState(null);
     const [realName, setRealName] = useState(null);
     const [bio, setBio] = useState(null);
     const [followerCount, setFollowerCount] = useState(null);
     const [followingCount, setFollowingCount] = useState(null);
-    const [leaderboardRank, setLeaderboardRank] = useState(null);
+
+    const [friendedUser, setFriendedUser] = useState(null);
+    const [pendingRequest, setPendingRequest] = useState(null);
+    const [friendList, setFriendList] = useState(null);
+
+    const [followedUser, setFollowedUser] = useState(null);
+    const [followerList, setFollowerList] = useState(null);
 
     const [openBio, setOpenBio] = useState(false);
     const [banner, bannerState] = useState(false);
     const [badges, setbadges] = useState([]);
+
+    // Friend useEffect
     useEffect(() => {
         if (!user) {
             return;
         }
-      const fetchData = async () => {
+        const fetchData = async () => {
         try {
-          const response = await fetch(
-           `${process.env.NEXT_PUBLIC_API_URL}/users/${user}/badges`
-          );
-          const data = await response.json();
-          console.log(data);
-          setbadges(data);
-        } catch {}
-      };
-      fetchData();
-      setbadges([]);
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/friends/' + user + '/friendList';
+                const requestOptions = {
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+            const response = await fetch(endPoint, requestOptions);
+            const result = await response.json();                
+            const isFriend = result.friends.some((friend) => friend == localStorage.getItem('username'));
+
+            setFriendedUser(isFriend);
+
+            const endPoint2 = process.env.NEXT_PUBLIC_API_URL + '/friends/' + 'sentRequests';
+                const requestOptions2 = {
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+            const response2 = await fetch(endPoint2, requestOptions2);
+            const result2 = await response2.json();           
+            const isPending = result2.some((friend) => friend.recipient.username == user);
+            
+            setPendingRequest(isPending);
+            
+        } catch (err) {
+            throw err;
+        }
+    };
+    fetchData();
+}, [user]);
+
+    // Follower useEffect
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+        const fetchData = async () => {
+        try {
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/followers/' + user + '/followers';
+                const requestOptions = {
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+            const response = await fetch(endPoint, requestOptions);
+            const result = await response.json();
+            const isFollower = result.followers.some(followers => followers.username == localStorage.getItem('username'));
+            console.log(result)
+                
+            setFollowedUser(isFollower);
+
+        } catch(err) {
+            throw err;
+        }
+        };
+        fetchData();
     }, [user]);
   
     // Get and store user data
     useEffect(() => {
-
         if (!user) {
             return;
         }
-
         const fetchData = async () => {
             try {
                 const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user;
@@ -68,7 +120,7 @@ export default function Users() {
                 
                 setUsername(result.username);
                 if (result.username == localStorage.getItem('username')) {
-                    setOwnUser(true);
+                    ownUser = true;
                 }
 
                 if (result.bio) {
@@ -80,41 +132,14 @@ export default function Users() {
                 setRealName(result.firstName + ' ' + result.lastName);
                 setFollowerCount(result.followersNum);
                 setFollowingCount(result.followingNum);
-                setLeaderboardRank(result.leaderboardNum);
-
-                console.log(result);
 
             } catch (err) {
-                setInvalidUser(true);
+                invalidUser = true;
                 throw err;
             }
         };
         fetchData();
     }, [user]);
-
-    //useEffect for fetching friend data
-    useEffect(() => {
-        // if (!user) {
-        //     return;
-        // }
-
-        // const fetchData = async () => {
-        //     try {
-        //         const endPoint = process.env.NEXT_PUBLIC_API_URL + '/friends/' + user;
-        //         const requestOptions = {
-        //             method: 'GET', headers: {
-        //                 'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        //             },
-        //         };
-        //         const response = await fetch(endPoint, requestOptions);
-        //         const result = await response.json();
-        //         console.log(result);
-        //     } catch (err) {
-        //         throw err;
-        //     }
-        // };
-        // fetchData();
-    })
 
     function openTheBio() {
         setOpenBio(true);
@@ -151,36 +176,58 @@ export default function Users() {
           });
       }
 
+    
+
     const followUser = async () => {
-
-    }
-
-    const unfollowUser = async () => {
-
-    }
-
-    const friendUser = async () => {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/friends/requests';
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/follow`;
         const requestOptions = {
             method: 'POST', headers: {
                 'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-            }, body: JSON.stringify({
-                recipient: username,
-            })
+            },
         };
         const response = await fetch(endPoint, requestOptions);
         const result = await response.json();
+        console.log(result);
+        setFollowedUser(true);
+    }
 
-        if (result.success) {
-            console.log('Friend request sent!');
-        }
-        if (result.error) {
-            console.log('Error sending friend request.');
-        }
+    const unfollowUser = async () => {
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/unfollow`;
+        const requestOptions = {
+            method: 'DELETE', headers: {
+                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+            },
+        };
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+        console.log(result);
+        setFollowedUser(false);
+    }
+
+    const friendUser = async () => {
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/sendRequest`;
+        const requestOptions = {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+            },
+        };
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+        setPendingRequest(true);
+        console.log(result);
     }
 
     const unFriendUser = async () => {
-
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/unadd`;
+        const requestOptions = {
+            method: 'DELETE', headers: {
+                'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+            },
+        };
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+        console.log(result);
+        setFriendedUser(false);
     }
 
     return (
@@ -240,12 +287,30 @@ export default function Users() {
                         <div className='ml-auto flex items-center'>
                         {(!ownUser &&
                             <div className="mt-4">
-                                <button>
-                                    <p className='border-2 border-red-500 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'> <i class="fas fa-user-plus"></i> Follow</p>
-                                </button>
-                                <button>
-                                    <p className='border-2 border-red-500 ml-5 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'>Add Friend</p>
-                                </button>
+                                {((!followedUser) &&
+                                    <button
+                                        onClick={followUser}>
+                                        <p className='border-2 border-red-500 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'> <i class="fas fa-user-plus"></i> Follow</p>
+                                    </button>
+                                ) || (followedUser &&
+                                    <button
+                                        onClick={unfollowUser}>
+                                        <p className='border-2 border-red-500 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'> <i class="fas fa-user-plus"></i> Unfollow</p>
+                                    </button>
+                                )}
+                                {((friendedUser &&
+                                    <button
+                                        onClick={unFriendUser}>
+                                        <p className='border-2 border-red-500 ml-5 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'>Remove Friend</p>
+                                    </button>
+                                ) || (pendingRequest &&
+                                    <p className='border-2 border-red-500 ml-5 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm'>Pending Request</p>
+                                )) || (!friendedUser && !pendingRequest &&
+                                    <button
+                                        onClick={friendUser}>
+                                        <p className='border-2 border-red-500 ml-5 rounded-md px-4 py-3 text-xl font-semibold bg-neutral-900 leading-6 text-white shadow-sm hover:bg-neutral-800'>Add Friend</p>
+                                    </button>
+                                )}
                             </div>
                         )}
 </div></div></div>
@@ -302,7 +367,7 @@ export default function Users() {
                               
                             <div className="mt-4 grid grid-cols-4 gap-x-2 gap-y-4 px-4 pb-10">
 
-                            {badges.map((data) => (
+                            {/* {badges.map((data) => (
                 <div
                  
                   className=" bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4  text-center"
@@ -324,7 +389,7 @@ export default function Users() {
                     })}
                   </h1>
                 </div>
-              ))}
+              ))} */}
 
               </div>
                             </div>
