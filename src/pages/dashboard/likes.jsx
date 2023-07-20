@@ -10,6 +10,8 @@ import { SideNavContent } from '@/components/dashboard/SideNavContents';
 
 export default function Dashboard() {
   const [likes, setLikes] = useState([]);
+  const [username, setUsername] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,6 +20,7 @@ export default function Dashboard() {
         const data = await response.json();
         console.log(data);
         setLikes(data);
+        setUsername(localStorage.getItem('username'));
         likes.map((like) => console.log(like.challenge.slug));
       } catch {}
     };
@@ -44,7 +47,7 @@ export default function Dashboard() {
 
         <div className="mx-auto flex h-screen max-w-7xl ">
           {/* Sidebar */}
-          <SideNavContent />
+          <SideNavContent username={username}/>
 
           {/* Main content area */}
           <div className="flex-1 mt-5">

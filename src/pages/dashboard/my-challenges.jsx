@@ -10,12 +10,16 @@ import { SideNavContent } from '@/components/dashboard/SideNavContents';
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
   const [badges, setbadges] = useState([]);
-  let username = 'laphatize';
+  const [username, setUsername] = useState(null);
+
+  let username2 = 'laphatize';
   useEffect(() => {
+    setUsername(localStorage.getItem('username'));
     const fetchData = async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/badges`
       );
+
       const data = await response.json();
       setbadges(data);
     };
@@ -47,7 +51,7 @@ export default function Dashboard() {
 
         <div className="mx-auto flex h-screen max-w-7xl ">
           {/* Sidebar */}
-          <SideNavContent />
+          <SideNavContent username={username}/>
 
           {/* Main content area */}
           <div className="flex-1">

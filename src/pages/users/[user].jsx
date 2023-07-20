@@ -33,6 +33,8 @@ export default function Users() {
     const [followedUser, setFollowedUser] = useState(null);
     const [followerList, setFollowerList] = useState(null);
 
+    const [completedChallenges, setCompletedChallenges] = useState(null);
+
     const [openBio, setOpenBio] = useState(false);
     const [banner, bannerState] = useState(false);
     const [badges, setbadges] = useState([]);
@@ -104,6 +106,54 @@ export default function Users() {
         };
         fetchData();
     }, [user]);
+
+    // Challenge useEffect
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+        const fetchData = async () => {
+            try {
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/completedChallenges';
+                const requestOptions = {
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+                const response = await fetch(endPoint, requestOptions);
+                const result = await response.json();
+                console.log(result)
+                setCompletedChallenges(result);
+
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        fetchData();
+    }, [user])
+
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+        const fetchData = async () => {
+            try {
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/followers/' + user + '/completedChallenges';
+                const requestOptions = {
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+                const response = await fetch(endPoint, requestOptions);
+                const result = await response.json();
+                console.log(result)
+                setCompletedChallenges(result);
+
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    })
 
     // Get and store user data
     useEffect(() => {
@@ -177,8 +227,6 @@ export default function Users() {
                 console.log(err);
             });
     }
-
-
 
     const followUser = async () => {
         const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/follow`;
@@ -259,9 +307,10 @@ export default function Users() {
 
                     {/* Main content area */}
                     <div className="flex-1 mt-5 justify-center items-center">
-                        <div class="h-auto w-full rounded-md bg-gradient-to-r from-red-700 via-red-500 to-orange-700 p-1">
-
-                            <div className=' flex  px-10 pb-10 pt-4  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p' style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1488554378835-f7acf46e6c98?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80")', backgroundSize: 'cover' }}>
+                        <div class="h-auto w-full rounded-md  p-1">
+                            <div style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1488554378835-f7acf46e6c98?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80")', backgroundSize: 'cover' }}>
+                                <div className=' flex  px-10 pb-10 pt-4  rounded-lg p'>
+                            
                                 <div className="flex items-center">
                                     {(username &&
                                         <img
@@ -284,6 +333,7 @@ export default function Users() {
                                     <div className='ml-10 mt-5'>
                                         <p className='text-white'>{followingCount} Following</p>
                                     </div>
+                                    
                                 </div>
 
                                 <div className='ml-auto flex items-center'>
@@ -315,10 +365,28 @@ export default function Users() {
                                                 )}
                                         </div>
                                     )}
-                                </div></div></div>
+                                </div>          
+                            </div>
+                            <div className="px-6 py-2">
+                            {(completedChallenges != null) && (
+                                <div className="grid grid-cols-2">
+                                    <div className='mt-2 mx-5 grid grid-cols-6'>
+                                        <p className="text-pink-400 text-xs border-b-4 border-pink-400">Beginner: {completedChallenges.completedBeginnerChallenges.length}</p> 
+                                        <p className="text-green-400 text-xs border-b-4 border-green-400">Easy: {completedChallenges.completedEasyChallenges.length}</p>                                     
+                                        <p className="text-yellow-500 text-xs border-b-4 border-yellow-500">Medium: {completedChallenges.completedMediumChallenges.length}</p>
+                                        <p className="text-red-500 text-xs border-b-4 border-red-500">Hard: {completedChallenges.completedHardChallenges.length}</p>
+                                        <p className="text-purple-400 text-xs border-b-4 border-purple-400">Insane: {completedChallenges.completedInsaneChallenges.length}</p>
+                                        <p className="text-white text-xs border-b-4 border-white">Impossible: {completedChallenges.completedImpossibleChallenges.length}</p>
+                                    </div>
+                                </div>
+                            )}
+                            </div>
+                            </div>
+                        </div>
 
 
                         {/* Add profile content here */}
+            
                         <div className='grid grid-cols-2 gap-x-4 '>
 
 

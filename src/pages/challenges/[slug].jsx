@@ -29,6 +29,11 @@ export default function Challenge() {
     const [award, setAward] = useState('');
     const [terminalUsername, setTerminalUsername] = useState('...');
     const [terminalPassword, setTerminalPassword] = useState('...');
+
+    const [difficulty, setDifficulty] = useState('');
+    const [alreadySolved, setAlreadySolved] = useState(false);
+
+
     
     // Kshitij
     const [hintMessages, setHintMessages] = useState([]);
@@ -63,6 +68,7 @@ export default function Challenge() {
                 const result = await response.json();
                 //result["content"] = result["content"].replace()
                 setChallenge(result);
+                setDifficulty(result.difficulty);
 
                 result.availableHints.forEach((hint, index) => {
                     updateHintMessage(hint, index);
@@ -131,6 +137,7 @@ export default function Challenge() {
                 //   setLikeCount(likeCount + 1);
                 // }
             };
+           
             fetchLikeUrl();
         } catch (err) {
             throw err;
@@ -159,6 +166,39 @@ export default function Challenge() {
             setLikeCount(challenge.upvotes);
         }
     }, [challenge]);
+
+    useEffect(() => {
+        if (!slug) {
+            return;
+        }
+        fetchSolvedUsers();
+    }, [slug]);
+
+    const fetchSolvedUsers = async () => {
+        try {
+            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/completed-users';
+            const requestOptions = {
+                method: 'GET', headers: {
+                    'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                }
+            }
+            const response = await fetch(endPoint, requestOptions);
+            const result = await response.json();
+
+            if (result != null) {
+                const user = result.users.filter((user) => {
+                    return user.username === localStorage.getItem('username');
+                });
+
+                if (user.length) {
+                    setAlreadySolved(true);
+                    console.log('Already solved');
+                }
+            }
+        } catch (error) {
+            throw error;
+        }
+    };
 
     const submitFlag = async () => {
         const slug = challenge.slug;
@@ -201,11 +241,30 @@ export default function Challenge() {
                     setSubmissionMsg("success");
                     setOpen(true);
 
+                    if (!alreadySolved) {
+                        try {
+                            const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + localStorage.getItem('username') + '/complete-challenge/' + slug + '/' + difficulty;
+                            const requestOptions = {
+                                method: 'POST', headers: {
+                                    'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                                }, body: JSON.stringify({
+                                    keyword: flag,
+                                }),
+                            };
+                            const response = await fetch(endPoint, requestOptions);
+                        } catch (err) {
+                            throw err;
+                        }
+                    }
+
                     setTimeout(function () {
                         document
                             .getElementById('enteredFlag')
                             .classList.remove('border-green-600');
                     }, 2000);
+                    
+
+
                 } else {
                     document
                         .getElementById('enteredFlag')

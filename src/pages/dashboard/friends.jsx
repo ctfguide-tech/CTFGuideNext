@@ -13,6 +13,7 @@ import { Transition, Fragment, Dialog } from '@headlessui/react';
 
 
 export default function Dashboard() {
+    const [username, setUsername] = useState(null);
     const [friends, setFriends] = useState([]);
     const [requests, setRequests] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -29,7 +30,7 @@ export default function Dashboard() {
                 const response = await fetch(endPoint, requestOptions);
                 const result = await response.json();
 
-                console.log(result)
+                setUsername(localStorage.getItem('username'));
 
                 result.friends.forEach((friend, index) => {
                     fetchFriendData(friend, index)
@@ -181,7 +182,7 @@ export default function Dashboard() {
                 <DashboardHeader />
                 <div className="mx-auto flex h-screen max-w-7xl ">
                     {/* Sidebar */}
-                    <SideNavContent />
+                    <SideNavContent username={username} />
 
                     {/* Main content area */}
                     <div className="flex-1 mt-5 justify-center items-center">

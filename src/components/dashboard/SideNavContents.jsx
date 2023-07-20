@@ -1,4 +1,4 @@
-export function SideNavContent() {
+export function SideNavContent({ username }) {
   return (
     <>
       <div
@@ -16,7 +16,7 @@ export function SideNavContent() {
           </li>
           <li className="mb-4 py-1">
             <a
-              href="../dashboard/profile"
+              href={`../dashboard/profile`}
               className="px-2 py-1 text-lg font-medium text-white hover:text-neutral-300"
             >
               <i class="fas fa-user-circle mr-2"></i>Profile
