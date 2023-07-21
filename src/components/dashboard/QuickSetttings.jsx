@@ -44,7 +44,7 @@ export function QuickSettings() {
             CTFGuide V3 is out now!
           </h1>
 
-          <p>
+          <p> 
             {' '}
             After months of development, we are excited to release the new
             version of CTFGuide. There's a lot to unpack here!

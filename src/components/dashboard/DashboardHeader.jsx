@@ -38,18 +38,18 @@ export function DashboardHeader() {
         .catch((err) => {
           console.log(err);
         });
-    } catch {}
+    } catch { }
   }, []);
 
   function createPopupWin(pageURL, pageTitle,
     popupWinWidth, popupWinHeight) {
-var left = (screen.width ) ;
-var top = (screen.height ) ;
-var myWindow = window.open(pageURL, pageTitle,
-    'resizable=yes, width=' + popupWinWidth
-    + ', height=' + popupWinHeight + ', top='
-    + top + ', left=' + left);
-}
+    var left = (screen.width);
+    var top = (screen.height);
+    var myWindow = window.open(pageURL, pageTitle,
+      'resizable=yes, width=' + popupWinWidth
+      + ', height=' + popupWinHeight + ', top='
+      + top + ', left=' + left);
+  }
 
   return (
     <div>
@@ -58,15 +58,8 @@ var myWindow = window.open(pageURL, pageTitle,
           style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
           className="h-20 w-full object-cover lg:h-20"
           alt=""
-        > 
-     
-      
-      
-      
-      </div>
-        
-
-        
+        >
+        </div>
       </div>
       <div className="mx-auto max-w-7xl ">
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -84,14 +77,14 @@ var myWindow = window.open(pageURL, pageTitle,
                   alt=""
                 />
               )) || (
-                <Skeleton
-                  circle={true}
-                  height={150}
-                  width={150}
-                  baseColor="#262626"
-                  highlightColor="#262626"
-                />
-              )}
+                  <Skeleton
+                    circle={true}
+                    height={150}
+                    width={150}
+                    baseColor="#262626"
+                    highlightColor="#262626"
+                  />
+                )}
             </a>
           </div>
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
@@ -142,16 +135,16 @@ var myWindow = window.open(pageURL, pageTitle,
                 <p className="mt-0 text-white">Points</p>
               </div>
               <div
-              onClick={() => {
+                onClick={() => {
 
-                createPopupWin('../terminal',
-            'CTFGuide Terminal', 1200, 650);
+                  createPopupWin('../terminal',
+                    'CTFGuide Terminal', 1200, 650);
 
 
-                 }}
+                }}
                 className="cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
               >
-          
+
                 <p className="mt-0 text-white"><i class="fas fa-terminal mr-1"></i> Terminal</p>
               </div>
               <div
