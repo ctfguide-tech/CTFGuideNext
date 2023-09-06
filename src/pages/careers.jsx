@@ -66,34 +66,36 @@ export default function Careers() {
             height: '200',
             bio: "Almond Force is a team dedicated to providing the cyber security and IT community with training on different platforms and events such as CTFs, Hack the Box, TryHackMe, and more! The team's founder is Almond Milk, and we strive to grow enough to where we can release content as our full-time career."
         },
-        {
-            personName: 'Brody Pearlman',
-            position: 'Business',
-            image: '../mish.jpg',
-            width: '200',
-            height: '200',
-        },
-        {
-            personName: 'Jackson Ferris',
-            position: 'Cybersecurity',
-            image: '../mish.jpg',
-            width: '200',
-            height: '200',
-        },
+        
+    
     ];
 
     const listings = [
         {
-            team: 'Web Team',
+        team: 'Executive Team',
             position: 'Full-Time',
-            roleName: 'UI/UX Team Lead',
+            roleName: 'Chief Financial Officer',
             listingPosted: 'Feb 8th',
             type: 'Remote',
         },
         {
-            team: 'Engineering Back-End',
+            team: 'Frontend Team',
+            position: 'Part-Time',
+            roleName: 'Project Manager',
+            listingPosted: 'Feb 8th',
+            type: 'Remote',
+        },
+        {
+            team: 'Frontend Team',
             position: 'Full-Time',
-            roleName: 'Data Analyst/Engineer',
+            roleName: 'Frontend Developer',
+            listingPosted: 'Feb 11th',
+            type: 'Remote',
+        },
+        {
+            team: 'Backend Team',
+            position: 'Full-Time',
+            roleName: 'Backend Developer',
             listingPosted: 'Feb 11th',
             type: 'Remote',
         },
@@ -130,14 +132,14 @@ export default function Careers() {
 
             <Header/>
             <main>
-                <div className="mx-auto mt-20 mb-20 w-full max-w-6xl text-center">
+                <div className=" mx-auto mt-20 mb-20 w-full max-w-6xl text-center">
                     <p className="mt-2 text-4xl font-bold text-white sm:text-4xl">
-                        Meet the team behind{' '}
-                        <span className="mt-2 text-4xl font-bold tracking-tight text-blue-500 sm:text-4xl">
-              CTFGuide
+                        Work for  
+                        <span className="mt-2 text-4xl font-bold tracking-tight text-blue-600 sm:text-4xl">
+            &nbsp;CTFGuide
             </span>
                     </p>
-                    <p className="mt-2 text-2xl font-bold  text-white ">
+                    <p className="mt-2 text-xl px-10  text-white ">
                         We're dedicated to providing a space where students can learn,
                         teachers can teach, and professionals can compete in the
                         ever-emerging field of Cybersecurity
@@ -148,7 +150,7 @@ export default function Careers() {
          sm is for "smaller" devices
          */}
                 <div
-                    className="mb-12 mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
+                    className="hidden mb-12 mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
                     {team.map((person) => {
                         return (
                             <PersonCard person={person}/>
@@ -157,12 +159,12 @@ export default function Careers() {
                 </div>
 
                 <div
-                    className="overflow-hidden py-24 sm:py-32"
+                    className="overflow-hidden py-14 sm:py-22"
                     style={{backgroundColor: '#212121'}}
                 >
                     <div>
                         <p className="text-center text-3xl font-bold text-white sm:text-4xl">
-                            Looking for a Job?
+                            Open Positions
                         </p>
                     </div>
 
@@ -177,12 +179,12 @@ export default function Careers() {
                                         <div>
                                             <h1 className=" text-xl">{job.team}</h1>
                                             <h1 className="text-3xl font-semibold">{job.roleName}</h1>
-                                            <p>Remote - Full Time</p>
+                                            <p>{job.type} - {job.position}</p>
                                         </div>
 
                                         <div className="ml-auto">
                                             <a
-                                                href="https://ctfguide.freshteam.com/jobs"
+                                                href="mailto:pranav@ctfguide.com"
                                                 className=" text-md justify-center rounded-full border border-transparent bg-blue-700 py-1 px-4 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                             >
                                                 Apply
