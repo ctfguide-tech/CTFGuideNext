@@ -45,7 +45,7 @@ export default function Pratice() {
       <StandardNav />
       <main>
  
-      <div className='mx-auto max-w-7xl mt-10'>
+      <div className='mx-auto max-w-7xl mt-10 hidden'>
           <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-10 sm:py-12 rounded-lg">
      
      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
