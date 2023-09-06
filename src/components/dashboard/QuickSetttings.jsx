@@ -46,7 +46,7 @@ export function QuickSettings() {
         bannerState(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err); 
       });
   }
 
