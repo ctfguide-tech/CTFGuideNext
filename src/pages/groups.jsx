@@ -18,9 +18,9 @@ export default function ComingSoon() {
 
     <div className='container'>
 
-      <h1 className='text-white text-2xl font-semibold'>
+      <h1 className='text-white text-2xl  text-center font-semibold'>
 
-        Your Courses
+        You are not enrolled in a university.
 
       </h1>
     </div>
