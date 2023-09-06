@@ -36,15 +36,12 @@ export function Enterprise() {
         <div class="mx-auto grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4">
           <div class="col-span-3">
             <h1 class="w-4/5 text-5xl font-bold leading-tight text-white">
-              Supercharge your hiring like never before.
+              Level up your classroom with AI enhanced learning.
             </h1>
             <h1 class="mt-5 text-3xl leading-tight text-white">
-              Evaluate employees in seconds, not days.
+              Converting lost and confused students into cybersecurity pros.
             </h1>
-            <h1 class="text-3xl leading-tight text-white">
-              Streamline your onboarding experience.
-            </h1>
-           
+       
           </div>
           <div class="col-span-1 mx-auto my-auto md:flex md:items-center md:justify-center">
             <img width="200" src="rocket.png" alt="Rocket image" />
