@@ -8,6 +8,9 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { app } from '../config/firebaseConfig';
+import { DataAsk } from '@/components/onboarding/DataAsk';
+import { DataAskPart2 } from '@/components/onboarding/DataAskPart2';
+import { Demo } from '@/components/onboarding/Demo';
 const provider = new GoogleAuthProvider();
 
 export default function Register() {
@@ -98,7 +101,7 @@ export default function Register() {
                 // Store Token in local storage.
                 localStorage.setItem('idToken', idToken);
 
-                window.location.replace('/onboarding');
+                window.location.replace('/dashboard');
               }
             });
             xhr.setRequestHeader('Authorization', `Bearer ${idToken}`);
@@ -325,6 +328,9 @@ export default function Register() {
                       Create an account
                     </button>
                   </div>
+                  <DataAsk />
+                  <DataAskPart2 />
+                  <Demo />
                 </div>
               </div>
             </div>
