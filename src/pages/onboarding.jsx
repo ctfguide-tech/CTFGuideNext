@@ -17,7 +17,7 @@ export default function Onboarding() {
       </Head>
       <main>
         <div className="h-flex h-screen items-center justify-center">
-          <OnboardingFlow></OnboardingFlow>
+          {/* Onboarding process has been moved to the registration page */}
         </div>
       </main>
     </>
