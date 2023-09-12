@@ -52,7 +52,7 @@ export default function Login() {
 
               if (!parsed.email) {
                 // User hasn't finished onboarding.
-                window.location.replace('/onboarding');
+                // Redirection to onboarding page removed as onboarding process is now handled by the registration page
                 return;
               }
 
