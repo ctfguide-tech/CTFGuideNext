@@ -105,40 +105,15 @@ export default function Dashboard() {
             </Head>
             <StandardNav />
             <main>
-                <div
-                    style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
-                    className="h-20 w-full object-cover lg:h-20"
-                    alt=""
-                ></div>
+            <DashboardHeader />
+
                 <div className="mx-auto flex h-screen max-w-7xl ">
                     {/* Sidebar */}
                     <SideNavContent />
 
                     {/* Main content area */}
-                    <div className="flex-1 mt-5 justify-center items-center">
-                        <div className="flex items-center">
-                            {(username &&
-                                <img
-                                    style={{ borderColor: '#ffbf00' }}
-                                    className="h-24 w-24 mx-3 rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
-                                    src={
-                                        `https://robohash.org/` + username +
-                                        `.png?set=set1&size=150x150`
-                                        }
-                                    alt=""
-                                />
-                            )}
-                            <div>
-                                <h1 className="mt-5 text-3xl text-white">{realName}</h1>
-                                <h2 className='text-1xl text-white'>@{username}</h2>
-                            </div>
-                            <div className='ml-10 mt-5'>
-                                <p className='text-white'>{followerCount} Followers</p>
-                            </div>
-                            <div className='ml-10 mt-5'>
-                                <p className='text-white'>{followingCount} Following</p>
-                            </div>
-                        </div>
+                    <div className="flex-1 mt-5 justify-center items-center w-full">
+              
                         {/* Add profile content here */}
                         <div>
                             <div className="flex items-center">
@@ -170,12 +145,12 @@ export default function Dashboard() {
                                             readOnly={false}
                                             onChange={openBanner}
                                             placeholder="Tell us about yourself!"                              
-                                            className="mt-3 w-full rounded-sm border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white"
+                                            className="mt-3 w-full rounded-sm border-none rounded-lg rounded-lg bg-neutral-800/50 px-6 py-3 text-lg text-white"
                                         ></textarea>
                                     </div>
 
                                 ) || (
-                                    <h1 className="mt-3 rounded-sm border border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white">
+                                    <h1 className="mt-3 rounded-sm border border-none rounded-lg rounded-lg bg-neutral-800/50 px-6 py-3 text-lg text-white">
                                         {bio === null || bio === "" ? "No bio set." : bio}
                                     </h1>
                                 )}
@@ -184,26 +159,25 @@ export default function Dashboard() {
                         <div>
                         {/* Badge Content */}
                             <h1 className="mt-5 text-xl text-gray-300">Badges</h1>
-                            <h1 className="mt-3 rounded-sm border border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white">
-                                Badge content here.
+                            <h1 className="mt-3 rounded-sm border border-none rounded-lg bg-neutral-800/50 px-6 py-3 text-lg text-white">
+                                Hmm, looks like you have no badges yet.
                             </h1>
                         </div>
-                        <div>
+                        <div className='hidden'>
                         {/* Pinned Challenges Content */}
                             <h1 className="mt-5 text-xl text-gray-300">Pinned Challenges</h1>
-                            <h1 className="mt-3 rounded-sm border border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white">
+                            <h1 className="mt-3 rounded-sm border border-none rounded-lg bg-neutral-800/50 px-6 py-3 text-lg text-white">
                                 Challenge content here.
                             </h1>
                         </div>
                         <div>
                         {/* Pinned Challenges Content */}
                             <h1 className="mt-5 text-xl text-gray-300">Statistics</h1>
-                            <h1 className="mt-3 rounded-sm border border-white/10 bg-neutral-800/50 px-6 py-3 text-lg text-white">
-                                Statistics here.
+                            <h1 className="mt-3 rounded-sm border border-none rounded-lg bg-neutral-800/50 px-6 py-3 text-lg text-white">
+                                This feature is temporarily disabled.
                             </h1>
                         </div>
                     </div>
-                <RightSideFiller />
                 </div>
             </main>
             <Footer />

@@ -155,7 +155,7 @@ export default function Login() {
             </style>
         </Head>
         <div style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8‌​fHx8&auto=format&fit=crop&w=1770&q=80')",
+            backgroundImage: "",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -180,9 +180,9 @@ export default function Login() {
                 <p className="mt-2 text-center text-sm text-gray-600">
                 <a
                     href="../register"
-                    className="font-semibold text-gray-200 hover:text-gray-400"
+                    className="font-semibold text-blue-600 hover:text-blue-700"
                 >
-                    Don&apos;t have an account?
+                    Don't have an account?
                 </a>
                 </p>
             </div>

@@ -38,7 +38,7 @@ export function QuickSettings() {
                 
                 <div className="mt-10">
               
-                <h1 className="mt-2 text-xl text-gray-300"> Getting Started</h1>
+                <h1 className="mt-2 text-xl text-gray-300"> GETTING STARTED</h1>
 
                   <div className="mt-3 grid grid-cols-3 gap-x-6">
                     <div className="">
@@ -141,7 +141,7 @@ export function QuickSettings() {
                     </div>
                   </div>
 
-      <h1 className="mt-4 text-xl text-gray-300"> Your Insights</h1>
+      <h1 className="mt-4 text-xl text-gray-300"> YOUR INSIGHTS</h1>
                 <div>
                     <div className="mt-3 w-full pb-4 mb-4">
                       <div className="grid grid-cols-1 gap-x-10">
@@ -170,7 +170,7 @@ export function QuickSettings() {
               </div>
 
 
-      <h1 className="text-xl text-gray-300"> Site Feed</h1>
+      <h1 className="text-xl text-gray-300"> SITE FEED</h1>
 
       <div className="mx-auto mb-4 mt-1 w-full gap-4 gap-y-6 rounded-lg">
         <div

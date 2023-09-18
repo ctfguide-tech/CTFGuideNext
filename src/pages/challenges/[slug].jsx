@@ -1,18 +1,18 @@
 import React from 'react';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
-import {StandardNav} from '@/components/StandardNav';
-import {useEffect, useState, Fragment} from 'react';
-import {Transition, Dialog} from '@headlessui/react';
-import {XMarkIcon, HeartIcon, ArrowPathIcon} from '@heroicons/react/24/outline';
+import { StandardNav } from '@/components/StandardNav';
+import { useEffect, useState, Fragment } from 'react';
+import { Transition, Dialog } from '@headlessui/react';
+import { XMarkIcon, HeartIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
-import {Footer} from '@/components/Footer';
-import {MarkdownViewer} from "@/components/MarkdownViewer";
-import {CheckCircleIcon, CheckIcon, FlagIcon} from '@heroicons/react/20/solid';
+import { Footer } from '@/components/Footer';
+import { MarkdownViewer } from "@/components/MarkdownViewer";
+import { CheckCircleIcon, CheckIcon, FlagIcon } from '@heroicons/react/20/solid';
 
 export default function Challenge() {
     const router = useRouter()
-    const {slug} = router.query
+    const { slug } = router.query
 
     const NO_PLACE = 'Not placed';
 
@@ -34,7 +34,7 @@ export default function Challenge() {
     const [alreadySolved, setAlreadySolved] = useState(false);
 
 
-    
+
     // Kshitij
     const [hintMessages, setHintMessages] = useState([]);
     const [hideHintButton, setHideHintButton] = useState(false);
@@ -94,13 +94,17 @@ export default function Challenge() {
                 };
                 const response = await fetch(endPoint, requestOptions);
                 const result = await response.json();
-
+                if (result.username === "" || result.password === "") {
+                    fetchTerminalData();
+                }
                 setTerminalUsername(result.username);
                 setTerminalPassword(result.password);
             } catch (err) {
                 console.log(err);
                 setTerminalUsername('Something went wrong.');
                 setTerminalPassword('Something went wrong.');
+
+
             }
         };
 
@@ -137,7 +141,7 @@ export default function Challenge() {
                 //   setLikeCount(likeCount + 1);
                 // }
             };
-           
+
             fetchLikeUrl();
         } catch (err) {
             throw err;
@@ -171,7 +175,7 @@ export default function Challenge() {
         if (!slug) {
             return;
         }
-     //   fetchSolvedUsers();
+        //   fetchSolvedUsers();
     }, [slug]);
 
     const fetchSolvedUsers = async () => {
@@ -227,7 +231,7 @@ export default function Challenge() {
                     }),
                 };
                 const response = await fetch(endPoint, requestOptions);
-                const {success, incorrect, error} = await response.json();
+                const { success, incorrect, error } = await response.json();
 
                 if (error) {
                     document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
@@ -262,7 +266,7 @@ export default function Challenge() {
                             .getElementById('enteredFlag')
                             .classList.remove('border-green-600');
                     }, 2000);
-                    
+
 
 
                 } else {
@@ -288,7 +292,7 @@ export default function Challenge() {
     const fetchComments = async () => {
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments');
-            const {result} = await response.json();
+            const { result } = await response.json();
 
             if (result && result.length) {
                 setComments([...result]);
@@ -297,7 +301,7 @@ export default function Challenge() {
             throw error;
         }
     };
-    
+
     // Kshitij
     async function fetchHints() {
         try {
@@ -332,12 +336,12 @@ export default function Challenge() {
     const handleButtonClick = () => {
         if (hintMessages.length < 3) {
             fetchHints()
-        } 
+        }
         if (hintMessages.length === 3) {
             setHideHintButton(true);
         }
     }
-    
+
 
     const onCommentReport = async () => {
         alert('Thank you for reporting this comment. Our moderation team will look into this.');
@@ -402,7 +406,7 @@ export default function Challenge() {
                     'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
                 },
             };
-            const {error} = await fetch(endPoint, requestOptions);
+            const { error } = await fetch(endPoint, requestOptions);
             if (error) {
                 alert(error);
             } else {
@@ -416,7 +420,7 @@ export default function Challenge() {
                     'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
                 },
             };
-            const {error} = await fetch(endPoint, requestOptions);
+            const { error } = await fetch(endPoint, requestOptions);
             if (error) {
                 alert(error);
             } else {
@@ -436,11 +440,11 @@ export default function Challenge() {
         </Head>
         <main>
             <div id="reportalert"
-                 className="hidden text-white flex bg-blue-900 center fixed bottom-6 right-6 rounded-md bg-[#7cd313] p-2">
+                className="hidden text-white flex bg-blue-900 center fixed bottom-6 right-6 rounded-md bg-[#7cd313] p-2">
                 <CheckCircleIcon className='w-6 h-6 mr-2'> </CheckCircleIcon>We'll investigate this challenge and
                 take appropriate action.
             </div>
-            <StandardNav/>
+            <StandardNav />
             <div className=" w-full py-10 " style={{
                 backgroundSize: "cover",
                 backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")'
@@ -480,7 +484,7 @@ export default function Challenge() {
                             className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
                         >
                             <h1 className=" mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
-                                <HeartIcon className="h-8 w-8 text-red-500"/>
+                                <HeartIcon className="h-8 w-8 text-red-500" />
                             </h1>
                             <p className=" text-2xl text-white">{likeCount}</p>
                         </button>
@@ -494,8 +498,8 @@ export default function Challenge() {
                             className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
                         >
                             <h1 className=" flex bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
-                                <FlagIcon className="h-8 w-8 text-yellow-600 mr-2"/> <p
-                                className='text-white font-normal text-lg'>Report Challenge</p>
+                                <FlagIcon className="h-8 w-8 text-yellow-600 mr-2" /> <p
+                                    className='text-white font-normal text-lg'>Report Challenge</p>
                             </h1>
                         </button>
                         <button
@@ -509,22 +513,22 @@ export default function Challenge() {
                 </div>
                 {/* ***************************************** */}
 
-                <div id="challengeDetails" style={{color: '#8c8c8c'}}
-                     className="w-full text-lg text-white whitespace-pre-wrap border-l-4 border-blue-700 px-4 bg-neutral-800/50 py-2">
+                <div id="challengeDetails" style={{ color: '#8c8c8c' }}
+                    className="w-full text-lg text-white whitespace-pre-wrap border-l-4 border-blue-700 px-4 bg-neutral-800/50 py-2">
                     <div>
 
-                        <MarkdownViewer content={challenge.content}/>
+                        <MarkdownViewer content={challenge.content} />
                     </div>
 
                 </div>
                 <div className="flex ">
                     <div className="mt-4 rounded-lg">
                         <div className="flex    rounded-lg   rounded-lg text-sm">
-                            <div style={{color: '#8c8c8c'}} className="mb-4">
+                            <div style={{ color: '#8c8c8c' }} className="mb-4">
                                 <input
                                     id="enteredFlag"
                                     onChange={flagChanged}
-                                    style={{backgroundColor: '#212121'}}
+                                    style={{ backgroundColor: '#212121' }}
                                     placeholder="Flag Here"
                                     className="focus-outline-none mx-auto  mr-2  rounded-lg border border-neutral-700 bg-black px-4 py-1 text-white outline-none"
                                 ></input>
@@ -548,7 +552,7 @@ export default function Challenge() {
                 </div>
                 <div className="hidden mt-6 grid gap-10 sm:grid-cols-1 lg:grid-cols-3">
                     <div
-                        style={{backgroundColor: '#212121'}}
+                        style={{ backgroundColor: '#212121' }}
                         className="card mx-auto w-full rounded-lg py-3 text-center shadow-lg"
                     >
                         <div className="card-body">
@@ -560,7 +564,7 @@ export default function Challenge() {
                     </div>
 
                     <div
-                        style={{backgroundColor: '#212121'}}
+                        style={{ backgroundColor: '#212121' }}
                         className="card mx-auto w-full rounded-lg py-3 text-center shadow-lg"
                     >
                         <div className="card-body">
@@ -572,7 +576,7 @@ export default function Challenge() {
                     </div>
 
                     <div
-                        style={{backgroundColor: '#212121'}}
+                        style={{ backgroundColor: '#212121' }}
                         className="card mx-auto w-full rounded-lg py-3 text-center shadow-lg"
                     >
                         <div className="card-body">
@@ -594,10 +598,10 @@ export default function Challenge() {
                         <span onClick={() => {
                             window.location.reload()
                         }}
-                              className='float-right ml-auto flex hover:text-neutral-300 cursor-pointer'> <ArrowPathIcon
-                            className='h-6 w-6 mr-2'/> Reset Terminal</span>
+                            className='float-right ml-auto flex hover:text-neutral-300 cursor-pointer'> <ArrowPathIcon
+                                className='h-6 w-6 mr-2' /> Reset Terminal</span>
                         <a
-                            style={{cursor: 'pointer'}}
+                            style={{ cursor: 'pointer' }}
                             className="hidden text-gray-300 hover:bg-black"
                         >
                             Need help?
@@ -614,14 +618,14 @@ export default function Challenge() {
                     <textarea
                         id="comment"
                         onChange={commentChange}
-                        style={{backgroundColor: '#212121'}}
+                        style={{ backgroundColor: '#212121' }}
                         className="focus-outline-none mt-4 block w-full rounded-lg border-none bg-black text-white outline-none"
                     ></textarea>
 
                     <button
                         onClick={submitComment}
                         id="commentButton"
-                        style={{backgroundColor: '#212121'}}
+                        style={{ backgroundColor: '#212121' }}
                         className="mt-4 rounded-lg border border-gray-700 bg-black px-4 py-1 text-white hover:bg-gray-900"
                     >
                         Post Comment
@@ -636,7 +640,7 @@ export default function Challenge() {
                     {comments.map((message, index) => (<div
                         key={index}
                         className="mt-4 rounded-lg bg-black  "
-                        style={{backgroundColor: '#212121'}}
+                        style={{ backgroundColor: '#212121' }}
                     >
                         <h1 className="px-5 pt-4 text-xl text-white">
                             @{message.username}
@@ -673,7 +677,7 @@ export default function Challenge() {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <Dialog.Overlay className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"/>
+                        <Dialog.Overlay className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
                     </Transition.Child>
 
                     {/* This element is to trick the browser into centering the modal contents. */}
@@ -681,8 +685,8 @@ export default function Challenge() {
                         className="hidden sm:inline-block sm:h-screen sm:align-middle"
                         aria-hidden="true"
                     >
-              &#8203;
-            </span>
+                        &#8203;
+                    </span>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -696,7 +700,8 @@ export default function Challenge() {
                             className="relative inline-block transform overflow-hidden rounded-lg border border-gray-700 bg-gray-900 px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6 sm:align-middle">
                             <div>
                                 <div className="mx-auto flex items-center justify-center rounded-full ">
-                                    <svg
+
+                                    {(submissionMsg == "success") &&  <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
                                         viewBox="0 0 24 24"
@@ -710,8 +715,14 @@ export default function Challenge() {
                                             d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
                                         />
                                     </svg>
+                                    }
+
+                                    {(submissionMsg == "incorrect") &&   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="text-red-500 w-14 h-14">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>}
+
                                 </div>
-                                <div className="mt-3 text-center sm:mt-5">
+                                <div className="mt-2 text-center sm:mt-5">
                                     <Dialog.Title
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-100"
@@ -752,7 +763,7 @@ export default function Challenge() {
 
         <Transition.Root show={hintOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={setHintOpen}>
-                <div className="fixed inset-0"/>
+                <div className="fixed inset-0" />
 
                 <div className="fixed inset-0 overflow-hidden">
                     <div className="absolute inset-0 overflow-hidden">
@@ -807,43 +818,43 @@ export default function Challenge() {
                                             </div>
                                         </div>
                                         <div className="mt-6 px-4 font-medium text-yellow-400 sm:px-6">
-                                        {hintMessages ? (
-                                            <div>
-                                            {hintMessages.map((hint, index) => (
-                                                <div
-                                                key={index}
-                                                className="w-full border-l-4  border-blue-600  bg-[#212121] px-4 py-3 mb-2 text-lg"
-                                                enter="transition-opacity duration-75"
-                                                enterFrom="opacity-0"
-                                                enterTo="opacity-100"
-                                                leave="transition-opacity duration-150"
-                                                leaveFrom="opacity-100"
-                                                leaveTo="opacity-0"
-                                              
-                                                >
-                                                <p className="text-white">
-                                                    <span className='text-xl font-semibold'>Hint #{index + 1}</span>
-                                                    {hint && <p>{hint}</p>}
-                                                </p>
+                                            {hintMessages ? (
+                                                <div>
+                                                    {hintMessages.map((hint, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="w-full border-l-4  border-blue-600  bg-[#212121] px-4 py-3 mb-2 text-lg"
+                                                            enter="transition-opacity duration-75"
+                                                            enterFrom="opacity-0"
+                                                            enterTo="opacity-100"
+                                                            leave="transition-opacity duration-150"
+                                                            leaveFrom="opacity-100"
+                                                            leaveTo="opacity-0"
+
+                                                        >
+                                                            <p className="text-white">
+                                                                <span className='text-xl font-semibold'>Hint #{index + 1}</span>
+                                                                {hint && <p>{hint}</p>}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                    <div className="w-full">
+                                                        <button
+                                                            hidden={hideHintButton}
+                                                            type="button"
+                                                            className="hover:bg-neutral-800 text-center mx-auto bg-[#212121] w-full py-2 text-lg"
+                                                            onClick={handleButtonClick}
+                                                        >
+                                                            <span className="sr-only bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-600">View hint</span>
+                                                            <i class="fas fa-unlock "></i>&nbsp; Unlock Hint #{hintMessages.length + 1}
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            ))}
-                                            <div className="w-full">
-                                                <button
-                                                hidden={hideHintButton}
-                                                type="button"
-                                                className="hover:bg-neutral-800 text-center mx-auto bg-[#212121] w-full py-2 text-lg"
-                                                onClick={handleButtonClick}
-                                                >
-                                                <span className="sr-only bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-600">View hint</span>
-                                                <i class="fas fa-unlock "></i>&nbsp; Unlock Hint #{hintMessages.length + 1}
-                                                </button>
-                                            </div>
-                                            </div>
-                                        ) : (
-                                            <p className="text-base font-normal text-white">
-                                            Oops, no hints for this challenge.
-                                            </p>
-                                        )}
+                                            ) : (
+                                                <p className="text-base font-normal text-white">
+                                                    Oops, no hints for this challenge.
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </Dialog.Panel>
@@ -857,6 +868,6 @@ export default function Challenge() {
             ℹ We provide accessible environments for everyone to run cybersecurity
             tools. Abuse and unnecessary computation is prohibited.
         </p>
-        <Footer/>
+        <Footer />
     </>)
 }

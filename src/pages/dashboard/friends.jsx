@@ -30,8 +30,13 @@ export default function Dashboard() {
                 const response = await fetch(endPoint, requestOptions);
                 const result = await response.json();
 
+                
                 setUsername(localStorage.getItem('username'));
 
+
+                if (!result || !result.friends) {
+                    return;
+                }
                 result.friends.forEach((friend, index) => {
                     fetchFriendData(friend, index)
                 });

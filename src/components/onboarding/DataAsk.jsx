@@ -93,12 +93,12 @@ export function DataAsk({ props }) {
 
 
   return (
-    <>
+    <div className="h-screen my-auto">
 
 
-<div className='grid grid-cols-2 max-w-6xl mx-auto mt-20'>
+<div className='mt-60 mx-auto my-auto items-center justify-center grid grid-cols-2 max-w-6xl mx-auto mt-20'>
   
-      <div className="  ">
+      <div className="   my-auto">
 
        
 
@@ -109,7 +109,7 @@ export function DataAsk({ props }) {
 
           <div
             style={{ backgroundColor: '#161716' }}
-            className=" mt-4 "
+            className=" "
           >
             <div className="  px-4 ">
               <h1 className="text-xl text-white ">
@@ -231,10 +231,10 @@ Finish creating your account
         
         <h1 className='mt-4'>You don't need to provide us your first name or last name, but we do need a username (to know who you are) and date of birth (COPPA laws). </h1>
          
-         <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide website."<br/>- Scratch</h1>
+         <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide account."<br/>- Scratch (Employee #2)</h1>
          </div>
 
       </div>
-    </>
+    </div>
   );
 }
