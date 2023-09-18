@@ -12,7 +12,6 @@ import Skeleton from 'react-loading-skeleton';
 import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import { data } from 'autoprefixer';
-import { Chart } from "react-google-charts";
 import { faF } from '@fortawesome/free-solid-svg-icons';
 
 export const data2 = [

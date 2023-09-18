@@ -187,9 +187,9 @@ export default function Dashboard() {
                     {/* Main content area */}
                     <div className="flex-1 mt-5 justify-center items-center">
                         <div className="flex items-center">
-                            <h1 className="mt-5 text-3xl text-white">My Friends</h1>
+                            <h1 className="mt-5 text-3xl text-white">Friends</h1>
                             <button
-                                className="popup-button text-white mt-5 mx-4 px-3 py-2 bg-neutral-800 hover:text-neutral-500"
+                                className="ml-auto popup-button text-white mt-5  rounded-md px-3 py-2 bg-neutral-800 hover:bg-neutral-700 duration-4000  transition ease-in-out hover:bg-neutral-800/40"
                                 onClick={handlePopupOpen}
                             >View Friend Requests</button>
 
@@ -266,7 +266,12 @@ export default function Dashboard() {
                         {!friends &&
                             <h1 className="mt-5 text-3xl text-white">No Friends Added... 😕</h1>
                         }
+                    <div className='border border-yellow-600 bg-yellow-900 px-2 py-1 rounded-lg'>
+                        <h1 className='text-white'>This feature is currently disabled. Starting Sept 17, you'll start seeing UI related to social features. But, they are not ready to use. Only CTFGuide developers will have access.</h1>
+                        </div>
                     </div>
+
+         
                 </div>
             </main>
         </>

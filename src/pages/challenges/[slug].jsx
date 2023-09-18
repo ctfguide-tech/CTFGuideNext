@@ -171,7 +171,7 @@ export default function Challenge() {
         if (!slug) {
             return;
         }
-        fetchSolvedUsers();
+     //   fetchSolvedUsers();
     }, [slug]);
 
     const fetchSolvedUsers = async () => {

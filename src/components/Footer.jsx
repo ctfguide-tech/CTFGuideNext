@@ -13,7 +13,7 @@ export function Footer() {
               <NavLink href="../terms-of-service">Terms of Service</NavLink>
               <NavLink href="../privacy-policy">Privacy Policy</NavLink>
               <NavLink href="https://status.ctfguide.com/">Status</NavLink>
-              <NavLink href="../careers">Join our Team!</NavLink>
+              <NavLink href="../careers">Careers</NavLink>
             </div>
           </nav>
         </div>
@@ -52,12 +52,17 @@ export function Footer() {
               className="group"
               aria-label="ctfguideapp on Twitter"
             >
+             
               <svg
                 aria-hidden="true"
-                className="h-6 w-6 fill-white group-hover:fill-sky-400"
+                className="h-6 w-6 fill-white group-hover:fill-[#1da1f2]"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
               >
-                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0 0 22 5.92a8.19 8.19 0 0 1-2.357.646 4.118 4.118 0 0 0 1.804-2.27 8.224 8.224 0 0 1-2.605.996 4.107 4.107 0 0 0-6.993 3.743 11.65 11.65 0 0 1-8.457-4.287 4.106 4.106 0 0 0 1.27 5.477A4.073 4.073 0 0 1 2.8 9.713v.052a4.105 4.105 0 0 0 3.292 4.022 4.093 4.093 0 0 1-1.853.07 4.108 4.108 0 0 0 3.834 2.85A8.233 8.233 0 0 1 2 18.407a11.615 11.615 0 0 0 6.29 1.84" />
+                <path d="M512 97.2c-18.8 8.3-39.1 13.9-60.2 16.4 21.6-13 38.2-33.6 46-58.1-20.2 12-42.6 20.7-66.4 25.4C416.2 62.7 390.2 48 362.2 48c-59.4 0-107.5 48-107.5 107.5 0 8.4.9 16.6 2.6 24.5-89.3-4.5-168.6-47.3-221.5-112.6-9.2 15.8-14.5 34.2-14.5 53.8 0 37.2 18.9 69.9 47.6 88.9-17.5-.5-34-5.4-48.4-13.4v1.3c0 51.9 36.8 95.3 85.7 105.2-8.9 2.4-18.3 3.7-28 3.7-6.8 0-13.4-.7-19.9-2 13.5 42.1 52.5 72.8 98.6 73.6-36 28.2-81.3 45-130.6 45-8.5 0-16.9-.5-25.2-1.5C46.2 448.5 101.2 464 160.2 464c192.3 0 297.6-159.3 297.6-297.6 0-4.5-.1-9-.3-13.4 20.5-14.8 38.2-33.3 52.3-54.4z"/>
+
               </svg>
+
             </Link>
             <Link
               href="https://github.com/ctfguide-tech"
