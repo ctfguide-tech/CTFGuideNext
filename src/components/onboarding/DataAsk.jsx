@@ -22,6 +22,9 @@ export function DataAsk({ props }) {
     var firstname = document.getElementById('firstname').value;
     var lastname = document.getElementById('lastname').value;
 
+    var termsAgreement = document.getElementById('legal').checked;
+
+
 
 
 
@@ -35,54 +38,59 @@ export function DataAsk({ props }) {
     );
     localStorage.setItem(
       'lastname',
-      document.getElementById('lastname').value 
+      document.getElementById('lastname').value
     );
 
-    if (!username || !birthday || !firstname || !lastname) {
-      return window.alert('Please fill out all fields.');
+    if (!username || !birthday || !firstname || !lastname || !termsAgreement) {
+      document.getElementById('error').classList.remove('hidden');
+      document.getElementById('error').innerHTML = "Username must be between 3 and 20 letters/numbers!";
+
+    } else if (username.length < 3 || username.length > 20) {
+      document.getElementById('error').classList.remove('hidden');
+      document.getElementById('error').innerHTML = "Username must be between 3 and 20 letters/numbers!";
     } else {
-     // window.location.replace('./onboarding?part=2');
-     var xhr = new XMLHttpRequest();
-     xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
-     xhr.setRequestHeader('Content-Type', 'application/json');
-     xhr.setRequestHeader(
-       'Authorization',
-       'Bearer ' + localStorage.getItem('idToken')
-     );
-     xhr.addEventListener('readystatechange', function () {
-       if (this.readyState === 4 && this.readyState === 201) {
-         var parsed = JSON.parse(this.responseText);
-         if (parsed.username) {
-           // Sign out
-           localStorage.removeItem('idToken');
- 
-           // Redirect to login
-           window.location.href = '/login';
-         }
-       }
- 
-       if (this.readyState === 4 && this.readyState != 201) {
-         var parsed = JSON.parse(this.responseText);
- 
-         if (parsed.error == 'undefined' || !parsed.error) {
-           window.location.replace('/login');
-         } else {
-    //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
-    document.getElementById('error').classList.remove('hidden');
-    document.getElementById('error').innerHTML = parsed.error;
-         }
-       }
-     });
- 
-     xhr.send(
-       JSON.stringify({
-         username: localStorage.getItem('username'),
-         birthday: localStorage.getItem('birthday'),
-         firstName: localStorage.getItem('firstname'),
-         lastName: localStorage.getItem('lastname'),
-         location: "????",
-       })
-     );
+      // window.location.replace('./onboarding?part=2');
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader(
+        'Authorization',
+        'Bearer ' + localStorage.getItem('idToken')
+      );
+      xhr.addEventListener('readystatechange', function () {
+        if (this.readyState === 4 && this.readyState === 201) {
+          var parsed = JSON.parse(this.responseText);
+          if (parsed.username) {
+            // Sign out
+            localStorage.removeItem('idToken');
+
+            // Redirect to login
+            window.location.href = '/login';
+          }
+        }
+
+        if (this.readyState === 4 && this.readyState != 201) {
+          var parsed = JSON.parse(this.responseText);
+
+          if (parsed.error == 'undefined' || !parsed.error) {
+            window.location.replace('/login');
+          } else {
+            //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = parsed.error;
+          }
+        }
+      });
+
+      xhr.send(
+        JSON.stringify({
+          username: localStorage.getItem('username'),
+          birthday: localStorage.getItem('birthday'),
+          firstName: localStorage.getItem('firstname'),
+          lastName: localStorage.getItem('lastname'),
+          location: "????",
+        })
+      );
     }
 
     //window.location.replace("./onboarding?part=2");
@@ -96,109 +104,109 @@ export function DataAsk({ props }) {
     <div className="h-screen my-auto">
 
 
-<div className='mt-60 mx-auto my-auto items-center justify-center grid grid-cols-2 max-w-6xl mx-auto mt-20'>
-  
-      <div className="   my-auto">
+      <div className='mt-60 mx-auto my-auto items-center justify-center grid grid-cols-2 max-w-6xl mx-auto mt-20'>
 
-       
+        <div className="   my-auto">
 
 
-        <div style={{ backgroundColor: '#161716' }} className=" ">
-       
 
 
-          <div
-            style={{ backgroundColor: '#161716' }}
-            className=" "
-          >
-            <div className="  px-4 ">
-              <h1 className="text-xl text-white ">
-                {' '}
-Finish creating your account
-              </h1>
+          <div style={{ backgroundColor: '#161716' }} className=" ">
 
-              <div
-                id="error"
-                className="mt-2 mb-2 hidden rounded-lg bg-red-900 px-2 py-1 text-center text-white"
-              >
-                Error - Something went wrong.
-              </div>
-              <div className=" mt-4">
-                <div className="isolate -space-y-px rounded-md sh
-                adow-sm">
-                  <div
-                    style={{ borderColor: '#212121' }}
-                    className="relative rounded-md rounded-b-none border  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-                  >
 
-<label
-                      htmlFor="job-title"
-                      className="block text-xs font-medium text-white"
-                    >
-                      Username
-                    </label>
-             
-                    <input
-                      type="text"
-                      name="name"
-                      id="username"
-                      style={{ backgroundColor: '#212121' }}
-                      className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
-                      placeholder="This is what people on CTFGuide will know you as."
-                    />
-                  </div>
-                  
-                  <div
-                    style={{ borderColor: '#212121' }}
-                    className="relative rounded-md rounded-t-none rounded-b-none border gap-x-4  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-                  >       <label
-                  htmlFor="job-title"
-                  className="block text-xs font-medium text-white"
+
+            <div
+              style={{ backgroundColor: '#161716' }}
+              className=" "
+            >
+              <div className="  px-4 ">
+                <h1 className="text-xl text-white ">
+                  {' '}
+                  Finish creating your account
+                </h1>
+
+                <div
+                  id="error"
+                  className="mt-2 mb-2 hidden rounded-lg bg-red-900 px-2 py-1 text-center text-white"
                 >
-                  Full Name (optional)
-                </label>
-                   <div className='flex gap-x-4'> 
-                    <input
-                      type="text"
-                      name="name"
-                      id="firstname"
-                      style={{ backgroundColor: '#212121' }}
-                      className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
-                      placeholder="First Name"
-                    />
+                  Error - Something went wrong.
+                </div>
+                <div className=" mt-4">
+                  <div className="isolate -space-y-px rounded-md sh
+                adow-sm">
+                    <div
+                      style={{ borderColor: '#212121' }}
+                      className="relative rounded-md rounded-b-none border  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                    >
 
-                    <input
-                      type="text"
-                      name="name"
-                      id="lastname"
-                      style={{ backgroundColor: '#212121' }}
-                      className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
-                      placeholder="Last Name"
-                    />
-                  </div>
-                  </div> 
+                      <label
+                        htmlFor="job-title"
+                        className="block text-xs font-medium text-white"
+                      >
+                        Username
+                      </label>
 
-                  <div
-                    style={{ borderColor: '#212121' }}
-                    className="relative rounded-md rounded-t-none border px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-                  >
-                    <label
+                      <input
+                        type="text"
+                        name="name"
+                        id="username"
+                        style={{ backgroundColor: '#212121' }}
+                        className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
+                        placeholder="This is what people on CTFGuide will know you as."
+                      />
+                    </div>
+
+                    <div
+                      style={{ borderColor: '#212121' }}
+                      className="relative rounded-md rounded-t-none rounded-b-none border gap-x-4  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                    >       <label
                       htmlFor="job-title"
                       className="block text-xs font-medium text-white"
                     >
-                      Birthday
-                    </label>
+                        Full Name (optional)
+                      </label>
+                      <div className='flex gap-x-4'>
+                        <input
+                          type="text"
+                          name="name"
+                          id="firstname"
+                          style={{ backgroundColor: '#212121' }}
+                          className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
+                          placeholder="First Name"
+                        />
 
-                    <input
-                      id="birthday"
-                      type="date"
-                      style={{ backgroundColor: '#212121' }}
-                      className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
-                    ></input>
+                        <input
+                          type="text"
+                          name="name"
+                          id="lastname"
+                          style={{ backgroundColor: '#212121' }}
+                          className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
+                          placeholder="Last Name"
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      style={{ borderColor: '#212121' }}
+                      className="relative rounded-md rounded-t-none border px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                    >
+                      <label
+                        htmlFor="job-title"
+                        className="block text-xs font-medium text-white"
+                      >
+                        Birthday
+                      </label>
+
+                      <input
+                        id="birthday"
+                        type="date"
+                        style={{ backgroundColor: '#212121' }}
+                        className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
+                      ></input>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mx-auto inline-flex text-center mt-4">
+                  <div className="mx-auto inline-flex text-center mt-4">
                     <input
                       id="legal"
                       style={{ backgroundColor: '#212121' }}
@@ -210,29 +218,31 @@ Finish creating your account
                     </p>
                   </div>
 
-                <div className="mx-auto mx-auto text-center">
-                  <button
-                    onClick={submitData}
-                    className="button mx-auto mt-8 w-2/3 rounded bg-blue-800 py-2 text-white hover:bg-blue-900"
-                  >
-                    Start Hacking
-                  </button>
+                  <div className="mx-auto mx-auto text-center">
+                    <button
+                      onClick={() => {
+                        submitData();
+                      }}
+                      className="button mx-auto mt-8 w-2/3 rounded bg-blue-800 py-2 text-white hover:bg-blue-900"
+                    >
+                      Start Hacking
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className='mx-auto my-auto text-white px-10'>
-        
+        <div className='mx-auto my-auto text-white px-10'>
 
-        <h1> We learned 55% of new signups weren't finishing our onboarding process, so we tried cutting it down to just 4 input boxes. </h1>
-        
-        <h1 className='mt-4'>You don't need to provide us your first name or last name, but we do need a username (to know who you are) and date of birth (COPPA laws). </h1>
-         
-         <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide account."<br/>- Scratch (Employee #2)</h1>
-         </div>
+
+          <h1> We learned 55% of new signups weren't finishing our onboarding process, so we tried cutting it down to just 4 input boxes. </h1>
+
+          <h1 className='mt-4'>You don't need to provide us your first name or last name, but we do need a username (to know who you are) and date of birth (COPPA laws). </h1>
+
+          <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide account."<br />- Scratch (Employee #2)</h1>
+        </div>
 
       </div>
     </div>
