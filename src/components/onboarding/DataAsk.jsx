@@ -17,6 +17,8 @@ export function DataAsk({ props }) {
   function submitData() {
     // Generate JSON to send
 
+
+    
     var username = document.getElementById('username').value;
     var birthday = document.getElementById('birthday').value;
     var firstname = document.getElementById('firstname').value;
@@ -43,13 +45,37 @@ export function DataAsk({ props }) {
 
     if (!username || !birthday || !firstname || !lastname || !termsAgreement) {
       document.getElementById('error').classList.remove('hidden');
-      document.getElementById('error').innerHTML = "Username must be between 3 and 20 letters/numbers!";
-
+      document.getElementById('error').innerHTML = "Fill all fields.";
+      return;
     } else if (username.length < 3 || username.length > 20) {
       document.getElementById('error').classList.remove('hidden');
       document.getElementById('error').innerHTML = "Username must be between 3 and 20 letters/numbers!";
-    } else {
-      // window.location.replace('./onboarding?part=2');
+      return;
+    } else  if (birthday) {
+      const minDate = new Date("1900-01-01");
+      const currentDate = new Date();
+      const maxDate = new Date(currentDate.getFullYear() - 13, currentDate.getMonth(), currentDate.getDate());
+      const inputDate = new Date(birthday);
+  
+      if (isNaN(inputDate.getTime())) {
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error').innerHTML = "Invalid date format.";
+        return;
+      }
+  
+      if (inputDate < minDate) {
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error').innerHTML = "Date must be after January 1, 1900";
+        return;
+      }
+  
+      if (inputDate > maxDate) {
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error').innerHTML = "You must be 13 or older.";
+        return;
+      }
+  
+      // send http request
       var xhr = new XMLHttpRequest();
       xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
       xhr.setRequestHeader('Content-Type', 'application/json');
@@ -65,19 +91,20 @@ export function DataAsk({ props }) {
             localStorage.removeItem('idToken');
 
             // Redirect to login
-            window.location.href = '/login';
+            window.location.href = '/dashboard';
           }
         }
 
         if (this.readyState === 4 && this.readyState != 201) {
           var parsed = JSON.parse(this.responseText);
 
-          if (parsed.error == 'undefined' || !parsed.error) {
+          if (parsed.error == 'undefined' || parsed.error) {
             window.location.replace('/login');
           } else {
+            window.location.href = "./dashboard";
             //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
-            document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = parsed.error;
+         //   document.getElementById('error').classList.remove('hidden');
+         //   document.getElementById('error').innerHTML = parsed.error;
           }
         }
       });
@@ -91,10 +118,11 @@ export function DataAsk({ props }) {
           location: "????",
         })
       );
-    }
-
-    //window.location.replace("./onboarding?part=2");
-  }
+      }
+    
+  } 
+  
+ 
 
 
 
