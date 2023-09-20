@@ -26,6 +26,7 @@ function classNames(...classes) {
 const auth = getAuth();
 
 const adminList = ["pranav,"]
+
 const DEFAULT_NOTIFICATION = {
   image:
     'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
@@ -36,6 +37,7 @@ const DEFAULT_NOTIFICATION = {
 
 export function StandardNav() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [points, setPoints] = useState('');
 
   const router = useRouter();
 
@@ -130,6 +132,8 @@ export function StandardNav() {
           }
 
           setUsername(data.username);
+          setPoints(data.points);
+
         })
         .catch((err) => {
           console.log(err);
@@ -224,6 +228,24 @@ export function StandardNav() {
                 </div>
               </div>
               <div className="flex items-center">
+                     <div
+                className="mb-0 rounded-lg px-4 py-1 flex items-center space-x-2"
+                style={{ backgroundColor: '#212121', borderWidth: '0px' }}
+              >
+                <h1 className="mx-auto mt-0 mb-0 text-center font-semibold  text-blue-500">
+                <i class="far fa-check-circle"></i> {points}
+                </h1>
+
+              </div>
+              <div
+                className="ml-4 mb-0 rounded-lg px-4 py-1 flex items-center space-x-2"
+                style={{ backgroundColor: '#212121', borderWidth: '0px' }}
+              >
+                <h1 className="mx-auto mt-0 mb-0 text-center font-semibold text-orange-400">
+                <i class="fas fa-fire"></i> 0
+                </h1>
+
+              </div>
                 <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
                
 

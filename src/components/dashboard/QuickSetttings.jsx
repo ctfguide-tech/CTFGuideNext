@@ -34,9 +34,9 @@ export function QuickSettings() {
   return (
     <>
 
-<div className="mx-auto grid max-w-7xl ">
+<div className="mx-auto grid max-w-7xl">
                 
-                <div className="mt-10">
+                <div className="mt-10 hidden">
               
                 <h1 className="mt-2 text-xl text-gray-300"> GETTING STARTED</h1>
 
@@ -170,7 +170,7 @@ export function QuickSettings() {
               </div>
 
 
-      <h1 className="text-xl text-gray-300"> SITE FEED</h1>
+      <h1 className="text-xl text-gray-300 mt-10"> SITE FEED</h1>
 
       <div className="mx-auto mb-4 mt-1 w-full gap-4 gap-y-6 rounded-lg">
         <div

@@ -11,7 +11,7 @@ export function Suggest() {
       <div className="mb-5 grid grid-cols-2 gap-x-4">
         <div className="">
           <a href='../challenges/cypher_decoding'>
-            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4  ring-1 ring-white/10 hover:ring-neutral-600">
+            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4   ">
               <div className="relative mx-auto max-w-7xl  px-5">
                 <div
                   className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
@@ -39,7 +39,7 @@ export function Suggest() {
 
         <div className="">
           <a href='../challenges/obedient_cat'>
-            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4  ring-1 ring-white/10 hover:ring-neutral-600">
+            <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4 ">
               <div className="relative mx-auto max-w-7xl  px-5">
                 <div
                   className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"

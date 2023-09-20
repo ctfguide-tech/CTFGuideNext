@@ -125,15 +125,7 @@ export function DashboardHeader() {
                 )}
               </div>
 
-              <div
-                className="mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-2"
-                style={{ backgroundColor: '#212121', borderWidth: '0px' }}
-              >
-                <h1 className="mx-auto mt-0 mb-0 text-center font-semibold text-white">
-                  {points}
-                </h1>
-                <p className="mt-0 text-white">Points</p>
-              </div>
+         
               <div
                 onClick={() => {
 
