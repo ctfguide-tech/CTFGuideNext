@@ -35,21 +35,117 @@ export default function Challenge() {
         points: 0, susername: 'Loading...', spassword: 'Loading...',
     });
 
-
     // Start Terminal
     useEffect(() => {
-      
+       
+        
+        // first fetch active terminals
+        const fetchActiveTerminals = async () => {
+            var raw = "";
+
+            var requestOptions = {
+              method: 'GET',
+              redirect: 'follow'
+            };
+            
+            fetch(`https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem("idToken")}`, requestOptions)
+              .then(response => response.json())
+              .then(result => {
+                console.log(result);
+                
+                
+
+                // handle if empty array
+                if (result.length == 0) {
+                    
+                        try {
+                      //      window.alert("no terminals found")
+                            fetchTerminalData();
+                        } catch (err) {
+                            console.log(err);
+                            setTerminalUsername('Something went wrong.');
+                            setTerminalPassword('Something went wrong.');
+                        }
+
+                } else {
+                    setTerminalUsername(result[0].userName);
+                    setTerminalPassword(result[0].password);
+                    document.getElementById("termurl").src = result[0].url;
+                    document.getElementById("timer").innerText = result[0].minutesRemaining + " minutes";  
+                    let minutes = result[0].minutesRemaining;
+                    setInterval(function() {
+                        // drop minutes
+                        if (minutes == 0) {
+                            window.alert("Your terminal session has expired. Please refresh the page to start a new session.")
+                            window.location.reload();
+                        }
+                        minutes = minutes - 1;
+                        document.getElementById("timer").innerText = minutes + " minutes";
+
+
+                    }, 60000)
+                 
+                }
+              })
+              .catch(error => console.log('error', error));
+
+
+              // send request
+
+
+
+        }
+
+        
         const fetchTerminalData = async () => {
             try {
-                const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
-                const requestOptions = {
-                    method: 'GET',
-                };
-                const response = await fetch(endPoint, requestOptions);
-                const result = await response.json();
+                console.log("[debug] Creating new container session because nothing was found.")
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                // random 4 digit number
+                let code = Math.floor(Math.random() * 9000) + 1000;
 
-                setTerminalUsername(result.username);
-                setTerminalPassword(result.password);
+                // create a secure random password
+                var password = "";
+                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+                for (var i = 0; i < 10; i++)
+                password += possible.charAt(Math.floor(Math.random() * possible.length));
+                
+                var raw = JSON.stringify({
+                  "jwtToken": localStorage.getItem("idToken"),
+                  "TerminalGroupName": "school-class-session", // temp
+                  "TerminalID": `${code}`,
+                  "classID": "psu58102", // temp
+                  "dockerLocation": "wettyoss/wetty:latest",// temp
+                  "injectFileLocation": "", // temp
+                  "maxCpuLimit": "500m",// temp
+                  "maxMemoryLimit": "512Mi",// temp
+                  "minCpuLimit": "250m",// temp
+                  "minMemoryLimit": "256Mi",// temp
+                  "terminalUsername": localStorage.getItem("username"),
+                  "organizationName": "PSU", // temp
+                  "terminalPassword": "",
+                  "userID": localStorage.getItem("username"),
+
+                });
+                
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: raw,
+                  redirect: 'follow'
+                };
+                
+                fetch("https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/createTerminal", requestOptions)
+                  .then(response => {
+                    response.json();
+                    
+                // reload page
+                window.location.reload();
+                  })
+                  .then(result => console.log(result))
+                  .catch(error => console.log('error', error));
             } catch (err) {
                 console.log(err);
                 setTerminalUsername('Something went wrong.');
@@ -57,13 +153,13 @@ export default function Challenge() {
             }
         };
 
+
         try {
-            fetchTerminalData();
-        } catch (err) {
+            fetchActiveTerminals();
+        } catch(err) {
             console.log(err);
-            setTerminalUsername('Something went wrong.');
-            setTerminalPassword('Something went wrong.');
         }
+
     }, []);
 
 
@@ -77,30 +173,34 @@ export default function Challenge() {
         </Head>
         <main>
         <div id="terminal" className=" mt-6 max-w-6xl mx-auto">
-                    <p className="hint mb-2 text-gray-400">
-                        <span className="text-white ">Terminal (Beta)</span> Login as{' '}
+                    <div className="hint mb-2 text-gray-400">
+                        <span className="text-white ">Terminal <span className='text-blue-500'>build: 1.0.2</span></span> Login as{' '}
                         <span className="text-yellow-400">{terminalUsername}</span> using
                         the password{' '}
                         <span className="text-yellow-400">{terminalPassword}</span>
-
-                        <span onClick={() => {
-                            window.location.reload()
-                        }}
-                              className='float-right ml-auto flex hover:text-neutral-300 cursor-pointer'> <ArrowPathIcon
-                            className='h-6 w-6 mr-2'/> Reset Terminal</span>
+                        
+                        <div
+                              className='float-right ml-auto flex  cursor-pointer'>  
+                        
+                              
+                          
                         <a
                             style={{cursor: 'pointer'}}
-                            className="hidden text-gray-300 hover:bg-black"
+                            className=" text-gray-300 hover:bg-black"
                         >
-                            Need help?
+                            Container will stop in: <span id="timer"></span>
                         </a>
-                    </p>
+                        </div>
+                    </div>
+          
                     <iframe
-                        className="w-full"
+                        className="w-full bg-white"
                         height="500"
-                        src="https://terminal.ctfguide.com/wetty/ssh/root?pass="
+                        id="termurl"
+                        src="https://fonty.ctfguide.com/ctfterminal/"
                     ></iframe>
                 </div>
+
         </main>
 
 

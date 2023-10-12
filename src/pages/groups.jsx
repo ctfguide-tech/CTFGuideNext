@@ -5,9 +5,43 @@ import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { useState } from 'react';
-export default function ComingSoon() {
+export default function Groups() {
 
   const [open, setOpen] = useState(false);
+
+  function joinCode() {
+    // Fetch code
+    // If code is valid, join group
+    // Else, display error
+
+    let code = document.getElementById("joinCode").ariaValueMax;
+    if (!code) {
+      return window.alert("Please enter a join code.")
+    } 
+
+    fetch('/api/groups', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code: code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+        if (data.success == true) {
+          window.location.reload();
+        } else {
+          window.alert("Invalid join code.")
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+
+  }
+
   return (
     <>
       <Head>
@@ -27,7 +61,7 @@ export default function ComingSoon() {
           <div className='flex'>
             <h1 className='text-white text-3xl'>Groups</h1>
             <div className='ml-auto'>
-              <button className='px-2 py-1 rounded-lg bg-blue-600 text-white ml-4'>Create Group</button>
+              <a href="./groups/create" className='px-2 py-1 rounded-lg bg-blue-600 text-white ml-4'>Create Group</a>
               <button onClick={() => setOpen(true)} className='px-2 py-1 rounded-lg  bg-neutral-800/50 hover:bg-neutral-700/50 text-white ml-4'>Join a Group</button>
 
             </div>
@@ -124,10 +158,10 @@ export default function ComingSoon() {
                 <div className='w-full'>
                     <div className="mt-3 sm:mt-5 text-center mx-auto">
                         <h1 className="text-white text-xl text-center"> Enter a join code</h1>
-                        <input className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  '></input>
+                        <input id="joinCode" className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  '></input>
                       <br></br>
                       <div className='w-full mx-auto text-center mt-4 pb-5' >
-                        <button className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => setOpen(false)} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
+                        <button onClick={() => joinGroup()} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => setOpen(false)} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
                         </div>
                     </div>
                 </div>
