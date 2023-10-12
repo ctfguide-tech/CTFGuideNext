@@ -81,41 +81,165 @@ export default function Challenge() {
         fetchData();
     }, [slug]);
 
-    // Start Terminal
+ 
+
+
     useEffect(() => {
-        if (!slug) {
-            return;
+       
+        
+        // first fetch active terminals
+        const fetchActiveTerminals = async () => {
+            var raw = "";
+
+            var requestOptions = {
+              method: 'GET',
+              redirect: 'follow'
+            };
+            
+            fetch(`https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem("idToken")}`, requestOptions)
+              .then(response => response.json())
+              .then(result => {
+                console.log(result);
+                
+                
+
+                // handle if empty array
+                if (result.length == 0) {
+                    
+                        try {
+                      //      window.alert("no terminals found")
+                            fetchTerminalData();
+                        } catch (err) {
+                            console.log(err);
+                            setTerminalUsername('Something went wrong.');
+                            setTerminalPassword('Something went wrong.');
+                        }
+
+                } else {
+                    setTerminalUsername(result[0].userName);
+                    setTerminalPassword(result[0].password);
+                    document.getElementById("termurl").src = result[0].url;
+
+                    setTimeout(function () {
+                        document.getElementById("termurl").classList.remove("opacity-0");
+                        document.getElementById("terminalLoader").classList.add("hidden");
+                    }, 2000)
+
+                    document.getElementById('termurl').onload = function() {
+                        try {
+                            const iframeContent = this.contentDocument || this.contentWindow.document;
+                    
+                            // Check for a 404 error. This is a very basic check and might not cover all scenarios.
+                            if (iframeContent.title.includes('404') || iframeContent.body.innerText.includes('404 Not Found')) {
+                                console.log('404 detected, reloading iframe...');
+                                setTimeout(() => {
+                                    this.contentWindow.location.reload();
+                                }, 1000); // reload after 1 second, adjust as needed
+                            }
+                        } catch (e) {
+                            console.error('Could not access iframe content:', e);
+                        }
+                    };
+                    
+                    document.getElementById("timer").innerText = result[0].minutesRemaining + " minutes";  
+                    let minutes = result[0].minutesRemaining;
+                    setInterval(function() {
+                        // drop minutes
+                        if (minutes == 0) {
+                            window.alert("Your terminal session has expired. Please refresh the page to start a new session.")
+                            window.location.reload();
+                        }
+                        minutes = minutes - 1;
+                        document.getElementById("timer").innerText = minutes + " minutes";
+
+
+                    }, 60000)
+                 
+                }
+              })
+              .catch(error => console.log('error', error));
+
+
+              // send request
+
+
+
         }
+
+        
         const fetchTerminalData = async () => {
             try {
-                const endPoint = 'https://terminal-gateway.ctfguide.com/createvm';
-                const requestOptions = {
-                    method: 'GET',
+                console.log("[debug] Creating new container session because nothing was found.")
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                // random 4 digit number
+                let code = Math.floor(Math.random() * 9000) + 1000;
+
+                // create a secure random password
+                var password = "";
+                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+                for (var i = 0; i < 10; i++)
+                password += possible.charAt(Math.floor(Math.random() * possible.length));
+                
+                var raw = JSON.stringify({
+                  "jwtToken": localStorage.getItem("idToken"),
+                  "TerminalGroupName": "school-class-session", // temp
+                  "TerminalID": `${code}`,
+                  "classID": "psu58102", // temp
+                  "dockerLocation": "wettyoss/wetty:latest",// temp
+                  "injectFileLocation": "", // temp
+                  "maxCpuLimit": "500m",// temp
+                  "maxMemoryLimit": "512Mi",// temp
+                  "minCpuLimit": "250m",// temp
+                  "minMemoryLimit": "256Mi",// temp
+                  "terminalUsername": localStorage.getItem("username"),
+                  "organizationName": "PSU", // temp
+                  "terminalPassword": "",
+                  "userID": localStorage.getItem("username"),
+
+                });
+                
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: raw,
+                  redirect: 'follow'
                 };
-                const response = await fetch(endPoint, requestOptions);
-                const result = await response.json();
-                if (result.username === "" || result.password === "") {
-                    fetchTerminalData();
-                }
-                setTerminalUsername(result.username);
-                setTerminalPassword(result.password);
+                
+                fetch("https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/createTerminal", requestOptions)
+                  .then(response => {
+                    response.json();
+                    
+                // reload page
+                window.location.reload();
+                  })
+                  .then(result => console.log(result))
+                  .catch(error => console.log('error', error));
             } catch (err) {
                 console.log(err);
                 setTerminalUsername('Something went wrong.');
                 setTerminalPassword('Something went wrong.');
-
-
             }
         };
 
+
         try {
-            fetchTerminalData();
-        } catch (err) {
+            fetchActiveTerminals();
+        } catch(err) {
             console.log(err);
-            setTerminalUsername('Something went wrong.');
-            setTerminalPassword('Something went wrong.');
         }
+
     }, [slug]);
+
+
+
+
+
+
+
+
+
 
     useEffect(() => {
         if (!slug) {
@@ -373,6 +497,8 @@ export default function Challenge() {
         }
     };
 
+
+
     const submitComment = async () => {
         const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments';
         const requestOptions = {
@@ -495,7 +621,7 @@ export default function Challenge() {
                                     document.getElementById("reportalert").classList.add("hidden");
                                 }, 5000);
                             }}
-                            className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
+                            className="card-body hidden m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
                         >
                             <h1 className=" flex bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
                                 <FlagIcon className="h-8 w-8 text-yellow-600 mr-2" /> <p
@@ -587,32 +713,51 @@ export default function Challenge() {
                         </div>
                     </div>
                 </div>
-
-                <div id="terminal" className=" mt-6 ">
-                    <p className="hint mb-2 text-gray-400">
-                        <span className="text-white ">Terminal (Beta)</span> Login as{' '}
+                <div id="terminal" className=" mt-6 max-w-6xl mx-auto">
+                    <div className="hint mb-2 text-gray-400">
+                        <span className="text-white font-semibold   "> <span className='text-blue-500'></span></span> Login as{' '}
                         <span className="text-yellow-400">{terminalUsername}</span> using
                         the password{' '}
                         <span className="text-yellow-400">{terminalPassword}</span>
 
-                        <span onClick={() => {
-                            window.location.reload()
-                        }}
-                            className='float-right ml-auto flex hover:text-neutral-300 cursor-pointer'> <ArrowPathIcon
-                                className='h-6 w-6 mr-2' /> Reset Terminal</span>
-                        <a
-                            style={{ cursor: 'pointer' }}
-                            className="hidden text-gray-300 hover:bg-black"
+                        <div
+                              className='float-right ml-auto flex  cursor-pointer'>  
+                        
+                            
+                          
+                        <span
+                            style={{cursor: 'pointer'}}
+                            className=" text-gray-300 hover:bg-black"
                         >
-                            Need help?
-                        </a>
-                    </p>
+                            Container will stop in: <span id="timer"></span>
+
+
+                        </span>
+
+                        <span onClick={() => {window.location.reload()}} className='ml-2 text-red-500'>If you see a 404, click here.</span>
+
+
+
+
+                        </div>
+                    </div>
+          
+                    <div className="w-full bg-black text-center mx-auto text-white h-500 py-10"
+                        height="500" id="terminalLoader">
+                            <p className='text-center text-4xl mx-auto fa fa-spinner fa-spin'></p>
+                            <h1 className='text-4xl text-center'>Your terminal is booting up.</h1>
+                            <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
+                        </div>
                     <iframe
-                        className="w-full"
+                        className="w-full bg-white opacity-0"
                         height="500"
-                        src="https://terminal.ctfguide.com/wetty/ssh/root?pass="
+                        id="termurl"
+                        src="https://fonty.ctfguide.com/ctfterminal/"
                     ></iframe>
-                </div>
+
+
+                     
+                    </div>
                 <div className="mt-5 rounded-lg px-5 pb-20">
                     <h1 className="text-3xl font-semibold text-white">Comments</h1>
                     <textarea

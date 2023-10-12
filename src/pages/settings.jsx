@@ -9,8 +9,10 @@ import {
   getAuth,
   reauthenticateWithCredential,
   EmailAuthProvider,
+  confirmPasswordReset,
 } from 'firebase/auth';
 import { useRouter } from 'next/router';
+import { loadStripe } from '@stripe/stripe-js';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -25,6 +27,7 @@ export default function Dashboard() {
   const [general, setGeneral] = useState(false);
   const [security, setSecurity] = useState(false);
   const [preferences, setPreferences] = useState(false);
+  const [developer, setDeveloper] = useState(false);
 
   var pfpString = '';
   var pfpChanged = false;
@@ -53,6 +56,14 @@ export default function Dashboard() {
     } else {
       setSecurity(false);
     }
+
+
+    if (router.query.loc == 'developer') {
+      setDeveloper(true);
+    } else {
+      setDeveloper(false);
+    }
+
 
     if (router.query.loc == 'preferences') {
       loadPreferences();
@@ -100,9 +111,8 @@ export default function Dashboard() {
             }
 
             if (JSON.parse(this.responseText).profileImage == '') {
-              document.getElementById('pfp').src = `https://robohash.org/${
-                document.getElementById('username').value
-              }.png?set=set1&size=150x150`;
+              document.getElementById('pfp').src = `https://robohash.org/${document.getElementById('username').value
+                }.png?set=set1&size=150x150`;
             } else {
               document.getElementById('pfp').src = JSON.parse(
                 this.responseText
@@ -123,6 +133,33 @@ export default function Dashboard() {
       xhr.send();
     }
   }
+
+  const redirectToCheckout = async (event) => {
+
+    const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+    
+    const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
+      method: 'POST',
+      body: JSON.stringify({
+        line_items: document.getElementById("paymentType").value        
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const session = await response.json();
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.sessionId,
+      
+    });
+
+    if (result.error) {
+      console.log(result.error.message);
+    }
+
+  };
 
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
@@ -168,9 +205,9 @@ export default function Dashboard() {
               if (downloadURL !== "") {
                 data.profileImage = downloadURL;
               }
-              
+
               var gooddata = JSON.stringify(data);
-              
+
               var xhr = new XMLHttpRequest();
 
               xhr.addEventListener('readystatechange', function () {
@@ -372,6 +409,14 @@ export default function Dashboard() {
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
+                  </a>
+                </li>
+                <li className="py-1 ">
+                  <a
+                    href="../settings?loc=developer"
+                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
+                  >
+                    Developer
                   </a>
                 </li>
               </ul>
@@ -919,6 +964,75 @@ export default function Dashboard() {
         </div>
       )}
 
+
+
+      {developer && (
+        <div id="general" className="">
+          <div className="mx-auto flex max-w-6xl">
+            <div
+              className="  mt-10 flex-none border-r pr-10 pl-10 text-gray-900"
+              style={{ borderColor: '#212121' }}
+            >
+              <ul className="mr-2 py-2">
+                <li className="py-1">
+                  <a
+                    href="../settings"
+                    className="px-2 py-2 text-lg  font-medium text-white"
+                  >
+                    {' '}
+                    General
+                  </a>
+                </li>
+                <li className="py-1 ">
+                  <a
+                    href="../settings?loc=security"
+                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
+                  >
+                    Security
+                  </a>
+                </li>
+                <li className="py-1 ">
+                  <a
+                    href="../settings?loc=preferences"
+                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
+                  >
+                    Email Preferences
+                  </a>
+                </li>
+                <li className="py-1 ">
+                  <a
+                    href="../settings?loc=developer"
+                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
+                  >
+                    Developer
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex-1 xl:overflow-y-auto">
+              <div className="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
+                <h1 className="mb-3 stext-3xl font-bold tracking-tight text-white">
+                  Developer
+                </h1>
+
+              <select id="paymentType" className='bg-neutral-800 py-1 text-white border-none'>
+                <option value="CTFGuidePro">CTFGuidePro</option>
+                <option value="CTFGuideStudentEDU">CTFGuideStudentsEDU</option>
+                <option value="CTFGuideInstitutionEDU">CTFGuideInstitutionEDU</option>
+
+                </select>
+
+                <br></br>
+              <button onClick={redirectToCheckout} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Stripe Checkout Demo</button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       {security && (
         <div id="security" className="">
           <div className="mx-auto flex max-w-6xl">
@@ -950,6 +1064,14 @@ export default function Dashboard() {
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
+                  </a>
+                </li>
+                <li className="py-1 ">
+                  <a
+                    href="../settings?loc=developer"
+                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
+                  >
+                    Developer
                   </a>
                 </li>
               </ul>
@@ -1066,6 +1188,14 @@ export default function Dashboard() {
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
+                  </a>
+                </li>
+                <li className="py-1 ">
+                  <a
+                    href="../settings?loc=developer"
+                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
+                  >
+                    Developer
                   </a>
                 </li>
               </ul>

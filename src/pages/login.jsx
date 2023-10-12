@@ -303,7 +303,7 @@ export default function Login() {
                     </div>
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-6 hidden">
                     <div className="mt-6  gap-3 ">
                     <div>
                         <a

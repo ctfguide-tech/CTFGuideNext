@@ -33,8 +33,14 @@ export default function Dashboard() {
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
+
+
+
+    
       <StandardNav />
       <main>
+
+        console.log("hello")
         <div className="mx-auto ">
           <div
             className="  w-full backdrop-blur-lg"

@@ -2,7 +2,7 @@ export function SideNavContent({ username }) {
   return (
     <>
       <div
-        className="mt-10 mr-6 w-1/6 flex-none border-r text-gray-900 hidden md:block lg:block"
+        className="mt-10 mr-6 w-1/6 flex-none border-none text-gray-900 hidden md:block lg:block"
         style={{ borderColor: '#212121' }}
       >
         <ul className="mr-2 py-2 list-none ">
@@ -57,7 +57,7 @@ export function SideNavContent({ username }) {
           {/*<li className="mb-4 py-1"><a href="../dashboard/my-friends" className="px-2 py-1 text-white hover:text-neutral-300 font-medium text-lg"><i class="fas fa-user-friends mr-2"></i>Friends</a></li>*/}
         </ul>
 
-        <hr className="mx-auto border border-[#212121]"></hr>
+        <hr className="mx-auto border-none"></hr>
 
         <a href="/guides/about">
           <div class="mt-6 mr-4 max-w-sm rounded-lg ">
