@@ -119,6 +119,12 @@ export default function Challenge() {
                     setTerminalUsername(result[0].userName);
                     setTerminalPassword(result[0].password);
                     document.getElementById("termurl").src = result[0].url;
+
+                    setTimeout(function () {
+                        document.getElementById("termurl").classList.remove("opacity-0");
+                        document.getElementById("terminalLoader").classList.add("hidden");
+                    }, 2000)
+
                     document.getElementById('termurl').onload = function() {
                         try {
                             const iframeContent = this.contentDocument || this.contentWindow.document;
@@ -615,7 +621,7 @@ export default function Challenge() {
                                     document.getElementById("reportalert").classList.add("hidden");
                                 }, 5000);
                             }}
-                            className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
+                            className="card-body hidden m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
                         >
                             <h1 className=" flex bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
                                 <FlagIcon className="h-8 w-8 text-yellow-600 mr-2" /> <p
@@ -709,7 +715,7 @@ export default function Challenge() {
                 </div>
                 <div id="terminal" className=" mt-6 max-w-6xl mx-auto">
                     <div className="hint mb-2 text-gray-400">
-                        <span className="text-white ">Terminal <span className='text-blue-500'>build: 1.0.2</span></span> Login as{' '}
+                        <span className="text-white font-semibold   "> <span className='text-blue-500'></span></span> Login as{' '}
                         <span className="text-yellow-400">{terminalUsername}</span> using
                         the password{' '}
                         <span className="text-yellow-400">{terminalPassword}</span>
@@ -717,24 +723,41 @@ export default function Challenge() {
                         <div
                               className='float-right ml-auto flex  cursor-pointer'>  
                         
-                              
+                            
                           
-                        <a
+                        <span
                             style={{cursor: 'pointer'}}
                             className=" text-gray-300 hover:bg-black"
                         >
                             Container will stop in: <span id="timer"></span>
-                        </a>
+
+
+                        </span>
+
+                        <span onClick={() => {window.location.reload()}} className='ml-2 text-red-500'>If you see a 404, click here.</span>
+
+
+
+
                         </div>
                     </div>
           
+                    <div className="w-full bg-black text-center mx-auto text-white h-500 py-10"
+                        height="500" id="terminalLoader">
+                            <p className='text-center text-4xl mx-auto fa fa-spinner fa-spin'></p>
+                            <h1 className='text-4xl text-center'>Your terminal is booting up.</h1>
+                            <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
+                        </div>
                     <iframe
-                        className="w-full bg-white"
+                        className="w-full bg-white opacity-0"
                         height="500"
                         id="termurl"
                         src="https://fonty.ctfguide.com/ctfterminal/"
                     ></iframe>
-                </div>
+
+
+                     
+                    </div>
                 <div className="mt-5 rounded-lg px-5 pb-20">
                     <h1 className="text-3xl font-semibold text-white">Comments</h1>
                     <textarea
