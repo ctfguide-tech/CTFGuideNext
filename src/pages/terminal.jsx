@@ -140,9 +140,9 @@ export default function Challenge() {
                 fetch("https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/createTerminal", requestOptions)
                   .then(response => {
                     response.json();
-                    
-                // reload page
-                window.location.reload();
+                
+
+                    fetchActiveTerminals();
                   })
                   .then(result => console.log(result))
                   .catch(error => console.log('error', error));
@@ -178,7 +178,7 @@ export default function Challenge() {
                         <span className="text-yellow-400">{terminalUsername}</span> using
                         the password{' '}
                         <span className="text-yellow-400">{terminalPassword}</span>
-                        
+
                         <div
                               className='float-right ml-auto flex  cursor-pointer'>  
                         
