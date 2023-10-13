@@ -125,21 +125,6 @@ export default function Challenge() {
                         document.getElementById("terminalLoader").classList.add("hidden");
                     }, 2000)
 
-                    document.getElementById('termurl').onload = function() {
-                        try {
-                            const iframeContent = this.contentDocument || this.contentWindow.document;
-                    
-                            // Check for a 404 error. This is a very basic check and might not cover all scenarios.
-                            if (iframeContent.title.includes('404') || iframeContent.body.innerText.includes('404 Not Found')) {
-                                console.log('404 detected, reloading iframe...');
-                                setTimeout(() => {
-                                    this.contentWindow.location.reload();
-                                }, 1000); // reload after 1 second, adjust as needed
-                            }
-                        } catch (e) {
-                            console.error('Could not access iframe content:', e);
-                        }
-                    };
                     
                     document.getElementById("timer").innerText = result[0].minutesRemaining + " minutes";  
                     let minutes = result[0].minutesRemaining;
