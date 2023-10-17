@@ -167,12 +167,15 @@ export default function Challenge() {
                 for (var i = 0; i < 10; i++)
                 password += possible.charAt(Math.floor(Math.random() * possible.length));
                 
+            
+
+
                 var raw = JSON.stringify({
                   "jwtToken": localStorage.getItem("idToken"),
                   "TerminalGroupName": "school-class-session", // temp
                   "TerminalID": `${code}`,
                   "classID": "psu58102", // temp
-                  "dockerLocation": "wettyoss/wetty:latest",// temp
+                  "dockerLocation": "ctf_base_terminal",// temp
                   "injectFileLocation": "", // temp
                   "maxCpuLimit": "500m",// temp
                   "maxMemoryLimit": "512Mi",// temp
@@ -196,8 +199,15 @@ export default function Challenge() {
                   .then(response => {
                     response.json();
                     
-                // reload page
-                window.location.reload();
+                    fetchActiveTerminals();
+
+                    // remove loader
+                    setTimeout(function () {
+                        document.getElementById("termurl").classList.remove("opacity-0");
+                        document.getElementById("terminalLoader").classList.add("hidden");
+                    }, 5000)
+
+
                   })
                   .then(result => console.log(result))
                   .catch(error => console.log('error', error));
@@ -719,7 +729,7 @@ export default function Challenge() {
 
                         </span>
 
-                        <span onClick={() => {window.location.reload()}} className='ml-2 text-red-500'>If you see a 404, click here.</span>
+                        <span onClick={() => {window.location.reload()}} className='hidden ml-2 text-red-500'>If you see a 404, click here.</span>
 
 
 
@@ -734,10 +744,11 @@ export default function Challenge() {
                             <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
                         </div>
                     <iframe
+                        onError={() => window.location.reload()}
                         className="w-full bg-white opacity-0"
                         height="500"
                         id="termurl"
-                        src="https://fonty.ctfguide.com/ctfterminal/"
+                        src="blank.html"
                     ></iframe>
 
 
