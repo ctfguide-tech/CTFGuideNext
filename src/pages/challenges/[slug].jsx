@@ -47,6 +47,7 @@ export default function Challenge() {
     useEffect(() => {
         //window.alert(slug)
 
+
         if (!slug) {
             return;
         }
@@ -118,12 +119,14 @@ export default function Challenge() {
                 } else {
                     setTerminalUsername(result[0].userName);
                     setTerminalPassword(result[0].password);
-                    document.getElementById("termurl").src = result[0].url;
 
                     setTimeout(function () {
                         document.getElementById("termurl").classList.remove("opacity-0");
                         document.getElementById("terminalLoader").classList.add("hidden");
-                    }, 2000)
+//window.alert(               JSON.stringify(result[0])                        )
+                        document.getElementById("termurl").src = result[0].url;
+
+                    }, 10000)
 
                     
                     document.getElementById("timer").innerText = result[0].minutesRemaining + " minutes";  
@@ -198,18 +201,16 @@ export default function Challenge() {
                 fetch("https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/createTerminal", requestOptions)
                   .then(response => {
                     response.json();
-                    
-                    fetchActiveTerminals();
-
-                    // remove loader
-                    setTimeout(function () {
-                        document.getElementById("termurl").classList.remove("opacity-0");
-                        document.getElementById("terminalLoader").classList.add("hidden");
-                    }, 5000)
 
 
                   })
-                  .then(result => console.log(result))
+                  .then(result => {
+                    fetchActiveTerminals();
+
+           
+                
+
+                  })
                   .catch(error => console.log('error', error));
             } catch (err) {
                 console.log(err);
@@ -614,7 +615,7 @@ export default function Challenge() {
                                 document.getElementById("reportalert").classList.remove("hidden");
                                 setTimeout(function () {
                                     document.getElementById("reportalert").classList.add("hidden");
-                                }, 5000);
+                                }, 15000);
                             }}
                             className="card-body hidden m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
                         >
@@ -748,7 +749,6 @@ export default function Challenge() {
                         className="w-full bg-white opacity-0"
                         height="500"
                         id="termurl"
-                        src="blank.html"
                     ></iframe>
 
 
