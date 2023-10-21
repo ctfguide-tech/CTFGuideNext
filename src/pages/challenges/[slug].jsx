@@ -141,7 +141,7 @@ export default function Challenge() {
                   "TerminalGroupName": "school-class-session", // temp
                   "TerminalID": `${code}`,
                   "classID": "psu58102", // temp
-                  "dockerLocation": "ctf_base_terminal",// temp
+                  "dockerLocation": "ctf_base_wetty_terminal",// temp
                   "injectFileLocation": `${fileurl}`, // temp
                   "maxCpuLimit": "500m",// temp
                   "maxMemoryLimit": "512Mi",// temp
