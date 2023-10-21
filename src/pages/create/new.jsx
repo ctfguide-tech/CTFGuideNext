@@ -28,6 +28,7 @@ export default function Createchall() {
             challengeType: 'STANDARD',
             hints: [document.getElementById('hint1').value, document.getElementById('hint2').value, document.getElementById('hint3').value,],
             penalties: [10, 15, 20],
+            fileurl : document.getElementById("fileurl").value,
         });
 
         var xhr = new XMLHttpRequest();
@@ -202,6 +203,15 @@ export default function Createchall() {
                                   className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white">
                                 No hint set
                             </textarea>
+                    </div>
+                </div>
+
+                <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40">
+                    <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+                        Server Files
+                    </h3>
+                    <div className="px-5 py-5">
+                            <input id="fileurl" placeholder='URL to your ZIP file' className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"></input>
                     </div>
                 </div>
 

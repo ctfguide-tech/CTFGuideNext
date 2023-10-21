@@ -33,6 +33,8 @@ export default function Challenge() {
     const [difficulty, setDifficulty] = useState('');
     const [alreadySolved, setAlreadySolved] = useState(false);
 
+    let fileurl = ""
+
 
 
     // Kshitij
@@ -45,49 +47,7 @@ export default function Challenge() {
 
     // The Challenge
     useEffect(() => {
-        //window.alert(slug)
-
-
-        if (!slug) {
-            return;
-        }
-        const award = localStorage.getItem('award');
-
-        if (award) {
-            setAward(award);
-        }
-
-        const fetchData = async () => {
-            try {
-                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug;
-                const requestOptions = {
-                    method: 'GET', headers: {
-                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-                    },
-                };
-                const response = await fetch(endPoint, requestOptions);
-                const result = await response.json();
-                //result["content"] = result["content"].replace()
-                setChallenge(result);
-                setDifficulty(result.difficulty);
-
-                result.availableHints.forEach((hint, index) => {
-                    updateHintMessage(hint, index);
-                });
-
-            } catch (err) {
-                throw err;
-            }
-        };
-        fetchData();
-    }, [slug]);
-
- 
-
-
-    useEffect(() => {
-       
-        
+   
         // first fetch active terminals
         const fetchActiveTerminals = async () => {
             var raw = "";
@@ -97,7 +57,7 @@ export default function Challenge() {
               redirect: 'follow'
             };
             
-            fetch(`https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem("idToken")}`, requestOptions)
+            fetch(`${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem("idToken")}`, requestOptions)
               .then(response => response.json())
               .then(result => {
                 console.log(result);
@@ -117,6 +77,8 @@ export default function Challenge() {
                         }
 
                 } else {
+
+                    
                     setTerminalUsername(result[0].userName);
                     setTerminalPassword(result[0].password);
 
@@ -170,8 +132,8 @@ export default function Challenge() {
                 for (var i = 0; i < 10; i++)
                 password += possible.charAt(Math.floor(Math.random() * possible.length));
                 
-            
-
+                fileurl = process.env.TERM_URL + "files/info.zip?id=2222"
+                console.log("Injecting file: " + fileurl)
 
                 var raw = JSON.stringify({
                   "jwtToken": localStorage.getItem("idToken"),
@@ -179,7 +141,7 @@ export default function Challenge() {
                   "TerminalID": `${code}`,
                   "classID": "psu58102", // temp
                   "dockerLocation": "ctf_base_terminal",// temp
-                  "injectFileLocation": "", // temp
+                  "injectFileLocation": `${fileurl}`, // temp
                   "maxCpuLimit": "500m",// temp
                   "maxMemoryLimit": "512Mi",// temp
                   "minCpuLimit": "250m",// temp
@@ -188,6 +150,7 @@ export default function Challenge() {
                   "organizationName": "PSU", // temp
                   "terminalPassword": "",
                   "userID": localStorage.getItem("username"),
+
 
                 });
                 
@@ -198,7 +161,7 @@ export default function Challenge() {
                   redirect: 'follow'
                 };
                 
-                fetch("https://file-system-run-qi6ms4rtoa-ue.a.run.app/Terminal/createTerminal", requestOptions)
+                fetch(process.env.TERM_URL + "Terminal/createTerminal", requestOptions)
                   .then(response => {
                     response.json();
 
@@ -220,15 +183,54 @@ export default function Challenge() {
         };
 
 
+        if (!slug) {
+            return;
+        }
+        const award = localStorage.getItem('award');
+
+        if (award) {
+            setAward(award);
+        }
+
+        const fetchData = async () => {
+            try {
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug;
+                const requestOptions = {
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                    },
+                };
+                const response = await fetch(endPoint, requestOptions);
+                const result = await response.json();
+                //result["content"] = result["content"].replace()
+
+
+                setChallenge(result);
+
+                fileurl = result.fileurl;
+
+
         try {
             fetchActiveTerminals();
         } catch(err) {
             console.log(err);
         }
 
+
+                setDifficulty(result.difficulty);
+
+                result.availableHints.forEach((hint, index) => {
+                    updateHintMessage(hint, index);
+                });
+
+            } catch (err) {
+                throw err;
+            }
+        };
+        fetchData();
     }, [slug]);
 
-
+ 
 
 
 
@@ -611,6 +613,7 @@ export default function Challenge() {
                             <p className=" text-2xl text-white">{likeCount}</p>
                         </button>
                         <button
+                        
                             onClick={() => {
                                 document.getElementById("reportalert").classList.remove("hidden");
                                 setTimeout(function () {
