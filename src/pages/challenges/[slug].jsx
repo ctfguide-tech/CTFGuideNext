@@ -207,7 +207,7 @@ export default function Challenge() {
 
                 setChallenge(result);
 
-                fileurl = result.fileurl;
+            //    fileurl = result.fileurl;
 
 
         try {
