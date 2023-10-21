@@ -132,7 +132,7 @@ export default function Challenge() {
                 for (var i = 0; i < 10; i++)
                 password += possible.charAt(Math.floor(Math.random() * possible.length));
                 
-                fileurl = process.env.TERM_URL + "files/info.zip?id=2222"
+                fileurl = process.env.NEXT_PUBLIC_TERM_URL + "files/info.zip?id=2222"
                 console.log("Injecting file: " + fileurl)
 
                 var raw = JSON.stringify({
