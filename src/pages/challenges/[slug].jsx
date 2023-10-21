@@ -161,7 +161,7 @@ export default function Challenge() {
                   redirect: 'follow'
                 };
                 
-                fetch(process.env.TERM_URL + "Terminal/createTerminal", requestOptions)
+                fetch(process.env.NEXT_PUBLIC_TERM_URL + "Terminal/createTerminal", requestOptions)
                   .then(response => {
                     response.json();
 
