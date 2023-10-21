@@ -57,7 +57,7 @@ useEffect(() => {
         <div
           id="1"
           style={{ backgroundColor: '#212121' }}
-          className="h-100 resize-x px-8 py-4"
+          className="h-100 resize-x px-8 py-4 overflow-scroll"
         >
           <h1 className="text-2xl font-bold text-white">
             I spy with my little eyes

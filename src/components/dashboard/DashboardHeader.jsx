@@ -26,6 +26,11 @@ export function DashboardHeader() {
         .then((data) => {
           setUsername(data.username);
           setLocation(data.location);
+          localStorage.setItem("username", data.username)
+
+          // set uid
+          
+          
           setJoin(data.createdAt.substring(0, 10));
           if (data.githubUrl) {
             setGithub(`https://github.com/${data.githubUrl}`);

@@ -179,7 +179,7 @@ export function StandardNav() {
                   </a>
                   <a
                     href="../../learn"
-                    className="hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                    className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                   >
                     Learn
                   </a>
@@ -383,7 +383,7 @@ export function StandardNav() {
               <Disclosure.Button
                 as="a"
                 href="../learn"
-                className="hidden block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+                className=" block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Learn
               </Disclosure.Button>

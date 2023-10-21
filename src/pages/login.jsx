@@ -26,6 +26,7 @@ export default function Login() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
+        localStorage.setItem("uid", uid);
       }
     });
   }, []);
@@ -49,6 +50,10 @@ export default function Login() {
 
               // Store Token in local storage.
               localStorage.setItem('idToken', idToken);
+
+              // Sotre username
+
+              localStorage.setItem('username', parsed.username);
 
               if (!parsed.email) {
                 // User hasn't finished onboarding.
@@ -108,6 +113,7 @@ export default function Login() {
                   window.location.replace('/onboarding');
                   return;
                 }
+                localStorage.setItem('username', parsed.username);
 
                 // Store related API endpoints in local storage.
                 localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
