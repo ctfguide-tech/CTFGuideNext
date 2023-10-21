@@ -78,6 +78,7 @@ export default function Challenge() {
 
                 } else {
 
+
                     
                     setTerminalUsername(result[0].userName);
                     setTerminalPassword(result[0].password);
@@ -132,7 +133,7 @@ export default function Challenge() {
                 for (var i = 0; i < 10; i++)
                 password += possible.charAt(Math.floor(Math.random() * possible.length));
                 
-                fileurl = process.env.NEXT_PUBLIC_TERM_URL + "files/info.zip?id=2222"
+                fileurl = "https://file-system-run-qi6ms4rtoa-ue.a.run.app/files/info.zip?id=2222"
                 console.log("Injecting file: " + fileurl)
 
                 var raw = JSON.stringify({
