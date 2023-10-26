@@ -139,7 +139,7 @@ export function DashboardHeader() {
 
 
                 }}
-                className="cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
+                className="hidden cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
               >
 
                 <p className="mt-0 text-white"><i class="fas fa-terminal mr-1"></i> Terminal</p>
