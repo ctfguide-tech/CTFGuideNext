@@ -282,7 +282,7 @@ export function StandardNav() {
                             <a
                               href="/dashboard"
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
+                                active ? '-100' : '',
                                 'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
@@ -299,7 +299,7 @@ export function StandardNav() {
                             <a
                               href="../../settings"
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
+                                active ? '-100' : '',
                                 'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
@@ -316,7 +316,7 @@ export function StandardNav() {
                             <a
                               href="https://ctfguide.hellonext.co/b/feedback"
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
+                                active ? '-100' : '',
                                 'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
@@ -333,7 +333,7 @@ export function StandardNav() {
                             <a
                               href="../../report"
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
+                                active ? '-100' : '',
                                 'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
@@ -350,7 +350,7 @@ export function StandardNav() {
                             <span
                               onClick={logout}
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
+                                active ? '-100' : '',
                                 'block flex cursor-pointer px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
