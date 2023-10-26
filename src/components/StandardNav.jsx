@@ -276,14 +276,14 @@ export function StandardNav() {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-100 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <Menu.Item>
                           {({ active }) => (
                             <a
                               href="/dashboard"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
                               Your Profile{' '}
@@ -300,7 +300,7 @@ export function StandardNav() {
                               href="../../settings"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
                               Settings{' '}
@@ -317,7 +317,7 @@ export function StandardNav() {
                               href="https://ctfguide.hellonext.co/b/feedback"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
                               Feedback{' '}
@@ -334,7 +334,7 @@ export function StandardNav() {
                               href="../../report"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
                               Report{' '}
@@ -351,7 +351,7 @@ export function StandardNav() {
                               onClick={logout}
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
-                                'block flex cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-200'
+                                'block flex cursor-pointer px-4 py-2 text-sm text-white hover:bg-neutral-800'
                               )}
                             >
                               Sign out{' '}
@@ -372,39 +372,39 @@ export function StandardNav() {
 
           <Disclosure.Panel className="md:hidden">
             <div className="space-y-1 pt-2 pb-3 bg-neutral-800/50">
-              {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300 hover:bg-gray-50 hover:font-bold" */}
+              {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300  hover:font-bold" */}
               <Disclosure.Button
                 as="a"
                 href="../dashboard"
-                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Dashboard
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
                 href="../learn"
-                className=" block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+                className=" block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Learn
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
                 href="../groups"
-                className="hidden block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+                className="hidden block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Groups
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
                 href="../practice"
-                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Practice
               </Disclosure.Button>
               <Disclosure.Button
                 as="a"
                 href="../live"
-                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6"
+                className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
               >
                 Live
               </Disclosure.Button>
