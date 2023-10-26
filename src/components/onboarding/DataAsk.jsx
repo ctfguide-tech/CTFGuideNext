@@ -48,7 +48,7 @@ export function DataAsk({ props }) {
       document.getElementById('lastname').value
     );
 
-    if (!username || !birthday || !firstname || !lastname || !termsAgreement) {
+    if (!username || !birthday || !termsAgreement) {
       document.getElementById('error').classList.remove('hidden');
       document.getElementById('error').innerHTML = "Fill all fields.";
       return;
