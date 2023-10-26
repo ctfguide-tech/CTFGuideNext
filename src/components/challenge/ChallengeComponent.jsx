@@ -70,15 +70,16 @@ const Challenge = ({ data, inCarousel }) => {
             <div className="flex">
               <p
                 id={index}
-                className="mr-3 mt-1 rounded-md  text-[12px] text-white"
+                className="mr-3 mt-1 rounded-md  text-[12px] text-white truncate text-ellipsis overflow-hidden"
               >
-               <i class="fas fa-puzzle-piece mr-1"></i> {category}
+                <i class="fas fa-puzzle-piece mr-1"></i>{" "}
+                {category === "reverse engineering" ? "RE" : category}
               </p>
               <p
                 id={index}
                 className="my-auto mt-1 rounded-md px-2 text-[12px] text-white"
               >
-               <i class="far fa-eye mr-1"></i> {data.views} 
+                <i class="far fa-eye mr-1"></i> {data.views}
               </p>
             </div>
           ))}

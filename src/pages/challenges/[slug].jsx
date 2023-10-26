@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
@@ -35,6 +35,51 @@ export default function Challenge() {
 
     let fileurl = ""
 
+    const [progress, setProgress] = useState(0);
+    const [eta, setEta] = useState(15)
+    
+    // change eta by one every sec 
+    useEffect(() => {
+        if (eta > 0) {
+        const interval = setInterval(() => {
+            setEta(prevEta => prevEta - 1);
+        }, 1000); // Update every 1 second
+    }
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
+    
+ 
+
+
+
+    useEffect(() => {
+
+
+       
+
+
+        const interval = setInterval(() => {
+            setProgress(prevProgress => {
+             
+
+                const newProgress = prevProgress + 100 / (15 * 10);
+                if (newProgress >= 100) {
+                    clearInterval(interval);
+                    return 100;
+                }
+                return newProgress;
+            });
+        }, 100); // Update every 100ms (15 seconds total for 0 to 100)
+
+        return () => {
+            clearInterval(interval);
+        };
+
+
+    }, []);
 
 
     // Kshitij
@@ -47,28 +92,28 @@ export default function Challenge() {
 
     // The Challenge
     useEffect(() => {
-   
+
         // first fetch active terminals
         const fetchActiveTerminals = async () => {
             var raw = "";
 
             var requestOptions = {
-              method: 'GET',
-              redirect: 'follow'
+                method: 'GET',
+                redirect: 'follow'
             };
-            
-            fetch(`${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem("idToken")}`, requestOptions)
-              .then(response => response.json())
-              .then(result => {
-                console.log(result);
-                
-                
 
-                // handle if empty array
-                if (result.length == 0) {
-                    
+            fetch(`${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem("idToken")}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result);
+
+
+
+                    // handle if empty array
+                    if (result.length == 0) {
+
                         try {
-                      //      window.alert("no terminals found")
+                            //      window.alert("no terminals found")
                             fetchTerminalData();
                         } catch (err) {
                             console.log(err);
@@ -76,48 +121,48 @@ export default function Challenge() {
                             setTerminalPassword('Something went wrong.');
                         }
 
-                } else {
+                    } else {
 
 
-                    
-                    setTerminalUsername(result[0].userName);
-                    setTerminalPassword(result[0].password);
 
-                    setTimeout(function () {
-                        document.getElementById("termurl").classList.remove("opacity-0");
-                        document.getElementById("terminalLoader").classList.add("hidden");
-//window.alert(               JSON.stringify(result[0])                        )
-                        document.getElementById("termurl").src = result[0].url;
+                        setTerminalUsername(result[0].userName);
+                        setTerminalPassword(result[0].password);
 
-                    }, 10000)
+                        setTimeout(function () {
+                            document.getElementById("termurl").classList.remove("opacity-0");
+                            document.getElementById("terminalLoader").classList.add("hidden");
+                            //window.alert(               JSON.stringify(result[0])                        )
+                            document.getElementById("termurl").src = result[0].url;
 
-                    
-                    document.getElementById("timer").innerText = result[0].minutesRemaining + " minutes";  
-                    let minutes = result[0].minutesRemaining;
-                    setInterval(function() {
-                        // drop minutes
-                        if (minutes == 0) {
-                            window.alert("Your terminal session has expired. Please refresh the page to start a new session.")
-                            window.location.reload();
-                        }
-                        minutes = minutes - 1;
-                        document.getElementById("timer").innerText = minutes + " minutes";
+                        }, 15000)
 
 
-                    }, 60000)
-                 
-                }
-              })
-              .catch(error => console.log('error', error));
+                        document.getElementById("timer").innerText = result[0].minutesRemaining + " minutes";
+                        let minutes = result[0].minutesRemaining;
+                        setInterval(function () {
+                            // drop minutes
+                            if (minutes == 0) {
+                                window.alert("Your terminal session has expired. Please refresh the page to start a new session.")
+                                window.location.reload();
+                            }
+                            minutes = minutes - 1;
+                            document.getElementById("timer").innerText = minutes + " minutes";
 
 
-              // send request
+                        }, 60000)
+
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+
+            // send request
 
 
 
         }
 
-        
+
         const fetchTerminalData = async () => {
             try {
                 console.log("[debug] Creating new container session because nothing was found.")
@@ -131,51 +176,51 @@ export default function Challenge() {
                 var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
                 for (var i = 0; i < 10; i++)
-                password += possible.charAt(Math.floor(Math.random() * possible.length));
-                
+                    password += possible.charAt(Math.floor(Math.random() * possible.length));
+
                 fileurl = "https://file-system-run-qi6ms4rtoa-ue.a.run.app/files/info.zip?id=2222"
                 console.log("Injecting file: " + fileurl)
 
                 var raw = JSON.stringify({
-                  "jwtToken": localStorage.getItem("idToken"),
-                  "TerminalGroupName": "school-class-session", // temp
-                  "TerminalID": `${code}`,
-                  "classID": "psu58102", // temp
-                  "dockerLocation": "ctf_base_wetty_terminal",// temp
-                  "injectFileLocation": `${fileurl}`, // temp
-                  "maxCpuLimit": "500m",// temp
-                  "maxMemoryLimit": "512Mi",// temp
-                  "minCpuLimit": "250m",// temp
-                  "minMemoryLimit": "256Mi",// temp
-                  "terminalUsername": localStorage.getItem("username"),
-                  "organizationName": "PSU", // temp
-                  "terminalPassword": "",
-                  "userID": localStorage.getItem("username"),
+                    "jwtToken": localStorage.getItem("idToken"),
+                    "TerminalGroupName": "school-class-session", // temp
+                    "TerminalID": `${code}`,
+                    "classID": "psu58102", // temp
+                    "dockerLocation": "ctf_base_wetty_terminal",// temp
+                    "injectFileLocation": `${fileurl}`, // temp
+                    "maxCpuLimit": "500m",// temp
+                    "maxMemoryLimit": "512Mi",// temp
+                    "minCpuLimit": "250m",// temp
+                    "minMemoryLimit": "256Mi",// temp
+                    "terminalUsername": localStorage.getItem("username"),
+                    "organizationName": "PSU", // temp
+                    "terminalPassword": "",
+                    "userID": localStorage.getItem("username"),
 
 
                 });
-                
+
                 var requestOptions = {
-                  method: 'POST',
-                  headers: myHeaders,
-                  body: raw,
-                  redirect: 'follow'
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
                 };
-                
+
                 fetch(process.env.NEXT_PUBLIC_TERM_URL + "Terminal/createTerminal", requestOptions)
-                  .then(response => {
-                    response.json();
+                    .then(response => {
+                        response.json();
 
 
-                  })
-                  .then(result => {
-                    fetchActiveTerminals();
+                    })
+                    .then(result => {
+                        fetchActiveTerminals();
 
-           
-                
 
-                  })
-                  .catch(error => console.log('error', error));
+
+
+                    })
+                    .catch(error => console.log('error', error));
             } catch (err) {
                 console.log(err);
                 setTerminalUsername('Something went wrong.');
@@ -208,14 +253,14 @@ export default function Challenge() {
 
                 setChallenge(result);
 
-            //    fileurl = result.fileurl;
+                //    fileurl = result.fileurl;
 
 
-        try {
-            fetchActiveTerminals();
-        } catch(err) {
-            console.log(err);
-        }
+                try {
+                    fetchActiveTerminals();
+                } catch (err) {
+                    console.log(err);
+                }
 
 
                 setDifficulty(result.difficulty);
@@ -231,7 +276,7 @@ export default function Challenge() {
         fetchData();
     }, [slug]);
 
- 
+
 
 
 
@@ -614,7 +659,7 @@ export default function Challenge() {
                             <p className=" text-2xl text-white">{likeCount}</p>
                         </button>
                         <button
-                        
+
                             onClick={() => {
                                 document.getElementById("reportalert").classList.remove("hidden");
                                 setTimeout(function () {
@@ -721,33 +766,57 @@ export default function Challenge() {
                         <span className="text-yellow-400">{terminalPassword}</span>
 
                         <div
-                              className='float-right ml-auto flex  cursor-pointer'>  
-                        
-                            
-                          
-                        <span
-                            style={{cursor: 'pointer'}}
-                            className=" text-gray-300 hover:bg-black"
-                        >
-                            Container will stop in: <span id="timer"></span>
+                            className='float-right ml-auto flex  cursor-pointer'>
 
 
-                        </span>
 
-                        <span onClick={() => {window.location.reload()}} className='hidden ml-2 text-red-500'>If you see a 404, click here.</span>
+                            <span
+                                style={{ cursor: 'pointer' }}
+                                className=" text-gray-300 hover:bg-black"
+                            >
+                                Container will stop in: <span id="timer"></span>
+
+
+                            </span>
+
+                            <span onClick={() => { window.location.reload() }} className='hidden ml-2 text-red-500'>If you see a 404, click here.</span>
 
 
 
 
                         </div>
                     </div>
-          
+
                     <div className="w-full bg-black text-center mx-auto text-white h-500 py-10"
                         height="500" id="terminalLoader">
-                            <p className='text-center text-4xl mx-auto fa fa-spinner fa-spin'></p>
-                            <h1 className='text-4xl text-center'>Your terminal is booting up.</h1>
-                            <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
+                        <span className="text-2xl font-semibold inline-block text-white">
+                                    {Math.round(progress)}%
+                                </span>
+                        <h1 className='text-xl text-center'>Launching Terminal</h1>             
+                        <div className="relative max-w-xl mx-auto ">
+                            <div className="flex  items-center justify-between">
+                                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-800 "></span>
+
+                   
+                            </div>
+                            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-600">
+                                <div style={{ width: `${progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-900"></div>
+                            </div>
+
+                            <span className="text-sm italic inline-block text-white">
+                                        Expected Time: {eta} seconds
+                                </span>
                         </div>
+                        <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
+                        <span className="text-sm  inline-block text-white">
+                                       Version 2 <br>
+                                       </br>
+
+                                       AI insights are disabled. If you see a blank page upon loading, please refresh the page.
+                                </span>
+                    </div>
+
+
                     <iframe
                         onError={() => window.location.reload()}
                         className="w-full bg-white opacity-0"
@@ -756,8 +825,8 @@ export default function Challenge() {
                     ></iframe>
 
 
-                     
-                    </div>
+
+                </div>
                 <div className="mt-5 rounded-lg px-5 pb-20">
                     <h1 className="text-3xl font-semibold text-white">Comments</h1>
                     <textarea
@@ -846,7 +915,7 @@ export default function Challenge() {
                             <div>
                                 <div className="mx-auto flex items-center justify-center rounded-full ">
 
-                                    {(submissionMsg == "success") &&  <svg
+                                    {(submissionMsg == "success") && <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
                                         viewBox="0 0 24 24"
@@ -862,9 +931,9 @@ export default function Challenge() {
                                     </svg>
                                     }
 
-                                    {(submissionMsg == "incorrect") &&   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="text-red-500 w-14 h-14">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-</svg>}
+                                    {(submissionMsg == "incorrect") && <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="text-red-500 w-14 h-14">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>}
 
                                 </div>
                                 <div className="mt-2 text-center sm:mt-5">
