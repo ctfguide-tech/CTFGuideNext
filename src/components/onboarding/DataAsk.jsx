@@ -18,8 +18,13 @@ export function DataAsk({ props }) {
     // Generate JSON to send
 
 
+
     
     var username = document.getElementById('username').value;
+
+   
+
+
     var birthday = document.getElementById('birthday').value;
     var firstname = document.getElementById('firstname').value;
     var lastname = document.getElementById('lastname').value;
@@ -51,6 +56,20 @@ export function DataAsk({ props }) {
       document.getElementById('error').classList.remove('hidden');
       document.getElementById('error').innerHTML = "Username must be between 3 and 20 letters/numbers!";
       return;
+    } else if (/^[0-9]/.test(username)) {
+
+      document.getElementById('error').classList.remove('hidden');
+      document.getElementById('error').innerHTML = "Username starts with a number.";
+    } else if (/^[A-Z]/.test(username)) {
+      document.getElementById('error').classList.remove('hidden');
+      document.getElementById('error').innerHTML = "Username starts with a capital letter.";
+   
+      
+    } else if (/^[!@#$%^&*(),.?":{}|<>]/.test(username)) {
+      document.getElementById('error').classList.remove('hidden');
+      document.getElementById('error').innerHTML = "Username starts with a special character.";
+   
+    
     } else  if (birthday) {
       const minDate = new Date("1900-01-01");
       const currentDate = new Date();
