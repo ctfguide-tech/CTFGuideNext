@@ -48,7 +48,7 @@ export function DataAsk({ props }) {
       document.getElementById('lastname').value
     );
 
-    if (!username || !birthday || !termsAgreement) {
+    if (!username || !birthday || !firstname || !lastname || !termsAgreement) {
       document.getElementById('error').classList.remove('hidden');
       document.getElementById('error').innerHTML = "Fill all fields.";
       return;
@@ -210,7 +210,7 @@ export function DataAsk({ props }) {
                       htmlFor="job-title"
                       className="block text-xs font-medium text-white"
                     >
-                        Full Name (optional)
+                        Full Name
                       </label>
                       <div className='flex gap-x-4'>
                         <input
@@ -286,7 +286,7 @@ export function DataAsk({ props }) {
 
           <h1> We learned 55% of new signups weren't finishing our onboarding process, so we tried cutting it down to just 4 input boxes. </h1>
 
-          <h1 className='mt-4'>You don't need to provide us your first name or last name, but we do need a username (to know who you are) and date of birth (COPPA laws). </h1>
+          <h1 className='mt-4'>We need a username (to know who you are) and date of birth (COPPA laws).  </h1>
 
           <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide account."<br />- Scratch (Employee #2)</h1>
         </div>
