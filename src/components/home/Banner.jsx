@@ -19,7 +19,7 @@ const Banner = () => {
     return (
         <div>
             {showBanner && (
-                <div className="bg-neutral-800 py-1 flex items-center justify-between">
+                <div className="hidden bg-neutral-800 py-1 flex items-center justify-between">
                     <p className="m-0 text-white text-center flex-grow">
                         Interested in designing our next feature?{' '}
                         <a href={surveyURL} className="hover:text-purple-700 text-blue-600 m1-2 font-semibold">
