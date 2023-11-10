@@ -118,7 +118,7 @@ export function DataAsk({ props }) {
           var parsed = JSON.parse(this.responseText);
 
           if (parsed.error == 'undefined' || parsed.error) {
-            window.location.replace('/login');
+            //window.location.replace('/login');
           } else {
             window.location.href = "./dashboard";
             //       window.location.replace('./onboarding?part=1&error=' + parsed.error);

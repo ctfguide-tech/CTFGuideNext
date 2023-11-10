@@ -5,14 +5,79 @@ import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { getAuth } from 'firebase/auth';
+
+const auth = getAuth();
 
 export default function CreateGroup() {
-    const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const [open, setOpen] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [groupDescription, setGroupDescription] = useState('');
+  const [domain, setDomain] = useState('');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [seats, setSeats] = useState(0);
+  const [time, setTime] = useState("");
+  const [startingDate, setStartingDate] = useState(new Date());
 
+  const createGroup = async () => {
+    try {
+      if(selectedOption === "student") {
+        // const response = await fetch('http://localhost:3001/classroom/create', {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     org: domain,
+        //     name,
+        //     description,
+        //     seats,
+        //     pricingPlan: "PerStudent",
+        //     isActive: false
+        //   })
+        // });
+        // console.log(response);
+      } else {
+        const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+        const userId = auth.currentUser.uid;
+    
+        const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
+          method: 'POST',
+          body: JSON.stringify({
+            subType: selectedOption,
+            quantity: seats,
+            uid: userId,
+            data: {
+              domain,
+              name,
+              description,
+              seats,
+              time,
+              startingDate
+            }
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        const session = await response.json();
+        if(session.error) {
+          console.log("Creating the stripe session failed")
+          return;
+        }
+    
+        const result = await stripe.redirectToCheckout({
+          sessionId: session.sessionId,
+        });
+    
+        if (result.error) {
+          console.log(result.error.message);
+        }
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
 
 
   function joinCode() {
@@ -65,8 +130,6 @@ export default function CreateGroup() {
         'Authorization': 'Bearer ' + localStorage.getItem('idToken')
       },
       body: JSON.stringify(groupData),
-     
-
     })
       .then((response) => response.json())
       .then((data) => {
@@ -82,6 +145,7 @@ export default function CreateGroup() {
         console.error('Error:', error);
       });
   }
+
 
   return (
     <>
@@ -124,7 +188,7 @@ export default function CreateGroup() {
           <div className="mt-2">
             <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
               <span className="flex select-none items-center pl-3 text-neutral-500 sm:text-sm">johndoe@</span>
-              <input type="text" name="username" id="email_domain"  className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="coolschool.edu"/>
+              <input type="text" name="username" id="email_domain" value={domain} onChange={(e) => setDomain(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="coolschool.edu"/>
 
             </div>
 
@@ -151,7 +215,7 @@ export default function CreateGroup() {
         <div className="col-span-full">
           <label for="about" className="block text-sm font-medium leading-6 text-white">Course Description</label>
           <div className="mt-2">
-            <textarea id="course_description" name="about" rows="3" className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"></textarea>
+            <textarea id="course_description" value={description} onChange={(e) => setDescription(e.target.value)} name="about" rows="3" className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"></textarea>
           </div>
           <p className="mt-3 text-sm leading-6 text-white">Write a short, brief description about your course. CTFGuide will use AI to suggest lesson content, labs, and more. This field is optional.</p>
         </div>
@@ -161,7 +225,7 @@ export default function CreateGroup() {
           <div className="mt-2">
             <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
            
-              <input type="text" name="Course Name" id="course_name"  className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Silly Hacking 101"/>
+              <input type="text" name="Course Name" id="course_name" value={name} onChange={(e) => setName(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Silly Hacking 101"/>
 
             </div>
        
@@ -176,10 +240,9 @@ export default function CreateGroup() {
                 onClick={() => setSelectedOption('student')}
             >
                 <h1>Paid for by Student  <b className='text-yellow-500 italic text-sm'>Most Popular!</b></h1>
-                <h1 className='text-2xl font-semibold'>$53</h1>
+                <h1 className='text-2xl font-semibold'>$58</h1>
                 <h1 className='text-sm'>per semester</h1>
             </div>
-
             <div 
                 className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'institution' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
                 onClick={() => setSelectedOption('institution')}
@@ -194,7 +257,7 @@ export default function CreateGroup() {
 
         <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
            
-           <input type="text" name="username" id="username"  className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
+           <input type="number" name="username" id="username" value={seats} onChange={(e) => setSeats(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
 
          </div>
 
@@ -202,7 +265,7 @@ export default function CreateGroup() {
 
 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
    
-   <input type="time" name="username" id="username"  className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
+   <input type="time" name="username" id="username" value={time} onChange={(e) => setTime(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
 
  </div>
 
@@ -212,7 +275,7 @@ export default function CreateGroup() {
  </div> 
     
 
-    <button onClick={submitButton} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
+    <button onClick={createGroup} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
         </div>
                 
                 </div>

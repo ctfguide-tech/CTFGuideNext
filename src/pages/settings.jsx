@@ -135,31 +135,71 @@ export default function Dashboard() {
   }
 
   const redirectToCheckout = async (event) => {
+    try {
+      const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+      const subscriptionType = document.getElementById("paymentType").value;
+      console.log(subscriptionType);
+      const userId = auth.currentUser.uid;
 
-    const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
-    
-    const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
-      method: 'POST',
-      body: JSON.stringify({
-        line_items: document.getElementById("paymentType").value        
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+      const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
+        method: 'POST',
+        body: JSON.stringify({
+          subType: subscriptionType,
+          quantity: 1,
+          uid: userId,
+          data: {}
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+  
+      const session = await response.json();
+      if(session.error) {
+        console.log("Creating the stripe session failed")
+        return;
       }
-    })
-
-    const session = await response.json();
-
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.sessionId,
-      
-    });
-
-    if (result.error) {
-      console.log(result.error.message);
+  
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+  
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch(error) {
+      console.log(error);
     }
-
   };
+
+
+  const updateCardInfo = async () => {
+    try {
+      const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+      const subscriptionType = document.getElementById("paymentType").value;
+      const userId = auth.currentUser.uid;
+
+      const response = await fetch('http://localhost:3001/payments/stripe/update-card', {
+        method: 'POST',
+        body: JSON.stringify({
+          subType: subscriptionType,
+          uid: userId
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+  
+      const session = await response.json();
+  
+      await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
 
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
@@ -1025,7 +1065,9 @@ export default function Dashboard() {
 
                 <br></br>
               <button onClick={redirectToCheckout} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Stripe Checkout Demo</button>
-
+              <br></br>
+              
+              <button onClick={updateCardInfo} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Update card infomation</button>
               </div>
             </div>
           </div>
