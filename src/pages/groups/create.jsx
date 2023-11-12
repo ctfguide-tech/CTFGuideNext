@@ -23,63 +23,33 @@ export default function CreateGroup() {
 
   const createGroup = async () => {
     try {
-      if(selectedOption === "student") {
-        // const response = await fetch('http://localhost:3001/classroom/create', {
-        //   method: 'POST',
-        //   body: JSON.stringify({
-        //     org: domain,
-        //     name,
-        //     description,
-        //     seats,
-        //     pricingPlan: "PerStudent",
-        //     isActive: false
-        //   })
-        // });
-        // console.log(response);
+      const userId = auth.currentUser.uid;
+      const dataObj = { org: domain, name, description, numberOfSeats: seats, pricingPlan: selectedOption, open: true };
+  
+      const url = selectedOption === "student" ? 'http://localhost:3001/classroom/create' : 'http://localhost:3001/payments/stripe/create-checkout-session';
+  
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(selectedOption === "student" ? { userId, ...dataObj } : { subType: selectedOption, quantity: seats, uid: userId, data: { ...dataObj } })
+      });
+  
+      if (selectedOption === "student") {
+        console.log(response);
       } else {
         const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
-        const userId = auth.currentUser.uid;
-    
-        const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
-          method: 'POST',
-          body: JSON.stringify({
-            subType: selectedOption,
-            quantity: seats,
-            uid: userId,
-            data: {
-              domain,
-              name,
-              description,
-              seats,
-              time,
-              startingDate
-            }
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-    
+  
         const session = await response.json();
-        if(session.error) {
-          console.log("Creating the stripe session failed")
-          return;
-        }
-    
-        const result = await stripe.redirectToCheckout({
-          sessionId: session.sessionId,
-        });
-    
-        if (result.error) {
-          console.log(result.error.message);
-        }
+        if (session.error) return console.log("Creating the stripe session failed");
+  
+        const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+        if (result.error) console.log(result.error.message);
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
-  }
-
-
+  };
+  
   function joinCode() {
     // Fetch code
     // If code is valid, join group
