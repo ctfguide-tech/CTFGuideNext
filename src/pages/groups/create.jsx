@@ -21,7 +21,7 @@ export default function CreateGroup() {
   const [time, setTime] = useState("");
   const [startingDate, setStartingDate] = useState(new Date());
 
-  const createGroup = async () => {
+  const createClass = async () => {
     try {
       const userId = auth.currentUser.uid;
       const dataObj = { org: domain, name, description, numberOfSeats: seats, pricingPlan: selectedOption, open: true };
@@ -31,11 +31,11 @@ export default function CreateGroup() {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(selectedOption === "student" ? { userId, ...dataObj } : { subType: selectedOption, quantity: seats, uid: userId, data: { ...dataObj } })
+        body: JSON.stringify(selectedOption === "student" ? { userId, ...dataObj } : { subType: selectedOption, quantity: seats, uid: userId, data: { ...dataObj }, operation: "createClass" })
       });
   
       if (selectedOption === "student") {
-        console.log(response);
+        console.log(await response.json());
       } else {
         const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
   
@@ -49,6 +49,34 @@ export default function CreateGroup() {
       console.log(err);
     }
   };
+
+
+  const joinClass = async () => {
+    try {
+      const userId = auth.currentUser.uid;
+      const url = "http://localhost:3001/classroom/join";
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({classCode: "HIB2vk", userId: userId, isTeacher: false })
+      });
+      const res = await response.json();
+      if(res.success) {
+        if(res.sessionId) {
+          // do the stripe stuff
+          const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+          const result = await stripe.redirectToCheckout({ sessionId: res.sessionId });
+          console.log(result);
+        } else {
+          console.log("successfuly joined the class");
+        }
+      } else {
+        console.log(res.message);
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
   
   function joinCode() {
     // Fetch code
@@ -80,42 +108,7 @@ export default function CreateGroup() {
       .catch((error) => {
         console.error('Error:', error);
       });
-
-
   }
-
-  function submitButton() {
-    // Send group data to server to create group
-    const groupData = {
-        name: document.getElementById('course_name').value,
-        description: document.getElementById('course_description').value,
-        email_domain: document.getElementById('email_domain').value,
-        pricing_model: selectedOption
-    };
-    console.log(groupData);
-    fetch('http://localhost:3001/groups', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('idToken')
-      },
-      body: JSON.stringify(groupData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-        if (data.success == true) {
-          window.alert("ok")
-      //    window.location.reload();
-        } else {
-          window.alert("Invalid join code.")
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
-
 
   return (
     <>
@@ -245,7 +238,8 @@ export default function CreateGroup() {
  </div> 
     
 
-    <button onClick={createGroup} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
+    <button onClick={createClass} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
+    <button onClick={joinClass} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Join existing class</button>
         </div>
                 
                 </div>

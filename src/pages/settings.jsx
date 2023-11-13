@@ -147,6 +147,7 @@ export default function Dashboard() {
           subType: subscriptionType,
           quantity: 1,
           uid: userId,
+          operation: "subscription",
           data: {}
         }),
         headers: {
@@ -188,7 +189,7 @@ export default function Dashboard() {
         headers: {
           'Content-Type': 'application/json'
         }
-      })
+      });
   
       const session = await response.json();
   
