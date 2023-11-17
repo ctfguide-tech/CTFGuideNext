@@ -155,10 +155,6 @@ export default function Login() {
     <>
         <Head>
             <title>Sign In - CTFGuide</title>
-            <style>
-            @import
-            url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-            </style>
         </Head>
         <div style={{
             backgroundImage: "",
@@ -201,7 +197,7 @@ export default function Login() {
                 <div className="space-y-6">
                     <div
                     id="error"
-                    className="tex†-white hidden rounded bg-red-500 px-4 py-1"
+                    className="text-white hidden rounded bg-red-500 px-4 py-1"
                     >
                     <h1 className="text-center text-white" id="errorMessage">
                         Something went wrong.
@@ -272,10 +268,10 @@ export default function Login() {
                 <div className="mt-6">
                     <div className="mt-6  gap-3 ">
                     <div>
-                        <a
+                        <button
                         style={{ backgroundColor: '#161716', borderWidth: '0px' }}
                         href="#"
-                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50 focus:ring-2"
                         onClick={loginGoogle}
                         >
                         <span className="sr-only">Sign in with Google</span>
@@ -304,7 +300,7 @@ export default function Login() {
                             />
                         </svg>
                         <p className="ml-2">Login with Google</p>
-                        </a>
+                        </button>
                     </div>
                     </div>
                 </div>
@@ -312,17 +308,16 @@ export default function Login() {
                 <div className="mt-6 hidden">
                     <div className="mt-6  gap-3 ">
                     <div>
-                        <a
+                        <button
                         style={{ backgroundColor: '#161716', borderWidth: '0px' }}
-                        href="#"
-                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50 focus:ring-2"
                         onClick={loginGoogle}
                         >
                         <span className="sr-only">Sign in with Google</span>
                     
-                        <i class="mt-1 mx-2 fas fa-university fa-lg"></i>University Login
+                        <i className="mt-1 mx-2 fas fa-university fa-lg"></i>University Login
 
-                        </a>
+                        </button>
                     </div>
                     </div>
                 </div>

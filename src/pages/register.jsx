@@ -109,11 +109,11 @@ export default function Register() {
           const errorCode = error.code;
           const errorMessage = error.message;
           window.alert(errorMessage);
-          document.getElementById('error').innerHTML = errorMessage;
+          document.getElementById('errorMessage').innerHTML = errorMessage;
           document.getElementById('error').classList.remove('hidden');
         });
     } else {
-      document.getElementById('error').innerHTML = 'Passwords do not match';
+      document.getElementById('errorMessage').innerHTML = 'Passwords do not match';
       document.getElementById('error').classList.remove('hidden');
     }
   }
@@ -121,10 +121,6 @@ export default function Register() {
     <>
       <Head>
         <title>Sign Up - CTFGuide</title>
-        <style>
-          @import
-          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-        </style>
       </Head>
 
       <div
@@ -161,9 +157,8 @@ export default function Register() {
                 <div>
                   <div className="mt-2 grid grid-cols-1 gap-3 ">
                     <div>
-                      <a
-                        href="#"
-                        className="inline-flex w-full justify-center rounded-md bg-neutral-800   py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-700"
+                      <button
+                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50 focus:ring-2"
                         onClick={loginGoogle}
                       >
                         <span className="sr-only">Sign in with Google</span>
@@ -192,7 +187,7 @@ export default function Register() {
                           />
                         </svg>
                         <p className="ml-2">Sign up with Google</p>
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -208,14 +203,14 @@ export default function Register() {
 
               <div className="mt-4">
                 <div className="space-y-6">
-                  <div
+                <div
                     id="error"
-                    className="animate_animated animate__fadeIn hidden rounded-lg border border-blue-500 bg-blue-900 px-2 py-2 text-white"
-                  >
-                    <p className="text-center text-sm text-white">
-                      There was an error when trying to log you in.
-                    </p>
-                  </div>
+                    className="text-white hidden rounded bg-red-500 px-4 py-1"
+                    >
+                    <h1 className="text-center text-white" id="errorMessage">
+                        Something went wrong.
+                    </h1>
+                    </div>
                   <div>
                     <label
                       htmlFor="email"
@@ -320,7 +315,7 @@ export default function Register() {
                       type="submit"
                       onClick={registerUser}
                       id="registerBtn"
-                      className="hover:shadow-blue-500/00 flex w-full justify-center rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 hover:shadow-lg focus:outline-none "
+                      className="hover:shadow-blue-500/00 flex w-full justify-center rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Create an account
                     </button>
