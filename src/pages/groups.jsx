@@ -4,43 +4,75 @@ import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
-import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { useEffect, useState } from 'react';
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
+
 export default function Groups() {
-
+  const baseUrl = "http://localhost:3001"
   const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
+  const [teacherClassrooms, setTeacherClassrooms] = useState([]);
+  const [studentClassrooms, setStudentClassrooms] = useState([]);
+  const [userId, setUserId] = useState("");
 
-  function joinCode() {
-    // Fetch code
-    // If code is valid, join group
-    // Else, display error
+  useEffect(() => {
+    const getAllClassrooms = async () => {
+      const uid = localStorage.getItem('uid');
+      if(!uid) return;
+      setUserId(uid);
+      const url = `${baseUrl}/classroom/all-classrooms?uid=${uid}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if(data.success) {
+        setTeacherClassrooms(data.teacher);
+        setStudentClassrooms(data.student);
+      } else {
+        console.log(data.message);
+      }
+    }
+    getAllClassrooms();
+  }, []);
 
-    let code = document.getElementById("joinCode").ariaValueMax;
-    if (!code) {
-      return window.alert("Please enter a join code.")
-    } 
 
-    fetch('/api/groups', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code: code }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-        if (data.success == true) {
-          window.location.reload();
-        } else {
-          window.alert("Invalid join code.")
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+  const joinClass = async () => {
+    setMessage("loading...");
+    setColor("gray")
+    let code = document.getElementById("joinCode").value;
+    try {
+      const userId = localStorage.getItem('uid');
+      const url = "http://localhost:3001/classroom/join";
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({classCode: code, userId: userId, isTeacher: false, email: auth.currentUser.email}) // need to get the role of user from local storage
       });
+      const res = await response.json();
+      if(res.success) {
+        if(res.sessionId) {
+          // do the stripe stuff
+          const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+          const result = await stripe.redirectToCheckout({ sessionId: res.sessionId });
+          console.log(result);
+        } else {
+          setColor("green");
+          setMessage("successfuly joined the class");
+          console.log("successfuly joined the class");
+        }
+      } else {
+        setColor("#FF7276");
+        setMessage(res.message);
+        console.log(res.message);
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  };
 
+  
 
-  }
 
   return (
     <>
@@ -68,7 +100,7 @@ export default function Groups() {
 
           </div>
 
-          <div className=' mt-  rounded-lg  '>
+          <div className=' mt-  rounded-lg hidden '>
             <motion.div
               className="mx-auto w-full rounded-md"
               initial={{ opacity: 0, x: 100 }}
@@ -125,6 +157,40 @@ export default function Groups() {
 
           </div>
 
+        <h1 className='text-white text-2xl mt-10'>{teacherClassrooms.length === 0 ? "You do not own any classrooms yet... " : "Classes you own"}</h1>
+          <div className='mt-4 grid grid-cols-3 gap-x-4'>
+
+          {
+            teacherClassrooms.map((classroom, idx) => {
+              return (
+                <div key={idx} className=' bg-neutral-800 rounded-lg px-4 py-2 hover:bg-neutral-800/50 cursor-pointer' 
+                onClick={() => {window.location.href = `/groups/${classroom.classCode}/${userId}`}}>
+                <h1 className='text-3xl text-neutral-300 font-semibold'>{classroom.name}</h1>
+                <p className='text-neutral-400'><i className="fas fa-users"></i> {classroom.numberOfSeats}</p>
+                </div>
+              )
+            })
+          }
+          </div>
+
+
+
+          <h1 className='text-white text-2xl mt-10'>{studentClassrooms.length === 0 ? "You haven't joined any classes yet..." : "Joined Classes"}</h1>
+          <div className='mt-4 grid grid-cols-3 gap-x-4'>
+
+          {
+            studentClassrooms.map((classroom, idx) => {
+              return (
+                <div key={idx} className=' bg-neutral-800 rounded-lg px-4 py-2 hover:bg-neutral-800/50 cursor-pointer' 
+                onClick={() => {window.location.href = `/groups/${classroom.classCode}/${userId}`}}>
+                <h1 className='text-3xl text-neutral-300 font-semibold'>{classroom.name}</h1>
+                <p className='text-neutral-400'><i className="fas fa-users"></i> {classroom.numberOfSeats}</p>
+                </div>
+              )
+            })
+          }
+          </div>
+
 
           <Transition.Root show={open} as={Fragment}>
 
@@ -161,7 +227,8 @@ export default function Groups() {
                         <input id="joinCode" className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  '></input>
                       <br></br>
                       <div className='w-full mx-auto text-center mt-4 pb-5' >
-                        <button onClick={() => joinGroup()} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => setOpen(false)} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
+                        <button onClick={() => joinClass()} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => {setOpen(false); setMessage("")}} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
+                        <div style={{color: color, marginTop: "10px"}}>{message}</div>
                         </div>
                     </div>
                 </div>

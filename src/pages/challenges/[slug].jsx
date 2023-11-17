@@ -300,10 +300,13 @@ export default function Challenge() {
 
                 const response = await fetch(userLikesUrl, requestOptions);
                 const result = await response.json();
-
+try {
                 const likes = result.filter((item) => {
                     return item.challenge.slug === slug;
                 });
+            } catch(err) {
+                console.log(err);
+            }
                 //   setLiked(likes.length ? true : false);
                 //  if (likes.length) {
                 //   setLikeCount(likeCount + 1);

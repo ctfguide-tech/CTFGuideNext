@@ -6,11 +6,11 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import { getAuth } from 'firebase/auth';
 
-const auth = getAuth();
 
 export default function CreateGroup() {
+  const baseUrl = "http://localhost:3001"; // change this in deployment
+
   const [selectedOption, setSelectedOption] = useState(null);
 
   const [open, setOpen] = useState(false);
@@ -23,10 +23,10 @@ export default function CreateGroup() {
 
   const createClass = async () => {
     try {
-      const userId = auth.currentUser.uid;
+      const userId = localStorage.getItem('uid');
       const dataObj = { org: domain, name, description, numberOfSeats: seats, pricingPlan: selectedOption, open: true };
   
-      const url = selectedOption === "student" ? 'http://localhost:3001/classroom/create' : 'http://localhost:3001/payments/stripe/create-checkout-session';
+      const url = selectedOption === "student" ? `${baseUrl}/classroom/create` : `${baseUrl}/payments/stripe/create-checkout-session`;
   
       const response = await fetch(url, {
         method: 'POST',
@@ -35,6 +35,7 @@ export default function CreateGroup() {
       });
   
       if (selectedOption === "student") {
+        window.location.href = '/groups';
         console.log(await response.json());
       } else {
         const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
@@ -50,65 +51,6 @@ export default function CreateGroup() {
     }
   };
 
-
-  const joinClass = async () => {
-    try {
-      const userId = auth.currentUser.uid;
-      const url = "http://localhost:3001/classroom/join";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({classCode: "HIB2vk", userId: userId, isTeacher: false })
-      });
-      const res = await response.json();
-      if(res.success) {
-        if(res.sessionId) {
-          // do the stripe stuff
-          const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
-          const result = await stripe.redirectToCheckout({ sessionId: res.sessionId });
-          console.log(result);
-        } else {
-          console.log("successfuly joined the class");
-        }
-      } else {
-        console.log(res.message);
-      }
-    } catch(err) {
-      console.log(err);
-    }
-  }
-  
-  function joinCode() {
-    // Fetch code
-    // If code is valid, join group
-    // Else, display error
-
-    let code = document.getElementById("joinCode").ariaValueMax;
-    if (!code) {
-      return window.alert("Please enter a join code.")
-    } 
-
-    fetch('/api/groups', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code: code }),
-      authorization: "Bearer " + localStorage.getItem("token")
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-        if (data.success == true) {
-          window.location.reload();
-        } else {
-          window.alert("Invalid join code.")
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
 
   return (
     <>
@@ -239,7 +181,6 @@ export default function CreateGroup() {
     
 
     <button onClick={createClass} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
-    <button onClick={joinClass} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Join existing class</button>
         </div>
                 
                 </div>

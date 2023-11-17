@@ -116,11 +116,6 @@ Create Image
 </div>
 <p className='text-xl text-red-600 mt-4'>Nothing found.</p>
 </div>
-
-
-
-
-        
         
 
     
