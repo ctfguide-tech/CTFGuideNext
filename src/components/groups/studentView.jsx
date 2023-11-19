@@ -107,8 +107,8 @@ export default function StudentView({ uid, group }) {
                     <div className='col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
 
 
-                    {/* LOOPING THROUGH TEACHERS */}
-                    <h1 className='text-xl text-white'> Professors: </h1>
+                    {/* LOOPING THROUGH MEMBERS */}
+                    <h1 className='text-xl text-white'> Members: </h1>
                         <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
                         {
                             classroom.teachers && classroom.teachers.length === 0
@@ -117,20 +117,13 @@ export default function StudentView({ uid, group }) {
                             classroom.teachers.map((teacher, idx) => {
                                 const i = defaultImages.length-1 - idx % defaultImages.length;
                                 return (
-                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center'>
+                                    <div key={idx} style={{border: "2px solid gold"}} className='flex bg-neutral-900 rounded-lg items-center'>
                                     <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'>{teacher.username}asd</h1>
+                                    <h1 className='text-white ml-6 mt-2 pl-1'>{teacher.username}</h1>
                                     </div>
                                 );
                             })
                         }
-                        </div>
-
-                        <br></br>
-
-                         {/* LOOPING THROUGH STUDENTS */}
-                        <h1 className='text-xl text-white'> Students: </h1>
-                        <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
                         {
                             classroom.students && classroom.students.length === 0
                             ? <div style={{color: "white"}}>No students yet...</div>
@@ -146,6 +139,8 @@ export default function StudentView({ uid, group }) {
                             })
                         }
                         </div>
+
+                        <br></br>
 
                                 <br></br>
                     <h1 className='text-xl text-white'> About this course: </h1>

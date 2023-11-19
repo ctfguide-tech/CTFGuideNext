@@ -4,6 +4,8 @@ import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
+import StudentProfile from '@/components/groups/studentProfile';
+import Modal from './Modal';
 
 export default function TeacherView({ uid, group }) {
     const baseUrl = "http://localhost:3001"; // switch to deployment api url
@@ -14,9 +16,18 @@ export default function TeacherView({ uid, group }) {
     const [message, setMessage] = useState('');
     const [color, setColor] = useState('gray');
     const [inviteLink, setInviteLink] = useState('');
-    const [isEditing, setIsEditing] = useState(false);
     const [openClass, setOpenClass] = useState(true);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+    
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+    
     const defaultImages = [
         "https://robohash.org/pranavramesh",
         "https://robohash.org/laphatize",
@@ -106,31 +117,6 @@ export default function TeacherView({ uid, group }) {
         }
     };
 
-    const viewProfile = student => {
-        console.log("Link to a page to view this students profile");
-    }
-
-    const removeStudent = async student => {
-        try {
-            const classroomId = classroom.id;
-            const userId = student.uid;
-            const url = `${baseUrl}/classroom/leave`;
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId, classroomId, isTeacher: false })
-            });
-            const data = await response.json();
-            if(data.success) {
-                console.log("The student has been removed");
-                window.location.href = `/groups/${classroom.classCode}/${uid}`;
-            } else {
-                console.log("Error when removing classroom");
-            }
-        } catch(err) {
-            console.log(err);
-        }
-    };
 
     const addSeatToClass = async () => {
         try {
@@ -201,6 +187,30 @@ export default function TeacherView({ uid, group }) {
         }
     };
 
+    if(selectedStudent) {
+        return <StudentProfile uidOfTeacher={uid} student={selectedStudent} classroom={classroom}>
+            <button onClick={() => setSelectedStudent(null)} style={{margin: "0px"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Back to classroom</button>
+        </StudentProfile>
+    }
+
+    const createAnnouncement = async message => {
+        try {
+            if(message.length < 1) return;
+            const classroomId = classroom.id;
+            const url = `${baseUrl}/classroom/announcements`;
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ classroomId, message })
+            });
+            const data = await response.json();
+            console.log(data.message);
+        } catch(err) {
+            console.log(err);
+        }
+        setIsModalOpen(false);
+    };
+
     return (
         <>
             <Head>
@@ -220,23 +230,18 @@ export default function TeacherView({ uid, group }) {
                         <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button>
                         <button onClick={addSeatToClass} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Add Seat</button>
                         <button onClick={() => setOpen(true)} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Invite</button>
-                        <button onClick={() => setIsEditing(!isEditing)} style={{backgroundColor: "#eee600 ", color:'black'}}className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Edit</button>
                         <button onClick={handleDelete} style={{backgroundColor: "red"}}className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Delete</button>
                         <button onClick={handleToggle} style={{backgroundColor: "gray"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>{openClass ? "close" : "open"}</button>
                         <button onClick={leaveClass} style={{backgroundColor: "orange"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Leave</button>
+                        <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' onClick={handleOpenModal}>Announcements</button>
+                        {isModalOpen ? <Modal isOpen={isModalOpen} onClose={handleCloseModal} createAnnouncement={createAnnouncement}></Modal> : ""}
+                            
                     </div>
                 </div>
-
-
-
-                   <div className='grid grid-cols-6 mt-4 gap-x-4'>
-
-
+                <div className='grid grid-cols-6 mt-4 gap-x-4'>
                     <div className='col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
-
-
-                    {/* LOOPING THROUGH TEACHERS */}
-                    <h1 className='text-xl text-white'> Professors: </h1>
+                    {/* LOOPING THROUGH MEMBERS */}
+                    <h1 className='text-xl text-white'> Members: </h1>
                         <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
                         {
                             classroom.teachers && classroom.teachers.length === 0
@@ -245,58 +250,44 @@ export default function TeacherView({ uid, group }) {
                             classroom.teachers.map((teacher, idx) => {
                                 const i = defaultImages.length-1 - idx % defaultImages.length;
                                 return (
-                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center'>
+                                    <div key={idx} style={{border: "2px solid gold"}} className='flex bg-neutral-900 rounded-lg items-center'>
                                     <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'>{teacher.username}asd</h1>
+                                    <h1 className='text-white ml-6 mt-2 pl-1'>{teacher.username}</h1>
                                     </div>
                                 );
                             })
+                        }
+                        {
+                            classroom.students ?
+                            classroom.students.map((student, idx) => {
+                                const i = idx % defaultImages.length;
+                                return (
+                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center' style={{cursor: "pointer"}} onClick={() => setSelectedStudent(student)}>
+                                    <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
+                                    <h1 className='text-white ml-6 mt-2 pl-1'>{student.username}</h1>
+                                    </div>
+                                );
+                            }) : ""
                         }
                         </div>
 
                         <br></br>
-
-                         {/* LOOPING THROUGH STUDENTS */}
-                        <h1 className='text-xl text-white'> Students: </h1>
-                        <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
-                        {
-                            classroom.students && classroom.students.length === 0
-                            ? <div style={{color: "white"}}>No students yet...</div>
-                            : classroom.students &&
-                            classroom.students.map((student, idx) => {
-                                const i = idx % defaultImages.length;
-                                return (
-                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center' onClick={() => viewProfile(student)}>
-                                    <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'>{student.username}</h1>
-                                    {isEditing ? <i onClick={() => removeStudent(student)} style= {{padding: "10px", cursor: "pointer"}}className="fas fa-trash-alt text-red-500 ml-auto"></i> : <></>}
-                                    </div>
-                                );
-                            })
-                        }
-                        </div>
-
-
-
                         <p className='text-white mt-10'>Invite students to your group by sharing the link below.</p>
                                 <div className='bg-black rounded-lg p-2 mt-2 flex'>
                                     <p className='text-white'>https://ctfguide/{classroom.classCode}</p>
-                                   <div className='ml-auto'>
-                                   <i class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
+                                <div className='ml-auto'>
+                                <i class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
                                 </div>
 
                                 <br></br>
                     <h1 className='text-xl text-white'> About this course: </h1>
-                    <div style={{color: "white"}}>{classroom.description}</div>
                     <br></br>
+                    <div style={{color: "white"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
+
                     </div>
-
-
-
                     <div className='col-span-2 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
-
                     <h1 className='text-xl text-white'>Assignments</h1>
-   <div className='mt-4'>
+                <div className='mt-4'>
                         {demoAssignments.map(assignment => (
                             <div key={assignment.id} onClick={() => {window.location.href = "/assignments/testingfun"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>
                                 <h2 className='text-lg text-white'>{assignment.title}</h2>
@@ -305,17 +296,26 @@ export default function TeacherView({ uid, group }) {
                             </div>
                         ))}
                     </div>
-
                     </div>
-
-
-                   </div>
-                    
+                    <br></br>
+                    <div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
+                    <h1 className='text-xl text-white'>Announcements:</h1>
+                        <ul style={{color: "white", padding: "0", margin: "0", height: "300px", overflowY: "auto"}}>
+                        {
+                            classroom.announcements ? classroom.announcements.slice().reverse().map((announcement, idx) => {
+                                return (
+                                    <li key={idx} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop:  "10px", cursor: "default"}}>
+                                        <span style={{fontSize: "13px"}}>{new Date(announcement.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcement.message}</span>
+                                    </li>
+                                )
+                            }) : ""
+                        }
+                        </ul>
+                    </div>
+                </div>
+                </div>
                 </div>
 
-
-
-            </div>
 
             <Transition.Root show={open} as={Fragment}>
 
@@ -368,3 +368,6 @@ export default function TeacherView({ uid, group }) {
         </>
     );
 }
+
+
+
