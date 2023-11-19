@@ -4,8 +4,6 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
-import { loadStripe } from '@stripe/stripe-js';
 
 export default function studentProfile({ uidOfTeacher, classroom, student, children }) {
     const baseUrl = "http://localhost:3001";

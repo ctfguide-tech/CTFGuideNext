@@ -2,8 +2,6 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
-import { loadStripe } from '@stripe/stripe-js';
 
 export default function StudentView({ uid, group }) {
     const baseUrl = "http://localhost:3001"; // switch to deployment api url
@@ -143,8 +141,8 @@ export default function StudentView({ uid, group }) {
                         <br></br>
 
                                 <br></br>
-                    <h1 className='text-xl text-white'> About this course: </h1>
-                    <div style={{color: "white"}}>{classroom.description}</div>
+                                <h1 className='text-xl text-white'> About this course </h1>
+                    <div style={{color: "white"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
                     <br></br>
                     </div>
 
@@ -164,7 +162,27 @@ export default function StudentView({ uid, group }) {
                     </div>
 
                     </div>
+<br></br>
 
+<div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
+                        <div className='flex items-center'>
+                            <h1 className='text-xl text-white'>Announcements:</h1>
+                        </div>
+                        <ul style={{color: "white", padding: "0", margin: "0", height: "300px", overflowY: "auto"}}>
+
+                            {
+                                classroom.announcements ? classroom.announcements.slice().reverse().map((announcement, idx) => {
+                                    return (
+                                        <div style={{position: 'relative'}} key={idx}>
+                                        <li className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop: "10px", cursor: "default"}}>
+                                            <span style={{fontSize: "13px"}}>{new Date(announcement.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcement.message}</span>
+                                        </li>
+                                        </div>
+                                    )
+                                }) : ""
+                            }
+                        </ul>
+                    </div>
 
                    </div>
                     

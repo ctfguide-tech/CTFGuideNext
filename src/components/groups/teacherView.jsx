@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import StudentProfile from '@/components/groups/studentProfile';
-import Modal from './Modal';
 
 export default function TeacherView({ uid, group }) {
     const baseUrl = "http://localhost:3001"; // switch to deployment api url
@@ -19,6 +18,7 @@ export default function TeacherView({ uid, group }) {
     const [openClass, setOpenClass] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [announcement, setAnnouncement] = useState("");
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -196,20 +196,41 @@ export default function TeacherView({ uid, group }) {
     const createAnnouncement = async message => {
         try {
             if(message.length < 1) return;
-            const classroomId = classroom.id;
+            const classCode = classroom.classCode;
             const url = `${baseUrl}/classroom/announcements`;
             const response = await fetch(url, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ classroomId, message })
+              body: JSON.stringify({ classCode, message })
             });
             const data = await response.json();
+            classroom.announcements.push(data.body);
             console.log(data.message);
         } catch(err) {
             console.log(err);
         }
+        setAnnouncement("");
         setIsModalOpen(false);
     };
+
+    const deleteAnnouncement = async id => {
+        try {
+            if(!id) return;
+            const url = `${baseUrl}/classroom/announcements/${id}`;
+            const response = await fetch(url, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await response.json();
+            setClassroom(prevClassroom => ({
+                ...prevClassroom,
+                announcements: prevClassroom.announcements.filter(announcement => announcement.id !== id),
+              }));
+            console.log(data.message);
+        } catch(err) {
+            console.log(err);
+        }
+    }
 
     return (
         <>
@@ -230,13 +251,10 @@ export default function TeacherView({ uid, group }) {
                         <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button>
                         <button onClick={addSeatToClass} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Add Seat</button>
                         <button onClick={() => setOpen(true)} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Invite</button>
-                        <button onClick={handleDelete} style={{backgroundColor: "red"}}className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Delete</button>
                         <button onClick={handleToggle} style={{backgroundColor: "gray"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>{openClass ? "close" : "open"}</button>
                         <button onClick={leaveClass} style={{backgroundColor: "orange"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Leave</button>
-                        <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' onClick={handleOpenModal}>Announcements</button>
-                        {isModalOpen ? <Modal isOpen={isModalOpen} onClose={handleCloseModal} createAnnouncement={createAnnouncement}></Modal> : ""}
-                            
-                    </div>
+                        <button onClick={handleDelete} style={{backgroundColor: "red"}}className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Delete</button>
+                   </div>
                 </div>
                 <div className='grid grid-cols-6 mt-4 gap-x-4'>
                     <div className='col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
@@ -272,16 +290,15 @@ export default function TeacherView({ uid, group }) {
                         </div>
 
                         <br></br>
-                        <p className='text-white mt-10'>Invite students to your group by sharing the link below.</p>
+                        <p className='text-white mt-10'>Invite students to your group by sharing the join code.</p>
                                 <div className='bg-black rounded-lg p-2 mt-2 flex'>
-                                    <p className='text-white'>https://ctfguide/{classroom.classCode}</p>
+                                    <p className='text-white' style={{fontSize: "20px"}}>{classroom.classCode}</p>
                                 <div className='ml-auto'>
                                 <i class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
                                 </div>
 
                                 <br></br>
                     <h1 className='text-xl text-white'> About this course: </h1>
-                    <br></br>
                     <div style={{color: "white"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
 
                     </div>
@@ -299,17 +316,46 @@ export default function TeacherView({ uid, group }) {
                     </div>
                     <br></br>
                     <div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
-                    <h1 className='text-xl text-white'>Announcements:</h1>
+                        <div className='flex items-center'>
+                            <h1 className='text-xl text-white'>Announcements:</h1>
+                            <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' style={{marginLeft: "66%"}} onClick={handleOpenModal}>Make Announcement</button>
+                        </div>
                         <ul style={{color: "white", padding: "0", margin: "0", height: "300px", overflowY: "auto"}}>
-                        {
-                            classroom.announcements ? classroom.announcements.slice().reverse().map((announcement, idx) => {
-                                return (
-                                    <li key={idx} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop:  "10px", cursor: "default"}}>
-                                        <span style={{fontSize: "13px"}}>{new Date(announcement.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcement.message}</span>
-                                    </li>
-                                )
-                            }) : ""
-                        }
+                            {
+                                isModalOpen ? <div><textarea
+                                value={announcement}
+                                onChange={(e) => setAnnouncement(e.target.value)}
+                                    rows="4" 
+                                    cols="50"
+                                    style={{
+                                        width: '100%', 
+                                        padding: '10px', 
+                                        margin: '10px 0', 
+                                        border: "1px solid white", 
+                                        borderRadius: '5px', 
+                                        backgroundColor: '#333', 
+                                        color: '#fff', 
+                                        resize: 'none', 
+                                        fontSize: '16px'
+                                    }}></textarea>
+                                    <button onClick={() => createAnnouncement(announcement)} style={{backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 20px', textAlign: 'center', textDecoration: 'none', display: 'inline-block', fontSize: '16px', margin: '4px 2px', cursor: 'pointer'}}>Send</button>
+                                    <button onClick={handleCloseModal} style={{backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 20px', textAlign: 'center', textDecoration: 'none', display: 'inline-block', fontSize: '16px', margin: '4px 2px', cursor: 'pointer'}}>Close</button>
+                                    </div> : <></>
+                            }
+                            {
+                                classroom.announcements ? classroom.announcements.slice().reverse().map((announcement, idx) => {
+                                    return (
+                                        <div style={{position: 'relative'}} key={idx}>
+                                        <li className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop: "10px", cursor: "default"}}>
+                                            <span style={{fontSize: "13px"}}>{new Date(announcement.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcement.message}</span>
+                                        </li>
+                                        <span onClick={() => deleteAnnouncement(announcement.id)} style={{fontSize: "15px", position: 'absolute', right: '0', paddingRight: "10px", bottom: '0', cursor: "pointer"}}>
+                                            <i className="fa fa-trash" style={{color: "#cc0000"}}></i>
+                                        </span>
+                                        </div>
+                                    )
+                                }) : ""
+                            }
                         </ul>
                     </div>
                 </div>
@@ -368,6 +414,3 @@ export default function TeacherView({ uid, group }) {
         </>
     );
 }
-
-
-
