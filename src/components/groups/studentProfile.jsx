@@ -24,27 +24,7 @@ export default function studentProfile({ uidOfTeacher, classroom, student, child
         {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
     ]
 
-    const removeStudent = async () => {
-        try {
-            const classroomId = classroom.id;
-            const userId = student.uid;
-            const url = `${baseUrl}/classroom/leave`;
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId, classroomId, isTeacher: false })
-            });
-            const data = await response.json();
-            if(data.success) {
-                console.log("The student has been removed");
-                window.location.href = `/groups/${classroom.classCode}/${uidOfTeacher}`;
-            } else {
-                console.log("Error when removing classroom");
-            }
-        } catch(err) {
-            console.log(err);
-        }
-    };
+
 
     return (
        <>
@@ -61,8 +41,6 @@ export default function studentProfile({ uidOfTeacher, classroom, student, child
                     <div className='flex'>
                         <h1 className='text-white text-3xl font-semibold'>{student.firstName} {student.lastName}  ({student.username})</h1>
                         <div className='ml-auto'>
-                        <button onClick={removeStudent} style={{background: "red"}} className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Remove Student</button>
-
                     </div>
                 </div>
 

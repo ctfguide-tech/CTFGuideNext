@@ -61,6 +61,7 @@ export default function Groups() {
           setMessage("successfuly joined the class");
           console.log("successfuly joined the class");
         }
+        window.location.href = ""
       } else {
         setColor("#FF7276");
         setMessage(res.message);

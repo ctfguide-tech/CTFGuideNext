@@ -16,7 +16,14 @@ export default function GroupDisplay() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if(uid && group) checkPermissions();
+        if(uid && group) {
+            const userUid = localStorage.getItem('uid');
+            if(userUid !== uid) {
+                window.location.href = "/groups";
+            } else {
+                checkPermissions();
+            }
+        }
     }, [uid, group]);
 
 

@@ -76,7 +76,10 @@ export default function StudentView({ uid, group }) {
         }
     };
 
-       
+    const viewGrades = () => {
+        // see the students grades
+    }
+
     return (
         <>
             <Head>
@@ -94,16 +97,15 @@ export default function StudentView({ uid, group }) {
                         <div className='ml-auto'>
                         {/* <button className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</button>
                         <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button> */}
-                        <button onClick={leaveClass} style={{backgroundColor: "orange"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Leave</button>
+                        <button onClick={viewGrades} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>View Grades</button>
+                        <button onClick={leaveClass} className='ml-4 bg-orange-600 rounded-lg hover:bg-orange-600/50 text-white px-2 py-1'>Leave</button>
                     
                     </div>
                 </div>
 
                    <div className='grid grid-cols-6 mt-4 gap-x-4'>
 
-
                     <div className='col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
-
 
                     {/* LOOPING THROUGH MEMBERS */}
                     <h1 className='text-xl text-white'> Members: </h1>
@@ -137,17 +139,12 @@ export default function StudentView({ uid, group }) {
                             })
                         }
                         </div>
-
                         <br></br>
-
                                 <br></br>
                                 <h1 className='text-xl text-white'> About this course </h1>
                     <div style={{color: "white"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
                     <br></br>
                     </div>
-
-
-
                     <div className='col-span-2 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
 
                     <h1 className='text-xl text-white'>Assignments</h1>
@@ -162,8 +159,7 @@ export default function StudentView({ uid, group }) {
                     </div>
 
                     </div>
-<br></br>
-
+                <br></br>
 <div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
                         <div className='flex items-center'>
                             <h1 className='text-xl text-white'>Announcements:</h1>
@@ -179,21 +175,14 @@ export default function StudentView({ uid, group }) {
                                         </li>
                                         </div>
                                     )
-                                }) : ""
+                                }) : <></>
                             }
                         </ul>
                     </div>
 
                    </div>
-                    
                 </div>
-
-
-
             </div>
-
-
-
             <Footer />
         </>
     );

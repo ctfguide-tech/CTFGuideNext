@@ -3,8 +3,8 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
-import { loadStripe } from '@stripe/stripe-js';
 import StudentProfile from '@/components/groups/studentProfile';
+import TeacherSettings from '@/components/groups/TeacherSettings';
 
 export default function TeacherView({ uid, group }) {
     const baseUrl = "http://localhost:3001"; // switch to deployment api url
@@ -15,10 +15,12 @@ export default function TeacherView({ uid, group }) {
     const [message, setMessage] = useState('');
     const [color, setColor] = useState('gray');
     const [inviteLink, setInviteLink] = useState('');
-    const [openClass, setOpenClass] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [announcement, setAnnouncement] = useState("");
+    const [viewSettings, setViewSettings] = useState(false);
+    const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -61,33 +63,12 @@ export default function TeacherView({ uid, group }) {
             const data = await response.json();
             if(data.success) {
               setClassroom(data.body);
-              setOpenClass(data.body.open);
             } else {
               console.log("Error when getting classroom info");
             }
         };
         getClassroom();
     }, []);
-
-    const handleDelete = async () => {
-        try {
-            const code = classroom.classCode;
-            const url = `${baseUrl}/classroom/remove`;
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ classCode: code })
-            });
-            const data = await response.json();
-            if(data.success) {
-                window.location.href = "/groups";
-            } else {
-                console.log("Error when removing classroom");
-            }
-        } catch(err) {
-            console.log(err);
-        }
-    };
 
 
     const handleInvite = async () => {
@@ -118,82 +99,33 @@ export default function TeacherView({ uid, group }) {
     };
 
 
-    const addSeatToClass = async () => {
+    const updateAnnouncement = async (id, message) => {
         try {
-            const classroomId = classroom.id;
-            const pricingPlan = classroom.pricingPlan;
-            const url = `${baseUrl}/classroom/add-seat`;
+            if(!id) return;
+            const url = `${baseUrl}/classroom/announcements/${id}`;
             const response = await fetch(url, {
-              method: 'POST',
+              method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ pricingPlan, classroomId, seatsToAdd: 1 })
+              body: JSON.stringify({message})
             });
             const data = await response.json();
-            if(data.success) {
-                if(data.sessionId) {
-                    const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
-                    await stripe.redirectToCheckout({ sessionId: data.sessionId });
-                } else {
-                    console.log("Seat has been updated");
-                    window.location.href = `/groups/${classroom.classCode}/${uid}`;
-                }
-            } else {
-                console.log("Error when adding seat");
-            }
+            let classroomAnnouncements = classroom.announcements;
+            setClassroom(prevClassroom => ({
+                ...prevClassroom,
+                announcements: classroomAnnouncements.map(announcement => 
+                    announcement.id === id ? data.body : announcement
+                )
+            }));
+            console.log(data.message);
         } catch(err) {
             console.log(err);
         }
-    }
-
-    const handleToggle = async () => {
-        try {
-            const classroomId = classroom.id;
-            const pricingPlan = classroom.pricingPlan;
-            const url = `${baseUrl}/classroom/open-close`;
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ classroomId, isOpen: openClass })
-            });
-            const data = await response.json();
-            if(data.success) {
-                console.log("Class open status toggled");
-            } else {
-                console.log(data.message);
-            }
-        } catch(err) {
-            console.log(err);
-        }
-        setOpenClass(!openClass);
-    };
-
-    const leaveClass = async () => {
-        try {
-            const classroomId = classroom.id;
-            const url = `${baseUrl}/classroom/leave`;
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ isTeacher: true, classroomId, userId: uid })
-            });
-            const data = await response.json();
-            if(data.success) {
-                window.location.href = `/groups`;
-            } else {
-                console.log(data.message);
-            }
-        } catch(err) {
-            console.log(err);
-        }
-    };
-
-    if(selectedStudent) {
-        return <StudentProfile uidOfTeacher={uid} student={selectedStudent} classroom={classroom}>
-            <button onClick={() => setSelectedStudent(null)} style={{margin: "0px"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Back to classroom</button>
-        </StudentProfile>
+        setAnnouncement("");
+        setEditingAnnouncementIdx(-1);
     }
 
     const createAnnouncement = async message => {
+        setAnnouncement("");
         try {
             if(message.length < 1) return;
             const classCode = classroom.classCode;
@@ -230,8 +162,44 @@ export default function TeacherView({ uid, group }) {
         } catch(err) {
             console.log(err);
         }
+        setAnnouncement("");
     }
 
+    if(selectedStudent) {
+        return <StudentProfile uidOfTeacher={uid} student={selectedStudent} classroom={classroom}>
+            <button onClick={() => setSelectedStudent(null)} style={{margin: "0px"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Back to classroom</button>
+        </StudentProfile>
+    }
+
+    
+    if(viewSettings) {
+        return <TeacherSettings classroom={classroom} />
+    }
+    const styles = {
+        textarea: {
+          width: '100%', 
+          padding: '10px', 
+          margin: '10px 0', 
+          border: "1px solid white", 
+          borderRadius: '5px', 
+          backgroundColor: '#333', 
+          color: '#fff', 
+          resize: 'none', 
+          fontSize: '16px'
+        },
+        button: {
+          backgroundColor: '#333', 
+          color: '#fff', 
+          border: 'none', 
+          padding: '10px 20px', 
+          textAlign: 'center', 
+          textDecoration: 'none', 
+          display: 'inline-block', 
+          fontSize: '16px', 
+          margin: '4px 2px', 
+          cursor: 'pointer'
+        }
+       };
     return (
         <>
             <Head>
@@ -249,11 +217,7 @@ export default function TeacherView({ uid, group }) {
                         <div className='ml-auto'>
                         <button className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</button>
                         <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button>
-                        <button onClick={addSeatToClass} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Add Seat</button>
-                        <button onClick={() => setOpen(true)} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Invite</button>
-                        <button onClick={handleToggle} style={{backgroundColor: "gray"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>{openClass ? "close" : "open"}</button>
-                        <button onClick={leaveClass} style={{backgroundColor: "orange"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Leave</button>
-                        <button onClick={handleDelete} style={{backgroundColor: "red"}}className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Delete</button>
+                        <button onClick={() => setViewSettings(true)} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'><i className="fa fa-cog"></i> Settings</button>
                    </div>
                 </div>
                 <div className='grid grid-cols-6 mt-4 gap-x-4'>
@@ -299,7 +263,7 @@ export default function TeacherView({ uid, group }) {
 
                                 <br></br>
                     <h1 className='text-xl text-white'> About this course: </h1>
-                    <div style={{color: "white"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
+                    <div style={{color: "white", cursor: "default"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
 
                     </div>
                     <div className='col-span-2 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
@@ -322,39 +286,43 @@ export default function TeacherView({ uid, group }) {
                         </div>
                         <ul style={{color: "white", padding: "0", margin: "0", height: "300px", overflowY: "auto"}}>
                             {
-                                isModalOpen ? <div><textarea
+                                isModalOpen && <div><textarea
                                 value={announcement}
                                 onChange={(e) => setAnnouncement(e.target.value)}
                                     rows="4" 
                                     cols="50"
-                                    style={{
-                                        width: '100%', 
-                                        padding: '10px', 
-                                        margin: '10px 0', 
-                                        border: "1px solid white", 
-                                        borderRadius: '5px', 
-                                        backgroundColor: '#333', 
-                                        color: '#fff', 
-                                        resize: 'none', 
-                                        fontSize: '16px'
-                                    }}></textarea>
-                                    <button onClick={() => createAnnouncement(announcement)} style={{backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 20px', textAlign: 'center', textDecoration: 'none', display: 'inline-block', fontSize: '16px', margin: '4px 2px', cursor: 'pointer'}}>Send</button>
-                                    <button onClick={handleCloseModal} style={{backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 20px', textAlign: 'center', textDecoration: 'none', display: 'inline-block', fontSize: '16px', margin: '4px 2px', cursor: 'pointer'}}>Close</button>
-                                    </div> : <></>
+                                    style={styles.textarea}></textarea>
+                                    <button onClick={() => createAnnouncement(announcement)} style={styles.button}>Post</button>
+                                    <button onClick={handleCloseModal} style={styles.button}>Cancel</button>
+                                    </div>
                             }
                             {
-                                classroom.announcements ? classroom.announcements.slice().reverse().map((announcement, idx) => {
-                                    return (
-                                        <div style={{position: 'relative'}} key={idx}>
-                                        <li className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop: "10px", cursor: "default"}}>
-                                            <span style={{fontSize: "13px"}}>{new Date(announcement.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcement.message}</span>
-                                        </li>
-                                        <span onClick={() => deleteAnnouncement(announcement.id)} style={{fontSize: "15px", position: 'absolute', right: '0', paddingRight: "10px", bottom: '0', cursor: "pointer"}}>
-                                            <i className="fa fa-trash" style={{color: "#cc0000"}}></i>
-                                        </span>
-                                        </div>
-                                    )
-                                }) : ""
+                                classroom.announcements && classroom.announcements.slice().reverse().map((announcementObj, idx) => {
+                                    if(idx === editingAnnouncementIdx) {
+                                        return (
+                                            <div key={idx}><textarea
+                                            value={announcement}
+                                            onChange={(e) => setAnnouncement(e.target.value)}
+                                                rows="4" 
+                                                cols="50"
+                                                style={styles.textarea}></textarea>
+                                                <button onClick={() => updateAnnouncement(announcementObj.id, announcement)} style={styles.button}>Update</button>
+                                                <button onClick={() => setEditingAnnouncementIdx(-1)} style={styles.button}>Cancel</button>
+                                                </div>
+                                        )
+                                    } else {
+                                        return (
+                                            <div style={{position: 'relative'}} key={idx}>
+                                            <li onClick={() => {setEditingAnnouncementIdx(idx);setAnnouncement(announcementObj.message);}}className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop: "10px", cursor: "default"}}>
+                                                <span style={{fontSize: "13px"}}>{new Date(announcementObj.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcementObj.message}</span>
+                                            </li>
+                                            <span onClick={() => deleteAnnouncement(announcementObj.id)} style={{fontSize: "15px", position: 'absolute', right: '0', paddingRight: "10px", bottom: '0', cursor: "pointer"}}>
+                                                <i className="fa fa-trash" style={{color: "rgb(255,99,71)"}}> remove</i>
+                                            </span>
+                                            </div>
+                                        )
+                                    }
+                                })
                             }
                         </ul>
                     </div>
