@@ -7,9 +7,9 @@ import { useRouter } from 'next/router';
 import StudentView from '@/components/groups/studentView';
 import Link from 'next/link';
 import Head from 'next/head';
-export default function GroupDisplay() {
-    const baseUrl = "http://localhost:3001";
+const baseUrl = "http://localhost:3001";
 
+export default function GroupDisplay() {
     const router = useRouter();
     const { uid, group } = router.query;
     const [viewAsTeacher, setViewAsTeacher ] = useState(null);

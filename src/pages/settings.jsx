@@ -14,6 +14,8 @@ import {
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 
+const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
+
 export default function Dashboard() {
   const router = useRouter();
 
@@ -136,7 +138,7 @@ export default function Dashboard() {
 
   const redirectToCheckout = async (event) => {
     try {
-      const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+      const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById("paymentType").value;
       console.log(subscriptionType);
       const userId = auth.currentUser.uid;
@@ -176,7 +178,7 @@ export default function Dashboard() {
 
   const updateCardInfo = async () => {
     try {
-      const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+      const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById("paymentType").value;
       const userId = auth.currentUser.uid;
 

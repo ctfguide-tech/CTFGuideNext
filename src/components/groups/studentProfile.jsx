@@ -5,26 +5,25 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 
+const baseUrl = "http://localhost:3001";
+const assignments = [
+    {title: "Assignment 1", status: "on time", grade: 87, dueDate: "1/25/12"},
+    {title: "Assignment 2", status: "on time",grade: 93, dueDate: "1/26/12"},
+    {title: "Assignment 3", status: "on time",grade: 95, dueDate: "1/25/12"},
+    {title: "Assignment 4", status: "on time",grade: 95, dueDate: "1/25/12"},
+    {title: "Assignment 5", status: "late",grade: 80, dueDate: "2/26/12"},
+    {title: "Assignment 6", status: "on time",grade: 96, dueDate: "2/27/12"},
+    {title: "Assignment 7", status: "on time",grade: 97, dueDate: "2/28/12"},
+    {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
+    {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
+    {title: "Assignment 8", status: "late",grade: 98, dueDate: "2/29/12"},
+    {title: "Assignment 8", status: "late",grade: 98, dueDate: "2/29/12"},
+    {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
+    {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
+    {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
+];
+
 export default function studentProfile({ uidOfTeacher, classroom, student, children }) {
-    const baseUrl = "http://localhost:3001";
-    const assignments = [
-        {title: "Assignment 1", status: "on time", grade: 87, dueDate: "1/25/12"},
-        {title: "Assignment 2", status: "on time",grade: 93, dueDate: "1/26/12"},
-        {title: "Assignment 3", status: "on time",grade: 95, dueDate: "1/25/12"},
-        {title: "Assignment 4", status: "on time",grade: 95, dueDate: "1/25/12"},
-        {title: "Assignment 5", status: "late",grade: 80, dueDate: "2/26/12"},
-        {title: "Assignment 6", status: "on time",grade: 96, dueDate: "2/27/12"},
-        {title: "Assignment 7", status: "on time",grade: 97, dueDate: "2/28/12"},
-        {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
-        {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
-        {title: "Assignment 8", status: "late",grade: 98, dueDate: "2/29/12"},
-        {title: "Assignment 8", status: "late",grade: 98, dueDate: "2/29/12"},
-        {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
-        {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
-        {title: "Assignment 8", status: "on time",grade: 98, dueDate: "2/29/12"},
-    ]
-
-
 
     return (
        <>

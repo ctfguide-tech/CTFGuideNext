@@ -6,9 +6,33 @@ import { Transition, Fragment, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/TeacherSettings';
 
-export default function TeacherView({ uid, group }) {
-    const baseUrl = "http://localhost:3001"; // switch to deployment api url
+const baseUrl = "http://localhost:3001"; // switch to deployment api url
+const defaultImages = [
+    "https://robohash.org/pranavramesh",
+    "https://robohash.org/laphatize",
+    "https://robohash.org/stevewilkers",
+    "https://robohash.org/rickast",
+    "https://robohash.org/picoarc",
+    "https://robohash.org/jasoncalcanis",
+];
 
+const demoAssignments = [
+    {
+        id: 1,
+        title: 'Assignment 1',
+        description: 'Introduction to Cyber Security Basics',
+        dueDate: '2023-12-01',
+    },
+    {
+        id: 2,
+        title: 'Assignment 2',
+        description: 'Understanding Cryptography',
+        dueDate: '2024-01-15',
+    },
+    // Add more assignments as needed
+];
+
+export default function TeacherView({ uid, group }) {
     const [classroom, setClassroom] = useState({});
     const [inviteEmail, setInviteEmail] = useState('');
     const [open, setOpen] = useState(false);
@@ -30,31 +54,6 @@ export default function TeacherView({ uid, group }) {
         setIsModalOpen(false);
     };
     
-    const defaultImages = [
-        "https://robohash.org/pranavramesh",
-        "https://robohash.org/laphatize",
-        "https://robohash.org/stevewilkers",
-        "https://robohash.org/rickast",
-        "https://robohash.org/picoarc",
-        "https://robohash.org/jasoncalcanis",
-    ];
-
-    const demoAssignments = [
-        {
-            id: 1,
-            title: 'Assignment 1',
-            description: 'Introduction to Cyber Security Basics',
-            dueDate: '2023-12-01',
-        },
-        {
-            id: 2,
-            title: 'Assignment 2',
-            description: 'Understanding Cryptography',
-            dueDate: '2024-01-15',
-        },
-        // Add more assignments as needed
-    ];
-
     useEffect(() => {
         const getClassroom = async () => {
             const classroomCode = group;
@@ -175,6 +174,7 @@ export default function TeacherView({ uid, group }) {
     if(viewSettings) {
         return <TeacherSettings classroom={classroom} />
     }
+
     const styles = {
         textarea: {
           width: '100%', 
@@ -199,7 +199,7 @@ export default function TeacherView({ uid, group }) {
           margin: '4px 2px', 
           cursor: 'pointer'
         }
-       };
+    };
     return (
         <>
             <Head>

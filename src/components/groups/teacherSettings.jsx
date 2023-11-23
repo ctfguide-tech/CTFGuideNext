@@ -6,10 +6,19 @@ import { useEffect, useState } from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 
+const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
+const baseUrl = "http://localhost:3001";
+
+const defaultImages = [
+  "https://robohash.org/pranavramesh",
+  "https://robohash.org/laphatize",
+  "https://robohash.org/stevewilkers",
+  "https://robohash.org/rickast",
+  "https://robohash.org/picoarc",
+  "https://robohash.org/jasoncalcanis",
+];
 
 export default function teacherSettings({ classroom }) {
-    const baseUrl = "http://localhost:3001";
-    //console.log(classroom);
     
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteLink, setInviteLink] = useState("ctfguide.com/invite/*****/********");
@@ -33,15 +42,7 @@ export default function teacherSettings({ classroom }) {
       "Are you sure you want to make these changes?",
       `Are you sure you want to remove ${selectedStudent && selectedStudent.username} from the class?`
     ]
-
-    const defaultImages = [
-      "https://robohash.org/pranavramesh",
-      "https://robohash.org/laphatize",
-      "https://robohash.org/stevewilkers",
-      "https://robohash.org/rickast",
-      "https://robohash.org/picoarc",
-      "https://robohash.org/jasoncalcanis",
-  ];
+    
     const handleNumberOfSeats = (event) => {
         const value = event.target.value;
         if (value !== '' && !isNaN(value) && parseInt(value) >= classroom.numberOfSeats) {
@@ -110,7 +111,6 @@ export default function teacherSettings({ classroom }) {
   };
 
 
-
     const removeStudent = async () => {
       try {
           const uidOfTeacher = localStorage.getItem("uid");
@@ -133,6 +133,7 @@ export default function teacherSettings({ classroom }) {
           console.log(err);
       }
   };
+
     const handleConfirmClick = async () => {
       if(index === 0) {
         await handleDelete()
@@ -148,7 +149,6 @@ export default function teacherSettings({ classroom }) {
 
     const addSeatToClass = async seatsToAdd => {
       try {
-          const uidOfTeacher = localStorage.getItem("uid");
           const classroomId = classroom.id;
           const pricingPlan = classroom.pricingPlan;
           const url = `${baseUrl}/classroom/add-seat`;
@@ -160,7 +160,7 @@ export default function teacherSettings({ classroom }) {
           const data = await response.json();
           if(data.success) {
               if(data.sessionId) {
-                  const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+                  const stripe = await loadStripe(STRIPE_KEY);
                   await stripe.redirectToCheckout({ sessionId: data.sessionId });
               } else {
                   console.log("Seat has been updated");

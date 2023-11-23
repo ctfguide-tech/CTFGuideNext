@@ -9,8 +9,10 @@ import { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
+const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
+const baseUrl = "http://localhost:3001";
+
 export default function Groups() {
-  const baseUrl = "http://localhost:3001"
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [color, setColor] = useState("");
@@ -43,7 +45,7 @@ export default function Groups() {
     let code = document.getElementById("joinCode").value;
     try {
       const userId = localStorage.getItem('uid');
-      const url = "http://localhost:3001/classroom/join";
+      const url = `${baseUrl}/classroom/join`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -53,7 +55,7 @@ export default function Groups() {
       if(res.success) {
         if(res.sessionId) {
           // do the stripe stuff
-          const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+          const stripe = await loadStripe(STRIPE_KEY);
           const result = await stripe.redirectToCheckout({ sessionId: res.sessionId });
           console.log(result);
         } else {
@@ -71,9 +73,6 @@ export default function Groups() {
       console.log(err);
     }
   };
-
-  
-
 
   return (
     <>
@@ -144,23 +143,10 @@ export default function Groups() {
 
 
               </div>
-
-
-
-
-
-
             </div>
-
-
-
-
-
           </div>
-
         <h1 className='text-white text-2xl mt-10'>{teacherClassrooms.length === 0 ? "You do not own any classrooms yet... " : "Classes you own"}</h1>
           <div className='mt-4 grid grid-cols-3 gap-x-4'>
-
           {
             teacherClassrooms.map((classroom, idx) => {
               return (
@@ -173,12 +159,8 @@ export default function Groups() {
             })
           }
           </div>
-
-
-
           <h1 className='text-white text-2xl mt-10'>{studentClassrooms.length === 0 ? "You haven't joined any classes yet..." : "Joined Classes"}</h1>
           <div className='mt-4 grid grid-cols-3 gap-x-4'>
-
           {
             studentClassrooms.map((classroom, idx) => {
               return (
@@ -191,64 +173,52 @@ export default function Groups() {
             })
           }
           </div>
-
-
           <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
 
-<Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
-
-    <Transition.Child
-        as={Fragment}
-        enter="ease-out duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="ease-in duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-    >
-        <div  
-        onClick={() => setOpen(false)}
-        className="fixed inset-0 bg-black bg-opacity-75 transition-opacity z-2" />
-  
-    </Transition.Child>
-    <div className="flex items-center justify-center min-h-screen">
-        <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-            <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="  bg-neutral-700  rounded-lg px-40 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
-                <div className='w-full'>
-                    <div className="mt-3 sm:mt-5 text-center mx-auto">
-                        <h1 className="text-white text-xl text-center"> Enter a join code</h1>
-                        <input id="joinCode" className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  '></input>
-                      <br></br>
-                      <div className='w-full mx-auto text-center mt-4 pb-5' >
-                        <button onClick={() => joinClass()} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => {setOpen(false); setMessage("")}} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
-                        <div style={{color: color, marginTop: "10px"}}>{message}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Transition.Child>
-    </div>
-</Dialog>
-</Transition.Root>
-
-
+          <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+          >
+              <div  
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 bg-black bg-opacity-75 transition-opacity z-2" />
+        
+          </Transition.Child>
+          <div className="flex items-center justify-center min-h-screen">
+              <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  enterTo="opacity-100 translate-y-0 sm:scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                  leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                  <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="  bg-neutral-700  rounded-lg px-40 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
+                      <div className='w-full'>
+                          <div className="mt-3 sm:mt-5 text-center mx-auto">
+                              <h1 className="text-white text-xl text-center"> Enter a join code</h1>
+                              <input id="joinCode" className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  '></input>
+                            <br></br>
+                            <div className='w-full mx-auto text-center mt-4 pb-5' >
+                              <button onClick={() => joinClass()} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => {setOpen(false); setMessage("")}} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
+                              <div style={{color: color, marginTop: "10px"}}>{message}</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </Transition.Child>
+          </div>
+      </Dialog>
+      </Transition.Root>
         </div>
-
-
-
       </div>
-
-
-
-
       <Footer />
     </>
   );
