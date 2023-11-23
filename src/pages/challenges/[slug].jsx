@@ -37,33 +37,33 @@ export default function Challenge() {
 
     const [progress, setProgress] = useState(0);
     const [eta, setEta] = useState(15)
-    
+
     // change eta by one every sec 
     useEffect(() => {
         if (eta > 0) {
-        const interval = setInterval(() => {
-            setEta(prevEta => prevEta - 1);
-        }, 1000); // Update every 1 second
-    }
+            const interval = setInterval(() => {
+                setEta(prevEta => prevEta - 1);
+            }, 1000); // Update every 1 second
+        }
 
         return () => {
             clearInterval(interval);
         };
     }, []);
-    
- 
+
+
 
 
 
     useEffect(() => {
 
 
-       
+
 
 
         const interval = setInterval(() => {
             setProgress(prevProgress => {
-             
+
 
                 const newProgress = prevProgress + 100 / (15 * 10);
                 if (newProgress >= 100) {
@@ -300,13 +300,13 @@ export default function Challenge() {
 
                 const response = await fetch(userLikesUrl, requestOptions);
                 const result = await response.json();
-try {
-                const likes = result.filter((item) => {
-                    return item.challenge.slug === slug;
-                });
-            } catch(err) {
-                console.log(err);
-            }
+                try {
+                    const likes = result.filter((item) => {
+                        return item.challenge.slug === slug;
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
                 //   setLiked(likes.length ? true : false);
                 //  if (likes.length) {
                 //   setLikeCount(likeCount + 1);
@@ -793,30 +793,30 @@ try {
                     <div className="w-full bg-black text-center mx-auto text-white h-500 py-10"
                         height="500" id="terminalLoader">
                         <span className="text-2xl font-semibold inline-block text-white">
-                                    {Math.round(progress)}%
-                                </span>
-                        <h1 className='text-xl text-center'>Launching Terminal</h1>             
+                            {Math.round(progress)}%
+                        </span>
+                        <h1 className='text-xl text-center'>Launching Terminal</h1>
                         <div className="relative max-w-xl mx-auto ">
                             <div className="flex  items-center justify-between">
                                 <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-800 "></span>
 
-                   
+
                             </div>
                             <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-600">
                                 <div style={{ width: `${progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-900"></div>
                             </div>
 
                             <span className="text-sm italic inline-block text-white">
-                                        Expected Time: {eta} seconds
-                                </span>
+                                Expected Time: {eta} seconds
+                            </span>
                         </div>
                         <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
                         <span className="text-sm  inline-block text-white">
-                                       Version 2 <br>
-                                       </br>
+                            Version 2 <br>
+                            </br>
 
-                                       AI insights are disabled. If you see a blank page upon loading, please refresh the page.
-                                </span>
+                            AI insights are disabled. If you see a blank page upon loading, please refresh the page.
+                        </span>
                     </div>
 
 

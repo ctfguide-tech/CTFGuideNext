@@ -200,6 +200,15 @@ export default function TeacherView({ uid, group }) {
           cursor: 'pointer'
         }
     };
+
+    function copy() {
+        var copyText = document.getElementById("copyBox");
+        copyText.type = "text"
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        copyText.type = "hidden"
+    }
     return (
         <>
             <Head>
@@ -223,7 +232,7 @@ export default function TeacherView({ uid, group }) {
                 <div className='grid grid-cols-6 mt-4 gap-x-4'>
                     <div className='col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
                     {/* LOOPING THROUGH MEMBERS */}
-                    <h1 className='text-xl text-white'> Members: </h1>
+                    <h1 className='text-xl text-white'> Members:</h1>
                         <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
                         {
                             classroom.teachers && classroom.teachers.length === 0
@@ -232,9 +241,9 @@ export default function TeacherView({ uid, group }) {
                             classroom.teachers.map((teacher, idx) => {
                                 const i = defaultImages.length-1 - idx % defaultImages.length;
                                 return (
-                                    <div key={idx} style={{border: "2px solid gold"}} className='flex bg-neutral-900 rounded-lg items-center'>
+                                    <div key={idx}  className='flex bg-neutral-900 rounded-lg items-center'>
                                     <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'>{teacher.username}</h1>
+                                    <h1 className='text-white ml-6 mt-2 pl-1'> <i class="fas fa-user-shield"></i> {teacher.username}</h1>
                                     </div>
                                 );
                             })
@@ -258,7 +267,7 @@ export default function TeacherView({ uid, group }) {
                                 <div className='bg-black rounded-lg p-2 mt-2 flex'>
                                     <p className='text-white' style={{fontSize: "20px"}}>{classroom.classCode}</p>
                                 <div className='ml-auto'>
-                                <i class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
+                                <i onClick={copy} class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
                                 </div>
 
                                 <br></br>
@@ -329,6 +338,8 @@ export default function TeacherView({ uid, group }) {
                 </div>
                 </div>
                 </div>
+
+                <input type="hidden" id="copyBox" value={classroom.classCode}></input>
 
 
             <Transition.Root show={open} as={Fragment}>
