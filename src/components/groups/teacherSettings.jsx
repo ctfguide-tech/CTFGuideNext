@@ -36,6 +36,8 @@ export default function teacherSettings({ classroom }) {
     const [messageOfConfirm, setMessageOfConfirm] = useState('');
     const [index, setIndex] = useState(-1);
 
+    const [subType, setSubType] = useState("None");
+
     const actions = [
       "Are you sure you want to delete the class all data will be lost",
       "Are you sure you want to leave the class",
@@ -50,22 +52,49 @@ export default function teacherSettings({ classroom }) {
         }
     };
 
+
+    const addSubscriptionToClass = async () => {
+      if(subType === "None") return;
+      try {
+        const stripe = await loadStripe(STRIPE_KEY);
+        const subscriptionType = subType;
+        const userId = localStorage.getItem("uid");
+        const response = await fetch(`${baseUrl}/payments/stripe/create-checkout-session`, {
+          method: 'POST',
+          body: JSON.stringify({
+            subType: subscriptionType,
+            quantity: numberOfSeats,
+            uid: userId,
+            operation: "subscription",
+            data: {}
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const session = await response.json();
+        await stripe.redirectToCheckout({ sessionId: session.sessionId });
+      } catch(error) {
+        console.log(error);
+      }
+    };
+
+
     const handleInviteLink = async () => {
         setInviteActivated(true);
         const email = inviteEmail;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (emailRegex.test(email)) {
-            setInviteLink('generating...');
-            const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            console.log(data);
-            if(data.success) {
-                setInviteLink(`localhost:3000/groups/invites/${classroom.classCode}/${data.body}`);
-            } else {
-              setInviteLink(data.message);
-            }
-        } else {
+          setInviteLink('generating...');
+          const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
+          const response = await fetch(url);
+          const data = await response.json();
+          console.log(data);
+          if(data.success) {
+              setInviteLink(`localhost:3000/groups/invites/${classroom.classCode}/${data.body}`);
+          } else {
+            setInviteLink(data.message);
+          }
         }
     };
 
@@ -211,7 +240,7 @@ export default function teacherSettings({ classroom }) {
       option.username.toLowerCase().includes(searchInput.toLowerCase())
     );
 
-    
+    console.log(subType);
     return (
        <>
             <Head>
@@ -336,6 +365,25 @@ export default function teacherSettings({ classroom }) {
                                 </div>
                     </div>
 
+                    <div className="sm:col-span-6">
+                      <label
+                        className="block text-sm font-medium leading-6 text-white"
+                      >
+                        Add a subscription to classroom
+                      </label>
+                      <div className="mt-2 flex rounded-md shadow-sm">
+                      <select
+                          value={subType}
+                          onChange={(e) => setSubType(e.target.value)}
+                          className="block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                          >
+                          <option value="None">None</option>
+                          <option value="CTFGuidePro">CTFGuidePro</option>
+                        </select>
+
+                        <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' onClick={addSubscriptionToClass}>Add</button>
+                        </div>
+                    </div>
 
 
                     <div className="sm:col-span-6">
@@ -461,15 +509,11 @@ export default function teacherSettings({ classroom }) {
                       setMessageOfConfirm(actions[0]);
                       setIndex(0);
                       }} className='ml-4 bg-red-600 rounded-lg hover:bg-red-600/50 text-white px-2 py-1'>Delete class</button>
-
-
                     </div>
-                    </div>
-                    </div>
-                    </div>
-                    </div>
-              
-     
+                  </div>
+                </div>
+              </div>
+            </div>
             <Footer />
         </>
     );

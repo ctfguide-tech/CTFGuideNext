@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
 
+
+const basePaymentLink = "https://buy.stripe.com/test_aEU5na60V8sBbfOcMN"; // this will need to change soon
 export default function CreateGroup() {
   const baseUrl = "http://localhost:3001"; // change this in deployment
 
@@ -20,12 +22,53 @@ export default function CreateGroup() {
   const [seats, setSeats] = useState(0);
   const [time, setTime] = useState("");
   const [startingDate, setStartingDate] = useState(new Date());
+  const [usingPaymentLink, setUsingPaymentLink] = useState(false);
+  const [paymentLink, setPaymentLink] = useState("");
+
+
+
+  const getPaymentLinkForSeats = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/classroom/getPaymentLinkForClassCreate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: seats })
+      });
+      const resJson = await res.json();
+      if(resJson.success) {
+        setPaymentLink(`${resJson.body}?classCode`);
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
 
   const createClass = async () => {
     try {
+
+      if(seats <= 0) {
+        return;
+      }
+
       const userId = localStorage.getItem('uid');
-      const dataObj = { org: domain, name, description, numberOfSeats: seats, pricingPlan: selectedOption, open: true };
-  
+      const dataObj = { org: domain, name, description, numberOfSeats: seats, isPayedFor: true, pricingPlan: selectedOption, open: true };
+      
+      if(usingPaymentLink && selectedOption === "institution") {
+        dataObj["isPayedFor"] = false;
+        const res = await fetch(`${baseUrl}/classroom/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, ...dataObj})
+        });
+        const resJson = await res.json();
+        if(resJson.success) {
+          window.location.href = '/groups';
+        }
+        else console.log("There was an error when creating the class");
+
+        return;
+      }
+
       const url = selectedOption === "student" ? `${baseUrl}/classroom/create` : `${baseUrl}/payments/stripe/create-checkout-session`;
   
       const response = await fetch(url, {
@@ -139,23 +182,33 @@ export default function CreateGroup() {
         </div>
 
         <h1 className='text-sm mt-4 text-white'>Pricing Model</h1>
-        <div className='mt-2 grid grid-row-1 grid-cols-2 gap-4 gap-x-4 text-white '>
+        <div className='mt-2 grid grid-row-1 grid-cols-3 gap-4 gap-x-4 text-white '>
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'student' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => setSelectedOption('student')}
+                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'student' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
+                onClick={() => {setSelectedOption('student'); setUsingPaymentLink(false)}}
             >
                 <h1>Paid for by Student  <b className='text-yellow-500 italic text-sm'>Most Popular!</b></h1>
                 <h1 className='text-2xl font-semibold'>$58</h1>
                 <h1 className='text-sm'>per semester</h1>
             </div>
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'institution' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => setSelectedOption('institution')}
+                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'institution' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
+                onClick={() => {setSelectedOption('institution'); setUsingPaymentLink(false)}}
             >
                 <h1>Paid for by Institution</h1>
                 <h1 className='text-2xl font-semibold'>$40</h1>
                 <h1 className='text-sm'>per student, per semester</h1>
             </div>
+
+            <div 
+                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
+                onClick={() => {setSelectedOption('institution'); setUsingPaymentLink(true)}}
+            >
+                <h1>Paid for by Institution With Payment Link</h1>
+                <h1 className='text-2xl font-semibold'>$40</h1>
+                <h1 className='text-sm'>per student, per semester</h1>
+            </div>
+            
         </div>
 
         <h1 className='text-sm mt-4 text-white'>Expected amount of students</h1>
@@ -181,6 +234,7 @@ export default function CreateGroup() {
     
 
     <button onClick={createClass} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
+        <div style={{color: "white"}}>{paymentLink}</div>
         </div>
                 
                 </div>

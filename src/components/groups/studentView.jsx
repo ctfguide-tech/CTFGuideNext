@@ -95,20 +95,13 @@ export default function StudentView({ uid, group }) {
                     <div className='flex'>
                         <h1 className='text-white text-3xl font-semibold'>{classroom.name}</h1>
                         <div className='ml-auto'>
-                        {/* <button className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</button>
-                        <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button> */}
-                        <button onClick={viewGrades} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>View Grades</button>
-                        <button onClick={leaveClass} className='ml-4 bg-orange-600 rounded-lg hover:bg-orange-600/50 text-white px-2 py-1'>Leave</button>
-                    
-                    </div>
+                        <button onClick={leaveClass} className='ml-4 bg-orange-600 rounded-lg hover:bg-orange-600/50 text-white px-2 py-1'> Leave</button>
+                   </div>
                 </div>
-
-                   <div className='grid grid-cols-6 mt-4 gap-x-4'>
-
-                    <div className='col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
-
+                <div className='grid grid-cols-6 mt-4 gap-x-4'>
+                    <div className='border-t-8 border-blue-600 col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
                     {/* LOOPING THROUGH MEMBERS */}
-                    <h1 className='text-xl text-white'> Members: </h1>
+                    <h1 className='text-xl text-white font-semibold'> Members</h1>
                         <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
                         {
                             classroom.teachers && classroom.teachers.length === 0
@@ -117,21 +110,19 @@ export default function StudentView({ uid, group }) {
                             classroom.teachers.map((teacher, idx) => {
                                 const i = defaultImages.length-1 - idx % defaultImages.length;
                                 return (
-                                    <div key={idx} style={{border: "2px solid gold"}} className='flex bg-neutral-900 rounded-lg items-center'>
+                                    <div key={idx}  className='flex bg-neutral-900 rounded-lg items-center'>
                                     <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'>{teacher.username}</h1>
+                                    <h1 className='text-white ml-6 mt-2 pl-1'> <i className="fas fa-user-shield"></i> {teacher.username}</h1>
                                     </div>
                                 );
                             })
                         }
                         {
-                            classroom.students && classroom.students.length === 0
-                            ? <div style={{color: "white"}}>No students yet...</div>
-                            : classroom.students &&
+                            classroom.students &&
                             classroom.students.map((student, idx) => {
                                 const i = idx % defaultImages.length;
                                 return (
-                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center' onClick={() => viewProfile(student)}>
+                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center'>
                                     <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
                                     <h1 className='text-white ml-6 mt-2 pl-1'>{student.username}</h1>
                                     </div>
@@ -139,50 +130,54 @@ export default function StudentView({ uid, group }) {
                             })
                         }
                         </div>
-                        <br></br>
-                                <br></br>
-                                <h1 className='text-xl text-white'> About this course </h1>
-                    <div style={{color: "white"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>{classroom.description}</div>
-                    <br></br>
-                    </div>
-                    <div className='col-span-2 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
 
-                    <h1 className='text-xl text-white'>Assignments</h1>
-   <div className='mt-4'>
+                        <br></br>
+
+                                <br></br>
+                    <h1 className='text-xl text-white font-semibold'> Course Description </h1>
+                    <div style={{color: "white", cursor: "default"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-sm mb-4'>{classroom.description}</div>
+
+                    </div>
+                    <div className='border-blue-600 border-t-8  col-span-2  bg-neutral-800/50 px-4 py-3 rounded-lg'>
+                    <h1 className='text-xl text-white font-semibold'>Assignments</h1>
+                <div className='mt-1 '>
                         {demoAssignments.map(assignment => (
-                            <div key={assignment.id} onClick={() => {window.location.href = "/assignments/testingfun"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-lg mb-4'>
+                            <div key={assignment.id} onClick={() => {window.location.href = "/assignments/testingfun"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-sm  mb-4'>
                                 <h2 className='text-lg text-white'>{assignment.title}</h2>
                                 <p className='text-white'>{assignment.description}</p>
                                 <p className='text-white'>Due Date: {assignment.dueDate}</p>
                             </div>
                         ))}
-                    </div>
 
+                        <button className='bg-neutral-900 text-white rounded-sm w-full px-2 py-1'>View All</button>
                     </div>
-                <br></br>
-<div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
+                    </div>
+                    <br></br>
+                    <div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
                         <div className='flex items-center'>
-                            <h1 className='text-xl text-white'>Announcements:</h1>
+                            <h1 className='text-xl text-white'>Announcements</h1>
                         </div>
                         <ul style={{color: "white", padding: "0", margin: "0", height: "300px", overflowY: "auto"}}>
 
                             {
-                                classroom.announcements ? classroom.announcements.slice().reverse().map((announcement, idx) => {
+                                classroom.announcements && classroom.announcements.slice().reverse().map((announcementObj, idx) => {
                                     return (
                                         <div style={{position: 'relative'}} key={idx}>
                                         <li className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop: "10px", cursor: "default"}}>
-                                            <span style={{fontSize: "13px"}}>{new Date(announcement.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcement.message}</span>
+                                            <span style={{fontSize: "13px"}}>{new Date(announcementObj.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcementObj.message}</span>
                                         </li>
+                                        <span onClick={() => deleteAnnouncement(announcementObj.id)} style={{fontSize: "15px", position: 'absolute', right: '0', paddingRight: "10px", bottom: '0', cursor: "pointer"}}>
+                                        </span>
                                         </div>
                                     )
-                                }) : <></>
+                                })
                             }
                         </ul>
                     </div>
-
-                   </div>
                 </div>
-            </div>
+                </div>
+                </div>
+
             <Footer />
         </>
     );

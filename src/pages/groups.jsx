@@ -146,14 +146,18 @@ export default function Groups() {
             </div>
           </div>
         <h1 className='text-white text-2xl mt-10'>{teacherClassrooms.length === 0 ? "You do not own any classrooms yet... " : "Classes you own"}</h1>
-          <div className='mt-4 grid grid-cols-3 gap-x-4'>
+          <div className='mt-4 grid grid-cols-3 gap-x-4 gap-y-4'>
           {
             teacherClassrooms.map((classroom, idx) => {
               return (
                 <div key={idx} className=' bg-neutral-800 rounded-lg px-4 py-2 hover:bg-neutral-800/50 cursor-pointer' 
-                onClick={() => {window.location.href = `/groups/${classroom.classCode}/${userId}`}}>
+                onClick={() => {classroom.isPayedFor ? window.location.href = `/groups/${classroom.classCode}/${userId}` : ""}}>
                 <h1 className='text-3xl text-neutral-300 font-semibold'>{classroom.name}</h1>
-                <p className='text-neutral-400'><i className="fas fa-users"></i> {classroom.numberOfSeats}</p>
+                {
+                  !classroom.isPayedFor ? <p className='text-neutral-400'><i className="fas fa-times"></i> Class Not Paied <span style={{fontSize: "12px"}}>{classroom.paymentLink}</span></p> : 
+                  <p className='text-neutral-400'><i className="fas fa-users"></i> {classroom.numberOfSeats} </p>
+                }
+                
                 </div>
               )
             })

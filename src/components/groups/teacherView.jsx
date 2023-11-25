@@ -4,7 +4,7 @@ import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
-import TeacherSettings from '@/components/groups/TeacherSettings';
+import TeacherSettings from '@/components/groups/teacherSettings';
 
 const baseUrl = "http://localhost:3001"; // switch to deployment api url
 const defaultImages = [
@@ -243,13 +243,13 @@ export default function TeacherView({ uid, group }) {
                                 return (
                                     <div key={idx}  className='flex bg-neutral-900 rounded-lg items-center'>
                                     <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'> <i class="fas fa-user-shield"></i> {teacher.username}</h1>
+                                    <h1 className='text-white ml-6 mt-2 pl-1'> <i className="fas fa-user-shield"></i> {teacher.username}</h1>
                                     </div>
                                 );
                             })
                         }
                         {
-                            classroom.students ?
+                            classroom.students &&
                             classroom.students.map((student, idx) => {
                                 const i = idx % defaultImages.length;
                                 return (
@@ -258,7 +258,7 @@ export default function TeacherView({ uid, group }) {
                                     <h1 className='text-white ml-6 mt-2 pl-1'>{student.username}</h1>
                                     </div>
                                 );
-                            }) : ""
+                            })
                         }
                         </div>
 
@@ -341,7 +341,7 @@ export default function TeacherView({ uid, group }) {
                 </div>
                 </div>
 
-                <input type="hidden" id="copyBox" value={classroom.classCode}></input>
+                <input type="hidden" id="copyBox" value={classroom.classCode || ""}></input>
 
 
             <Transition.Root show={open} as={Fragment}>
