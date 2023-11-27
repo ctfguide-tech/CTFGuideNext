@@ -2,14 +2,16 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
 
 export default function StudentView({ uid, group }) {
     const baseUrl = "http://localhost:3001"; // switch to deployment api url
 
     const [classroom, setClassroom] = useState({});
-    const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState('');
-    const [color, setColor] = useState('gray');
+    const [upgradeType, setUpgradeType] = useState("CTFGuideStudentEDUPaymentLink");
+    const [isUpgraded, setIsUpgraded] = useState(false);
+    const [paymentLink, setPaymentLink] = useState("");
 
     const defaultImages = [
         "https://robohash.org/pranavramesh",
@@ -44,6 +46,8 @@ export default function StudentView({ uid, group }) {
             const data = await response.json();
             if(data.success) {
               setClassroom(data.body);
+              const upgraded = data.body.upgrades.some(i => (i.name === "CTFGuideStudentEDU" && i.userId === uid) || i.name === "CTFGuideInstitutionEDU");
+              setIsUpgraded(upgraded);
             } else {
               console.log("Error when getting classroom info");
             }
@@ -80,6 +84,54 @@ export default function StudentView({ uid, group }) {
         // see the students grades
     }
 
+    const studentUpgrade = async () => {
+        if(upgradeType === "None") return;
+        try {
+            if(upgradeType.includes("PaymentLink")) {
+                const response = await fetch(`${baseUrl}/classroom/upgrade`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                    upgradeType: upgradeType.split("PaymentLink")[0],
+                    numberOfSeats: 1,
+                    classroomId: classroom.id,
+                    userId: uid
+                }),
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if(data.success) {
+                setPaymentLink(data.body);
+                console.log(data.body);
+            }
+        } else {
+            const stripe = await loadStripe(STRIPE_KEY);
+            const response = await fetch(`${baseUrl}/payments/stripe/create-checkout-session`, {
+              method: 'POST',
+              body: JSON.stringify({
+                subType: upgradeType,
+                quantity: 1,
+                uid: uid,
+                operation: "classroomUpgrade",
+                data: { classroomId: classroom.id }
+              }),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            const session = await response.json();
+            if(session.success) {
+              await stripe.redirectToCheckout({ sessionId: session.sessionId });
+            } else {
+              console.log("Error:", session.message);
+            }
+          }
+        } catch(error) {
+          console.log(error);
+        }
+      };
+
     return (
         <>
             <Head>
@@ -94,8 +146,14 @@ export default function StudentView({ uid, group }) {
                 <div className="mx-auto mt-10 max-w-6xl">
                     <div className='flex'>
                         <h1 className='text-white text-3xl font-semibold'>{classroom.name}</h1>
+                        {
+                            isUpgraded && <i className="fa fa-star" style={{color: "yellow", fontSize: "25px", paddingLeft: "10px"}}></i>
+                        }
                         <div className='ml-auto'>
                         <button onClick={leaveClass} className='ml-4 bg-orange-600 rounded-lg hover:bg-orange-600/50 text-white px-2 py-1'> Leave</button>
+                        {
+                            !isUpgraded && <button onClick={studentUpgrade} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'> Upgrade</button>
+                        }
                    </div>
                 </div>
                 <div className='grid grid-cols-6 mt-4 gap-x-4'>

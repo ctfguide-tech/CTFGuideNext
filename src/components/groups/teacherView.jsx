@@ -6,6 +6,7 @@ import { Transition, Fragment, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
 
+
 const baseUrl = "http://localhost:3001"; // switch to deployment api url
 const defaultImages = [
     "https://robohash.org/pranavramesh",
@@ -44,7 +45,7 @@ export default function TeacherView({ uid, group }) {
     const [announcement, setAnnouncement] = useState("");
     const [viewSettings, setViewSettings] = useState(false);
     const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
-
+    const [upgraded, setUpgraded] = useState(false);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -62,13 +63,13 @@ export default function TeacherView({ uid, group }) {
             const data = await response.json();
             if(data.success) {
               setClassroom(data.body);
+              setUpgraded(data.body.upgrades.some(i => i.name === "CTFGuideInstitutionEDU"));
             } else {
               console.log("Error when getting classroom info");
             }
         };
         getClassroom();
     }, []);
-
 
     const handleInvite = async () => {
         setColor('gray');
@@ -223,6 +224,9 @@ export default function TeacherView({ uid, group }) {
                 <div className="mx-auto mt-10 max-w-6xl">
                     <div className='flex'>
                         <h1 className='text-white text-3xl font-semibold'>{classroom.name}</h1>
+                        {
+                            upgraded && <i className="fa fa-star" style={{color: "yellow", fontSize: "25px", paddingLeft: "10px"}}></i>
+                        }
                         <div className='ml-auto'>
                         <button className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</button>
                         <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button>

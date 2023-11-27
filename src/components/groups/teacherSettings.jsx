@@ -35,8 +35,11 @@ export default function teacherSettings({ classroom }) {
     const [searchInput, setSearchInput] = useState('');
     const [messageOfConfirm, setMessageOfConfirm] = useState('');
     const [index, setIndex] = useState(-1);
+    const [upgraded, setUpgraded] = useState(classroom.upgrades.some(i => i.name === "CTFGuideInstitutionEDU"));
 
-    const [subType, setSubType] = useState("None");
+    const [upgradeType, setUpgradeType] = useState(upgraded ? "CTFGuideInstitutionEDU" : "None");
+    const [paymentLink, setPaymentLink] = useState("Payment Link...");
+
 
     const actions = [
       "Are you sure you want to delete the class all data will be lost",
@@ -52,28 +55,51 @@ export default function teacherSettings({ classroom }) {
         }
     };
 
-
-    const addSubscriptionToClass = async () => {
-      if(subType === "None") return;
+    // upgrade class
+    const upgradeClass = async () => {
+      if(upgradeType === "None") return;
       try {
-        const stripe = await loadStripe(STRIPE_KEY);
-        const subscriptionType = subType;
-        const userId = localStorage.getItem("uid");
-        const response = await fetch(`${baseUrl}/payments/stripe/create-checkout-session`, {
-          method: 'POST',
-          body: JSON.stringify({
-            subType: subscriptionType,
-            quantity: numberOfSeats,
-            uid: userId,
-            operation: "subscription",
-            data: {}
-          }),
-          headers: {
-            'Content-Type': 'application/json'
+        const uidOfTeacher = localStorage.getItem("uid");
+        if(upgradeType.includes("PaymentLink")) {
+          const response = await fetch(`${baseUrl}/classroom/upgrade`, {
+            method: 'POST',
+            body: JSON.stringify({
+              upgradeType: upgradeType.split("PaymentLink")[0],
+              numberOfSeats: numberOfSeats,
+              classroomId: classroom.id,
+              userId: uidOfTeacher
+            }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          const data = await response.json();
+          if(data.success) {
+            setPaymentLink(data.body);
           }
-        })
-        const session = await response.json();
-        await stripe.redirectToCheckout({ sessionId: session.sessionId });
+        } else {
+          const stripe = await loadStripe(STRIPE_KEY);
+          const userId = localStorage.getItem("uid");
+          const response = await fetch(`${baseUrl}/payments/stripe/create-checkout-session`, {
+            method: 'POST',
+            body: JSON.stringify({
+              subType: upgradeType,
+              quantity: numberOfSeats,
+              uid: userId,
+              operation: "classroomUpgrade",
+              data: { classroomId: classroom.id }
+            }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          const session = await response.json();
+          if(session.success) {
+            await stripe.redirectToCheckout({ sessionId: session.sessionId });
+          } else {
+            console.log("Error:", session.message);
+          }
+        }
       } catch(error) {
         console.log(error);
       }
@@ -100,12 +126,11 @@ export default function teacherSettings({ classroom }) {
 
     const handleDelete = async () => {
         try {
-            const code = classroom.classCode;
             const url = `${baseUrl}/classroom/remove`;
             const response = await fetch(url, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ classCode: code })
+              body: JSON.stringify({ classroomId: classroom.id, classCode: classroom.classCode })
             });
             const data = await response.json();
             if(data.success) {
@@ -240,7 +265,7 @@ export default function teacherSettings({ classroom }) {
       option.username.toLowerCase().includes(searchInput.toLowerCase())
     );
 
-    console.log(subType);
+
     return (
        <>
             <Head>
@@ -366,23 +391,30 @@ export default function teacherSettings({ classroom }) {
                     </div>
 
                     <div className="sm:col-span-6">
-                      <label
-                        className="block text-sm font-medium leading-6 text-white"
-                      >
-                        Add a subscription to classroom
+                      <label className="block text-sm font-medium leading-6 text-white" >
+                        Add an upgrade to classroom
                       </label>
                       <div className="mt-2 flex rounded-md shadow-sm">
                       <select
-                          value={subType}
-                          onChange={(e) => setSubType(e.target.value)}
+                          value={upgradeType}
+                          onChange={(e) => setUpgradeType(e.target.value)}
                           className="block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                           >
                           <option value="None">None</option>
-                          <option value="CTFGuidePro">CTFGuidePro</option>
+                          <option value="CTFGuideInstitutionEDUPaymentLink">EDU with Payment Link</option>
+                          <option value="CTFGuideInstitutionEDU">EDU without Payment Link</option>
                         </select>
-
-                        <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' onClick={addSubscriptionToClass}>Add</button>
+                        <button disabled={upgraded} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' onClick={upgradeClass}>Add</button>
                         </div>
+
+                        {
+                          upgradeType.includes("PaymentLink") && <div className='bg-black rounded-lg p-2 mt-2 flex'>
+                          <p className='text-white' style={{color: "white"}}>{paymentLink}</p>
+                          <div className='ml-auto'>
+                          <i class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
+                          </div>
+                        }
+
                     </div>
 
 
