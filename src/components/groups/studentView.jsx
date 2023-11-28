@@ -9,7 +9,7 @@ export default function StudentView({ uid, group }) {
     const baseUrl = "http://localhost:3001"; // switch to deployment api url
 
     const [classroom, setClassroom] = useState({});
-    const [upgradeType, setUpgradeType] = useState("CTFGuideStudentEDUPaymentLink");
+    const [upgradeType, setUpgradeType] = useState("CTFGuideStudentEDU");
     const [isUpgraded, setIsUpgraded] = useState(false);
     const [paymentLink, setPaymentLink] = useState("");
 
@@ -107,7 +107,7 @@ export default function StudentView({ uid, group }) {
             }
         } else {
             const stripe = await loadStripe(STRIPE_KEY);
-            const response = await fetch(`${baseUrl}/payments/stripe/create-checkout-session`, {
+            const response = await fetch(`${baseUrl}/payments/stripe/create-payment-intent`, {
               method: 'POST',
               body: JSON.stringify({
                 subType: upgradeType,
@@ -122,7 +122,7 @@ export default function StudentView({ uid, group }) {
             });
             const session = await response.json();
             if(session.success) {
-              await stripe.redirectToCheckout({ sessionId: session.sessionId });
+              await stripe.redirectToCheckout({ sessionId: session.body});
             } else {
               console.log("Error:", session.message);
             }
@@ -131,6 +131,29 @@ export default function StudentView({ uid, group }) {
           console.log(error);
         }
       };
+
+
+    const cancelClassroomUpgrade = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/payments/stripe/cancel-payment-intent`, {
+                method: 'POST',
+                body: JSON.stringify({
+                classroomId: classroom.id,
+                uid: uid,
+                operation: "classroomUpgrade"
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+            });
+            const data = await response.json();
+            if(data.success) {
+                console.log(data.message);
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    }
 
     return (
         <>
@@ -153,6 +176,9 @@ export default function StudentView({ uid, group }) {
                         <button onClick={leaveClass} className='ml-4 bg-orange-600 rounded-lg hover:bg-orange-600/50 text-white px-2 py-1'> Leave</button>
                         {
                             !isUpgraded && <button onClick={studentUpgrade} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'> Upgrade</button>
+                        }
+                        {
+                            isUpgraded && <button onClick={cancelClassroomUpgrade} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'> Cancel Free Trial</button>
                         }
                    </div>
                 </div>
