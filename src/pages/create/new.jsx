@@ -35,7 +35,7 @@ export default function Createchall() {
 
         xhr.addEventListener('readystatechange', function () {
             if (this.readyState === 4 || this.status === 201) {
-                window.location.replace('/create');
+                // window.location.replace('/create');
             }
 
             if (this.readyState === 4 && this.status != 201) {
@@ -107,17 +107,24 @@ export default function Createchall() {
 
                 <h1
                     id="challengeName"
-                    className="w-3/4 rounded-sm shadow-lg bg-neutral-900/90 py-2 px-4 text-3xl font-semibold text-white"
+                    onChange={event => {
+                        console.log(event.target.value);
+                        document.getElementById('challengeName').innerText = event.target.value;
+                    }
+                    }
+                    className="w-3/4 rounded-lg shadow-lg bg-neutral-900/90  border border-neutral-600 py-2 px-4 text-3xl font-semibold text-white"
                     contentEditable
                 >
                     Untitled Challenge
                 </h1>
 
-                <div className=" mt-4 flex flex-shrink-0">
+                <div className=" hidden mt-4 flex flex-shrink-0">
+                    <div className='w-full'>
+                    <h1>Difficulty</h1>
                     <select
                         id="difficulty"
                         name="difficulty"
-                        className="mt-1 mb-4  w-1/3 rounded-md border-neutral-900 bg-neutral-900/90 py-2 pl-3 pr-20 text-base  text-white  focus:outline-none sm:text-sm"
+                        className="mt-1 mb-4  w-1/3 rounded-md border-neutral-600 bg-neutral-900/90 py-2 pl-3 pr-20 text-base  text-white  focus:outline-none sm:text-sm"
                         defaultValue="easy"
                     >
                         <option value="beginner">Beginner</option>
@@ -127,11 +134,13 @@ export default function Createchall() {
                         <option value="insane">Insane</option>
 
                     </select>
-
+                    </div>
+                    <div className='w-full'>
+                        <h1>Category</h1>
                     <select
                         id="category"
                         name="category"
-                        className="ml-4 mt-1 mb-4  w-1/3 rounded-md border-neutral-900  bg-neutral-900/90 py-2 pl-3 pr-20  text-base  text-white  focus:outline-none sm:text-sm"
+                        className="ml-4 mt-1 mb-4  w-1/3 rounded-md border-neutral-600  bg-neutral-900/90 py-2 pl-3 pr-20  text-base  text-white  focus:outline-none sm:text-sm"
                         defaultValue="forensics"
                     >
                         <option value="forensics">forensics</option>
@@ -144,14 +153,23 @@ export default function Createchall() {
 
                         <option value="other">other</option>
                     </select>
+                    </div>
                 </div>
 
+
+            <div className='grid grid-cols-2 gap-x-4'>
                 <div
                     className="mt-5 rounded-sm shadow-lg border border-gray-900 bg-neutral-800/40  shadow-lg ring-1 ring-black ring-opacity-5">
                     <h3 className=" rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
                         Challenge Content
                     </h3>
                     <div className="px-5 py-5 ">
+          
+
+
+                    <dt className="truncate text-xl font-medium text-white">
+                            Challenge Instructions
+                        </dt>
               <textarea
                   id="content"
                   className="h-40 w-full rounded-sm shadow-lg  border-none bg-neutral-900 px-5 py-4 text-white"
@@ -160,6 +178,32 @@ export default function Createchall() {
                       setContentPreview(event.target.value);
                   }}
               ></textarea>
+
+<div className=" py-5">
+                        <dt className="truncate text-xl font-medium text-white">
+                            Hint 1
+                        </dt>
+                        <textarea
+                            id="hint1"
+                            className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 text-white"
+                        >
+                No hint set
+              </textarea>
+
+                        <dt className="mt-4 truncate text-xl font-medium text-white">
+                            Hint 2
+                        </dt>
+                        <textarea id="hint2"
+                                  className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900   text-white">No hint set</textarea>
+
+                        <dt className="mt-4 truncate text-xl font-medium text-white">
+                            Hint 3
+                        </dt>
+                        <textarea id="hint3"
+                                  className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white">
+                                No hint set
+                            </textarea>
+                    </div>
                     </div>
                 </div>
 
@@ -168,6 +212,29 @@ export default function Createchall() {
                     <h3 className=" rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
                         Challenge Content Preview
                     </h3>
+                    <div className=" w-full py-10 " style={{
+                backgroundSize: "cover",
+                backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")'
+            }}
+            >
+                <div className="mx-auto my-auto flex  text-center">
+                    <h1 className="mx-auto my-auto text-4xl font-semibold text-white" id="challengeName">
+                        {' '}
+                      test
+                    </h1>
+                </div>
+                <div className="mx-auto my-auto  text-center text-lg text-white">
+                    <div className="my-auto flex place-items-center justify-center">
+                        <p className="my-auto mr-2 text-sm">Created by</p>
+                        <img
+                            className="my-auto my-auto mr-2 h-6   w-6  rounded-full bg-neutral-900"
+                            src={`https://robohash.org/`  + `.png?set=set1&size=150x150`}
+                            alt=""
+                        />
+                        <p className="my-auto text-sm">{}</p>
+                    </div>
+                </div>
+            </div>
                     <div className="px-5 py-5 ">
                         <div contentEditable={false}>
                             <MarkdownViewer content={contentPreview}/>
@@ -175,7 +242,12 @@ export default function Createchall() {
                     </div>
                 </div>
 
-                <div className="mt-5 rounded-sm shadow-lg 900 bg-neutral-800/40">
+                </div>
+
+
+
+
+                <div className="mt-5 rounded-sm shadow-lg 900 bg-neutral-800/40 hidden ">
                     <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
                         Challenge Hints
                     </h3>
@@ -206,7 +278,7 @@ export default function Createchall() {
                     </div>
                 </div>
 
-                <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40">
+                <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40 hidden ">
                     <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
                         Server Files
                     </h3>

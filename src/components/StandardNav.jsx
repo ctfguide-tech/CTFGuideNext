@@ -59,7 +59,7 @@ export function StandardNav() {
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN === 'ctfguide-dev.firebaseapp.com') {
-      setIsAdmin(true)
+    //  setIsAdmin(true)
     }
   }, []);
 
