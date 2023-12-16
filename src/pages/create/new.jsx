@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {StandardNav} from '@/components/StandardNav';
 import {Footer} from '@/components/Footer';
 import {MarkdownViewer} from "@/components/MarkdownViewer";
@@ -7,16 +7,117 @@ import {MarkdownViewer} from "@/components/MarkdownViewer";
 const pages = [{name: 'Creator Dashboard', href: '../create', current: false}, {
     name: 'Challenge Creation', href: './', current: true
 },];
-
+const styles = {
+    h1: { fontSize: '2.4rem' },
+    h2: { fontSize: '2rem' },
+    h3: { fontSize: '1.8rem' },
+    h4: { fontSize: '1.6rem' },
+    h5: { fontSize: '1.4rem' },
+    h6: { fontSize: '1.2rem' },
+  };
 export default function Createchall() {
     const [activeTab, setActiveTab] = useState('created');
     const [contentPreview, setContentPreview] = useState("");
 
+    const [username, setUsername] = useState('anonymous');
+    useEffect(() => {
+        setUsername(localStorage.getItem('username'));
+    });
     function handleTabClick(tab) {
         setActiveTab(tab);
     }
 
     function uploadChallenge() {
+        let errorReasons = [];
+        // remove any previous borders that could've been there
+        document.getElementById('challengeName').classList.remove('border-red-500');
+        document.getElementById('content').classList.remove('border-red-500');
+        document.getElementById('solution').classList.remove('border-red-500');
+        document.getElementById('hint1').classList.remove('border-red-500');
+        document.getElementById('hint2').classList.remove('border-red-500');
+        document.getElementById('hint3').classList.remove('border-red-500');
+
+        document.getElementById('challengeName').classList.remove('border');
+        document.getElementById('content').classList.remove('border');
+        document.getElementById('solution').classList.remove('border');
+        document.getElementById('hint1').classList.remove('border');
+        document.getElementById('hint2').classList.remove('border');
+        document.getElementById('hint3').classList.remove('border');
+        //document.getElementById('fileurl').classList.remove('border-red-500');
+
+
+        // validation checks
+        if (document.getElementById('challengeName').innerText.length < 1) {
+            document.getElementById('challengeName').classList.add('border')
+            document.getElementById('challengeName').classList.add('border-red-500');
+            errorReasons.push('Challenge name cannot be empty.');
+           
+        }
+
+        if (document.getElementById('content').value.length < 1) {
+            document.getElementById('content').classList.add('border')
+            document.getElementById('content').classList.add('border-red-500');
+            errorReasons.push('Challenge content cannot be empty.');
+
+
+            
+
+            
+        }
+
+        if (document.getElementById('solution').value.length < 1) {
+            document.getElementById('solution').classList.add('border')
+            document.getElementById('solution').classList.add('border-red-500');
+            errorReasons.push('Challenge solution cannot be empty.');
+           
+        }
+
+        if (document.getElementById('hint1').value.length < 1) {
+            document.getElementById('hint1').classList.add('border')
+
+            document.getElementById('hint1').classList.add('border-red-500');
+            errorReasons.push('Hint 1 is missing.');
+           
+        }
+
+        if (document.getElementById('hint2').value.length < 1) {
+            document.getElementById('hint2').classList.add('border')
+
+            document.getElementById('hint2').classList.add('border-red-500');
+            errorReasons.push('Hint 2 is missing.');
+
+            
+        }
+
+        if (document.getElementById('hint3').value.length < 1) {
+            document.getElementById('hint3').classList.add('border')
+
+            document.getElementById('hint3').classList.add('border-red-500');
+            errorReasons.push('Hint 3 is missing.');
+
+            
+        }
+
+
+        if (errorReasons.length > 0) {
+            let errorString = '• ';
+            errorReasons.forEach((reason) => {
+                if (reason === errorReasons[errorReasons.length - 1]) {
+                    errorString += reason;
+                    return;
+                } else {
+                errorString += reason + '\n• ';
+                }
+            }
+
+            );
+            document.getElementById('error').innerText = errorString;
+            document.getElementById('error').classList.remove('hidden');
+            return;
+        }
+       
+
+
         // WARNING: For POST requests, body is set to null by browsers.
         var data = JSON.stringify({
             title: document.getElementById('challengeName').innerText,
@@ -28,7 +129,6 @@ export default function Createchall() {
             challengeType: 'STANDARD',
             hints: [document.getElementById('hint1').value, document.getElementById('hint2').value, document.getElementById('hint3').value,],
             penalties: [10, 15, 20],
-            fileurl : document.getElementById("fileurl").value,
         });
 
         var xhr = new XMLHttpRequest();
@@ -39,7 +139,7 @@ export default function Createchall() {
             }
 
             if (this.readyState === 4 && this.status != 201) {
-                window.alert('Something went wrong.');
+                document.getElementById('error').classList.remove('hidden');
             }
         });
 
@@ -60,7 +160,7 @@ export default function Createchall() {
         </Head>
         <StandardNav/>
 
-        <main>
+        <main style={styles}>
 
 
             <nav
@@ -105,18 +205,22 @@ export default function Createchall() {
             >
                 {/*/ Create a new challenge */}
 
-                <h1
+                <input
                     id="challengeName"
                     onChange={event => {
                         console.log(event.target.value);
-                        document.getElementById('challengeName').innerText = event.target.value;
+                        document.getElementById('challengeName2').innerText = event.target.value;
                     }
                     }
+                    
                     className="w-3/4 rounded-lg shadow-lg bg-neutral-900/90  border border-neutral-600 py-2 px-4 text-3xl font-semibold text-white"
-                    contentEditable
-                >
-                    Untitled Challenge
-                </h1>
+                    placeholder='Untitled Challenge'
+                />
+                   
+                   <div id="error" className="hidden mt-4 bg-red-500 rounded-md px-4 py-1">
+                    Something went wrong on our end. Your changes have not been saved. You can try again now or later. 
+                  
+                   </div> 
 
                 <div className=" hidden mt-4 flex flex-shrink-0">
                     <div className='w-full'>
@@ -172,7 +276,9 @@ export default function Createchall() {
                         </dt>
               <textarea
                   id="content"
-                  className="h-40 w-full rounded-sm shadow-lg  border-none bg-neutral-900 px-5 py-4 text-white"
+                  placeholder="You can use Markdown here! "
+
+                  className="h-40 mt-2 w-full rounded-lg shadow-lg bg-neutral-900 border-neutral-800 px-5 py-4 text-white"
                   onChange={event =>{
                       console.log(event.target.value);
                       setContentPreview(event.target.value);
@@ -185,23 +291,27 @@ export default function Createchall() {
                         </dt>
                         <textarea
                             id="hint1"
-                            className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 text-white"
+                            placeholder="No hint set"
+                            className="mt-1 w-full rounded-lg shadow-lg border-neutral-800 bg-neutral-900 text-white"
                         >
-                No hint set
+                
               </textarea>
 
                         <dt className="mt-4 truncate text-xl font-medium text-white">
                             Hint 2
                         </dt>
                         <textarea id="hint2"
-                                  className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900   text-white">No hint set</textarea>
+                                                    placeholder="No hint set"
+
+                                  className="mt-1 w-full rounded-lg shadow-lg border-neutral-800 bg-neutral-900   text-white"></textarea>
 
                         <dt className="mt-4 truncate text-xl font-medium text-white">
                             Hint 3
                         </dt>
                         <textarea id="hint3"
-                                  className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white">
-                                No hint set
+                                                    placeholder="No hint set"
+
+                                  className="mt-1 w-full rounded-lg shadow-lg border-neutral-800 bg-neutral-900  text-white">
                             </textarea>
                     </div>
                     </div>
@@ -218,9 +328,9 @@ export default function Createchall() {
             }}
             >
                 <div className="mx-auto my-auto flex  text-center">
-                    <h1 className="mx-auto my-auto text-4xl font-semibold text-white" id="challengeName">
+                    <h1 className="mx-auto my-auto text-4xl font-semibold text-white" id="challengeName2">
                         {' '}
-                      test
+                        Untitled Challenge{' '}
                     </h1>
                 </div>
                 <div className="mx-auto my-auto  text-center text-lg text-white">
@@ -228,10 +338,10 @@ export default function Createchall() {
                         <p className="my-auto mr-2 text-sm">Created by</p>
                         <img
                             className="my-auto my-auto mr-2 h-6   w-6  rounded-full bg-neutral-900"
-                            src={`https://robohash.org/`  + `.png?set=set1&size=150x150`}
+                            src={`https://robohash.org/`  +  username + `.png?set=set1&size=150x150`}
                             alt=""
                         />
-                        <p className="my-auto text-sm">{}</p>
+                        <p className="my-auto text-sm">{username}</p>
                     </div>
                 </div>
             </div>
