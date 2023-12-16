@@ -14,6 +14,8 @@ import {
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 
+const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
+
 export default function Dashboard() {
   const router = useRouter();
 
@@ -27,7 +29,7 @@ export default function Dashboard() {
   const [general, setGeneral] = useState(false);
   const [security, setSecurity] = useState(false);
   const [preferences, setPreferences] = useState(false);
-  const [developer, setDeveloper] = useState(false);
+  const [billing, setbilling] = useState(false);
 
   var pfpString = '';
   var pfpChanged = false;
@@ -58,10 +60,10 @@ export default function Dashboard() {
     }
 
 
-    if (router.query.loc == 'developer') {
-      setDeveloper(true);
+    if (router.query.loc == 'billing') {
+      setbilling(true);
     } else {
-      setDeveloper(false);
+      setbilling(false);
     }
 
 
@@ -135,31 +137,72 @@ export default function Dashboard() {
   }
 
   const redirectToCheckout = async (event) => {
+    try {
+      const stripe = await loadStripe(STRIPE_KEY);
+      const subscriptionType = document.getElementById("paymentType").value;
+      console.log(subscriptionType);
+      const userId = auth.currentUser.uid;
 
-    const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
-    
-    const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
-      method: 'POST',
-      body: JSON.stringify({
-        line_items: document.getElementById("paymentType").value        
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+      const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
+        method: 'POST',
+        body: JSON.stringify({
+          subType: subscriptionType,
+          quantity: 1,
+          uid: userId,
+          operation: "subscription",
+          data: {}
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+  
+      const session = await response.json();
+      if(session.error) {
+        console.log("Creating the stripe session failed")
+        return;
       }
-    })
-
-    const session = await response.json();
-
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.sessionId,
-      
-    });
-
-    if (result.error) {
-      console.log(result.error.message);
+  
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+  
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch(error) {
+      console.log(error);
     }
-
   };
+
+
+  const updateCardInfo = async () => {
+    try {
+      const stripe = await loadStripe(STRIPE_KEY);
+      const subscriptionType = document.getElementById("paymentType").value;
+      const userId = auth.currentUser.uid;
+
+      const response = await fetch('http://localhost:3001/payments/stripe/update-card', {
+        method: 'POST',
+        body: JSON.stringify({
+          subType: subscriptionType,
+          uid: userId
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      const session = await response.json();
+  
+      await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
 
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
@@ -413,10 +456,10 @@ export default function Dashboard() {
                 </li>
                 <li className="py-1 ">
                   <a
-                    href="../settings?loc=developer"
+                    href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
-                    Developer
+                    Billing
                   </a>
                 </li>
               </ul>
@@ -966,7 +1009,7 @@ export default function Dashboard() {
 
 
 
-      {developer && (
+      {billing && (
         <div id="general" className="">
           <div className="mx-auto flex max-w-6xl">
             <div
@@ -1001,10 +1044,10 @@ export default function Dashboard() {
                 </li>
                 <li className="py-1 ">
                   <a
-                    href="../settings?loc=developer"
+                    href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
-                    Developer
+                    Billing
                   </a>
                 </li>
               </ul>
@@ -1012,11 +1055,105 @@ export default function Dashboard() {
 
             <div className="flex-1 xl:overflow-y-auto">
               <div className="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
-                <h1 className="mb-3 stext-3xl font-bold tracking-tight text-white">
-                  Developer
+                <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
+                  Billing
                 </h1>
 
-              <select id="paymentType" className='bg-neutral-800 py-1 text-white border-none'>
+<div className='bg-neutral-800 px-4 py-4 rounded-sm  pb-12 w-2/3'>
+<div className='flex'>
+<div>
+<h1 className='text-white'>FREE</h1>
+              <h1 className='text-white text-xl'>Standard Account</h1>
+
+
+
+              </div>
+              <div className='ml-auto'>
+                <button className='hidden mt-2 border border-blue-600 hover:bg-neutral-700 px-2 py-1 text-blue-600'>CHANGE PLAN</button>
+              </div>
+
+          
+  </div>
+  <h1 className='text-white mt-4 font-semibold'>Usage Limits</h1>
+
+<div className="flex justify-between mb-1">
+  <span className="text-base font-medium text-white">Terminal Usage</span>
+  <span className="text-sm font-medium   text-white">0%  </span>
+  
+</div>
+<div className="w-full  rounded-full h-2.5 bg-neutral-700">
+  <div className="bg-blue-600 h-2.5 rounded-full" style={{width: '0%'}}></div>
+</div>
+
+<div className="flex justify-between mb-1 mt-4">
+  <span className="text-base font-medium text-white">CPU Burst Usage</span>
+  <span className="text-sm font-medium   text-white">0%</span>
+  
+</div>
+<div className="w-full  rounded-full h-2.5 bg-neutral-700">
+  <div className="bg-blue-600 h-2.5 rounded-full" style={{width: '0%'}}></div>
+</div>
+
+<h1 className='text-white mt-4 '>Container Hardware: Standard Compute</h1>
+
+  </div>
+
+  <p className='text-white mt-5'>
+    CTFGuide currently has a very generous grant from Google Cloud Platform, which allows us to provide free compute to our users. However, this grant is limited, and we may have to start charging for compute in the future. If we do, we will give you a 30 day notice before we start charging for compute. 
+  </p>
+
+
+
+
+
+                <div className="text-white items-center justify-between hidden">
+  
+      <hr className="text-white border-neutral-600 mt-2 mb-2" />
+      <h1 className="text-center text-4xl mt-4">
+        Upgrade to <span className="font-bold text-blue-500">CTFGuide Pro</span>
+      </h1>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="mt-4 border border-neutral-700 hover px-4 py-4 text-white rounded" style={{cursor: 'pointer'}}>
+          <h1 className="text-center text-3xl">Monthly</h1>
+          <h1 className="text-center text-xl">$4.99/month</h1>
+        </div>
+        <div className="mt-4 border border-neutral-700 hover px-4 py-4 text-white rounded" style={{cursor: 'pointer'}}>
+          <h1 className="text-center text-3xl">Annually</h1>
+          <h1 className="text-center text-xl">$35.88/year</h1>
+        </div>
+      </div>
+      <h1 className="text-xl mt-4 text-center mb-1">What do you get?</h1>
+      <div className="px-2 py-1 text-center">
+        <p>Access to exclusive learning content.</p>
+      </div>
+      <div className="mt-1 px-2 py-1 text-center">
+        <p>Show of an exclusive CTFGuide Pro badge</p>
+      </div>
+      <div className="mt-1 px-2 py-1 text-center">
+        <p>Animated profile pictures**</p>
+      </div>
+      <div className="mt-1 px-2 py-1 text-center">
+        <p>Increased container time</p>
+      </div>
+      <div className="mt-1 px-2 py-1 text-center">
+        <p>AI Tutor**</p>
+      </div>
+      <p className="mt-4 text-sm text-gray-500">
+        * For the features marked with a star, it means it has not been released yet. For every month you have CTFGuide Pro, if the feature has not been implemented yet, you'll be given an additional free month of Pro.
+      </p>
+    </div>
+
+        
+
+
+<div className='hidden'>
+  <hr className='mt-4 border-neutral-500'>
+        </hr>
+        <h1 className='text-white mt-4'> Dev Testing</h1>
+
+
+
+              <select id="paymentType" className='mt-4 bg-neutral-800 py-1 text-white border-none'>
                 <option value="CTFGuidePro">CTFGuidePro</option>
                 <option value="CTFGuideStudentEDU">CTFGuideStudentsEDU</option>
                 <option value="CTFGuideInstitutionEDU">CTFGuideInstitutionEDU</option>
@@ -1025,8 +1162,14 @@ export default function Dashboard() {
 
                 <br></br>
               <button onClick={redirectToCheckout} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Stripe Checkout Demo</button>
-
+              <br></br>
+              
+              <button onClick={updateCardInfo} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Update card infomation</button>
+            
+            </div>
               </div>
+
+              
             </div>
           </div>
         </div>
@@ -1068,10 +1211,10 @@ export default function Dashboard() {
                 </li>
                 <li className="py-1 ">
                   <a
-                    href="../settings?loc=developer"
+                    href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
-                    Developer
+                    Billing
                   </a>
                 </li>
               </ul>
@@ -1192,10 +1335,10 @@ export default function Dashboard() {
                 </li>
                 <li className="py-1 ">
                   <a
-                    href="../settings?loc=developer"
+                    href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
-                    Developer
+                    Billing
                   </a>
                 </li>
               </ul>

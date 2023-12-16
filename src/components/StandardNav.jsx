@@ -19,6 +19,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import 'reactjs-popup/dist/index.css';
 import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
+import { LogoAdmin } from './LogoAdmin';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -52,6 +53,16 @@ export function StandardNav() {
   }
 
   // if user signed out redirect
+
+  // if env is NEXT_PUBLIC_APP_AUTH_DOMAIN=ctfguide-dev.firebaseapp.com the logo should say CTFGuide Developer not CTFGuide Beta 
+
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN === 'ctfguide-dev.firebaseapp.com') {
+    //  setIsAdmin(true)
+    }
+  }, []);
+
 
   
   const [notification, showNotifications] = useState(false);
@@ -166,7 +177,12 @@ export function StandardNav() {
                 </div>
                 <div className="flex flex-shrink-0 items-center">
                   <Link href="../dashboard" aria-label="Dashboard">
-                    <Logo className=" w-4 lg:hidden" />
+                  
+                  
+                    {isAdmin ? <LogoAdmin /> : <Logo />}
+
+
+                 
                   </Link>
                 </div>
                 <div className="hidden md:ml-6 md:flex ">
@@ -185,7 +201,7 @@ export function StandardNav() {
                   </a>
                   <a
                     href="../../groups"
-                    className="hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                    className=" hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                   >
                     Groups
                   </a>
@@ -217,12 +233,12 @@ export function StandardNav() {
                   </a>
                   {
                   isAdmin && (
-                  <a
+                  <p
                     href="../../live"
-                    className="text-yellow-400 font-semibold inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                    className="text-neutral-800 text-xl font-semibold inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium  "
                   >
-                    Admin Panel
-                  </a>
+                    CTFGUIDE INTERNAL 
+                  </p>
                   )
 }
                 </div>
@@ -440,11 +456,14 @@ export function StandardNav() {
         </>
       )}
     </Disclosure>
-
-    <div  className='bg-blue-700 py-1 text-center text-white hidden'>
-      <h1>Our team is aware of an issue with terminals. We are investigating this issue and hope to have a fix out soon. <a href='https://status.ctfguide.com/' className='hover:underline font-semibold'> Stay updated on our status page.</a></h1>
+                                
+      {
+    isAdmin && (
+    <div  className='bg-neutral-800 py-1 text-sm text-center text-white '>
+      <h1>CTFGuide is running in development mode. </h1>
     </div>
-
+    )
+    }
   
     </>
   );

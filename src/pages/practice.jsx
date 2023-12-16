@@ -84,7 +84,7 @@ export default function Pratice() {
                   <PracticeNav />
                 </div>
                 <div className="col-span-5 ml-4">
-          <div className=" w-full border-l border-neutral-800 ">
+          <div className=" w-full border-neutral-800 ">
             <div className="flex hidden">
               <div className="mt-6 flex w-1/2 rounded-lg bg-[#212121] px-4 py-2">
                 <div className="flex px-0 py-0">

@@ -5,8 +5,8 @@ export function SideNavContent({ username }) {
         className="mt-10 mr-6 w-1/6 flex-none border-none text-gray-900 hidden md:block lg:block"
         style={{ borderColor: '#212121' }}
       >
-        <ul className="mr-2 py-2 list-none ">
-          <li className="mb-4 py-1 ">
+        <ul className="mr-2 py-2">
+          <li className="mb-4 py-1">
             <a
               href="../dashboard"
               className="px-2 py-2 text-lg font-medium text-white hover:text-neutral-300"
@@ -60,7 +60,7 @@ export function SideNavContent({ username }) {
         <hr className="mx-auto border-none"></hr>
 
         <a href="/guides/about">
-          <div class="mt-6 mr-4 max-w-sm rounded-lg ">
+          <div class="mt-6 mr-4 max-w-sm rounded-lg shadow">
             <i class="fas fa-seedling mb-2 h-10 w-10 text-3xl text-green-500 text-green-500"></i>
             <h5 class="mb-2 text-xl font-semibold tracking-tight  text-white">
               New to CTFGuide?
@@ -85,7 +85,7 @@ export function SideNavContent({ username }) {
 
 
         <a href="https://discord.gg/q3hgRBvgkX">
-          <div class="mt-10 mr-4 max-w-sm rounded-lg ">
+          <div class="mt-10 mr-4 max-w-sm rounded-lg shadow">
             <i class="fab fa-discord mb-2 h-10 w-10 text-3xl  text-indigo-500"></i>
             <h5 class="mb-2 text-xl font-semibold tracking-tight  text-white">
               Join our Discord!

@@ -53,7 +53,7 @@ const Challenge = ({ data, inCarousel }) => {
         <h3 className="mt-2 truncate text-2xl font-bold text-white">
           {data.title.substring(0, 45)}
         </h3>
-        <p className="mb-3 truncate text-sm text-white text-center ">
+        <p className="mb-3 truncate text-sm text-white  ">
           {data.content.substring(0, 40)}
         </p>
         <p className="  text-[12px] truncate rounded-md  tracking-wide text-white">

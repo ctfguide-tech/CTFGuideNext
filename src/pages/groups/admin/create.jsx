@@ -8,6 +8,7 @@ const people = [
 
   
 export default function ComingSoon() {
+    console.log()
     return (
         <>
             <Head>

@@ -5,83 +5,95 @@ import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
 
+
+
+const basePaymentLink = "https://buy.stripe.com/test_aEU5na60V8sBbfOcMN"; // this will need to change soon
 export default function CreateGroup() {
-    const [selectedOption, setSelectedOption] = useState(null);
+  const baseUrl = "http://localhost:3001"; // change this in deployment
+
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const [open, setOpen] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [groupDescription, setGroupDescription] = useState('');
+  const [domain, setDomain] = useState('');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [seats, setSeats] = useState(0);
+  const [time, setTime] = useState("");
+  const [startingDate, setStartingDate] = useState(new Date());
+  const [usingPaymentLink, setUsingPaymentLink] = useState(false);
+  const [paymentLink, setPaymentLink] = useState("");
 
 
 
-  function joinCode() {
-    // Fetch code
-    // If code is valid, join group
-    // Else, display error
-
-    let code = document.getElementById("joinCode").ariaValueMax;
-    if (!code) {
-      return window.alert("Please enter a join code.")
-    } 
-
-    fetch('/api/groups', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code: code }),
-      authorization: "Bearer " + localStorage.getItem("token")
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-        if (data.success == true) {
-          window.location.reload();
-        } else {
-          window.alert("Invalid join code.")
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+  const getPaymentLinkForSeats = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/classroom/getPaymentLinkForClassCreate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: seats })
       });
-
-
+      const resJson = await res.json();
+      if(resJson.success) {
+        setPaymentLink(`${resJson.body}?classCode`);
+      }
+    } catch(err) {
+      console.log(err);
+    }
   }
 
-  function submitButton() {
-    // Send group data to server to create group
-    const groupData = {
-        name: document.getElementById('course_name').value,
-        description: document.getElementById('course_description').value,
-        email_domain: document.getElementById('email_domain').value,
-        pricing_model: selectedOption
-    };
-    console.log(groupData);
-    fetch('http://localhost:3001/groups', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('idToken')
-      },
-      body: JSON.stringify(groupData),
-     
+  const createClass = async () => {
+    try {
 
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-        if (data.success == true) {
-          window.alert("ok")
-      //    window.location.reload();
-        } else {
-          window.alert("Invalid join code.")
+      if(seats <= 0) {
+        return;
+      }
+
+      const userId = localStorage.getItem('uid');
+      const dataObj = { org: domain, name, description, numberOfSeats: seats, isPayedFor: true, pricingPlan: selectedOption, open: true };
+      
+      if(usingPaymentLink && selectedOption === "institution") {
+        dataObj["isPayedFor"] = false;
+        const res = await fetch(`${baseUrl}/classroom/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, ...dataObj})
+        });
+        const resJson = await res.json();
+        if(resJson.success) {
+          window.location.href = '/groups';
         }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+        else console.log("There was an error when creating the class");
+
+        return;
+      }
+
+      const url = selectedOption === "student" ? `${baseUrl}/classroom/create` : `${baseUrl}/payments/stripe/create-checkout-session`;
+  
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(selectedOption === "student" ? { userId, ...dataObj } : { subType: selectedOption, quantity: seats, uid: userId, data: { ...dataObj }, operation: "createClass" })
       });
-  }
+  
+      if (selectedOption === "student") {
+        window.location.href = '/groups';
+        console.log(await response.json());
+      } else {
+        const stripe = await loadStripe("pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7");
+  
+        const session = await response.json();
+        if (session.error) return console.log("Creating the stripe session failed");
+  
+        const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+        if (result.error) console.log(result.error.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
 
   return (
     <>
@@ -124,7 +136,7 @@ export default function CreateGroup() {
           <div className="mt-2">
             <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
               <span className="flex select-none items-center pl-3 text-neutral-500 sm:text-sm">johndoe@</span>
-              <input type="text" name="username" id="email_domain"  className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="coolschool.edu"/>
+              <input type="text" name="username" id="email_domain" value={domain} onChange={(e) => setDomain(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="coolschool.edu"/>
 
             </div>
 
@@ -151,7 +163,7 @@ export default function CreateGroup() {
         <div className="col-span-full">
           <label for="about" className="block text-sm font-medium leading-6 text-white">Course Description</label>
           <div className="mt-2">
-            <textarea id="course_description" name="about" rows="3" className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"></textarea>
+            <textarea id="course_description" value={description} onChange={(e) => setDescription(e.target.value)} name="about" rows="3" className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"></textarea>
           </div>
           <p className="mt-3 text-sm leading-6 text-white">Write a short, brief description about your course. CTFGuide will use AI to suggest lesson content, labs, and more. This field is optional.</p>
         </div>
@@ -161,7 +173,7 @@ export default function CreateGroup() {
           <div className="mt-2">
             <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
            
-              <input type="text" name="Course Name" id="course_name"  className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Silly Hacking 101"/>
+              <input type="text" name="Course Name" id="course_name" value={name} onChange={(e) => setName(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Silly Hacking 101"/>
 
             </div>
        
@@ -170,31 +182,40 @@ export default function CreateGroup() {
         </div>
 
         <h1 className='text-sm mt-4 text-white'>Pricing Model</h1>
-        <div className='mt-2 grid grid-row-1 grid-cols-2 gap-4 gap-x-4 text-white '>
+        <div className='mt-2 grid grid-row-1 grid-cols-3 gap-4 gap-x-4 text-white '>
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'student' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => setSelectedOption('student')}
+                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'student' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
+                onClick={() => {setSelectedOption('student'); setUsingPaymentLink(false)}}
             >
                 <h1>Paid for by Student  <b className='text-yellow-500 italic text-sm'>Most Popular!</b></h1>
-                <h1 className='text-2xl font-semibold'>$53</h1>
+                <h1 className='text-2xl font-semibold'>$58</h1>
                 <h1 className='text-sm'>per semester</h1>
             </div>
-
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'institution' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => setSelectedOption('institution')}
+                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${selectedOption === 'institution' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
+                onClick={() => {setSelectedOption('institution'); setUsingPaymentLink(false)}}
             >
                 <h1>Paid for by Institution</h1>
                 <h1 className='text-2xl font-semibold'>$40</h1>
                 <h1 className='text-sm'>per student, per semester</h1>
             </div>
+
+            <div 
+                className={`bg-neutral-800 hover:bg-neutral-750 px-2 py-2 text-center ${usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
+                onClick={() => {setSelectedOption('institution'); setUsingPaymentLink(true)}}
+            >
+                <h1>Paid for by Institution With Payment Link</h1>
+                <h1 className='text-2xl font-semibold'>$40</h1>
+                <h1 className='text-sm'>per student, per semester</h1>
+            </div>
+            
         </div>
 
         <h1 className='text-sm mt-4 text-white'>Expected amount of students</h1>
 
         <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
            
-           <input type="text" name="username" id="username"  className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
+           <input type="number" name="username" id="username" value={seats} onChange={(e) => setSeats(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
 
          </div>
 
@@ -202,7 +223,7 @@ export default function CreateGroup() {
 
 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
    
-   <input type="time" name="username" id="username"  className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
+   <input type="time" name="username" id="username" value={time} onChange={(e) => setTime(e.target.value)} className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Just needs to be an estimate."/>
 
  </div>
 
@@ -212,7 +233,8 @@ export default function CreateGroup() {
  </div> 
     
 
-    <button onClick={submitButton} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
+    <button onClick={createClass} id="submitButton" className='px-5  py-1 text-xl text-white bg-blue-700 rounded-lg hover:bg-blue-600/50 mt-4'> Submit</button>
+        <div style={{color: "white"}}>{paymentLink}</div>
         </div>
                 
                 </div>
