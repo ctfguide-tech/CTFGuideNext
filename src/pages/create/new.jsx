@@ -27,6 +27,8 @@ export default function Createchall() {
         setActiveTab(tab);
     }
 
+
+
     function uploadChallenge() {
         let errorReasons = [];
         // remove any previous borders that could've been there
@@ -47,10 +49,16 @@ export default function Createchall() {
 
 
         // validation checks
-        if (document.getElementById('challengeName').innerText.length < 1) {
+        if (document.getElementById('challengeName').value.length < 1) {
             document.getElementById('challengeName').classList.add('border')
             document.getElementById('challengeName').classList.add('border-red-500');
             errorReasons.push('Challenge name cannot be empty.');
+           
+        }
+        if (document.getElementById('solution').value.length < 1) {
+            document.getElementById('solution').classList.add('border')
+            document.getElementById('solution').classList.add('border-red-500');
+            errorReasons.push('Challenge solution cannot be empty.');
            
         }
 
@@ -65,12 +73,7 @@ export default function Createchall() {
             
         }
 
-        if (document.getElementById('solution').value.length < 1) {
-            document.getElementById('solution').classList.add('border')
-            document.getElementById('solution').classList.add('border-red-500');
-            errorReasons.push('Challenge solution cannot be empty.');
-           
-        }
+
 
         if (document.getElementById('hint1').value.length < 1) {
             document.getElementById('hint1').classList.add('border')
@@ -120,7 +123,7 @@ export default function Createchall() {
 
         // WARNING: For POST requests, body is set to null by browsers.
         var data = JSON.stringify({
-            title: document.getElementById('challengeName').innerText,
+            title: document.getElementById('challengeName').value,
             content: document.getElementById('content').value,
             category: [document.getElementById('category').value],
             points: 100,
@@ -140,6 +143,12 @@ export default function Createchall() {
 
             if (this.readyState === 4 && this.status != 201) {
                 document.getElementById('error').classList.remove('hidden');
+            } else {
+                if (this.status === 201) {
+                    // redirect to /create page
+                    window.location.replace('/create?success=true');
+
+                }
             }
         });
 
@@ -355,57 +364,17 @@ export default function Createchall() {
                 </div>
 
 
-
-
-                <div className="mt-5 rounded-sm shadow-lg 900 bg-neutral-800/40 hidden ">
-                    <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
-                        Challenge Hints
-                    </h3>
-                    <div className="px-5 py-5">
-                        <dt className="truncate text-xl font-medium text-white">
-                            Hint 1
-                        </dt>
-                        <textarea
-                            id="hint1"
-                            className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 text-white"
-                        >
-                No hint set
-              </textarea>
-
-                        <dt className="mt-4 truncate text-xl font-medium text-white">
-                            Hint 2
-                        </dt>
-                        <textarea id="hint2"
-                                  className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900   text-white">No hint set</textarea>
-
-                        <dt className="mt-4 truncate text-xl font-medium text-white">
-                            Hint 3
-                        </dt>
-                        <textarea id="hint3"
-                                  className="mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900  text-white">
-                                No hint set
-                            </textarea>
-                    </div>
-                </div>
-
-                <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40 hidden ">
-                    <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
-                        Server Files
-                    </h3>
-                    <div className="px-5 py-5">
-                            <input id="fileurl" placeholder='URL to your ZIP file' className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"></input>
-                    </div>
-                </div>
-
                 <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40">
                     <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
                         Challenge Solution
                     </h3>
                     <div className="px-5 py-5">
-                            <textarea
-                                id="solution"
-                                className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"
-                            >Nothing Set</textarea>
+                    <textarea id="solution"
+        
+        placeholder="Not having a solution, is a different kinda evil."
+        className="mt-1 w-full rounded-lg shadow-lg border-neutral-800 bg-neutral-900 text-white"
+    >
+                            </textarea>
                     </div>
                 </div>
 
