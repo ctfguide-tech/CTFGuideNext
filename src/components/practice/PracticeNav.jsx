@@ -5,12 +5,12 @@ export function PracticeNav() {
   return (
     <>
       <div
-        className=" mt-8 flex-none text-neutral-900 w-full   mx-auto rounded-sm shadow-lg"
-        style={{ borderColor: '#212121' }}
+        className=" mt-8 flex-none text-white w-full list-none   mx-auto rounded-sm shadow-lg"
+       
       >
-        <hr className='border-white/10 mb-3'></hr>
-        <h2 className="flex text-blue-600 px-4 mb-3 ml-4 mx-auto">NAVIGATION<ArrowPathRoundedSquareIcon className='ml-4 h-6'/></h2>
-        <ul className="">
+        <hr className='border-none '></hr>
+     
+        <ul className="list-none">
           <li className="py-1 px-2 hover:bg-neutral-800/60 rounded-sm border border-white/10 hover:border-white/30">
             <a
               href="/practice/hub"
@@ -19,7 +19,7 @@ export function PracticeNav() {
               <i class="fas fa-laptop-code mr-2"></i>Hub
             </a>
           </li>
-          <li className="mb-1 py-1 px-2 hover:bg-neutral-800/60 border border-white/10 hover:border-white/30">
+          <li className="mb-1 py-1 px-2 border-top-none hover:bg-neutral-800/60 border border-white/10 hover:border-white/30">
             <a
               href="../practice"
               className="px-2 py-2 text-lg font-medium text-white"

@@ -28,7 +28,16 @@ export default function Create() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
+    // check if url has success=true
+  useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get('success');
+      if (success === 'true') {
+          document.getElementById('saved').classList.remove('hidden');
+      }
+  }, [])
+  
+  ;
   useEffect(() => {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, {
@@ -237,15 +246,31 @@ export default function Create() {
       <main>
         {/*<CreatorDashboard />*/}
         <br></br>
+
         <div
           className="fixed top-0 left-0 mt-10 h-full w-1/2 "
           aria-hidden="true"
         ></div>
+        
         <div className="  top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
+      
         <div className="relative flex min-h-full flex-col">
           <div className="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
+       
             <div className="min-w-0 flex-1 xl:flex">
+            
+            
               <div className=" lg:min-w-0 lg:flex-1 mt-6 rounded-lg ">
+             
+             
+             <div id="saved" className='hidden mb-10 text-white text-center text-xl border  px-2 py-1 rounded-lg bg-green-900 border-green-700 '> 
+                <h1><i class="fas fa-check mr-2 "></i>  Your challenge has been created and submitted for approval.</h1>
+             </div>
+
+
+
+
+
           <div className='mx-auto max-w-7xl'>
           <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
