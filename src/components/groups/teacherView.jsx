@@ -63,15 +63,17 @@ export default function TeacherView({ uid, group }) {
       const data = await response.json();
       if (data.success) {
         setClassroom(data.body);
-        setUpgraded(
-          data.body.upgrades.some((i) => i.name === 'CTFGuideInstitutionEDU')
-        );
+        // setUpgraded(
+        //   data.body.upgrades.some((i) => i.name === 'CTFGuideInstitutionEDU')
+        // );
       } else {
         console.log('Error when getting classroom info');
       }
     };
     getClassroom();
   }, []);
+
+  // console.log(classroom);
 
   const handleInvite = async () => {
     setColor('gray');
@@ -246,16 +248,6 @@ export default function TeacherView({ uid, group }) {
             <h1 className="text-3xl font-semibold text-white">
               {classroom.name}
             </h1>
-            {upgraded && (
-              <i
-                className="fa fa-star"
-                style={{
-                  color: 'yellow',
-                  fontSize: '25px',
-                  paddingLeft: '10px',
-                }}
-              ></i>
-            )}
             <div className="ml-auto">
               <button
                 onClick={() => setViewCreateAssignment(true)}
@@ -357,19 +349,24 @@ export default function TeacherView({ uid, group }) {
             <div className="col-span-2 rounded-lg  border-t-8  border-blue-600 bg-neutral-800/50 px-4 py-3">
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
-                {demoAssignments.map((assignment) => (
-                  <div
-                    key={assignment.id}
-                    onClick={() => {
-                      window.location.href = '/assignments/testingfun';
-                    }}
-                    className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3  hover:bg-neutral-900/50"
-                  >
-                    <h2 className="text-lg text-white">{assignment.title}</h2>
-                    <p className="text-white">{assignment.description}</p>
-                    <p className="text-white">Due Date: {assignment.dueDate}</p>
-                  </div>
-                ))}
+                {classroom &&
+                  classroom.assignments &&
+                  classroom.assignments.map((assignment) => (
+                    <div
+                      key={assignment.id}
+                      onClick={() => {
+                        window.location.href = '/assignments/' + assignment.id;
+                      }}
+                      className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3  hover:bg-neutral-900/50"
+                    >
+                      <h2 className="text-lg text-white">{assignment.name}</h2>
+                      <p className="text-white">{assignment.description}</p>
+                      <p className="text-white">
+                        Due Date:{' '}
+                        {new Date(assignment.dueDate).toLocaleDateString()}{' '}
+                      </p>
+                    </div>
+                  ))}
 
                 <button className="w-full rounded-sm bg-neutral-900 px-2 py-1 text-white">
                   View All

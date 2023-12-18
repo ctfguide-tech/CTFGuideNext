@@ -1,22 +1,30 @@
 import { useState } from 'react';
 
 const baseUrl = `http://localhost:3001`;
+
 const CreateAssignment = ({ classroom }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [category, setCategory] = useState('');
+  const [totalPoints, setTotalPoints] = useState('');
 
   const createAssignment = async () => {
     try {
       const classroomId = classroom.id;
-      const url = `${baseUrl}/classroom-assignments/create-assignment`;
+      const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
 
       const assignmentData = {
         name,
         description,
         dueDate,
         classroomId,
+        category,
+        totalPoints,
+        challengeSlug: "tesgdfgsfd",
+        userId: "a4503965-12b6-4154-93a6-8c4bb6d979be"
       };
+
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,7 +46,7 @@ const CreateAssignment = ({ classroom }) => {
     border: '1px solid #ccc',
     borderRadius: '4px',
   };
-
+  const handleExistingChallange = () => {};
   const buttonStyle = {
     padding: '10px 20px',
     margin: '10px 0',
@@ -56,6 +64,18 @@ const CreateAssignment = ({ classroom }) => {
         value={name}
         placeholder="Name..."
       />
+            <input
+        style={inputStyle}
+        onChange={(e) => setCategory(e.target.value)}
+        value={category}
+        placeholder="Category"
+      />
+            <input
+        style={inputStyle}
+        onChange={(e) => setTotalPoints(e.target.value)}
+        value={totalPoints}
+        placeholder="Total points"
+      />
       <input
         onChange={(e) => setDescription(e.target.value)}
         style={inputStyle}
@@ -70,8 +90,13 @@ const CreateAssignment = ({ classroom }) => {
         value={dueDate}
         placeholder="Due Date"
       />
-      <button style={buttonStyle}>Use existing challenge</button>
+  
+      <button onClick={handleExistingChallange} style={buttonStyle}>
+        Use existing challenge
+      </button>
       <button style={buttonStyle}>Create new challenge</button>
+
+
       <button style={buttonStyle} onClick={createAssignment}>
         Submit
       </button>

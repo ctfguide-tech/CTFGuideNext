@@ -104,7 +104,7 @@ export default function invite() {
  
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
           <div style={{ maxWidth: '300px', textAlign: 'center' }}>
-            <h1 style={{ color: 'white', fontSize: '1.5rem', marginBottom: '1rem' }}>You have need invited to {classroom.name}</h1>
+            <h1 style={{ color: 'white', fontSize: '1.5rem', marginBottom: '1rem' }}>You have been invited to {classroom.name}</h1>
             <div style={{ padding: '1rem', backgroundColor: '#34495E', borderRadius: '8px' }}>
               {display ? (
                 <div>
