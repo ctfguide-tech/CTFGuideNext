@@ -179,8 +179,7 @@ export function StandardNav() {
                   <Link href="../dashboard" aria-label="Dashboard">
                   
                   
-                    {isAdmin ? <LogoAdmin /> : <Logo />}
-
+                    <Logo />
 
                  
                   </Link>
