@@ -86,12 +86,12 @@ export default function Groups() {
       <StandardNav />
       <div className=" min-h-screen  ">
 
-      <div className="mx-auto mt-64 max-w-6xl ">
+      <div className="mx-auto mt-64 max-w-6xl hidden">
         <div className='grid grid-cols-2 gap-x-24'>
         <div>
           <img src='./groups.png'></img>
         </div>
-        <div>
+        <div >
 
           <h1 className='mt-10 text-white text-6xl font-semibold '>CTFGuide Groups</h1>
           <h1 className='text-white text-2xl mt-1'>A powerful solution for institutions teaching IT and cybersecurity.</h1>
@@ -104,7 +104,7 @@ export default function Groups() {
      
         </div>
 
-        <div className="mx-auto mt-10 max-w-6xl hidden">
+        <div className="mx-auto mt-10 max-w-6xl ">
 
           <div className='flex'>
             <h1 className='text-white text-3xl'>Groups</h1>
