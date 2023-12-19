@@ -40,8 +40,10 @@ export default function Challenge() {
 
     // change eta by one every sec 
     useEffect(() => {
-        if (eta > 0) {
-            const interval = setInterval(() => {
+        let interval;
+
+        if (eta >= 0) {
+            interval = setInterval(() => {
                 setEta(prevEta => prevEta - 1);
             }, 1000); // Update every 1 second
         }
@@ -129,6 +131,8 @@ export default function Challenge() {
                         setTerminalPassword(result[0].password);
 
                         setTimeout(function () {
+                            document.getElementById("termurl").classList.remove("absolute");
+
                             document.getElementById("termurl").classList.remove("opacity-0");
                             document.getElementById("terminalLoader").classList.add("hidden");
                             //window.alert(               JSON.stringify(result[0])                        )
@@ -806,23 +810,18 @@ export default function Challenge() {
                                 <div style={{ width: `${progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-900"></div>
                             </div>
 
-                            <span className="text-sm italic inline-block text-white">
+                            <span className="hidden text-sm italic inline-block text-white">
                                 Expected Time: {eta} seconds
                             </span>
                         </div>
                         <img className="text-center mx-auto" width="50" src="https://ctfguide.com/darkLogo.png"></img>
-                        <span className="text-sm  inline-block text-white">
-                            Version 2 <br>
-                            </br>
-
-                            AI insights are disabled. If you see a blank page upon loading, please refresh the page.
-                        </span>
+              
                     </div>
 
 
                     <iframe
                         onError={() => window.location.reload()}
-                        className="w-full bg-white opacity-0"
+                        className="w-full bg-white opacity-0 absolute"
                         height="500"
                         id="termurl"
                     ></iframe>
@@ -830,7 +829,7 @@ export default function Challenge() {
 
 
                 </div>
-                <div className="mt-5 rounded-lg px-5 pb-20">
+                <div className="mt-10  rounded-lg px-5 pb-20">
                     <h1 className="text-3xl font-semibold text-white">Comments</h1>
                     <textarea
                         id="comment"

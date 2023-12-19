@@ -6,7 +6,7 @@ export function Logo(props) {
         className="my-auto text-xl font-semibold text-white"
         style={{ fontFamily: 'Poppins, sans-serif' }}
       >
-        CTFGuide <span className="text-blue-600">Beta</span>
+        CTFGuide <span className="text-blue-600 hidden">Beta</span>
       </h1>
     </div>
   );

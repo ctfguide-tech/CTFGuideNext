@@ -1069,7 +1069,7 @@ export default function Dashboard() {
 
               </div>
               <div className='ml-auto'>
-                <button className='mt-2 border border-blue-600 hover:bg-neutral-700 px-2 py-1 text-blue-600'>CHANGE PLAN</button>
+                <button className='hidden mt-2 border border-blue-600 hover:bg-neutral-700 px-2 py-1 text-blue-600'>CHANGE PLAN</button>
               </div>
 
           
@@ -1077,26 +1077,30 @@ export default function Dashboard() {
   <h1 className='text-white mt-4 font-semibold'>Usage Limits</h1>
 
 <div className="flex justify-between mb-1">
-  <span className="text-base font-medium text-white">Terminal Hours</span>
-  <span className="text-sm font-medium   text-white">45% (4.5/10 hours) </span>
+  <span className="text-base font-medium text-white">Terminal Usage</span>
+  <span className="text-sm font-medium   text-white">0%  </span>
   
 </div>
 <div className="w-full  rounded-full h-2.5 bg-neutral-700">
-  <div className="bg-blue-600 h-2.5 rounded-full" style={{width: '45%'}}></div>
+  <div className="bg-blue-600 h-2.5 rounded-full" style={{width: '0%'}}></div>
 </div>
 
 <div className="flex justify-between mb-1 mt-4">
-  <span className="text-base font-medium text-white">Kanso Sessions</span>
-  <span className="text-sm font-medium   text-white">12% (12/100 conversations) </span>
+  <span className="text-base font-medium text-white">CPU Burst Usage</span>
+  <span className="text-sm font-medium   text-white">0%</span>
   
 </div>
 <div className="w-full  rounded-full h-2.5 bg-neutral-700">
-  <div className="bg-blue-600 h-2.5 rounded-full" style={{width: '12%'}}></div>
+  <div className="bg-blue-600 h-2.5 rounded-full" style={{width: '0%'}}></div>
 </div>
 
-<h1 className='text-white mt-4 font-semibold'>Container Hardware</h1>
+<h1 className='text-white mt-4 '>Container Hardware: Standard Compute</h1>
 
   </div>
+
+  <p className='text-white mt-5'>
+    CTFGuide currently has a very generous grant from Google Cloud Platform, which allows us to provide free compute to our users. However, this grant is limited, and we may have to start charging for compute in the future. If we do, we will give you a 30 day notice before we start charging for compute. 
+  </p>
 
 
 
