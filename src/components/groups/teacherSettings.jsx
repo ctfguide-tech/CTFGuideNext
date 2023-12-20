@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
-import { useEffect, useState } from 'react';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
+import { useEffect, Fragment, useState } from 'react';
+import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;

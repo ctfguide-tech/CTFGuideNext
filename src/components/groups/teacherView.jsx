@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
-import { useEffect, useState } from 'react';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
+import { useEffect, Fragment, useState } from 'react';
+import { Transition, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/createAssignment';

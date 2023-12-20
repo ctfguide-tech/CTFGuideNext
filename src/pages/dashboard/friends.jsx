@@ -3,13 +3,13 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { useEffect } from 'react';
+import { useEffect, Fragment, } from 'react';
 import { useState } from 'react';
 import { SideNavContent } from '@/components/dashboard/SideNavContents';
 import { RightSideFiller } from '@/components/dashboard/RightSideFiller';
 import { FriendCard } from '@/components/dashboard/FriendCard';
 import { FriendRequestCard } from '@/components/dashboard/FriendRequestCard';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
+import { Transition, Dialog } from '@headlessui/react';
 
 
 export default function Dashboard() {

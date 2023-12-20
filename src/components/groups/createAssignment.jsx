@@ -3,10 +3,12 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
-import { useState } from 'react';
-
+import { Transition, Dialog } from '@headlessui/react';
+import { useState, Fragment } from 'react';
 import { Menu } from '@headlessui/react';
+
+import ForkChallenge from './fork-challenge';
+import CreateChallenge from './create-challenge';
 
 export default function CreateGroup() {
   const baseUrl = 'http://localhost:3001'; // change this in deployment
@@ -21,30 +23,23 @@ export default function CreateGroup() {
   const [time, setTime] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const mockLoad = async () => {
-    const submitButton = document.getElementById('submitButton');
-    submitButton.innerHTML = 'Loading...';
-    submitButton.disabled = true;
+  const [displayExistingChallenge, setDisplayExistingChallenge] = useState(false);
+  const [displayCustomChallenge, setDisplayCustomChallenge] = useState(false);
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        domain,
-        description,
-        seats,
-        time,
-        selectedCategory,
-      }),
-    };
-
-    //console.log({ domain, description, seats, time, selectedCategory });
-    // const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/`, requestOptions);
-    // const data = await response.json();
-
-    submitButton.innerHTML = 'Submit';
-    submitButton.disabled = false;
+  const onSubmit = async () => {
+    if(selectedOption === "existingChallenge") {
+      setDisplayExistingChallenge(true);
+    }else if (selectedOption === "customChallenge") {
+      setDisplayCustomChallenge(true);
   };
+}
+
+
+  if(displayExistingChallenge) {
+    return <ForkChallenge />
+  }else if(displayCustomChallenge){
+    return <CreateChallenge />
+  }
 
   return (
     <>
@@ -325,7 +320,7 @@ export default function CreateGroup() {
                 </div>
 
                 <button
-                  onClick={mockLoad}
+                  onClick={onSubmit}
                   id="submitButton"
                   className="mt-4  rounded-lg bg-blue-700 px-5 py-1 text-xl text-white hover:bg-blue-600/50"
                 >

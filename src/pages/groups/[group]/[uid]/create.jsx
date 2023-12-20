@@ -3,8 +3,8 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
-import { useState } from 'react';
+import { Transition, Dialog } from '@headlessui/react';
+import { useState, Fragment } from 'react';
 
 import { Menu } from '@headlessui/react';
 
