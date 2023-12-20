@@ -9,7 +9,7 @@ const CreateAssignment = ({ classroom }) => {
   const [category, setCategory] = useState('');
   const [totalPoints, setTotalPoints] = useState('');
 
-  const createAssignment = async () => {
+  const createNewAssignment = async () => {
     try {
       const classroomId = classroom.id;
       const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
@@ -21,8 +21,8 @@ const CreateAssignment = ({ classroom }) => {
         classroomId,
         category,
         totalPoints,
-        challengeSlug: "tesgdfgsfd",
-        userId: "a4503965-12b6-4154-93a6-8c4bb6d979be"
+        challengeSlug: 'tesgdfgsfd',
+        userId: 'a4503965-12b6-4154-93a6-8c4bb6d979be',
       };
 
       const response = await fetch(url, {
@@ -39,6 +39,38 @@ const CreateAssignment = ({ classroom }) => {
       console.log(err);
     }
   };
+
+  const forkAssignment = async () => {
+    try {
+      const classroomId = classroom.id;
+      const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
+
+      const assignmentData = {
+        name,
+        description,
+        dueDate,
+        classroomId,
+        category,
+        totalPoints,
+        challengeSlug: 'tesgdfgsfd',
+        userId: 'a4503965-12b6-4154-93a6-8c4bb6d979be',
+      };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...assignmentData }),
+      });
+      const data = await response.json();
+      console.log(data.message);
+      if (data.success) {
+        // window.location.href = '/';
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const inputStyle = {
     width: '100%',
     padding: '10px',
@@ -64,13 +96,13 @@ const CreateAssignment = ({ classroom }) => {
         value={name}
         placeholder="Name..."
       />
-            <input
+      <input
         style={inputStyle}
         onChange={(e) => setCategory(e.target.value)}
         value={category}
         placeholder="Category"
       />
-            <input
+      <input
         style={inputStyle}
         onChange={(e) => setTotalPoints(e.target.value)}
         value={totalPoints}
@@ -90,15 +122,12 @@ const CreateAssignment = ({ classroom }) => {
         value={dueDate}
         placeholder="Due Date"
       />
-  
-      <button onClick={handleExistingChallange} style={buttonStyle}>
+
+      <button onClick={forkAssignment} style={buttonStyle}>
         Use existing challenge
       </button>
-      <button style={buttonStyle}>Create new challenge</button>
-
-
-      <button style={buttonStyle} onClick={createAssignment}>
-        Submit
+      <button onClick={createNewAssignment} style={buttonStyle}>
+        Create new challenge
       </button>
     </>
   );

@@ -5,9 +5,8 @@ import { useEffect, useState } from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 
-const STRIPE_KEY =
-  'pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7';
-const baseUrl = 'http://localhost:3001';
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 
 const defaultImages = [
   'https://robohash.org/pranavramesh',

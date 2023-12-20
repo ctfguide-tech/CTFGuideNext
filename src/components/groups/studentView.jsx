@@ -3,11 +3,10 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-const STRIPE_KEY =
-  'pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7';
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function StudentView({ uid, group }) {
-  const baseUrl = 'http://localhost:3001'; // switch to deployment api url
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 
   const [classroom, setClassroom] = useState({});
   const [upgradeType, setUpgradeType] = useState('CTFGuideStudentEDU');

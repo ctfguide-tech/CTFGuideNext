@@ -9,8 +9,7 @@ import { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
-const STRIPE_KEY =
-  'pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7';
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = 'http://localhost:3001';
 
 export default function Groups() {

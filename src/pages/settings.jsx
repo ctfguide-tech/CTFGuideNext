@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 
-const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function Dashboard() {
   const router = useRouter();
@@ -59,13 +59,11 @@ export default function Dashboard() {
       setSecurity(false);
     }
 
-
     if (router.query.loc == 'developer') {
       setDeveloper(true);
     } else {
       setDeveloper(false);
     }
-
 
     if (router.query.loc == 'preferences') {
       loadPreferences();
@@ -113,8 +111,9 @@ export default function Dashboard() {
             }
 
             if (JSON.parse(this.responseText).profileImage == '') {
-              document.getElementById('pfp').src = `https://robohash.org/${document.getElementById('username').value
-                }.png?set=set1&size=150x150`;
+              document.getElementById('pfp').src = `https://robohash.org/${
+                document.getElementById('username').value
+              }.png?set=set1&size=150x150`;
             } else {
               document.getElementById('pfp').src = JSON.parse(
                 this.responseText
@@ -139,70 +138,74 @@ export default function Dashboard() {
   const redirectToCheckout = async (event) => {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
-      const subscriptionType = document.getElementById("paymentType").value;
+      const subscriptionType = document.getElementById('paymentType').value;
       console.log(subscriptionType);
       const userId = auth.currentUser.uid;
 
-      const response = await fetch('http://localhost:3001/payments/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          subType: subscriptionType,
-          quantity: 1,
-          uid: userId,
-          operation: "subscription",
-          data: {}
-        }),
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        'http://localhost:3001/payments/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            subType: subscriptionType,
+            quantity: 1,
+            uid: userId,
+            operation: 'subscription',
+            data: {},
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      })
-  
+      );
+
       const session = await response.json();
-      if(session.error) {
-        console.log("Creating the stripe session failed")
+      if (session.error) {
+        console.log('Creating the stripe session failed');
         return;
       }
-  
+
       const result = await stripe.redirectToCheckout({
         sessionId: session.sessionId,
       });
-  
+
       if (result.error) {
         console.log(result.error.message);
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   };
 
-
   const updateCardInfo = async () => {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
-      const subscriptionType = document.getElementById("paymentType").value;
+      const subscriptionType = document.getElementById('paymentType').value;
       const userId = auth.currentUser.uid;
 
-      const response = await fetch('http://localhost:3001/payments/stripe/update-card', {
-        method: 'POST',
-        body: JSON.stringify({
-          subType: subscriptionType,
-          uid: userId
-        }),
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        'http://localhost:3001/payments/stripe/update-card',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            subType: subscriptionType,
+            uid: userId,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      });
-  
+      );
+
       const session = await response.json();
-  
+
       await stripe.redirectToCheckout({
         sessionId: session.sessionId,
       });
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
-  }
-
+  };
 
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
@@ -230,22 +233,22 @@ export default function Dashboard() {
               var location = document.getElementById('location').value;
 
               var data = {};
-              if (bio !== "") {
+              if (bio !== '') {
                 data.bio = bio;
               }
-              if (github !== "") {
+              if (github !== '') {
                 data.githubUrl = github;
               }
-              if (firstName !== "") {
+              if (firstName !== '') {
                 data.firstName = firstName;
               }
-              if (lastName !== "") {
+              if (lastName !== '') {
                 data.lastName = lastName;
               }
-              if (location !== "") {
+              if (location !== '') {
                 data.location = location;
               }
-              if (downloadURL !== "") {
+              if (downloadURL !== '') {
                 data.profileImage = downloadURL;
               }
 
@@ -425,7 +428,7 @@ export default function Dashboard() {
         <div id="general" className="">
           <div className="mx-auto flex max-w-6xl">
             <div
-              className="  mt-10 flex-none border-r pr-10 pl-10 text-gray-900"
+              className="  mt-10 flex-none border-r pl-10 pr-10 text-gray-900"
               style={{ borderColor: '#212121' }}
             >
               <ul className="mr-2 py-2">
@@ -466,7 +469,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex-1 xl:overflow-y-auto">
-              <div className="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
+              <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
                   General
                 </h1>
@@ -560,7 +563,7 @@ export default function Dashboard() {
                           />
                           <label
                             htmlFor="user-photo"
-                            className="bg-neutral cursor:pointer pointer-events-none block rounded-md py-2 px-3 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 peer-hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
+                            className="bg-neutral cursor:pointer pointer-events-none block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 peer-hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
                           >
                             <span>Change</span>
                             <span className="sr-only"> user photo</span>
@@ -995,7 +998,7 @@ export default function Dashboard() {
                     <button
                       id="save"
                       onClick={saveGeneral}
-                      className="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
                       Save
                     </button>
@@ -1007,13 +1010,11 @@ export default function Dashboard() {
         </div>
       )}
 
-
-
       {developer && (
         <div id="general" className="">
           <div className="mx-auto flex max-w-6xl">
             <div
-              className="  mt-10 flex-none border-r pr-10 pl-10 text-gray-900"
+              className="  mt-10 flex-none border-r pl-10 pr-10 text-gray-900"
               style={{ borderColor: '#212121' }}
             >
               <ul className="mr-2 py-2">
@@ -1054,35 +1055,50 @@ export default function Dashboard() {
             </div>
 
             <div className="flex-1 xl:overflow-y-auto">
-              <div className="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
-                <h1 className="mb-3 stext-3xl font-bold tracking-tight text-white">
+              <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+                <h1 className="stext-3xl mb-3 font-bold tracking-tight text-white">
                   Developer
                 </h1>
 
-              <select id="paymentType" className='bg-neutral-800 py-1 text-white border-none'>
-                <option value="CTFGuidePro">CTFGuidePro</option>
-                <option value="CTFGuideStudentEDU">CTFGuideStudentsEDU</option>
-                <option value="CTFGuideInstitutionEDU">CTFGuideInstitutionEDU</option>
-
+                <select
+                  id="paymentType"
+                  className="border-none bg-neutral-800 py-1 text-white"
+                >
+                  <option value="CTFGuidePro">CTFGuidePro</option>
+                  <option value="CTFGuideStudentEDU">
+                    CTFGuideStudentsEDU
+                  </option>
+                  <option value="CTFGuideInstitutionEDU">
+                    CTFGuideInstitutionEDU
+                  </option>
                 </select>
 
                 <br></br>
-              <button onClick={redirectToCheckout} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Stripe Checkout Demo</button>
-              <br></br>
-              
-              <button onClick={updateCardInfo} className='text-md px-2 py-1 text-white rounded-lg mt-4 bg-blue-600'>Update card infomation</button>
+                <button
+                  onClick={redirectToCheckout}
+                  className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
+                >
+                  Stripe Checkout Demo
+                </button>
+                <br></br>
+
+                <button
+                  onClick={updateCardInfo}
+                  className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
+                >
+                  Update card infomation
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-
       {security && (
         <div id="security" className="">
           <div className="mx-auto flex max-w-6xl">
             <div
-              className="  mt-10 flex-none border-r pr-10 pl-10 text-gray-900"
+              className="  mt-10 flex-none border-r pl-10 pr-10 text-gray-900"
               style={{ borderColor: '#212121' }}
             >
               <ul className="mr-2 py-2">
@@ -1123,7 +1139,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex-1 xl:overflow-y-auto">
-              <div className="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
+              <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
                   Security
                 </h1>
@@ -1191,7 +1207,7 @@ export default function Dashboard() {
                   <button
                     id="saveSecurity"
                     onClick={saveSecurity}
-                    className="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                   >
                     Save
                   </button>
@@ -1206,7 +1222,7 @@ export default function Dashboard() {
         <div id="preferences" className="">
           <div className="mx-auto flex max-w-6xl">
             <div
-              className="  mt-10 flex-none list-none border-r pr-10 pl-10 text-white"
+              className="  mt-10 flex-none list-none border-r pl-10 pr-10 text-white"
               style={{ borderColor: '#212121' }}
             >
               <ul className="mr-2 list-none py-2">
@@ -1247,7 +1263,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex-1 xl:overflow-y-auto">
-              <div className="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
+              <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
                   Email Preferences
                 </h1>
@@ -1314,7 +1330,7 @@ export default function Dashboard() {
                     <button
                       id="savePreferences"
                       onClick={savePreferences}
-                      className="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
                       Save
                     </button>

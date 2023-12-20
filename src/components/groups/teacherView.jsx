@@ -7,7 +7,7 @@ import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/createAssignment';
 
-const baseUrl = 'http://localhost:3001'; // switch to deployment api url
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const defaultImages = [
   'https://robohash.org/pranavramesh',
   'https://robohash.org/laphatize',
