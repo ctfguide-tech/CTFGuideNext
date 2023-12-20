@@ -224,7 +224,7 @@ export default function TeacherView({ uid, group }) {
                     <div className='flex'>
                         <h1 className='text-white text-3xl font-semibold'>{classroom.name}</h1>
                         <div className='ml-auto'>
-                        <button className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</button>
+                        <a href={window.location.href  + '/create'} className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</a>
                         <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button>
                         <button onClick={() => setViewSettings(true)} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'><i className="fa fa-cog"></i> Settings</button>
                    </div>
