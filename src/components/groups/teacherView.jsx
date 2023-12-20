@@ -150,72 +150,45 @@ export default function TeacherView({ uid, group }) {
     setIsModalOpen(false);
   };
 
-    const deleteAnnouncement = async id => {
-        try {
-            if(!id) return;
-            const url = `${baseUrl}/classroom/announcements/${id}`;
-            const response = await fetch(url, {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await response.json();
-            setClassroom(prevClassroom => ({
-                ...prevClassroom,
-                announcements: prevClassroom.announcements.filter(announcement => announcement.id !== id),
-              }));
-            console.log(data.message);
-        } catch(err) {
-            console.log(err);
-        }
-        setAnnouncement("");
+  const deleteAnnouncement = async (id) => {
+    try {
+      if (!id) return;
+      const url = `${baseUrl}/classroom/announcements/${id}`;
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      setClassroom((prevClassroom) => ({
+        ...prevClassroom,
+        announcements: prevClassroom.announcements.filter(
+          (announcement) => announcement.id !== id
+        ),
+      }));
+      console.log(data.message);
+    } catch (err) {
+      console.log(err);
     }
+    setAnnouncement('');
+  };
 
-    if(selectedStudent) {
-        return <StudentProfile uidOfTeacher={uid} student={selectedStudent} classroom={classroom}>
-            <button onClick={() => setSelectedStudent(null)} style={{margin: "0px"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Back to classroom</button>
-        </StudentProfile>
-    }
-
-    
-    if(viewSettings) {
-        return <TeacherSettings classroom={classroom} />
-    }
-
-    const styles = {
-        textarea: {
-          width: '100%', 
-          padding: '10px', 
-          margin: '10px 0', 
-          border: "1px solid white", 
-          borderRadius: '5px', 
-          backgroundColor: '#333', 
-          color: '#fff', 
-          resize: 'none', 
-          fontSize: '16px'
-        },
-        button: {
-          backgroundColor: '#333', 
-          color: '#fff', 
-          border: 'none', 
-          padding: '10px 20px', 
-          textAlign: 'center', 
-          textDecoration: 'none', 
-          display: 'inline-block', 
-          fontSize: '16px', 
-          margin: '4px 2px', 
-          cursor: 'pointer'
-        }
-    };
-
-    function copy() {
-        var copyText = document.getElementById("copyBox");
-        copyText.type = "text"
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
-        copyText.type = "hidden"
-    }
+  if (selectedStudent) {
     return (
+<<<<<<< HEAD
+      <StudentProfile
+        uidOfTeacher={uid}
+        student={selectedStudent}
+        classroom={classroom}
+      >
+        <button
+          onClick={() => setSelectedStudent(null)}
+          style={{ margin: '0px' }}
+          className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+        >
+          Back to classroom
+        </button>
+      </StudentProfile>
+=======
         <>
             <Head>
                 <title>Coming Soon - CTFGuide</title>
@@ -267,99 +240,6 @@ export default function TeacherView({ uid, group }) {
                             })
                         }
                         </div>
-  function copy() {
-    var copyText = document.getElementById('copyBox');
-    copyText.type = 'text';
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(copyText.value);
-    copyText.type = 'hidden';
-  }
-  return (
-    <>
-      <Head>
-        <title>Coming Soon - CTFGuide</title>
-        <style>
-          @import
-          url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-        </style>
-      </Head>
-      <StandardNav />
-      <div className=" min-h-screen  ">
-        <div className="mx-auto mt-10 max-w-6xl">
-          <div className="flex">
-            <h1 className="text-3xl font-semibold text-white">
-              {classroom.name}
-            </h1>
-            <div className="ml-auto">
-              <button
-                onClick={() => setViewCreateAssignment(true)}
-                className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-              >
-                Create Assignment
-              </button>
-              <button className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50">
-                Create Lab
-              </button>
-              <button
-                onClick={() => setViewSettings(true)}
-                className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-              >
-                <i className="fa fa-cog"></i> Settings
-              </button>
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-6 gap-x-4">
-            <div className="col-span-4 rounded-lg border-t-8 border-blue-600 bg-neutral-800/50 px-4 py-3 ">
-              {/* LOOPING THROUGH MEMBERS */}
-              <h1 className="text-xl font-semibold text-white"> Members</h1>
-              <div className="grid grid-cols-3 gap-x-2 gap-y-2">
-                {classroom.teachers && classroom.teachers.length === 0 ? (
-                  <div style={{ color: 'white' }}>No teachers yet...</div>
-                ) : (
-                  classroom.teachers &&
-                  classroom.teachers.map((teacher, idx) => {
-                    const i =
-                      defaultImages.length - 1 - (idx % defaultImages.length);
-                    return (
-                      <div
-                        key={idx}
-                        className="flex items-center rounded-lg bg-neutral-900"
-                      >
-                        <img
-                          src={defaultImages[i]}
-                          className="ml-1 h-10 w-10 "
-                        ></img>{' '}
-                        <h1 className="ml-6 mt-2 pl-1 text-white">
-                          {' '}
-                          <i className="fas fa-user-shield"></i>{' '}
-                          {teacher.username}
-                        </h1>
-                      </div>
-                    );
-                  })
-                )}
-                {classroom.students &&
-                  classroom.students.map((student, idx) => {
-                    const i = idx % defaultImages.length;
-                    return (
-                      <div
-                        key={idx}
-                        className="flex items-center rounded-lg bg-neutral-900"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedStudent(student)}
-                      >
-                        <img
-                          src={defaultImages[i]}
-                          className="ml-1 h-10 w-10 "
-                        ></img>{' '}
-                        <h1 className="ml-6 mt-2 pl-1 text-white">
-                          {student.username}
-                        </h1>
-                      </div>
-                    );
-                  })}
-              </div>
 
                         <br></br>
                         <p className='text-white mt-10'>Invite students to your group by sharing the join code.</p>
@@ -492,6 +372,7 @@ export default function TeacherView({ uid, group }) {
 
             <Footer />
         </>
+>>>>>>> frontend-payment
     );
   }
 
