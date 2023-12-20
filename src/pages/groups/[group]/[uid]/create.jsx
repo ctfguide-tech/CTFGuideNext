@@ -5,12 +5,9 @@ import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 
 import { Menu } from '@headlessui/react';
 
-
-const basePaymentLink = "https://buy.stripe.com/test_aEU5na60V8sBbfOcMN"; // this will need to change soon
 export default function CreateGroup() {
   const baseUrl = "http://localhost:3001"; // change this in deployment
 
@@ -22,20 +19,30 @@ export default function CreateGroup() {
   const [description, setDescription] = useState('');
   const [seats, setSeats] = useState(0);
   const [time, setTime] = useState("");
-  const [startingDate, setStartingDate] = useState(new Date());
-  const [usingPaymentLink, setUsingPaymentLink] = useState(false);
-  const [paymentLink, setPaymentLink] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const mockLoad = () => {
-        const submitButton = document.getElementById('submitButton');
-        submitButton.innerHTML = "Loading...";
-        submitButton.disabled = true;
-        setTimeout(() => {
-            submitButton.innerHTML = "Submit";
-            submitButton.disabled = false;
-        }, 2000);
-    }
+
+  
+
+  const mockLoad = async () => {
+    const submitButton = document.getElementById('submitButton');
+    submitButton.innerHTML = "Loading...";
+    submitButton.disabled = true;
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain, description, seats, time, selectedCategory })
+    };
+
+
+    //console.log({ domain, description, seats, time, selectedCategory });
+    // const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/`, requestOptions);
+    // const data = await response.json();
+   
+    submitButton.innerHTML = "Submit";
+    submitButton.disabled = false;
+  }
 
   return (
     <>
@@ -174,29 +181,29 @@ export default function CreateGroup() {
         <h1 className='text-sm mt-10 text-white'>Assignment Type</h1>
         <div className='mt-2 grid grid-row-1 grid-cols-3 gap-4 gap-x-4 text-white '>
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-900 hover:border-neutral-900 cursor-pointer px-2 py-2 text-center ${selectedOption === 'student' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => {setSelectedOption('student'); setUsingPaymentLink(false)}}
+                className={`bg-neutral-800 cursor-pointer px-2 py-2 text-center ${selectedOption === 'existingChallenge' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800 hover:bg-neutral-900 hover:border-neutral-900'}`}
+                onClick={() => {setSelectedOption('existingChallenge')}}
             >
                 <i className="text-3xl text-blue-500 fas fa-globe"></i>
                 <h1 className='text-lg font-semibold'>Existing Challenge</h1>
-                <h1 className='text-sm'>Choose a challenge made by the community on CTFGuide</h1>
+                <h1 className='text-sm'>Choose an existing challenge made by the community on CTFGuide with assisted grading by AI</h1>
             </div>
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-900 hover:border-neutral-900 cursor-pointer px-2 py-2 text-center ${selectedOption === 'student' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => {setSelectedOption('student'); setUsingPaymentLink(false)}}
+                className={`bg-neutral-800 cursor-pointer px-2 py-2 text-center ${selectedOption === 'customChallenge' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800 hover:bg-neutral-900 hover:border-neutral-900'}`}
+                onClick={() => {setSelectedOption('customChallenge')}}
             >
            
                 <i className="text-3xl text-orange-500 fas fa-hand-sparkles"></i>
                 <h1 className='text-lg font-semibold'>Custom Challenge</h1>
-                <h1 className='text-sm'>Create a new challenge from scratch. This is a classic CTF challenge.</h1>
+                <h1 className='text-sm'>Create a new challenge from scratch. This is a classic CTF challenge with assisted grading by AI.</h1>
             </div>
             <div 
-                className={`bg-neutral-800 hover:bg-neutral-900 hover:border-neutral-900 cursor-pointer px-2 py-2 text-center ${selectedOption === 'student' && !usingPaymentLink ? 'border-2 border-blue-600' : 'border-2 border-neutral-800'}`}
-                onClick={() => {setSelectedOption('student'); setUsingPaymentLink(false)}}
+                className={`bg-neutral-800 cursor-pointer px-2 py-2 text-center ${selectedOption === 'dynamicLab' ? 'border-2 border-blue-600' : 'border-2 border-neutral-800 hover:bg-neutral-900 hover:border-neutral-900'}`}
+                onClick={() => setSelectedOption('dynamicLab')}
             >
                 <i className="text-3xl text-green-500 fas fa-robot"></i>
                 <h1 className='text-lg font-semibold'>Dynamic Lab</h1>
-                <h1 className='text-sm'>Create a realistic cybersecurity scenerio that is graded automatically with AI.</h1>
+                <h1 className='text-sm'>Create a simulated Cybersecurity environent graded by AI </h1>
             </div>
             
         </div>
