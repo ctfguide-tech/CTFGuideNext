@@ -225,6 +225,10 @@ export default function Createchall() {
                     className="w-3/4 rounded-lg shadow-lg bg-neutral-900/90  border border-neutral-600 py-2 px-4 text-3xl font-semibold text-white"
                     placeholder='Untitled Challenge'
                 />
+
+                <div className='mt-4'>
+                <i className="fas fa-code-branch"></i> You are forking <span className="mt-4 font-semibold text-blue-500">Untitled Challenge</span> 
+                </div>
                    
                    <div id="error" className="hidden mt-4 bg-red-500 rounded-md px-4 py-1">
                     Something went wrong on our end. Your changes have not been saved. You can try again now or later. 
