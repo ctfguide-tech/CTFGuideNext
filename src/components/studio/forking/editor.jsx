@@ -29,8 +29,33 @@ const Editor = (slug) => {
 
     useEffect(() => {
         // request challenge data based of slug passed in prop
-    });
-    
+        
+        var requestOptions = {
+            method: 'GET'
+        };
+
+        fetch("http://localhost:3001/challenges/" + slug, requestOptions)
+
+            .then(response => response.json()) // assuming the response is JSON
+            .then(result => {
+                console.log(result.result);
+                document.getElementById('challengeName').value = result.result.title;
+                document.getElementById('challengeName2').innerText = result.result.title;
+                document.getElementById('content').value = result.result.content;
+                document.getElementById('solution').value = result.result.solution;
+                document.getElementById('hint1').value = result.result.hint1;
+                document.getElementById('hint2').value = result.result.hint2;
+                document.getElementById('hint3').value = result.result.hint3;
+                document.getElementById('difficulty').value = result.result.difficulty;
+                document.getElementById('category').value = result.result.category;
+                setContentPreview(result.result.content);
+            })
+            .catch(error => console.log('error', error));
+    }
+        , []); // Added an empty dependency array to prevent infinite requests
+
+   
+
 
 
     return (
