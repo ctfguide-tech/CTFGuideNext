@@ -191,7 +191,7 @@ export default function TeacherView({ uid, group }) {
   }
 
   if (viewCreateAssignment) {
-    return <CreateAssignment classroom={classroom} />;
+    return <CreateAssignment classroomId={classroom.id} />;
   }
 
   if (viewSettings) {

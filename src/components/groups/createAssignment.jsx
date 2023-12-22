@@ -10,37 +10,73 @@ import { Menu } from '@headlessui/react';
 import ForkChallenge from './fork-challenge';
 import CreateChallenge from './create-challenge';
 
-export default function CreateGroup() {
+export default function CreateGroup(props) {
   const baseUrl = 'http://localhost:3001'; // change this in deployment
-
   const [selectedOption, setSelectedOption] = useState(null);
-
   const [open, setOpen] = useState(false);
-  const [domain, setDomain] = useState('');
-  const [name, setName] = useState('');
+
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [seats, setSeats] = useState(0);
+  const [dueDate, setDueDate] = useState('');
   const [time, setTime] = useState('');
+  const [assignmentPoints, setAssignmentPoints] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-  const [displayExistingChallenge, setDisplayExistingChallenge] = useState(false);
+  const [displayExistingChallenge, setDisplayExistingChallenge] =
+    useState(false);
   const [displayCustomChallenge, setDisplayCustomChallenge] = useState(false);
-
+  const [errMessage, setErrMessage] = useState('');
   const onSubmit = async () => {
-    if(selectedOption === "existingChallenge") {
+    if (
+      !dueDate ||
+      !time ||
+      !selectedOption ||
+      !selectedCategory ||
+      assignmentPoints < 0 ||
+      !title
+    ) {
+      setErrMessage('Please enter all the form information');
+      return;
+    }
+    if (selectedOption === 'existingChallenge') {
       setDisplayExistingChallenge(true);
-    }else if (selectedOption === "customChallenge") {
+    } else if (selectedOption === 'customChallenge') {
       setDisplayCustomChallenge(true);
+    } else {
+      setErrMessage('Please select an assignment type');
+    }
   };
-}
 
-
-  if(displayExistingChallenge) {
-    return <ForkChallenge />
-  }else if(displayCustomChallenge){
-    return <CreateChallenge />
+  if (displayExistingChallenge) {
+    return (
+      <ForkChallenge
+        assignmentInfo={{
+          classroomId: props.classroomId,
+          title,
+          description,
+          time,
+          dueDate,
+          assignmentPoints,
+          selectedCategory,
+        }}
+      />
+    );
+  } else if (displayCustomChallenge) {
+    return (
+      <CreateChallenge
+        assignmentInfo={{
+          classroomId: props.classroomId,
+          title,
+          description,
+          time,
+          dueDate,
+          assignmentPoints,
+          selectedCategory,
+        }}
+      />
+    );
   }
 
+  console.log();
   return (
     <>
       <Head>
@@ -78,7 +114,6 @@ export default function CreateGroup() {
                   CTFGuide needs some information to issue an assignment to
                   students.
                 </p>
-
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-4">
                     <div className="grid grid-cols-1">
@@ -97,8 +132,8 @@ export default function CreateGroup() {
                                   type="text"
                                   name="title"
                                   id="assignment_title"
-                                  value={domain}
-                                  onChange={(e) => setDomain(e.target.value)}
+                                  value={title}
+                                  onChange={(e) => setTitle(e.target.value)}
                                   className="block flex-1 border-0 bg-transparent px-4 py-1.5 pl-3 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
                                   placeholder="Make this descriptive but short."
                                 />
@@ -116,6 +151,12 @@ export default function CreateGroup() {
                             <div className="mt-2">
                               <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
                                 <input
+                                  value={assignmentPoints}
+                                  onChange={(e) =>
+                                    setAssignmentPoints(
+                                      parseInt(e.target.value)
+                                    )
+                                  }
                                   type="number"
                                   name="title"
                                   id="assignment_points"
@@ -220,7 +261,6 @@ export default function CreateGroup() {
                     </div>
                   </div>
                 </div>
-
                 <h1 className="mt-10 text-sm text-white">Assignment Type</h1>
                 <div className="grid-row-1 mt-2 grid grid-cols-3 gap-4 gap-x-4 text-white ">
                   <div
@@ -260,32 +300,28 @@ export default function CreateGroup() {
                     </h1>
                   </div>
                   <div
-                    className={`cursor-pointer bg-neutral-800 px-2 py-2 text-center ${
-                      selectedOption === 'dynamicLab'
-                        ? 'border-2 border-blue-600'
-                        : 'border-2 border-neutral-800 hover:border-neutral-900 hover:bg-neutral-900'
-                    }`}
-                    onClick={() => setSelectedOption('dynamicLab')}
+                    className={`bg-neutral-900 px-2 py-2 text-center`}
+                    // onClick={() => setSelectedOption('dynamicLab')}
                   >
                     <i className="fas fa-robot text-3xl text-green-500"></i>
-                    <h1 className="text-lg font-semibold">Dynamic Lab</h1>
+                    <h1 className="text-lg font-semibold">
+                      Dynamic Lab (Coming Soon)
+                    </h1>
                     <h1 className="text-sm">
                       Create a simulated Cybersecurity environent graded by AI{' '}
                     </h1>
                   </div>
                 </div>
-
                 <h1 className="mt-6 text-sm  text-white">
                   Assignment Due Date
                 </h1>
-
                 <div className="mt-2 flex gap-x-4 rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
                   <input
                     type="date"
                     name="username"
                     id="username"
-                    value={seats}
-                    onChange={(e) => setSeats(e.target.value)}
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
                     className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Just needs to be an estimate."
                   />
@@ -302,9 +338,7 @@ export default function CreateGroup() {
                     />
                   </div>
                 </div>
-
                 <h1 className="mt-4 text-sm text-white"></h1>
-
                 <div className="bg-neutral-850 mt-4 hidden rounded-lg border border-neutral-500 px-4 py-2 text-white">
                   <b>✨ Why do we ask for this information?</b>
                   <h1>
@@ -318,15 +352,17 @@ export default function CreateGroup() {
                     terminal to deploy.
                   </h1>
                 </div>
-
                 <button
                   onClick={onSubmit}
                   id="submitButton"
                   className="mt-4  rounded-lg bg-blue-700 px-5 py-1 text-xl text-white hover:bg-blue-600/50"
                 >
                   {' '}
-                  Submit
+                  continue
                 </button>
+                <br></br>
+                <br></br>
+                <div style={{ color: 'red' }}>{errMessage}</div>
               </div>
             </div>
           </div>
