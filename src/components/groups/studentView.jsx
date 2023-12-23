@@ -2,16 +2,14 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+// import { loadStripe } from '@stripe/stripe-js';
+// const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function StudentView({ uid, group }) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 
   const [classroom, setClassroom] = useState({});
-  const [upgradeType, setUpgradeType] = useState('CTFGuideStudentEDU');
-  const [isUpgraded, setIsUpgraded] = useState(false);
-  const [paymentLink, setPaymentLink] = useState('');
+  const [freeTrialDaysLeft, setFreeTrialDaysLeft] = useState(0);
 
   const defaultImages = [
     'https://robohash.org/pranavramesh',
@@ -38,22 +36,34 @@ export default function StudentView({ uid, group }) {
     // Add more assignments as needed
   ];
 
+  const getFreeTrialStatus = async (classroomId) => {
+    try {
+      console.log('Getting free trial status');
+      const userId = localStorage.getItem('uid');
+      const url = `${baseUrl}/classroom/getFreeTrialStatus/${userId}/${classroomId}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.success) {
+        setFreeTrialDaysLeft(data.body.daysLeft);
+      } else {
+        console.log(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
+    const classroomCode = group;
     const getClassroom = async () => {
-      const classroomCode = group;
       const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classroomCode}`;
       const response = await fetch(url);
       const data = await response.json();
       if (data.success) {
         setClassroom(data.body);
-        const upgraded = data.body.upgrades.some(
-          (i) =>
-            (i.name === 'CTFGuideStudentEDU' && i.userId === uid) ||
-            i.name === 'CTFGuideInstitutionEDU'
-        );
-        setIsUpgraded(upgraded);
+        await getFreeTrialStatus(data.body.id);
       } else {
-        console.log('Error when getting classroom info');
+        console.log(data.message);
       }
     };
     getClassroom();
@@ -87,82 +97,6 @@ export default function StudentView({ uid, group }) {
     // see the students grades
   };
 
-  const studentUpgrade = async () => {
-    if (upgradeType === 'None') return;
-    try {
-      if (upgradeType.includes('PaymentLink')) {
-        const response = await fetch(`${baseUrl}/classroom/upgrade`, {
-          method: 'POST',
-          body: JSON.stringify({
-            upgradeType: upgradeType.split('PaymentLink')[0],
-            numberOfSeats: 1,
-            classroomId: classroom.id,
-            userId: uid,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
-        if (data.success) {
-          setPaymentLink(data.body);
-          console.log(data.body);
-        }
-      } else {
-        const stripe = await loadStripe(STRIPE_KEY);
-        const response = await fetch(
-          `${baseUrl}/payments/stripe/create-payment-intent`,
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              subType: upgradeType,
-              quantity: 1,
-              uid: uid,
-              operation: 'classroomUpgrade',
-              data: { classroomId: classroom.id },
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        const session = await response.json();
-        if (session.success) {
-          await stripe.redirectToCheckout({ sessionId: session.body });
-        } else {
-          console.log('Error:', session.message);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const cancelClassroomUpgrade = async () => {
-    try {
-      const response = await fetch(
-        `${baseUrl}/payments/stripe/cancel-payment-intent`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            classroomId: classroom.id,
-            uid: uid,
-            operation: 'classroomUpgrade',
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      const data = await response.json();
-      if (data.success) {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <>
       <Head>
@@ -177,13 +111,19 @@ export default function StudentView({ uid, group }) {
         <div className="mx-auto mt-10 max-w-6xl">
           <div className="flex">
             <h1 className="text-3xl font-semibold text-white">
-              {classroom.name}
+              {classroom.name}{' '}
             </h1>
           </div>
           <div className="mt-4 grid grid-cols-6 gap-x-4">
             <div className="col-span-4 rounded-lg border-t-8 border-blue-600 bg-neutral-800/50 px-4 py-3 ">
               {/* LOOPING THROUGH MEMBERS */}
-              <h1 className="text-xl font-semibold text-white"> Members</h1>
+              <h1 className="text-xl font-semibold text-white">
+                {' '}
+                Members |{' '}
+                {freeTrialDaysLeft !== 0
+                  ? 'Free Trial Ends in ' + freeTrialDaysLeft + ' days'
+                  : ''}
+              </h1>
               <div className="grid grid-cols-3 gap-x-2 gap-y-2">
                 {classroom.teachers && classroom.teachers.length === 0 ? (
                   <div style={{ color: 'white' }}>No teachers yet...</div>
@@ -229,9 +169,7 @@ export default function StudentView({ uid, group }) {
                     );
                   })}
               </div>
-
               <br></br>
-
               <br></br>
               <h1 className="text-xl font-semibold text-white">
                 {' '}
