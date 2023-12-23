@@ -93,6 +93,26 @@ export default function StudentView({ uid, group }) {
     }
   };
 
+  const cancelFreeTrial = async () => {
+    try {
+      const classroomId = classroom.id;
+      const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation: 'joinClass', classroomId, uid }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        console.log(data);
+      } else {
+        console.log(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const viewGrades = () => {
     // see the students grades
   };
@@ -113,6 +133,22 @@ export default function StudentView({ uid, group }) {
             <h1 className="text-3xl font-semibold text-white">
               {classroom.name}{' '}
             </h1>
+            <div className="ml-auto">
+              <button
+                onClick={leaveClass}
+                className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+              >
+                Leave
+              </button>{' '}
+              {freeTrialDaysLeft > 0 && (
+                <button
+                  onClick={cancelFreeTrial}
+                  className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                >
+                  Cancel Free Trial
+                </button>
+              )}
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-6 gap-x-4">
             <div className="col-span-4 rounded-lg border-t-8 border-blue-600 bg-neutral-800/50 px-4 py-3 ">
