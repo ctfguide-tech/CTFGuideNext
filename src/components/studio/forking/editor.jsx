@@ -28,6 +28,7 @@ const Editor = (props) => {
   const [newChallengeName, setNewChallengeName] = useState(props.slug);
   const [fetched, setFetched] = useState(false);
 
+  const [errMessage, setErrMessage] = useState('');
   const [username, setUsername] = useState('anonymous');
   useEffect(() => {
     setUsername(localStorage.getItem('username'));
@@ -38,6 +39,11 @@ const Editor = (props) => {
 
   const uploadChallenge = async () => {
     try {
+      const nameExists = await getChallenge(false, newChallengeName);
+      if (nameExists) {
+        setErrMessage('Challenge name already exists, please change the name');
+        return;
+      }
       const challengeInfo = {
         name: newChallengeName,
         hints,
@@ -72,33 +78,37 @@ const Editor = (props) => {
     }
   };
 
-  useEffect(() => {
-    const getChallenge = async () => {
-      try {
-        var requestOptions = {
-          method: 'GET',
-        };
-        const response = await fetch(
-          `http://localhost:3001/challenges/basicInfo/${props.slug}`,
-          requestOptions
-        );
-        const data = await response.json();
-        if (data.success) {
-          setHints(data.body.hints);
-          setContentPreview(data.body.content);
-          setSolution(data.body.solution);
-          setDifficulty(data.body.difficulty);
-          setCategory(data.body.category);
-          setFetched(true);
-        } else {
-          console.log(`Error when getting challenge information`);
-        }
-      } catch (err) {
-        console.log(err);
+  const getChallenge = async (isDefault, slugName) => {
+    try {
+      var requestOptions = {
+        method: 'GET',
+      };
+      const response = await fetch(
+        `http://localhost:3001/challenges/basicInfo/${slugName}`,
+        requestOptions
+      );
+      const data = await response.json();
+      if (!isDefault) {
+        return data.success;
       }
-    };
+      if (data.success) {
+        setHints(data.body.hints);
+        setContentPreview(data.body.content);
+        setSolution(data.body.solution);
+        setDifficulty(data.body.difficulty);
+        setCategory(data.body.category);
+        setFetched(true);
+      }
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
+  useEffect(() => {
     if (!fetched) {
-      getChallenge();
+      getChallenge(true, props.slug);
     }
   }, []);
 
@@ -113,9 +123,14 @@ const Editor = (props) => {
           onChange={(event) => {
             setNewChallengeName(event.target.value);
           }}
-          className="w-3/4 rounded-lg border border-neutral-600  bg-neutral-900/90 px-4 py-2 text-3xl font-semibold text-white shadow-lg"
+          className={
+            errMessage !== ''
+              ? 'w-3/4 rounded-lg border border-red-600 bg-neutral-900/90 px-4 py-2 text-3xl font-semibold text-white shadow-lg'
+              : 'w-3/4 rounded-lg border border-neutral-600 bg-neutral-900/90 px-4 py-2 text-3xl font-semibold text-white shadow-lg'
+          }
           placeholder="Untitled Challenge"
         />
+        <div style={{ color: '#ff4c4c', fontWeight: 'bold' }}>{errMessage}</div>
 
         <div className="mt-4">
           <i className="fas fa-code-branch"></i> You are forking{' '}

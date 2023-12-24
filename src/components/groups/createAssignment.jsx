@@ -20,7 +20,7 @@ export default function CreateGroup(props) {
   const [dueDate, setDueDate] = useState('');
   const [time, setTime] = useState('');
   const [assignmentPoints, setAssignmentPoints] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('Test');
   const [displayExistingChallenge, setDisplayExistingChallenge] =
     useState(false);
   const [displayCustomChallenge, setDisplayCustomChallenge] = useState(false);

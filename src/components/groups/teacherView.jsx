@@ -17,22 +17,6 @@ const defaultImages = [
   'https://robohash.org/jasoncalcanis',
 ];
 
-const demoAssignments = [
-  {
-    id: 1,
-    title: 'Assignment 1',
-    description: 'Introduction to Cyber Security Basics',
-    dueDate: '2023-12-01',
-  },
-  {
-    id: 2,
-    title: 'Assignment 2',
-    description: 'Understanding Cryptography',
-    dueDate: '2024-01-15',
-  },
-  // Add more assignments as needed
-];
-
 export default function TeacherView({ uid, group }) {
   const [classroom, setClassroom] = useState({});
   const [inviteEmail, setInviteEmail] = useState('');
@@ -45,7 +29,7 @@ export default function TeacherView({ uid, group }) {
   const [announcement, setAnnouncement] = useState('');
   const [viewSettings, setViewSettings] = useState(false);
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
-  const [upgraded, setUpgraded] = useState(false);
+  // const [upgraded, setUpgraded] = useState(false);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -63,17 +47,12 @@ export default function TeacherView({ uid, group }) {
       const data = await response.json();
       if (data.success) {
         setClassroom(data.body);
-        // setUpgraded(
-        //   data.body.upgrades.some((i) => i.name === 'CTFGuideInstitutionEDU')
-        // );
       } else {
         console.log('Error when getting classroom info');
       }
     };
     getClassroom();
   }, []);
-
-  // console.log(classroom);
 
   const handleInvite = async () => {
     setColor('gray');
@@ -129,6 +108,21 @@ export default function TeacherView({ uid, group }) {
     setEditingAnnouncementIdx(-1);
   };
 
+  const parseDate = (dateString) => {
+    let dateObject = new Date(dateString);
+    let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
+    let day = dateObject.getDate();
+    let year = dateObject.getFullYear();
+    let hours = dateObject.getHours();
+    let minutes = dateObject.getMinutes();
+    let ampm = hours >= 12 ? ' PM' : ' AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let strTime = hours + ':' + minutes + ampm;
+    let formattedDate = `${month}/${day}/${year} ${strTime}`;
+    return formattedDate;
+  };
   const createAnnouncement = async (message) => {
     setAnnouncement('');
     try {
@@ -359,11 +353,11 @@ export default function TeacherView({ uid, group }) {
                       }}
                       className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3  hover:bg-neutral-900/50"
                     >
-                      <h2 className="text-lg text-white">{assignment.name}</h2>
-                      <p className="text-white">{assignment.description}</p>
+                      <h2 className="text-lg text-white">
+                        {assignment.category}: {assignment.name}
+                      </h2>
                       <p className="text-white">
-                        Due Date:{' '}
-                        {new Date(assignment.dueDate).toLocaleDateString()}{' '}
+                        Due: {parseDate(assignment.dueDate)}{' '}
                       </p>
                     </div>
                   ))}

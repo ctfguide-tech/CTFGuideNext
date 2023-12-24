@@ -136,7 +136,7 @@ export default function Createchall(props) {
       } else {
         if (this.status === 201 || this.status === 200) {
           // redirect to /create page
-          window.location.replace('/groups');
+          window.location.reload();
         }
       }
     });

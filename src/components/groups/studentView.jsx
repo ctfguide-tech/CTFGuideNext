@@ -10,6 +10,7 @@ export default function StudentView({ uid, group }) {
 
   const [classroom, setClassroom] = useState({});
   const [freeTrialDaysLeft, setFreeTrialDaysLeft] = useState(0);
+  const [displayDueDate, setDisplayDueDate] = useState('');
 
   const defaultImages = [
     'https://robohash.org/pranavramesh',
@@ -20,22 +21,7 @@ export default function StudentView({ uid, group }) {
     'https://robohash.org/jasoncalcanis',
   ];
 
-  const demoAssignments = [
-    {
-      id: 1,
-      title: 'Assignment 1',
-      description: 'Introduction to Cyber Security Basics',
-      dueDate: '2023-12-01',
-    },
-    {
-      id: 2,
-      title: 'Assignment 2',
-      description: 'Understanding Cryptography',
-      dueDate: '2024-01-15',
-    },
-    // Add more assignments as needed
-  ];
-
+  console.log(classroom);
   const getFreeTrialStatus = async (classroomId) => {
     try {
       console.log('Getting free trial status');
@@ -51,6 +37,22 @@ export default function StudentView({ uid, group }) {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const parseDate = (dateString) => {
+    let dateObject = new Date(dateString);
+    let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
+    let day = dateObject.getDate();
+    let year = dateObject.getFullYear();
+    let hours = dateObject.getHours();
+    let minutes = dateObject.getMinutes();
+    let ampm = hours >= 12 ? ' PM' : ' AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let strTime = hours + ':' + minutes + ampm;
+    let formattedDate = `${month}/${day}/${year} ${strTime}`;
+    return formattedDate;
   };
 
   useEffect(() => {
@@ -155,9 +157,9 @@ export default function StudentView({ uid, group }) {
               {/* LOOPING THROUGH MEMBERS */}
               <h1 className="text-xl font-semibold text-white">
                 {' '}
-                Members |{' '}
+                Members{' '}
                 {freeTrialDaysLeft !== 0
-                  ? 'Free Trial Ends in ' + freeTrialDaysLeft + ' days'
+                  ? '| Free Trial Ends in ' + freeTrialDaysLeft + ' days'
                   : ''}
               </h1>
               <div className="grid grid-cols-3 gap-x-2 gap-y-2">
@@ -221,19 +223,24 @@ export default function StudentView({ uid, group }) {
             <div className="col-span-2 rounded-lg  border-t-8  border-blue-600 bg-neutral-800/50 px-4 py-3">
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
-                {demoAssignments.map((assignment) => (
-                  <div
-                    key={assignment.id}
-                    onClick={() => {
-                      window.location.href = '/assignments/testingfun';
-                    }}
-                    className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3  hover:bg-neutral-900/50"
-                  >
-                    <h2 className="text-lg text-white">{assignment.title}</h2>
-                    <p className="text-white">{assignment.description}</p>
-                    <p className="text-white">Due Date: {assignment.dueDate}</p>
-                  </div>
-                ))}
+                {classroom &&
+                  classroom.assignments &&
+                  classroom.assignments.map((assignment) => (
+                    <div
+                      key={assignment.id}
+                      onClick={() => {
+                        window.location.href = '/assignments/' + assignment.id;
+                      }}
+                      className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3  hover:bg-neutral-900/50"
+                    >
+                      <h2 className="text-lg text-white">
+                        {assignment.category}: {assignment.name}
+                      </h2>
+                      <p className="text-white">
+                        Due: {parseDate(assignment.dueDate)}{' '}
+                      </p>
+                    </div>
+                  ))}
 
                 <button className="w-full rounded-sm bg-neutral-900 px-2 py-1 text-white">
                   View All
@@ -300,7 +307,6 @@ export default function StudentView({ uid, group }) {
           </div>
         </div>
       </div>
-
       <Footer />
     </>
   );

@@ -181,7 +181,7 @@ export default function Dashboard() {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById('paymentType').value;
-      const userId = auth.currentUser.uid;
+      const userId = localStorage.getItem('uid');
 
       const response = await fetch(
         'http://localhost:3001/payments/stripe/update-card',
@@ -204,6 +204,28 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const cancelSubscription = async () => {
+    try {
+      const subscriptionType = document.getElementById('paymentType').value;
+      const userId = localStorage.getItem('uid');
+      const url = `http://localhost:3001/payments/stripe/cancel`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({
+          subType: subscriptionType,
+          userId: userId,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log(data.message);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -1167,7 +1189,7 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="hidden">
+                <div className="hiden">
                   <hr className="mt-4 border-neutral-500"></hr>
                   <h1 className="mt-4 text-white"> Dev Testing</h1>
 
@@ -1198,6 +1220,12 @@ export default function Dashboard() {
                     className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
                   >
                     Update card infomation
+                  </button>
+                  <button
+                    onClick={cancelSubscription}
+                    className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
+                  >
+                    cancel subscription
                   </button>
                 </div>
               </div>
