@@ -284,6 +284,83 @@ const Editor = (props) => {
           </div>
         </div>
 
+        <div className="900 mt-5 rounded-sm   bg-neutral-800/40 shadow-lg">
+          <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
+          Environment Container Configuration
+          </h3>
+          <div className="px-5 py-5 grid grid-cols-2 gap-x-8 w-full">
+
+                       <div className=' '>
+                       <h1 className='text-lg'>Existing Configuration</h1>
+
+                            <textarea className='border-none mt-4 w-full bg-black text-white'>
+
+                            </textarea>
+                       </div>
+                       <div className='text-lg'>
+                       <h1>Add your own configurations</h1>
+
+                            <textarea className='border-none mt-4 w-full bg-black text-white'>
+
+                            </textarea>
+                       </div>
+
+
+          
+                  
+          </div>
+          <div className='px-4'>
+                    <div className='bg-neutral-850 mt-2 border border-neutral-500 rounded-lg px-4 text-white py-2'>
+                <b>✨ What is this?</b>
+                <h1>When we spin up your container, we will run the commands in this configuration file. If you are modifying a fork, you should assume their configuration file will be run first, then yours is run afterwards.</h1>
+
+         
+
+             </div> 
+
+             <br></br>
+                    </div>
+
+
+                    <div className="px-5 py-1">
+                    <h1>Import files into VM over URL</h1>
+
+                            <input id="fileurl" placeholder='URL to your ZIP file' className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"></input>
+                    </div>
+
+                    <div className="px-5 py-1">
+                    <h1>Import files from your computer</h1>
+
+                    <label
+    className="mt-4 flex justify-center w-full h-32 px-4 transition bg-neutral-800 border-2 border-neutral-600 border-dashed rounded-md appearance-none cursor-pointer hover:border-neutral-500 focus:outline-none">
+    <span className="flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <span className="font-medium text-gray-300">
+            Drop files to Attach, or
+            <span className="ml-1 text-blue-600 underline">browse</span>
+        </span>
+    </span>
+    <input type="file" name="file_upload" class="hidden"/>
+</label>
+
+                            <div className='bg-neutral-850 mt-10 mb-10 border border-neutral-500 rounded-lg px-4 text-white py-2'>
+                <b>🗒️ A note about file uploads</b>
+                <h1>Please assume that files are places in the home directory.</h1>
+
+         
+
+             </div> 
+                    </div>
+
+                    
+                    
+        </div>
+
+
         <button
           onClick={uploadChallenge}
           className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
