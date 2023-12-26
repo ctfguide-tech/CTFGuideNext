@@ -38,12 +38,19 @@ export default function CreateGroup(props) {
       setErrMessage('Please enter all the form information');
       return;
     }
+    const params = window.location.href.split('/');
+    if (params.length < 6) {
+      console.log('This should never run');
+      return;
+    }
+    // const classCode = params[4];
+    // const uid = params[5];
     if (selectedOption === 'existingChallenge') {
       setDisplayExistingChallenge(true);
-      // console.log(searchParams);
       // window.location.href = `/groups/${classCode}/${uid}/studio/fork-challenge`;
     } else if (selectedOption === 'customChallenge') {
       setDisplayCustomChallenge(true);
+      // window.location.href = `/groups/${classCode}/${uid}/studio/custom-challenge`;
     } else {
       setErrMessage('Please select an assignment type');
     }
@@ -79,7 +86,6 @@ export default function CreateGroup(props) {
     );
   }
 
-  console.log();
   return (
     <>
       <Head>

@@ -29,7 +29,7 @@ const styles = {
   h5: { fontSize: '1.4rem' },
   h6: { fontSize: '1.2rem' },
 };
-export default function Createchall(props) {
+export default function Createchall() {
   const [activeTab, setActiveTab] = useState('created');
   const [contentPreview, setContentPreview] = useState('');
   const [challengeSelected, setChallengeSelected] = useState(false);

@@ -6,7 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/createAssignment';
-import Gradebook from "@/components/groups/gradebook";
+import Gradebook from '@/components/groups/gradebook';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const defaultImages = [
@@ -187,14 +187,13 @@ export default function TeacherView({ uid, group }) {
     );
   }
 
-
   if (viewGradebook) {
     return <Gradebook classroomId={classroom.id} />;
   }
 
-  // if (viewCreateAssignment) {
-  //   return <CreateAssignment classroomId={classroom.id} />;
-  // }
+  if (viewCreateAssignment) {
+    return <CreateAssignment classroomId={classroom.id} />;
+  }
 
   if (viewSettings) {
     return <TeacherSettings classroom={classroom} />;
@@ -251,7 +250,7 @@ export default function TeacherView({ uid, group }) {
               {classroom.name}
             </h1>
             <div className="ml-auto">
-            <button
+              <button
                 onClick={() => setViewGradebook(true)}
                 className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
               >
@@ -259,7 +258,10 @@ export default function TeacherView({ uid, group }) {
               </button>
 
               <button
-                onClick={() => window.location.href = `/groups/${classroom.classCode}/${uid}/create`} 
+                onClick={() => {
+                  setViewCreateAssignment(true);
+                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                }}
                 className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
               >
                 Create Assignment
