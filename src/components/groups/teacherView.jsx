@@ -6,6 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/createAssignment';
+import Gradebook from "@/components/groups/gradebook";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const defaultImages = [
@@ -31,6 +32,8 @@ export default function TeacherView({ uid, group }) {
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
   // const [upgraded, setUpgraded] = useState(false);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
+
+  const [viewGradebook, setViewGradebook] = useState(false);
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -184,9 +187,14 @@ export default function TeacherView({ uid, group }) {
     );
   }
 
-  if (viewCreateAssignment) {
-    return <CreateAssignment classroomId={classroom.id} />;
+
+  if (viewGradebook) {
+    return <Gradebook classroomId={classroom.id} />;
   }
+
+  // if (viewCreateAssignment) {
+  //   return <CreateAssignment classroomId={classroom.id} />;
+  // }
 
   if (viewSettings) {
     return <TeacherSettings classroom={classroom} />;
@@ -243,8 +251,15 @@ export default function TeacherView({ uid, group }) {
               {classroom.name}
             </h1>
             <div className="ml-auto">
+            <button
+                onClick={() => setViewGradebook(true)}
+                className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+              >
+                Gradebook
+              </button>
+
               <button
-                onClick={() => setViewCreateAssignment(true)}
+                onClick={() => window.location.href = `/groups/${classroom.classCode}/${uid}/create`} 
                 className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
               >
                 Create Assignment
