@@ -44,7 +44,7 @@ export default function Slug() {
 
 
 
-          <div className='w-full bg-blue-900/60 px-4 py-4 '>
+          <div className='w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-4 py-4 '>
 
             <div className='max-w-6xl mx-auto'>
 
