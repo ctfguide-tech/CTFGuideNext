@@ -130,9 +130,30 @@ leaveTo="opacity-0"
 
               </div>
 
-              <div className='col-span-4 bg-black h-96 px-4'>
+              <div className='col-span-4 bg-black h-60 px-4'>
                 <iframe className="w-full h-full" src="https://terminal.ctfguide.com/wetty/ssh/root"></iframe>
+             
+                <p className='font-semibold text-white mt-6'>STUDENT SUBMISSIONS</p>
+                <hr className='bg-neutral-900 rounded-lg border border-blue-600' />
+                <div className='grid grid-cols-4 mt-4 gap-x-2'>
+                  <div className='bg-neutral-800 px-2 py-1 rounded-lg text-white'>
+                    <h1>Pranav Ramesh <i className="ml-2 fas fa-check text-green-500"></i></h1>
+                  </div>
+
+                  <div className='bg-neutral-800 px-2 py-1 rounded-lg text-white'>
+                    <h1>Abhi Byreddy <i className="ml-2 fas fa-check text-green-500"></i></h1>
+                  </div>
+
+                  <div className='bg-neutral-800 px-2 py-1 rounded-lg text-white'>
+                    <h1>Jiaming Wang  <i className="text-red-400 ml-2  fas fa-clock"></i></h1>
+                  </div>
+
+                
+                </div>
               </div>
+
+
+
             </div>
           </div>
 
