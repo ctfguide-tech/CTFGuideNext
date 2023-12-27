@@ -11,6 +11,7 @@ const Gradebook = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
+  const [classroomId, setClassroomId] = useState(-1);
 
   useEffect(() => {
     const params = window.location.href.split('/');
@@ -30,7 +31,7 @@ const Gradebook = () => {
           requestOptions
         );
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         if (data.success) {
           setStudents(data.body.students);
         } else {
@@ -52,9 +53,10 @@ const Gradebook = () => {
           requestOptions
         );
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         if (data.success) {
           setAssignments(data.body.assignments);
+          setClassroomId(data.body.id)
         } else {
           console.log(data);
         }
@@ -70,7 +72,8 @@ const Gradebook = () => {
   }, []);
   let collumSize = assignments.length + 1;
 
-  console.log(students);
+  // console.log(assignments)
+  // console.log(students);
   // each student object has an array of submissions and each submission is linked to a class
   return (
     <>
@@ -96,9 +99,9 @@ const Gradebook = () => {
         })}
       </div>
       <div>
-       {students && students.map((student, idx) => {
+       {classroomId !== -1 && students.map((student, idx) => {
            return (
-               <div key={idx}> <StudentGradeCard student={student} /> </div>
+               <div key={idx}> <StudentGradeCard student={student} classroomId={classroomId} /> </div>
            )
        })}
       </div>
