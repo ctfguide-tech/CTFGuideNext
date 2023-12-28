@@ -10,6 +10,7 @@ export default function Slug() {
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
   const [submissions, setSubmissions] = useState([]);
+  const [solved, setSolved] = useState(false);
   const [hints, setHints] = useState([
     { message: '', penalty: '' },
     { message: '', penalty: '' },
@@ -18,7 +19,7 @@ export default function Slug() {
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
-    let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
+    let month = dateObject.getMonth() + 1;
     let day = dateObject.getDate();
     let year = dateObject.getFullYear();
     let hours = dateObject.getHours();
@@ -59,7 +60,7 @@ export default function Slug() {
       const requestOptions = { method: 'GET' };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (data.success) {
         setSubmissions(data.body);
       } else {
@@ -76,9 +77,7 @@ export default function Slug() {
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
-      console.log('You got it!!');
-    } else {
-      console.log('this is incorrect');
+      setSolved(true);
     }
   };
 
@@ -88,9 +87,37 @@ export default function Slug() {
     tmp[i].penalty = '(-' + assignment.challenge.hints[i].penalty + ') points';
     setHints(tmp);
   };
+  console.log(solved);
 
-  console.log(assignment);
-  console.log(submissions);
+  const submitAssignment = async () => {
+    try {
+      const params = window.location.href.split('/');
+      const userId = localStorage.getItem('uid');
+      const url = `${baseUrl}/submission/create`;
+      const body = {
+        hintsUsed: [],
+        solved: solved,
+        userId: userId,
+        classroomId: assignment.classroomId,
+        assignmentId: parseInt(params[4]),
+        keyword: flagInput,
+        challengeId: assignment.challengeId,
+      };
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+      };
+      // const response = await fetch(url, requestOptions);
+      // const data = await response.json();
+      // console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // console.log(assignment);
+  // console.log(submissions);
 
   return (
     <>
@@ -223,6 +250,12 @@ export default function Slug() {
                   ))}
                 </div>
               </div>
+              <button
+                onClick={submitAssignment}
+                className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+              >
+                Submit
+              </button>
             </div>
           </div>
         </div>

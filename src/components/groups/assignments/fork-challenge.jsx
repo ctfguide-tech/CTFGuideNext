@@ -6,21 +6,6 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 import Editor from '@/components/studio/forking/editor';
 import ChallengeSelectView from '@/components/studio/forking/ChallengeSelectView';
 
-const pages = [
-  { name: 'Groups', href: '../create', current: false },
-  {
-    name: 'Course Name',
-    href: './',
-    current: false,
-  },
-  { name: 'New Assignment', href: '#', current: false },
-  {
-    name: 'Fork Challenge',
-    href: '#',
-    current: true,
-  },
-];
-
 const styles = {
   h1: { fontSize: '2.4rem' },
   h2: { fontSize: '2rem' },
@@ -29,7 +14,31 @@ const styles = {
   h5: { fontSize: '1.4rem' },
   h6: { fontSize: '1.2rem' },
 };
-export default function Createchall() {
+export default function Createchall(props) {
+  const pages = [
+    {
+      name: 'Groups',
+      href: '../create',
+      current: false,
+      click: () => (window.location.href = '/groups'),
+    },
+    {
+      name: 'classroom',
+      click: () => window.location.reload(false),
+    },
+    {
+      name: 'New Assignment',
+      href: '#',
+      click: () => props.setDisplay(false),
+      current: false,
+    },
+    {
+      name: 'Fork Challenge',
+      href: '#',
+      current: true,
+      click: () => {},
+    },
+  ];
   const [activeTab, setActiveTab] = useState('created');
   const [contentPreview, setContentPreview] = useState('');
   const [challengeSelected, setChallengeSelected] = useState(false);
@@ -86,13 +95,13 @@ export default function Createchall() {
                   >
                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
                   </svg>
-                  <a
-                    href={page.href}
+                  <span
+                    onClick={page.click}
+                    style={{ cursor: 'pointer' }}
                     className="ml-4 text-sm font-medium text-gray-100 hover:text-gray-200"
-                    aria-current={page.current ? 'page' : undefined}
                   >
                     {page.name}
-                  </a>
+                  </span>
                 </div>
               </li>
             ))}

@@ -5,7 +5,7 @@ import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
-import CreateAssignment from '@/components/groups/createAssignment';
+import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;

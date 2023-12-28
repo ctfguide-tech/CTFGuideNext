@@ -4,14 +4,6 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 
-const pages = [
-  { name: 'Create Assignment', href: '../create', current: false },
-  {
-    name: 'Challenge Creation',
-    href: './',
-    current: true,
-  },
-];
 const styles = {
   h1: { fontSize: '2.4rem' },
   h2: { fontSize: '2rem' },
@@ -21,6 +13,20 @@ const styles = {
   h6: { fontSize: '1.2rem' },
 };
 export default function Createchall(props) {
+  const pages = [
+    {
+      name: 'Create Assignment',
+      click: () => props.setDisplay(false),
+      href: '../create',
+      current: false,
+    },
+    {
+      name: 'Challenge Creation',
+      href: './',
+      current: true,
+      click: () => {},
+    },
+  ];
   const [activeTab, setActiveTab] = useState('created');
   const [contentPreview, setContentPreview] = useState('');
 
@@ -191,13 +197,13 @@ export default function Createchall(props) {
                   >
                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
                   </svg>
-                  <a
-                    href={page.href}
+                  <span
+                    style={{ cursor: 'pointer' }}
+                    onClick={page.click}
                     className="ml-4 text-sm font-medium text-gray-100 hover:text-gray-200"
-                    aria-current={page.current ? 'page' : undefined}
                   >
                     {page.name}
-                  </a>
+                  </span>
                 </div>
               </li>
             ))}

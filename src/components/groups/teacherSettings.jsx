@@ -64,59 +64,6 @@ export default function teacherSettings({ classroom }) {
     }
   };
 
-  // upgrade class
-  const upgradeClass = async () => {
-    if (upgradeType === 'None') return;
-    try {
-      const uidOfTeacher = localStorage.getItem('uid');
-      if (upgradeType.includes('PaymentLink')) {
-        const response = await fetch(`${baseUrl}/classroom/upgrade`, {
-          method: 'POST',
-          body: JSON.stringify({
-            upgradeType: upgradeType.split('PaymentLink')[0],
-            numberOfSeats: numberOfSeats,
-            classroomId: classroom.id,
-            userId: uidOfTeacher,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
-        if (data.success) {
-          setPaymentLink(data.body);
-        }
-      } else {
-        const stripe = await loadStripe(STRIPE_KEY);
-        const userId = localStorage.getItem('uid');
-        const response = await fetch(
-          `${baseUrl}/payments/stripe/create-checkout-session`,
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              subType: upgradeType,
-              quantity: numberOfSeats,
-              uid: userId,
-              operation: 'classroomUpgrade',
-              data: { classroomId: classroom.id },
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        const session = await response.json();
-        if (session.success) {
-          await stripe.redirectToCheckout({ sessionId: session.sessionId });
-        } else {
-          console.log('Error:', session.message);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleInviteLink = async () => {
     setInviteActivated(true);
     const email = inviteEmail;
@@ -301,8 +248,8 @@ export default function teacherSettings({ classroom }) {
                 onClick={() => (window.location.href = ``)}
                 className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
                 style={{
-                  fontSize: '10px',
-                  marginLeft: '-15px',
+                  fontSize: '12px',
+                  marginLeft: '-10px',
                   marginBottom: '10px',
                 }}
               >

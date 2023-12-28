@@ -7,8 +7,8 @@ import { Transition, Dialog } from '@headlessui/react';
 import { useState, Fragment } from 'react';
 import { Menu } from '@headlessui/react';
 
-import ForkChallenge from '@/components/groups/fork-challenge';
-import CreateChallenge from '@/components/groups/create-challenge';
+import ForkChallenge from './fork-challenge';
+import CreateChallenge from './create-challenge';
 
 export default function CreateGroup(props) {
   const baseUrl = 'http://localhost:3001'; // change this in deployment
@@ -38,19 +38,11 @@ export default function CreateGroup(props) {
       setErrMessage('Please enter all the form information');
       return;
     }
-    const params = window.location.href.split('/');
-    if (params.length < 6) {
-      console.log('This should never run');
-      return;
-    }
-    // const classCode = params[4];
-    // const uid = params[5];
+
     if (selectedOption === 'existingChallenge') {
       setDisplayExistingChallenge(true);
-      // window.location.href = `/groups/${classCode}/${uid}/studio/fork-challenge`;
     } else if (selectedOption === 'customChallenge') {
       setDisplayCustomChallenge(true);
-      // window.location.href = `/groups/${classCode}/${uid}/studio/custom-challenge`;
     } else {
       setErrMessage('Please select an assignment type');
     }
@@ -68,6 +60,7 @@ export default function CreateGroup(props) {
           assignmentPoints,
           selectedCategory,
         }}
+        setDisplay={setDisplayExistingChallenge}
       />
     );
   } else if (displayCustomChallenge) {
@@ -82,6 +75,7 @@ export default function CreateGroup(props) {
           assignmentPoints,
           selectedCategory,
         }}
+        setDisplay={setDisplayCustomChallenge}
       />
     );
   }
@@ -98,6 +92,17 @@ export default function CreateGroup(props) {
       <StandardNav />
       <div className=" min-h-screen  ">
         <div className="mx-auto mt-10 max-w-6xl">
+          <button
+            onClick={() => (window.location.href = ``)}
+            className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+            style={{
+              fontSize: '15px',
+              marginLeft: '-5px',
+              marginBottom: '10px',
+            }}
+          >
+            <i className="fa fa-arrow-left" style={{ color: 'white' }}></i> Back
+          </button>
           <div className="flex">
             <h1 className="text-3xl text-white">Create an Assignment</h1>
             <div className="ml-auto hidden">
