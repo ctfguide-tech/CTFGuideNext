@@ -4,19 +4,9 @@ import { useState, useEffect } from 'react';
 
 const baseUrl = `http://localhost:3001`;
 const Editor = (props) => {
-  console.log(props);
-
-  const styles = {
-    h1: { fontSize: '2.4rem' },
-    h2: { fontSize: '2rem' },
-    h3: { fontSize: '1.8rem' },
-    h4: { fontSize: '1.6rem' },
-    h5: { fontSize: '1.4rem' },
-    h6: { fontSize: '1.2rem' },
-  };
-
   const [activeTab, setActiveTab] = useState('created');
   const [contentPreview, setContentPreview] = useState('');
+  const [penalty, setPenalty] = useState([0, 0, 0]);
   const [hints, setHints] = useState([
     'No hints set',
     'No hints set',
@@ -26,19 +16,21 @@ const Editor = (props) => {
   const [difficulty, setDifficulty] = useState('');
   const [category, setCategory] = useState([]);
   const [newChallengeName, setNewChallengeName] = useState(props.slug);
-  const [fetched, setFetched] = useState(false);
 
   const [errMessage, setErrMessage] = useState('');
+  const [penaltyErr, setPenaltyErr] = useState('');
+
   const [username, setUsername] = useState('anonymous');
-  useEffect(() => {
-    setUsername(localStorage.getItem('username'));
-  });
-  function handleTabClick(tab) {
-    setActiveTab(tab);
-  }
 
   const uploadChallenge = async () => {
     try {
+      for (const p of penalty) {
+        if (p > 0) {
+          setPenaltyErr("Can't have a positive value for penalties");
+          return;
+        }
+      }
+      setPenaltyErr('');
       const nameExists = await getChallenge(false, newChallengeName);
       if (nameExists) {
         setErrMessage('Challenge name already exists, please change the name');
@@ -47,13 +39,12 @@ const Editor = (props) => {
       const challengeInfo = {
         name: newChallengeName,
         hints,
+        penalty,
         content: contentPreview,
         solution,
         difficulty,
         category,
       };
-      // console.log(challengeInfo);
-      // console.log(props.assignmentInfo.assignmentInfo);
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
       const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
       const requestOptions = {
@@ -72,7 +63,6 @@ const Editor = (props) => {
       if (data.success) {
         window.location.reload();
       }
-      console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -97,7 +87,6 @@ const Editor = (props) => {
         setSolution(data.body.solution);
         setDifficulty(data.body.difficulty);
         setCategory(data.body.category);
-        setFetched(true);
       }
       return true;
     } catch (err) {
@@ -107,9 +96,8 @@ const Editor = (props) => {
   };
 
   useEffect(() => {
-    if (!fetched) {
-      getChallenge(true, props.slug);
-    }
+    setUsername(localStorage.getItem('username'));
+    getChallenge(true, props.slug);
   }, []);
 
   return (
@@ -205,18 +193,45 @@ const Editor = (props) => {
                       <dt className="mt-4 truncate text-xl font-medium text-white">
                         Hint {idx + 1}
                       </dt>
-                      <textarea
-                        onChange={(e) => {
-                          setHints((prevState) => {
-                            const newState = [...prevState];
-                            newState[idx] = e.target.value;
-                            return newState;
-                          });
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
                         }}
-                        value={hint}
-                        placeholder="No hint set"
-                        className="mt-1 w-full rounded-lg border-neutral-800 bg-neutral-900 text-white  shadow-lg"
-                      ></textarea>
+                      >
+                        <textarea
+                          onChange={(e) => {
+                            setHints((prevState) => {
+                              const newState = [...prevState];
+                              newState[idx] = e.target.value;
+                              return newState;
+                            });
+                          }}
+                          value={hint}
+                          placeholder="No hint set"
+                          className="mt-1 w-full rounded-lg border-neutral-800 bg-neutral-900 text-white shadow-lg"
+                          style={{ flexBasis: '85%' }}
+                        ></textarea>
+                        <input
+                          value={penalty[idx]}
+                          onChange={(e) => {
+                            setPenalty((prevState) => {
+                              let newState = [...prevState];
+                              newState[idx] = parseInt(e.target.value);
+                              return newState;
+                            });
+                          }}
+                          max={0}
+                          placeholder={-idx * 5}
+                          type="number"
+                          className={
+                            penaltyErr === ''
+                              ? 'mt-1 w-full rounded-lg border-neutral-800 bg-neutral-900 text-white shadow-lg'
+                              : 'mt-1 w-full rounded-lg border-red-800 bg-neutral-900 text-white shadow-lg'
+                          }
+                          style={{ flexBasis: '15%' }}
+                        />
+                      </div>
                     </div>
                   );
                 })}

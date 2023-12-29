@@ -137,11 +137,13 @@ export default function Createchall(props) {
         // window.location.replace('/create');
       }
 
-      if (this.readyState === 4 && this.status != 201) {
+      if (
+        this.readyState === 4 &&
+        (this.status !== 201 || this.status !== 200)
+      ) {
         document.getElementById('error').classList.remove('hidden');
       } else {
         if (this.status === 201 || this.status === 200) {
-          // redirect to /create page
           window.location.reload();
         }
       }
@@ -286,7 +288,7 @@ export default function Createchall(props) {
                   placeholder="You can use Markdown here! "
                   className="mt-2 h-40 w-full rounded-lg border-neutral-800 bg-neutral-900 px-5 py-4 text-white shadow-lg"
                   onChange={(event) => {
-                    console.log(event.target.value);
+                    // console.log(event.target.value);
                     setContentPreview(event.target.value);
                   }}
                 ></textarea>
