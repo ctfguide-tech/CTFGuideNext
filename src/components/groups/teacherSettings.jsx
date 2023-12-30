@@ -7,6 +7,12 @@ import { loadStripe } from '@stripe/stripe-js';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
+const categoryToIdx = {
+  test: 0,
+  quiz: 1,
+  homework: 2,
+  assessment: 3,
+};
 
 const defaultImages = [
   'https://robohash.org/pranavramesh',
@@ -35,14 +41,13 @@ export default function teacherSettings({ classroom }) {
   const [searchInput, setSearchInput] = useState('');
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(-1);
-  const [upgraded, setUpgraded] = useState(
-    classroom.upgrades.some((i) => i.name === 'CTFGuideInstitutionEDU')
-  );
 
-  const [upgradeType, setUpgradeType] = useState(
-    upgraded ? 'CTFGuideInstitutionEDU' : 'None'
+  const [weightIdx, setWeightIdx] = useState(0);
+  const [weights, setWeights] = useState(classroom.weights);
+  const [category, setCategory] = useState(
+    classroom.category.length > 0 ? classroom.category[0] : 0
   );
-  const [paymentLink, setPaymentLink] = useState('Payment Link...');
+  // console.log(classroom);
 
   const actions = [
     'Are you sure you want to delete the class all data will be lost',
@@ -201,6 +206,7 @@ export default function teacherSettings({ classroom }) {
         org: emailDomain,
         openStatus: isOpen === 'open',
         description,
+        weights,
       };
       const url = `${baseUrl}/classroom/save`;
       const response = await fetch(url, {
@@ -424,6 +430,51 @@ export default function teacherSettings({ classroom }) {
                     <p className="mt-3 text-sm text-white">
                       Brief description for your classroom.
                     </p>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="classroom-status"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Category
+                    </label>
+                    <select
+                      value={category}
+                      onChange={(e) => {
+                        let t = e.target.value;
+                        setCategory(t);
+                        setWeightIdx(categoryToIdx[t]);
+                      }}
+                      id="classroom-status"
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    >
+                      <option value="test">test</option>
+                      <option value="quiz">quiz</option>
+                      <option value="homework">homework</option>
+                      <option value="assessment">assessment</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="number-of-seats"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Weight
+                    </label>
+                    <input
+                      autoComplete="off"
+                      type="number"
+                      value={weights[weightIdx]}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        let tmpWeights = [...weights];
+                        tmpWeights[weightIdx] = val;
+                        setWeights(tmpWeights);
+                      }}
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    />
                   </div>
 
                   <div style={{ width: '700px' }}>

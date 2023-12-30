@@ -120,7 +120,7 @@ const Gradebook = () => {
                 <div style={{ color: 'white' }}>{student.name}</div>
                 {assignments.map((assignment) => (
                   <div style={{ color: 'white' }}>
-                    {student[assignment.name]}/100
+                    {student[assignment.name] || 'NA'}/100
                   </div>
                 ))}
                 <div
