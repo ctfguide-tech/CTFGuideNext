@@ -26,15 +26,21 @@ export default function GroupDisplay() {
   const checkPermissions = async () => {
     try {
       const url = `${baseUrl}/classroom/check-if-teacher`;
+      const token = localStorage.getItem('idToken');
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
         body: JSON.stringify({ classCode: group, uid: uid }),
       });
       const res = await response.json();
       if (res.success) {
         setViewAsTeacher(res.isTeacher);
         console.log(res.message);
+      } else {
+        window.location.replace('/login');
       }
     } catch (err) {
       console.log(err);

@@ -76,7 +76,14 @@ export default function teacherSettings({ classroom }) {
     if (emailRegex.test(email)) {
       setInviteLink('generating...');
       const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
-      const response = await fetch(url);
+      const token = localStorage.getItem('idToken');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      const response = await fetch(url, requestOptions);
       const data = await response.json();
       console.log(data);
       if (data.success) {
@@ -92,9 +99,13 @@ export default function teacherSettings({ classroom }) {
   const handleDelete = async () => {
     try {
       const url = `${baseUrl}/classroom/remove`;
+      const token = localStorage.getItem('idToken');
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
         body: JSON.stringify({
           classroomId: classroom.id,
           classCode: classroom.classCode,
@@ -104,6 +115,7 @@ export default function teacherSettings({ classroom }) {
       if (data.success) {
         window.location.href = '/groups';
       } else {
+        window.location.replace('/login');
         console.log('Error when removing classroom');
       }
     } catch (err) {
@@ -209,9 +221,13 @@ export default function teacherSettings({ classroom }) {
         weights,
       };
       const url = `${baseUrl}/classroom/save`;
+      const token = localStorage.getItem('idToken');
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
         body: JSON.stringify(reqBody),
       });
       const data = await response.json();
@@ -225,7 +241,7 @@ export default function teacherSettings({ classroom }) {
           window.location.href = ``;
         }
       } else {
-        console.log('Error when updating the class');
+        window.location.replace('/login');
       }
     } catch (err) {
       console.log(err);
@@ -380,35 +396,6 @@ export default function teacherSettings({ classroom }) {
                       </div>
                     </div>
                   </div>
-                  {/** This is for classroom upgrades
-
-                    <div className="sm:col-span-6">
-                      <label className="block text-sm font-medium leading-6 text-white" >
-                        Add an upgrade to classroom
-                      </label>
-                      <div className="mt-2 flex rounded-md shadow-sm">
-                      <select
-                          value={upgradeType}
-                          onChange={(e) => setUpgradeType(e.target.value)}
-                          className="block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
-                          >
-                          <option value="None">None</option>
-                          <option value="CTFGuideInstitutionEDUPaymentLink">EDU with Payment Link</option>
-                          <option value="CTFGuideInstitutionEDU">EDU without Payment Link</option>
-                        </select>
-                        <button disabled={upgraded} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' onClick={upgradeClass}>Add</button>
-                        </div>
-
-                        {
-                          upgradeType.includes("PaymentLink") && <div className='bg-black rounded-lg p-2 mt-2 flex'>
-                          <p className='text-white' style={{color: "white"}}>{paymentLink}</p>
-                          <div className='ml-auto'>
-                          <i class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
-                          </div>
-                        }
-
-                    </div>
-         * **/}
 
                   <div className="sm:col-span-6">
                     <label
@@ -619,7 +606,7 @@ export default function teacherSettings({ classroom }) {
                   disabled={selectedStudent === null}
                   className="ml-4 rounded-lg bg-pink-600 px-2 py-1 text-white hover:bg-pink-600/50"
                 >
-                  remove{' '}
+                  Blacklist{' '}
                   {selectedStudent ? selectedStudent.username : 'student'}
                 </button>
 

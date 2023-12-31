@@ -46,7 +46,10 @@ export default function TeacherView({ uid, group }) {
     const getClassroom = async () => {
       const classroomCode = group;
       const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classroomCode}`;
-      const response = await fetch(url);
+      const requestOptions = {
+        method: 'GET',
+      };
+      const response = await fetch(url, requestOptions);
       const data = await response.json();
       if (data.success) {
         setClassroom(data.body);

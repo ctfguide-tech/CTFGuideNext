@@ -47,9 +47,13 @@ const Editor = (props) => {
       };
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
       const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
+      const token = localStorage.getItem('idToken');
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
         body: JSON.stringify({
           slug: props.slug,
           challengeInfo,
