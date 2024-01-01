@@ -44,8 +44,14 @@ export default function Slug() {
       const response = await fetch(url, requestOptions);
       const data = await response.json();
       if (data.success) {
-        setAssignment(data.body);
-        await getSubmissions(data.body);
+        const isAuth = await authenticate(data.body);
+        if (isAuth) {
+          setAssignment(data.body);
+          await getSubmissions(data.body);
+        } else {
+          console.log('You are not apart of this class');
+          window.location.href = '/groups';
+        }
       } else {
         console.log(data.message);
       }
@@ -60,7 +66,6 @@ export default function Slug() {
       const requestOptions = { method: 'GET' };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      // console.log(data);
       if (data.success) {
         setSubmissions(data.body);
       } else {
@@ -69,6 +74,22 @@ export default function Slug() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const authenticate = async (assignment) => {
+    try {
+      const uid = localStorage.getItem('uid');
+      const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
+      const response = await fetch(url, { method: 'GET' });
+      const data = await response.json();
+      console.log(data);
+      if (data.success) {
+        return true;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    return false;
   };
 
   useEffect(() => {
@@ -87,7 +108,6 @@ export default function Slug() {
     tmp[i].penalty = '(-' + assignment.challenge.hints[i].penalty + ') points';
     setHints(tmp);
   };
-  console.log(solved);
 
   const submitAssignment = async () => {
     try {
@@ -115,9 +135,6 @@ export default function Slug() {
       console.log(err);
     }
   };
-
-  // console.log(assignment);
-  // console.log(submissions);
 
   return (
     <>

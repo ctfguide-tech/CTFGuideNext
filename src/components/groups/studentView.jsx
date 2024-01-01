@@ -29,6 +29,7 @@ export default function StudentView({ uid, group }) {
       const url = `${baseUrl}/classroom/getFreeTrialStatus/${userId}/${classroomId}`;
       const response = await fetch(url);
       const data = await response.json();
+      console.log(data);
       if (data.success) {
         setFreeTrialDaysLeft(data.body.daysLeft);
       } else {

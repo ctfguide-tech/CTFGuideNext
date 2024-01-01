@@ -16,11 +16,26 @@ const Editor = (props) => {
   const [difficulty, setDifficulty] = useState('');
   const [category, setCategory] = useState([]);
   const [newChallengeName, setNewChallengeName] = useState(props.slug);
-
   const [errMessage, setErrMessage] = useState('');
   const [penaltyErr, setPenaltyErr] = useState('');
-
   const [username, setUsername] = useState('anonymous');
+
+  const [existingConfig, setExistingConfig] = useState('');
+  const [newConfig, setNewConfig] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const sendToTerminalApi = async () => {
+    try {
+      console.log(selectedFile);
+      // here send this file to scratch's api
+      const success = true;
+      if (success) {
+        await uploadChallenge();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const uploadChallenge = async () => {
     try {
@@ -36,6 +51,10 @@ const Editor = (props) => {
         setErrMessage('Challenge name already exists, please change the name');
         return;
       }
+
+      const exConfig = existingConfig.split('\n');
+      const nConfig = newConfig.split('\n');
+
       const challengeInfo = {
         name: newChallengeName,
         hints,
@@ -44,6 +63,8 @@ const Editor = (props) => {
         solution,
         difficulty,
         category,
+        config: [...exConfig, ...nConfig],
+        fileId: 'This is a tmp fileId, its going to come from scratchs api',
       };
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
       const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
@@ -91,6 +112,7 @@ const Editor = (props) => {
         setSolution(data.body.solution);
         setDifficulty(data.body.difficulty);
         setCategory(data.body.category);
+        setExistingConfig(data.body.config.join('\n'));
       }
       return true;
     } catch (err) {
@@ -103,6 +125,10 @@ const Editor = (props) => {
     setUsername(localStorage.getItem('username'));
     getChallenge(true, props.slug);
   }, []);
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
 
   return (
     <div>
@@ -311,12 +337,20 @@ const Editor = (props) => {
             <div className=" ">
               <h1 className="text-lg">Existing Configuration</h1>
 
-              <textarea className="mt-4 w-full border-none bg-black text-white"></textarea>
+              <textarea
+                value={existingConfig}
+                onChange={(e) => setExistingConfig(e.target.value)}
+                className="mt-4 w-full border-none bg-black text-white"
+              ></textarea>
             </div>
             <div className="text-lg">
               <h1>Add your own configurations</h1>
 
-              <textarea className="mt-4 w-full border-none bg-black text-white"></textarea>
+              <textarea
+                value={newConfig}
+                onChange={(e) => setNewConfig(e.target.value)}
+                className="mt-4 w-full border-none bg-black text-white"
+              ></textarea>
             </div>
           </div>
           <div className="px-4">
@@ -331,16 +365,6 @@ const Editor = (props) => {
             </div>
 
             <br></br>
-          </div>
-
-          <div className="px-5 py-1">
-            <h1>Import files into VM over URL</h1>
-
-            <input
-              id="fileurl"
-              placeholder="URL to your ZIP file"
-              className="mb-4 mt-1 w-full rounded-sm border-none bg-neutral-900 px-2 py-2 text-white  shadow-lg"
-            ></input>
           </div>
 
           <div className="px-5 py-1">
@@ -367,7 +391,18 @@ const Editor = (props) => {
                   <span className="ml-1 text-blue-600 underline">browse</span>
                 </span>
               </span>
-              <input type="file" name="file_upload" class="hidden" />
+              <input
+                style={{
+                  position: 'absolute',
+                  width: '57%',
+                  backgroundColor: 'yellow',
+                  height: '13%',
+                }}
+                onChange={(e) => handleFileChange(e)}
+                type="file"
+                name="file_upload"
+                class="hidden"
+              />
             </label>
 
             <div className="bg-neutral-850 mb-10 mt-10 rounded-lg border border-neutral-500 px-4 py-2 text-white">
@@ -380,7 +415,7 @@ const Editor = (props) => {
         </div>
 
         <button
-          onClick={uploadChallenge}
+          onClick={sendToTerminalApi}
           className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
         >
           <i class="fas fa-send"></i> Create Challenge
