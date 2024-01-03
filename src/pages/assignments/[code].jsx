@@ -17,6 +17,8 @@ export default function Slug() {
     { message: '', penalty: '' },
   ]);
 
+  const [challenge, setChallenge] = useState(null);
+
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1;
@@ -35,6 +37,7 @@ export default function Slug() {
 
   const getAssignment = async () => {
     try {
+      console.log('Getting the assignments');
       const params = window.location.href.split('/');
       if (params.length < 5) {
         return;
@@ -62,6 +65,7 @@ export default function Slug() {
 
   const getSubmissions = async (assignment) => {
     try {
+      console.log('getting the who submitted what for teacher view');
       const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
       const requestOptions = { method: 'GET' };
       const response = await fetch(url, requestOptions);
@@ -78,6 +82,7 @@ export default function Slug() {
 
   const authenticate = async (assignment) => {
     try {
+      console.log('authenticating user');
       const uid = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
       const response = await fetch(url, { method: 'GET' });
@@ -92,9 +97,41 @@ export default function Slug() {
     return false;
   };
 
+  const getChallenge = async () => {
+    try {
+      console.log('getting the challenge');
+      const token = localStorage.getItem('idToken');
+      const url = `${baseUrl}/challenges/${assignment.challenge.slug}?assignmentId=${assignment.id}`;
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      console.log(data);
+      if (data.success) {
+        setChallenge(data.body);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    getAssignment();
-  }, []);
+    if (assignment === null) {
+      getAssignment();
+    } else if (!challenge) {
+      getChallenge();
+    }
+    // spin up the terminal
+    // first we get the assignment
+    // then we auth
+    // then fetch submissions if this is teacherview
+    // we need to fetch the file name for "associated files"
+    // on hints pressed make a call to the database to update the analytic that got created when user view challenge
+  }, [assignment]);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -102,35 +139,65 @@ export default function Slug() {
     }
   };
 
-  const showHint = (i) => {
-    let tmp = [...hints];
-    tmp[i].message = assignment.challenge.hints[i].message;
-    tmp[i].penalty = '(-' + assignment.challenge.hints[i].penalty + ') points';
-    setHints(tmp);
+  const showHint = async (i) => {
+    try {
+      const url = `${baseUrl}/challenges/hints-update`;
+      const userId = localStorage.getItem('uid');
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hintsUsed: i,
+          uid: userId,
+          challengeId: assignment.challenge.id,
+        }),
+      };
+
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      console.log(data);
+      if (data.success) {
+        let tmp = [...hints];
+        tmp[i].message = assignment.challenge.hints[i].message;
+        tmp[i].penalty =
+          '(-' + assignment.challenge.hints[i].penalty + ') points';
+        setHints(tmp);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const submitAssignment = async () => {
     try {
       const params = window.location.href.split('/');
       const userId = localStorage.getItem('uid');
+      const token = localStorage.getItem('idToken');
       const url = `${baseUrl}/submission/create`;
+
       const body = {
-        hintsUsed: [],
-        solved: solved,
+        solved: flagInput === assignment.solution.keyword,
         userId: userId,
         classroomId: assignment.classroomId,
         assignmentId: parseInt(params[4]),
         keyword: flagInput,
         challengeId: assignment.challengeId,
+        totalPoints: assignment.totalPoints,
+        hints: assignment.challenge.hints,
       };
+
       const requestOptions = {
         method: 'POST',
         body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
       };
-      // const response = await fetch(url, requestOptions);
-      // const data = await response.json();
-      // console.log(data);
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      console.log(data);
     } catch (err) {
       console.log(err);
     }

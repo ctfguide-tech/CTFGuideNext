@@ -7,11 +7,9 @@ import StudentGradeCard from '@/components/StudentGradeCard';
 import { useRouter } from 'next/router';
 
 const Gradebook = () => {
-  const router = useRouter();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
-  const [classroomId, setClassroomId] = useState(-1);
 
   const getStudentsSubmissionsFinalGrades = async (classroomId) => {
     try {
@@ -50,7 +48,6 @@ const Gradebook = () => {
         const data = await response.json();
         if (data.success) {
           setAssignments(data.body.assignments);
-          setClassroomId(data.body.id);
           await getStudentsSubmissionsFinalGrades(data.body.id);
         } else {
           console.log(data);
@@ -64,11 +61,7 @@ const Gradebook = () => {
       getAssignments();
     }
   }, []);
-  let collumSize = assignments.length + 1;
 
-  console.log(assignments);
-  // console.log(students);
-  // each student object has an array of submissions and each submission is linked to a class
   return (
     <>
       <Head>
@@ -120,13 +113,53 @@ const Gradebook = () => {
                 <div style={{ color: 'white' }}>{student.name}</div>
                 {assignments.map((assignment) => (
                   <div style={{ color: 'white' }}>
-                    {student[assignment.name] || 'NA'}/100
+                    {student[assignment.name].grade === null
+                      ? 'NA'
+                      : student[assignment.name].grade}
+                    /{student[assignment.name].total}
+                    {student[assignment.name].late ? (
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          color: 'yellow',
+                          position: 'relative',
+                          bottom: '5px', // adjust this value to move the label up or down
+                          left: '5px', // adjust this value to move the label left or right
+                        }}
+                      >
+                        (LATE)
+                      </span>
+                    ) : student[assignment.name].late !== null ? (
+                      <i
+                        class="fa fa-check-circle"
+                        style={{
+                          color: 'lightgreen',
+                          position: 'relative',
+                          left: '5px',
+                          bottom: '5px',
+                        }}
+                        aria-hidden="true"
+                      ></i>
+                    ) : (
+                      <i
+                        class="fa fa-times"
+                        style={{
+                          color: '#D8504D',
+                          position: 'relative',
+                          left: '5px',
+                          bottom: '5px',
+                        }}
+                        aria-hidden="true"
+                      ></i>
+                    )}
                   </div>
                 ))}
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
-                  <div>{student.finalGrade}%</div>
+                  <div>
+                    {student.finalGrade === null ? 'NA' : student.finalGrade}%
+                  </div>
                 </div>
               </div>
             ))}
