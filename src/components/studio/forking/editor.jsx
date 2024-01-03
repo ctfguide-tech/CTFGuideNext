@@ -24,34 +24,67 @@ const Editor = (props) => {
   const [newConfig, setNewConfig] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const sendToTerminalApi = async () => {
-    try {
-      console.log(selectedFile);
-      // here send this file to scratch's api
-      const success = true;
-      if (success) {
-        await uploadChallenge();
+  const validateNewChallege = async () => {
+    for (const p of penalty) {
+      if (p > 0) {
+        setPenaltyErr("Can't have a positive value for penalties");
+        return false;
       }
-    } catch (err) {
-      console.log(err);
+    }
+    setPenaltyErr('');
+    const nameExists = await getChallenge(false, newChallengeName);
+    if (nameExists) {
+      setErrMessage('Challenge name already exists, please change the name');
+      return false;
+    }
+    return true;
+  };
+
+  const sendToTerminalApi = async () => {
+    const token = localStorage.getItem('idToken');
+    const isValid = await validateNewChallege();
+    if (selectedFile && token && isValid) {
+      try {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('jwtToken', token);
+
+        const response = await fetch(
+          'https://file-system-run-qi6ms4rtoa-ue.a.run.app/upload',
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        const readableStream = response.body;
+        const textDecoder = new TextDecoder();
+        const reader = readableStream.getReader();
+
+        let result = await reader.read();
+
+        let fileId = '';
+        while (!result.done) {
+          fileId = textDecoder.decode(result.value);
+          result = await reader.read();
+        }
+
+        if (response.ok) {
+          console.log('File uploaded successfully!');
+          await uploadChallenge(fileId);
+        } else {
+          console.error('File upload failed.');
+        }
+      } catch (error) {
+        console.error('Error during file upload:', error);
+      }
+    } else {
+      console.warn('Either the file, toke, or challenge is invalid');
     }
   };
 
-  const uploadChallenge = async () => {
+  const uploadChallenge = async (fileId) => {
     try {
-      for (const p of penalty) {
-        if (p > 0) {
-          setPenaltyErr("Can't have a positive value for penalties");
-          return;
-        }
-      }
-      setPenaltyErr('');
-      const nameExists = await getChallenge(false, newChallengeName);
-      if (nameExists) {
-        setErrMessage('Challenge name already exists, please change the name');
-        return;
-      }
-
       const exConfig = existingConfig.split('\n');
       const nConfig = newConfig.split('\n');
 
@@ -64,7 +97,7 @@ const Editor = (props) => {
         difficulty,
         category,
         config: [...exConfig, ...nConfig],
-        fileId: 'This is a tmp fileId, its going to come from scratchs api',
+        fileId: fileId,
       };
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
       const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
