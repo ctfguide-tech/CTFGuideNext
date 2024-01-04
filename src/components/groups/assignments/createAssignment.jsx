@@ -15,6 +15,8 @@ export default function CreateGroup(props) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [open, setOpen] = useState(false);
 
+  const [latePenalty, setLatePenalty] = useState('');
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -33,7 +35,9 @@ export default function CreateGroup(props) {
       !selectedOption ||
       !selectedCategory ||
       assignmentPoints < 0 ||
-      !title
+      !title ||
+      new Date() > new Date(dueDate) ||
+      latePenalty === ''
     ) {
       setErrMessage('Please enter all the form information');
       return;
@@ -59,6 +63,7 @@ export default function CreateGroup(props) {
           dueDate,
           assignmentPoints,
           selectedCategory,
+          latePenalty: parseInt(latePenalty),
         }}
         setDisplay={setDisplayExistingChallenge}
       />
@@ -74,6 +79,7 @@ export default function CreateGroup(props) {
           dueDate,
           assignmentPoints,
           selectedCategory,
+          latePenalty: parseInt(latePenalty),
         }}
         setDisplay={setDisplayCustomChallenge}
       />
@@ -367,6 +373,22 @@ export default function CreateGroup(props) {
                     />
                   </div>
                 </div>
+                <h1 className="mt-6 text-sm  text-white">Late Penalty (%)</h1>
+                <input
+                  type="number"
+                  name="username"
+                  id="username"
+                  value={latePenalty}
+                  onChange={(e) => {
+                    if (parseInt(e.target.value) < 0) {
+                      setLatePenalty('0');
+                    } else {
+                      setLatePenalty(e.target.value);
+                    }
+                  }}
+                  className="border-1 block flex-1 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  placeholder="10%"
+                />
                 <h1 className="mt-4 text-sm text-white"></h1>
                 <div className="bg-neutral-850 mt-4 hidden rounded-lg border border-neutral-500 px-4 py-2 text-white">
                   <b>✨ Why do we ask for this information?</b>

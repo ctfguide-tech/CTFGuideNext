@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 
 const baseUrl = `http://localhost:3001`;
 const Editor = (props) => {
-  const [activeTab, setActiveTab] = useState('created');
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
   const [hints, setHints] = useState([
@@ -40,41 +39,41 @@ const Editor = (props) => {
     return true;
   };
 
-  const sendToTerminalApi = async () => {
+  const sendToFileApi = async () => {
     const token = localStorage.getItem('idToken');
     const isValid = await validateNewChallege();
     if (selectedFile && token && isValid) {
       try {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('jwtToken', token);
-
-        const response = await fetch(
-          'https://file-system-run-qi6ms4rtoa-ue.a.run.app/upload',
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
-
-        const readableStream = response.body;
-        const textDecoder = new TextDecoder();
-        const reader = readableStream.getReader();
-
-        let result = await reader.read();
-
-        let fileId = '';
-        while (!result.done) {
-          fileId = textDecoder.decode(result.value);
-          result = await reader.read();
-        }
-
-        if (response.ok) {
-          console.log('File uploaded successfully!');
-          await uploadChallenge(fileId);
-        } else {
-          console.error('File upload failed.');
-        }
+        // const formData = new FormData();
+        // formData.append('file', selectedFile);
+        // formData.append('jwtToken', token);
+        // const response = await fetch(
+        //   `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
+        //   {
+        //     method: 'POST',
+        //     body: formData,
+        //   }
+        // );
+        //
+        // const readableStream = response.body;
+        // const textDecoder = new TextDecoder();
+        // const reader = readableStream.getReader();
+        //
+        // let result = await reader.read();
+        //
+        // let fileId = '';
+        // while (!result.done) {
+        //   fileId = textDecoder.decode(result.value);
+        //   result = await reader.read();
+        // }
+        //
+        // if (response.ok) {
+        //   console.log('File uploaded successfully!');
+        //   await uploadChallenge(fileId);
+        // } else {
+        //   console.error('File upload failed.');
+        // }
+        await uploadChallenge('123321');
       } catch (error) {
         console.error('Error during file upload:', error);
       }
@@ -146,6 +145,7 @@ const Editor = (props) => {
         setDifficulty(data.body.difficulty);
         setCategory(data.body.category);
         setExistingConfig(data.body.config.join('\n'));
+        setPenalty(data.body.hintsPenalty);
       }
       return true;
     } catch (err) {
@@ -448,7 +448,7 @@ const Editor = (props) => {
         </div>
 
         <button
-          onClick={sendToTerminalApi}
+          onClick={sendToFileApi}
           className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
         >
           <i class="fas fa-send"></i> Create Challenge

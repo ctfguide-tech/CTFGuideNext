@@ -10,7 +10,7 @@ export default function Slug() {
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
   const [submissions, setSubmissions] = useState([]);
-  const [solved, setSolved] = useState(false);
+  const [solved, setSolved] = useState(null);
   const [hints, setHints] = useState([
     { message: '', penalty: '' },
     { message: '', penalty: '' },
@@ -18,6 +18,8 @@ export default function Slug() {
   ]);
 
   const [challenge, setChallenge] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
@@ -136,6 +138,8 @@ export default function Slug() {
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
       setSolved(true);
+    } else {
+      setSolved(false);
     }
   };
 
@@ -171,6 +175,7 @@ export default function Slug() {
 
   const submitAssignment = async () => {
     try {
+      setLoading(true);
       const params = window.location.href.split('/');
       const userId = localStorage.getItem('uid');
       const token = localStorage.getItem('idToken');
@@ -197,10 +202,12 @@ export default function Slug() {
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
+      setSubmitted(true);
       console.log(data);
     } catch (err) {
       console.log(err);
     }
+    setLoading(false);
   };
 
   return (
@@ -270,6 +277,30 @@ export default function Slug() {
                   Check Flag
                 </button>
 
+                {solved === true ? (
+                  <i
+                    className="fa fa-check-circle"
+                    style={{
+                      color: 'lightgreen',
+                      position: 'relative',
+                      left: '5px',
+                    }}
+                    aria-hidden="true"
+                  ></i>
+                ) : (
+                  solved === false && (
+                    <i
+                      class="fa fa-times"
+                      style={{
+                        color: '#D8504D',
+                        position: 'relative',
+                        left: '5px',
+                      }}
+                      aria-hidden="true"
+                    ></i>
+                  )
+                )}
+
                 <p className="mt-6 font-semibold text-white">HINTS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
                 {hints.map((hint, idx) => {
@@ -297,7 +328,7 @@ export default function Slug() {
                         </p>
                       </div>
                       <span style={{ color: 'white' }}>
-                        -{assignment && assignment.challenge.hints[idx].penalty}{' '}
+                        {assignment && assignment.challenge.hints[idx].penalty}{' '}
                         points
                       </span>
                     </div>
@@ -337,8 +368,9 @@ export default function Slug() {
               <button
                 onClick={submitAssignment}
                 className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                disabled={loading}
               >
-                Submit
+                {submitted ? 'Resubmit' : 'Submit'}
               </button>
             </div>
           </div>
