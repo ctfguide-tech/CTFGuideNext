@@ -2,7 +2,6 @@ import React from 'react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useState, useEffect } from 'react';
 
-const baseUrl = `http://localhost:3001`;
 const Editor = (props) => {
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
@@ -84,8 +83,14 @@ const Editor = (props) => {
 
   const uploadChallenge = async (fileId) => {
     try {
-      const exConfig = existingConfig.split('\n');
-      const nConfig = newConfig.split('\n');
+      const exConfig = existingConfig.replace('\n', ' && ');
+      const nConfig = newConfig.replace('\n', ' && ');
+      let finalConfig = '';
+      if (exConfig && nConfig) {
+        finalConfig = exConfig + ' && ' + nConfig;
+      } else {
+        finalConfig = exConfig || nConfig;
+      }
 
       const challengeInfo = {
         name: newChallengeName,
@@ -95,11 +100,11 @@ const Editor = (props) => {
         solution,
         difficulty,
         category,
-        config: [...exConfig, ...nConfig],
+        commands: finalConfig,
         fileId: fileId,
       };
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
-      const url = `${baseUrl}/classroom-assignments/create-fork-assignment`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment`;
       const token = localStorage.getItem('idToken');
       const requestOptions = {
         method: 'POST',
@@ -130,21 +135,25 @@ const Editor = (props) => {
       var requestOptions = {
         method: 'GET',
       };
+
       const response = await fetch(
-        `http://localhost:3001/challenges/basicInfo/${slugName}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${slugName}`,
         requestOptions
       );
+
       const data = await response.json();
+
       if (!isDefault) {
         return data.success;
       }
+
       if (data.success) {
         setHints(data.body.hints);
         setContentPreview(data.body.content);
         setSolution(data.body.solution);
         setDifficulty(data.body.difficulty);
         setCategory(data.body.category);
-        setExistingConfig(data.body.config.join('\n'));
+        setExistingConfig(data.body.commands.replace(' && ', '\n'));
         setPenalty(data.body.hintsPenalty);
       }
       return true;

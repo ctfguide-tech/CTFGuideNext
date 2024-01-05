@@ -10,7 +10,7 @@ import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
-const baseUrl = 'http://localhost:3001';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Groups() {
   const [open, setOpen] = useState(false);

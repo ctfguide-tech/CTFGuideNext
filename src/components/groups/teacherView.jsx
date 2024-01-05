@@ -3,7 +3,6 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import StudentProfile from '@/components/groups/studentProfile';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
@@ -171,24 +170,6 @@ export default function TeacherView({ uid, group }) {
     }
     setAnnouncement('');
   };
-
-  if (selectedStudent) {
-    return (
-      <StudentProfile
-        uidOfTeacher={uid}
-        student={selectedStudent}
-        classroom={classroom}
-      >
-        <button
-          onClick={() => setSelectedStudent(null)}
-          style={{ margin: '0px' }}
-          className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-        >
-          Back to classroom
-        </button>
-      </StudentProfile>
-    );
-  }
 
   if (viewGradebook) {
     return <Gradebook classroomId={classroom.id} />;

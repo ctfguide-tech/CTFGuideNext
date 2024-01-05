@@ -11,7 +11,6 @@ import ForkChallenge from './fork-challenge';
 import CreateChallenge from './create-challenge';
 
 export default function CreateGroup(props) {
-  const baseUrl = 'http://localhost:3001'; // change this in deployment
   const [selectedOption, setSelectedOption] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -26,23 +25,43 @@ export default function CreateGroup(props) {
   const [displayExistingChallenge, setDisplayExistingChallenge] =
     useState(false);
   const [displayCustomChallenge, setDisplayCustomChallenge] = useState(false);
-  const [errMessage, setErrMessage] = useState('');
+
+  const [errMessage, setErrMessage] = useState([]);
+
+  const validateForm = () => {
+    let errorList = [];
+    if (!dueDate) {
+      errorList.push('Invalid due date');
+    }
+    if (!time) {
+      errorList.push('Invalid Time');
+    }
+    if (!selectedOption) {
+      errorList.push('Please select a challenge option');
+    }
+    if (!selectedCategory) {
+      errorList.push('Please select a category');
+    }
+    if (!assignmentPoints < 0) {
+      errorList.push('Points value cant be less than 0');
+    }
+    if (!title) {
+      errorList.push('Invalid title');
+    }
+    if (new Date() > new Date(dueDate)) {
+      errorList.push('Due date is in the past');
+    }
+    if (latePenalty === '') {
+      errorList.push('Enter late penalty');
+    }
+    setErrMessage(errorList);
+    if (errorList.length > 0) {
+      return false;
+    } else return true;
+  };
 
   const onSubmit = async () => {
-    if (
-      !dueDate ||
-      !time ||
-      !selectedOption ||
-      !selectedCategory ||
-      assignmentPoints < 0 ||
-      !title ||
-      new Date() > new Date(dueDate) ||
-      latePenalty === ''
-    ) {
-      setErrMessage('Please enter all the form information');
-      return;
-    }
-
+    if (!validateForm()) return;
     if (selectedOption === 'existingChallenge') {
       setDisplayExistingChallenge(true);
     } else if (selectedOption === 'customChallenge') {
@@ -413,7 +432,11 @@ export default function CreateGroup(props) {
                 </button>
                 <br></br>
                 <br></br>
-                <div style={{ color: 'red' }}>{errMessage}</div>
+                {errMessage.map((err, idx) => (
+                  <div key={idx} style={{ color: 'red' }}>
+                    {err}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

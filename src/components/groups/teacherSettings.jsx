@@ -392,7 +392,7 @@ export default function teacherSettings({ classroom }) {
                         {inviteLink}
                       </p>
                       <div className="ml-auto">
-                        <i class="far fa-copy cursor-pointer text-white hover:text-neutral-400"></i>
+                        <i className="far fa-copy cursor-pointer text-white hover:text-neutral-400"></i>
                       </div>
                     </div>
                   </div>

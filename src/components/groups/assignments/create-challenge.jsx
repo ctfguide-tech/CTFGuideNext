@@ -66,35 +66,36 @@ export default function Createchall(props) {
     const isValid = await validateNewChallege();
     if (selectedFile && token && isValid) {
       try {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('jwtToken', token);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
-
-        const readableStream = response.body;
-        const textDecoder = new TextDecoder();
-        const reader = readableStream.getReader();
-
-        let result = await reader.read();
-
-        let fileId = '';
-        while (!result.done) {
-          fileId = textDecoder.decode(result.value);
-          result = await reader.read();
-        }
-
-        if (response.ok) {
-          console.log('File uploaded successfully!');
-          await uploadChallenge(fileId);
-        } else {
-          console.error('File upload failed.');
-        }
+        // const formData = new FormData();
+        // formData.append('file', selectedFile);
+        // formData.append('jwtToken', token);
+        // const response = await fetch(
+        //   `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
+        //   {
+        //     method: 'POST',
+        //     body: formData,
+        //   }
+        // );
+        //
+        // const readableStream = response.body;
+        // const textDecoder = new TextDecoder();
+        // const reader = readableStream.getReader();
+        //
+        // let result = await reader.read();
+        //
+        // let fileId = '';
+        // while (!result.done) {
+        //   fileId = textDecoder.decode(result.value);
+        //   result = await reader.read();
+        // }
+        //
+        // if (response.ok) {
+        //   console.log('File uploaded successfully!');
+        //   await uploadChallenge(fileId);
+        // } else {
+        //   console.error('File upload failed.');
+        // }
+        await uploadChallenge('16');
       } catch (error) {
         console.error('Error during file upload:', error);
       }
@@ -105,7 +106,8 @@ export default function Createchall(props) {
 
   const uploadChallenge = async (fileId) => {
     try {
-      const nConfig = newConfig.split('\n');
+      const nConfig = newConfig.replace('\n', ' && ');
+      const token = localStorage.getItem('idToken');
       const challengeInfo = {
         name: newChallengeName,
         category: [category],
@@ -115,16 +117,12 @@ export default function Createchall(props) {
         solution,
         difficulty,
         category,
-        config: [...nConfig],
+        commands: nConfig,
         fileId: fileId,
       };
+
       const assignmentInfo = props.assignmentInfo;
-
-      // console.log(challengeInfo);
-      // console.log(assignmentInfo);
-
       const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-new-assignment`;
-      const token = localStorage.getItem('idToken');
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -138,8 +136,10 @@ export default function Createchall(props) {
           username: localStorage.getItem('username'),
         }),
       };
+
       const response = await fetch(url, requestOptions);
       const data = await response.json();
+
       if (data.success) {
         window.location.reload();
       }
@@ -154,7 +154,7 @@ export default function Createchall(props) {
         method: 'GET',
       };
       const response = await fetch(
-        `http://localhost:3001/challenges/basicInfo/${slugName}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${slugName}`,
         requestOptions
       );
       const data = await response.json();
@@ -173,6 +173,7 @@ export default function Createchall(props) {
     setSelectedFile(event.target.files[0]);
   };
 
+  console.log(newConfig);
   return (
     <>
       <Head>

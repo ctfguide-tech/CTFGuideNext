@@ -2,12 +2,9 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
-import StudentGradeCard from '@/components/StudentGradeCard';
-
-import { useRouter } from 'next/router';
 
 const Gradebook = () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
 
@@ -22,7 +19,6 @@ const Gradebook = () => {
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      console.log(data);
       if (data.success) {
         setStudents(data.body);
       }
@@ -166,6 +162,7 @@ const Gradebook = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
