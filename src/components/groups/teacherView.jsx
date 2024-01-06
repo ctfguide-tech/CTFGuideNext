@@ -491,7 +491,10 @@ export default function TeacherView({ group }) {
                     </div>
                   ))}
 
-                <button className="text-sm float-right rounded-sm bg-neutral-900  py-1 text-white">
+                <button className="text-sm float-right rounded-sm bg-neutral-900  py-1 text-white" onClick = {() => {
+                  window.location.href = `../groups/view-all-assignments`
+                }}>
+                  
                   <i className="fas fa-external-link-alt"></i> View All
                 </button>
               </div>
