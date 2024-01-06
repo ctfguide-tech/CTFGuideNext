@@ -6,6 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
+import { Tooltip } from 'react-tooltip'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const defaultImages = [
@@ -209,14 +210,6 @@ export default function TeacherView({ uid, group }) {
     },
   };
 
-  function copy() {
-    var copyText = document.getElementById('copyBox');
-    copyText.type = 'text';
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(copyText.value);
-    copyText.type = 'hidden';
-  }
   return (
     <>
       <Head>
@@ -224,68 +217,81 @@ export default function TeacherView({ uid, group }) {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+        /* bold */
+
+
         </style>
       </Head>
       <StandardNav />
-      <div className=" min-h-screen  ">
-        <div className="mx-auto mt-10 max-w-6xl">
+      <div className=" min-h-screen max-w-6xl mx-auto grid grid-cols-10 gap-x-8 ">
+
+        <div className='col-span-2'>
+          {/* side nav bar */}
+
+          <div class="flex flex-col mt-20 text-xl text-white">
+  <p  onClick={() => setViewGradebook(true)}
+ class=" hover:bg-neutral-800 px-2 cursor-pointer"><i className="fas fa-table mr-2 "></i> Gradebook </p>
+  <p onClick={() => setViewSettings(true)}
+ class="hover:bg-neutral-800 px-2 mt-2 cursor-pointer"><i className="fas fa-cogs mr-2"></i>Settings </p>
+
+</div>
+
+        </div>
+        <div className="col-span-8  mt-10 ">
           <div className="flex">
             <h1 className="text-3xl font-semibold text-white">
               {classroom.name}
             </h1>
             <div className="ml-auto">
-              <button
-                onClick={() => setViewGradebook(true)}
-                className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-              >
-                Gradebook
-              </button>
+             
 
               <button
                 onClick={() => {
                   setViewCreateAssignment(true);
                   // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
                 }}
-                className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                className="rounded-lg bg-blue-600/80 px-4 py-2 text-white hover:bg-blue-600/50"
               >
-                Create Assignment
+                <i className="fas fa-plus-circle"></i> Create Assignment
               </button>
-              <button className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50">
-                Create Lab
-              </button>
-              <button
-                onClick={() => setViewSettings(true)}
-                className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-              >
-                <i className="fa fa-cog"></i> Settings
-              </button>
+
+     
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-6 gap-x-4">
-            <div className="col-span-4 rounded-lg border-t-8 border-blue-600 bg-neutral-800/50 px-4 py-3 ">
+          <div className="mt-4 grid grid-cols-6 gap-x-8">
+            <div className="col-span-4 rounded-lg    py-3 ">
+
+
+              <h1 className="text-xl font-semibold text-white">
+                {' '}
+                Course Description{' '}
+              </h1>
+              <div
+                style={{ color: 'white', cursor: 'default' }}
+                className="mb-4 cursor-pointer rounded-sm  "
+              >
+                {classroom.description}
+              </div>
               {/* LOOPING THROUGH MEMBERS */}
-              <h1 className="text-xl font-semibold text-white"> Members</h1>
-              <div className="grid grid-cols-3 gap-x-2 gap-y-2">
+
+              <h1 className="text-xl font-semibold text-white mb-2"> Members</h1>
+              <div className="grid grid-cols-4 gap-y-2 gap-x-4">
                 {classroom.teachers && classroom.teachers.length === 0 ? (
                   <div style={{ color: 'white' }}>No teachers yet...</div>
                 ) : (
                   classroom.teachers &&
                   classroom.teachers.map((teacher, idx) => {
-                    const i =
-                      defaultImages.length - 1 - (idx % defaultImages.length);
+                    const i = defaultImages.length - 1 - (idx % defaultImages.length);
                     return (
-                      <div
-                        key={idx}
-                        className="flex items-center rounded-lg bg-neutral-900"
-                      >
+                      <div key={idx} className="flex items-center space-x-2 rounded-lg ">
                         <img
                           src={defaultImages[i]}
-                          className="ml-1 h-10 w-10 "
-                        ></img>{' '}
-                        <h1 className="ml-6 mt-2 pl-1 text-white">
-                          {' '}
-                          <i className="fas fa-user-shield"></i>{' '}
-                          {teacher.username}
+                          className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
+                          alt={`Teacher ${teacher.username}`}
+                        />
+                        <h1 className="text-white truncate">
+                          <i className="fas fa-user-shield"></i> {teacher.username}
                         </h1>
                       </div>
                     );
@@ -297,98 +303,36 @@ export default function TeacherView({ uid, group }) {
                     return (
                       <div
                         key={idx}
-                        className="flex items-center rounded-lg bg-neutral-900"
+                        className="flex items-center space-x-2 rounded-lg  "
                         style={{ cursor: 'pointer' }}
                         onClick={() => setSelectedStudent(student)}
                       >
                         <img
                           src={defaultImages[i]}
-                          className="ml-1 h-10 w-10 "
-                        ></img>{' '}
-                        <h1 className="ml-6 mt-2 pl-1 text-white">
-                          {student.username}
-                        </h1>
+                          className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
+                          alt={`Student ${student.username}`}
+                        />
+                        <h1 className="text-white">{student.username}</h1>
                       </div>
                     );
                   })}
               </div>
 
-              <br></br>
-              <p className="mt-10 text-white">
-                Invite students to your group by sharing the join code.
-              </p>
-              <div className="mt-2 flex rounded-lg bg-black p-2">
-                <p className="text-white" style={{ fontSize: '20px' }}>
-                  {classroom.classCode}
-                </p>
-                <div className="ml-auto">
-                  <i
-                    onClick={copy}
-                    class="far fa-copy cursor-pointer text-white hover:text-neutral-400"
-                  ></i>
+
+              <div className="col-span-6 rounded-lg l ">
+              <div className="flex items-center ">
+                <h1 className="text-xl text-white font-semibold mt-10 mb-2">Announcements</h1>
+                <div className='ml-auto mt-10 mb-2'>
+                  <button
+                    className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+
+                    onClick={handleOpenModal}
+                  >
+                    New Post
+                  </button>
                 </div>
               </div>
-
-              <br></br>
-              <h1 className="text-xl font-semibold text-white">
-                {' '}
-                Course Description{' '}
-              </h1>
-              <div
-                style={{ color: 'white', cursor: 'default' }}
-                className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3 hover:bg-neutral-900/50"
-              >
-                {classroom.description}
-              </div>
-            </div>
-            <div className="col-span-2 rounded-lg  border-t-8  border-blue-600 bg-neutral-800/50 px-4 py-3">
-              <h1 className="text-xl font-semibold text-white">Assignments</h1>
-              <div className="mt-1 ">
-                {classroom &&
-                  classroom.assignments &&
-                  classroom.assignments.map((assignment) => (
-                    <div
-                      key={assignment.id}
-                      onClick={() => {
-                        window.location.href = '/assignments/' + assignment.id;
-                      }}
-                      className="mb-4 cursor-pointer rounded-sm  bg-neutral-900 p-3  hover:bg-neutral-900/50"
-                    >
-                      <h2 className="text-lg text-white">
-                        {assignment.category}: {assignment.name}
-                      </h2>
-                      <p className="text-white">
-                        Due: {parseDate(assignment.dueDate)}{' '}
-                      </p>
-                    </div>
-                  ))}
-
-                <button className="w-full rounded-sm bg-neutral-900 px-2 py-1 text-white">
-                  View All
-                </button>
-              </div>
-            </div>
-            <br></br>
-            <div className="col-span-6 rounded-lg border-l border-neutral-800 bg-neutral-800/50 px-4 py-3">
-              <div className="flex items-center">
-                <h1 className="text-xl text-white">Announcements</h1>
-                <button
-                  className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-                  style={{ marginLeft: '66%' }}
-                  onClick={handleOpenModal}
-                >
-                  Make Announcement
-                </button>
-              </div>
-              <ul
-                style={{
-                  color: 'white',
-                  padding: '0',
-                  margin: '0',
-                  height: '300px',
-                  overflowY: 'auto',
-                }}
-              >
+              <ul>
                 {isModalOpen && (
                   <div>
                     <textarea
@@ -396,15 +340,17 @@ export default function TeacherView({ uid, group }) {
                       onChange={(e) => setAnnouncement(e.target.value)}
                       rows="4"
                       cols="50"
-                      style={styles.textarea}
+                      className=' my-4 w-full bg-neutral-800 border border-neutral-800/50 rounded-lg p-2 text-white'
                     ></textarea>
                     <button
                       onClick={() => createAnnouncement(announcement)}
-                      style={styles.button}
+                      className='bg-blue-600 px-2 py-1 text-white rounded-lg hover:bg-blue-600/50 mr-2'
                     >
                       Post
                     </button>
-                    <button onClick={handleCloseModal} style={styles.button}>
+                    <button onClick={handleCloseModal}
+                      className='bg-blue-600 px-2 py-1 text-white rounded-lg hover:bg-blue-600/50 mr-2'
+                    >
                       Cancel
                     </button>
                   </div>
@@ -451,20 +397,16 @@ export default function TeacherView({ uid, group }) {
                                 setEditingAnnouncementIdx(idx);
                                 setAnnouncement(announcementObj.message);
                               }}
-                              className="mb-4 cursor-pointer rounded-lg bg-neutral-900 p-3 hover:bg-neutral-900/50"
-                              style={{
-                                marginLeft: '10px',
-                                marginTop: '10px',
-                                cursor: 'default',
-                              }}
+                              className="list-none mb-4 px-4 py-2 cursor-pointer rounded-lg bg-neutral-800  w-fullhover:border-blue-500 border border-neutral-900/50"
+                             
                             >
-                              <span style={{ fontSize: '13px' }}>
+                              <span className="text-white" style={{ fontSize: '13px' }}>
                                 {new Date(
                                   announcementObj.createdAt
                                 ).toLocaleDateString()}
                               </span>{' '}
                               <br></br>{' '}
-                              <span style={{ fontSize: '17px' }}>
+                              <span className="text-white" style={{ fontSize: '17px' }}>
                                 {announcementObj.message}
                               </span>
                             </li>
@@ -472,22 +414,18 @@ export default function TeacherView({ uid, group }) {
                               onClick={() =>
                                 deleteAnnouncement(announcementObj.id)
                               }
-                              style={{
-                                fontSize: '15px',
-                                position: 'absolute',
-                                right: '0',
-                                paddingRight: '10px',
-                                bottom: '0',
-                                cursor: 'pointer',
-                              }}
+
+
+                              className='text-sm bg-neutral-800 px-2  rounded-lg hover:bg-neutral-800/50 absolute mr-2 mb-1 right-0 bottom-0 cursor-pointer text-white'
                             >
                               <i
-                                className="fa fa-trash"
-                                style={{ color: 'rgb(255,99,71)' }}
+                                className="fa fa-trash text-red-500 mr-1"
+
                               >
                                 {' '}
-                                remove
+
                               </i>
+                              Delete
                             </span>
                           </div>
                         );
@@ -495,8 +433,64 @@ export default function TeacherView({ uid, group }) {
                     })}
               </ul>
             </div>
+
+            </div>
+            <div className="col-span-2   px-4 py-3">
+              <h1 className="text-xl font-semibold text-white">Assignments</h1>
+              <div className="mt-1 ">
+                {classroom &&
+                  classroom.assignments &&
+                  classroom.assignments.map((assignment) => (
+                    <div
+                      key={assignment.id}
+                      onClick={() => {
+                        window.location.href = '/assignments/' + assignment.id;
+                      }}
+                      className="mb-2 border-l-4 border-green-600 cursor-pointer rounded-sm  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
+                    >
+                      <h2 className="text-md text-white">
+                        <Tooltip id="quiz-tooltip" place="left" />
+                        <Tooltip id="test-tooltip" place="left" />
+                        <Tooltip id="homework-tooltip" place="left" />
+                        <Tooltip id="assessment-tooltip" place="left" />
+
+                        {assignment.category === 'quiz' && (
+
+                          <i title="quiz" className="fas fa-question-circle" data-tooltip-id="quiz-tooltip" data-tooltip-content="Quiz"></i>
+
+
+                        )}
+                        {assignment.category === 'test' && (
+                          <i title="test" className="fas fa-clipboard-check" data-tooltip-id="test-tooltip" data-tooltip-content="Test"></i>
+                        )}
+                        {assignment.category === 'homework' && (
+                          <i title="homework" className="fas fa-book" data-tooltip-id="homework-tooltip" data-tooltip-content="Homework"></i>
+                        )}
+                        {assignment.category === 'assessment' && (
+                          <i title="assessment" className="fas fa-file-alt" data-tooltip-id="assessment-tooltip" data-tooltip-content="Assessment"></i>
+                        )}
+
+                        <span className='ml-0.5'>   {assignment.name}{' '}</span>
+                      </h2>
+                      <p className="text-white">
+                        Due: {parseDate(assignment.dueDate)}{' '}
+                      </p>
+                    </div>
+                  ))}
+
+                <button className="text-sm float-right rounded-sm bg-neutral-900  py-1 text-white">
+                  <i className="fas fa-external-link-alt"></i> View All
+                </button>
+              </div>
+            </div>
+            <br></br>
+         
           </div>
         </div>
+
+
+
+        
       </div>
 
       <input

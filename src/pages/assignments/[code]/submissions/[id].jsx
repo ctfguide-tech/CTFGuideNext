@@ -210,6 +210,45 @@ export default function Slug() {
     setLoading(false);
   };
 
+
+  // fetch kana log
+  useEffect(() => {
+    ;(async function () {
+
+        
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+            };
+              
+            fetch(`https://file-system-run-qi6ms4rtoa-ue.a.run.app/files/get/log?jwtToken=${localStorage.getItem('idToken')}&slug=fork_of_challenge_232`, requestOptions)
+                .then(async response => {
+                    // set file variable to the response
+                    
+                //    AsciinemaPlayer.create('', document.getElementById('demo'));
+                
+                     const AsciinemaPlayer = await import('asciinema-player')
+                    AsciinemaPlayer.create({ data: response }, document.getElementById('demo'), {
+                        // smaller font
+                        fontSize: 12,
+
+                    });
+
+
+                })
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+            })()
+
+  //    AsciinemaPlayerLibrary.create(src, ref.current, asciinemaOptions)
+
+    
+
+  
+
+  }, [])
+
+
   return (
     <>
       <Head>
@@ -217,7 +256,12 @@ export default function Slug() {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
         </style>
+
+        <link rel="stylesheet" type="text/css" href="../../../../asciinema-player.css" />
+
+       
       </Head>
       <StandardNav />
       <div className=" min-h-screen  ">
@@ -242,135 +286,28 @@ export default function Slug() {
           </div>
 
           <div className="mx-auto mt-4 max-w-6xl">
-          <h1 className="text-xl font-semibold text-white">
-                  Assignment Description
-                </h1>
-                <MarkdownViewer
-                  className="text-white"
-                  content={assignment && assignment.description}
-                />
 
 
 
-            <div className="grid h-full grid-cols-6 gap-x-8">
+            <div className="">
+     
 
-              
-              <div className="col-span-2">
-           
-                <b className="text-white">ASSOCIATED FILES</b>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 cursor-pointer rounded-lg border border-neutral-800/50 bg-neutral-800/50 px-4 py-1 text-white hover:bg-neutral-700/10">
-                  <h1 className="text-md">
-                    <i className="fas fa-file-archive mr-2 text-white"></i>{' '}
-                    this_is_flag.zip
-                  </h1>
-                </div>
+                <div className='grid grid-cols-2 gap-x-8'>
+                    <div>
+                    <h1 className='text-white text-xl mb-2'>Session Recording</h1>
+                <div className="border border-neutral-800" id="demo"> 
 
-                <p className="mt-6 font-semibold text-white">FLAG SUBMISSION</p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-
-                <input
-                  placeholder="Think you got the flag? Enter it here!"
-                  className="mt-4 w-full cursor-pointer rounded-lg border border-neutral-800/50 bg-neutral-800/50 px-4 py-1 text-white hover:bg-neutral-700/10"
-                  onChange={(e) => setFlagInput(e.target.value)}
-                  value={flagInput}
-                ></input>
-                <button
-                  onClick={checkFlag}
-                  className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                >
-                  Check Flag
-                </button>
-
-                {solved === true ? (
-                  <i
-                    className="fa fa-check-circle"
-                    style={{
-                      color: 'lightgreen',
-                      position: 'relative',
-                      left: '5px',
-                    }}
-                    aria-hidden="true"
-                  ></i>
-                ) : (
-                  solved === false && (
-                    <i
-                      class="fa fa-times"
-                      style={{
-                        color: '#D8504D',
-                        position: 'relative',
-                        left: '5px',
-                      }}
-                      aria-hidden="true"
-                    ></i>
-                  )
-                )}
-
-                <p className="mt-6 font-semibold text-white">HINTS</p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                {hints.map((hint, idx) => {
-                  return (
-                    <div
-                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg transition-opacity duration-75 opacity-0 hover:opacity-100 transition-opacity duration-150"
-                      onClick={() => showHint(idx)}
-                      style={{
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <div>
-                        <p className="text-white">
-                          <span className="text-sm">
-                            Hint {idx + 1}: {hint.message}
-                          </span>
-                        </p>
-                      </div>
-                      <span className="text-sm mt-1 text-white">
-                        {assignment && assignment.challenge.hints[idx].penalty} points
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="col-span-4 h-60  px-4">
-           
-
-                <p className="font-semibold text-white">
-                  STUDENT SUBMISSIONS
-                </p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 grid grid-cols-1 gap-x-2  w-full">
-                  {submissions.length === 0 && 'No students in class...'}
-                  {submissions.map((submission, idx) => (
-                    <div
-                      key={idx}
-                      className="hover:bg-neutral-800/40 cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white"
-                    >
-                      <h1 className='flex'>
-                        {submission.name}{' '}
-                        {submission.submitted ? (
-                        <div className='ml-auto'>
-                            <i title="Completed!" className="fas fa-check  text-green-500"></i>
                         </div>
-                        ) : (
-                          <div className='ml-auto'>
-                          <i title="Incomplete!" className=" fas fa-clock  text-red-400 "></i>
-                          </div>
-                        )}
-                      </h1>
+                
                     </div>
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={submitAssignment}
-                className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                disabled={loading}
-              >
-                {submitted ? 'Resubmit' : 'Submit'}
-              </button>
+                    <div>
+                    <h1 className='text-white text-xl mb-2'>Kana AI</h1>
+
+               
+                    </div>
+
+    </div>
+   
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import TextLoop from "react-text-loop";
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
-import Banner from '@/components/home/Banner';
+import Banner from '@/components/learn/home/Banner';
 
 
 const navigation = [
