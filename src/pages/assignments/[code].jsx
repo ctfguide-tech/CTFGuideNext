@@ -23,10 +23,12 @@ export default function Slug() {
   const [loading, setLoading] = useState(false);
 
   const [terminalUrl, setTerminalUrl] = useState('');
+
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
+
   const [foundTerminal, setFoundTerminal] = useState(false);
 
   const parseDate = (dateString) => {
@@ -285,6 +287,10 @@ export default function Slug() {
     setLoading(false);
   };
 
+  const routeToSubmission = (id) => {
+    window.location.replace(`/assignments/${assignment.id}/submissions/${id}`)
+  };
+
   return (
     <>
       <Head>
@@ -317,21 +323,16 @@ export default function Slug() {
           </div>
 
           <div className="mx-auto mt-4 max-w-6xl">
-          <h1 className="text-xl font-semibold text-white">
-                  Assignment Description
-                </h1>
-                <MarkdownViewer
-                  className="text-white"
-                  content={assignment && assignment.description}
-                />
-
-
+            <h1 className="text-xl font-semibold text-white">
+              Assignment Description
+            </h1>
+            <MarkdownViewer
+              className="text-white"
+              content={assignment && assignment.description}
+            />
 
             <div className="grid h-full grid-cols-6 gap-x-8">
-
-              
               <div className="col-span-2">
-           
                 <b className="text-white">ASSOCIATED FILES</b>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
                 <div className="mt-4 cursor-pointer rounded-lg border border-neutral-800/50 bg-neutral-800/50 px-4 py-1 text-white hover:bg-neutral-700/10">
@@ -386,7 +387,7 @@ export default function Slug() {
                 {hints.map((hint, idx) => {
                   return (
                     <div
-                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg transition-opacity duration-75 opacity-0 hover:opacity-100 transition-opacity duration-150"
+                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-0 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
                       onClick={() => showHint(idx)}
                       style={{
                         cursor: 'pointer',
@@ -401,15 +402,35 @@ export default function Slug() {
                           </span>
                         </p>
                       </div>
-                      <span className="text-sm mt-1 text-white">
-                        {assignment && assignment.challenge.hints[idx].penalty} points
+                      <span className="mt-1 text-sm text-white">
+                        {assignment && assignment.challenge.hints[idx].penalty}{' '}
+                        points
                       </span>
                     </div>
                   );
                 })}
               </div>
-
+                
               <div className="col-span-4 h-60 bg-black px-4">
+              <div className="hint mb-2 text-gray-400">
+              <span className="font-semibold text-white   ">
+                {' '}
+                <span className="text-blue-500"></span>
+              </span>{' '}
+              Login as{' '}
+              <span className="text-yellow-400">{userName}</span> using
+              the password{' '}
+              <span className="text-yellow-400">{password}</span>
+              <div className="float-right ml-auto flex  cursor-pointer">
+                <span
+                  style={{ cursor: 'pointer' }}
+                  className=" text-gray-300 hover:bg-black"
+                >
+                  Container will stop in: {minutesRemaining} minutes
+                </span>
+
+              </div>
+            </div>
                 <iframe
                   className="h-full w-full"
                   src={
@@ -418,26 +439,35 @@ export default function Slug() {
                   }
                 ></iframe>
 
-                <p className="font-semibold text-white">
-                  STUDENT SUBMISSIONS
-                </p>
+                <p className="font-semibold text-white">STUDENT SUBMISSIONS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 grid grid-cols-1 gap-x-2  w-full">
-                  {submissions.length === 0 && 'No students in class...'}
+                <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
+                  {submissions.length === 0 && (
+                    <div style={{ color: 'white' }}>
+                      No Students in class...
+                    </div>
+                  )}
                   {submissions.map((submission, idx) => (
                     <div
                       key={idx}
-                      className="hover:bg-neutral-800/40 cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white"
+                      className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white hover:bg-neutral-800/40"
+                      onClick={() => routeToSubmission(submission.subId)}
                     >
-                      <h1 className='flex'>
+                      <h1 className="flex">
                         {submission.name}{' '}
                         {submission.submitted ? (
-                        <div className='ml-auto'>
-                            <i title="Completed!" className="fas fa-check  text-green-500"></i>
-                        </div>
+                          <div className="ml-auto">
+                            <i
+                              title="Completed!"
+                              className="fas fa-check  text-green-500"
+                            ></i>
+                          </div>
                         ) : (
-                          <div className='ml-auto'>
-                          <i title="Incomplete!" className=" fas fa-clock  text-red-400 "></i>
+                          <div className="ml-auto">
+                            <i
+                              title="Incomplete!"
+                              className=" fas fa-clock  text-red-400 "
+                            ></i>
                           </div>
                         )}
                       </h1>

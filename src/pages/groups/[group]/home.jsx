@@ -4,27 +4,23 @@ import { useRouter } from 'next/router';
 import StudentView from '@/components/groups/studentView';
 import Link from 'next/link';
 import Head from 'next/head';
-const baseUrl = 'http://localhost:3001';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function GroupDisplay() {
   const router = useRouter();
-  const { uid, group } = router.query;
+  const { group } = router.query;
   const [viewAsTeacher, setViewAsTeacher] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (uid && group) {
-      const userUid = localStorage.getItem('uid');
-      if (userUid !== uid) {
-        window.location.href = '/groups';
-      } else {
-        checkPermissions();
-      }
+    if (group) {
+      checkPermissions();
     }
-  }, [uid, group]);
+  }, [group]);
 
   const checkPermissions = async () => {
     try {
+      const userUid = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/check-if-teacher`;
       const token = localStorage.getItem('idToken');
       const response = await fetch(url, {
@@ -33,7 +29,7 @@ export default function GroupDisplay() {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token,
         },
-        body: JSON.stringify({ classCode: group, uid: uid }),
+        body: JSON.stringify({ classCode: group, uid: userUid }),
       });
       const res = await response.json();
       if (res.success) {
@@ -72,9 +68,9 @@ export default function GroupDisplay() {
       </div>
     </>
   ) : viewAsTeacher ? (
-    <TeacherView uid={uid} group={group} />
+    <TeacherView group={group} />
   ) : !isLoading ? (
-    <StudentView uid={uid} group={group} />
+    <StudentView group={group} />
   ) : (
     <></>
   );

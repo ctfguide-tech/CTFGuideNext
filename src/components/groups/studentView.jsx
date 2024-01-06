@@ -5,12 +5,12 @@ import { useEffect, useState } from 'react';
 // import { loadStripe } from '@stripe/stripe-js';
 // const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
-export default function StudentView({ uid, group }) {
+export default function StudentView({ group }) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 
   const [classroom, setClassroom] = useState({});
   const [freeTrialDaysLeft, setFreeTrialDaysLeft] = useState(0);
-  const [displayDueDate, setDisplayDueDate] = useState('');
+  // const [displayDueDate, setDisplayDueDate] = useState('');
 
   const defaultImages = [
     'https://robohash.org/pranavramesh',
@@ -79,6 +79,7 @@ export default function StudentView({ uid, group }) {
   const leaveClass = async () => {
     try {
       const classroomId = classroom.id;
+      const uid = localStorage.getItem("uid");
       const url = `${baseUrl}/classroom/leave`;
       const response = await fetch(url, {
         method: 'POST',
@@ -99,6 +100,7 @@ export default function StudentView({ uid, group }) {
   const cancelFreeTrial = async () => {
     try {
       const classroomId = classroom.id;
+      const uid = localStorage.getItem("uid");
       const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
       const response = await fetch(url, {
         method: 'POST',
