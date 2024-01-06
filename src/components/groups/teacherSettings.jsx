@@ -4,7 +4,8 @@ import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 const categoryToIdx = {
@@ -248,6 +249,28 @@ export default function teacherSettings({ classroom }) {
     }
   };
 
+
+  function copy() {
+    var copyText = document.getElementById('copyBox');
+    copyText.type = 'text';
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    copyText.type = 'hidden';
+
+    toast.success('Copied to clipboard!', {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      });
+
+  }
+
   const filteredOptions = classroom.students.filter((option) =>
     option.username.toLowerCase().includes(searchInput.toLowerCase())
   );
@@ -265,23 +288,26 @@ export default function teacherSettings({ classroom }) {
       <div id="general" className="">
         <div className="mx-auto flex max-w-6xl">
           <div className="flex-1 xl:overflow-y-auto">
-            <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-              <button
-                onClick={() => (window.location.href = ``)}
-                className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-                style={{
-                  fontSize: '12px',
-                  marginLeft: '-10px',
-                  marginBottom: '10px',
-                }}
-              >
-                <i className="fa fa-arrow-left" style={{ color: 'white' }}></i>{' '}
-                Back
-              </button>
-
+            <div className="mx-auto max-w-4.5xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        
+        <div className='flex'>
               <h1 className="text-3xl font-bold tracking-tight text-white">
                 Classroom Settings
               </h1>
+
+            <div className='ml-auto'>
+            <button
+        onClick={() => (window.location.href = ``)}
+        className=" rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+        style={{
+          fontSize: '15px',
+        }}
+      >
+        <i className="fa fa-arrow-left" style={{ color: 'white' }}></i> Back
+      </button>
+              </div>
+              </div>
+
 
               <div className="mt-6 space-y-8 ">
                 <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
@@ -294,6 +320,24 @@ export default function teacherSettings({ classroom }) {
                     </p>
                   </div>
 
+                  <div className="sm:col-span-6">
+                  <div className='mx-auto text-center  mb-4'>
+              <p className="mt-3 text-white">
+                Invite students to your group by sharing the join code.
+              </p>
+              <div className="mt-2 flex rounded-lg bg-neutral-800 w-1/3 p-2 mx-auto ">
+                <p className="text-white text-center mx-auto" style={{ fontSize: '20px' }}>
+                  {classroom.classCode} <i
+                    onClick={copy}
+                    class="far fa-copy cursor-pointer text-white hover:text-neutral-400"
+                  ></i>
+                </p>
+
+              </div>
+              </div>
+                        </div>
+
+                  
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="number-of-seats"
@@ -397,6 +441,7 @@ export default function teacherSettings({ classroom }) {
                     </div>
                   </div>
 
+             
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="description"
@@ -636,6 +681,15 @@ export default function teacherSettings({ classroom }) {
           </div>
         </div>
       </div>
+
+      <input
+        type="hidden"
+        id="copyBox"
+        value={classroom.classCode || ''}
+      ></input>
+
+<ToastContainer />
+
       <Footer />
     </>
   );

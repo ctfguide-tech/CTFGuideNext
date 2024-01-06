@@ -317,9 +317,7 @@ export default function Slug() {
           </div>
 
           <div className="mx-auto mt-4 max-w-6xl">
-            <div className="grid h-full grid-cols-6 gap-x-8">
-              <div className="col-span-2">
-                <h1 className="text-xl font-semibold text-white">
+          <h1 className="text-xl font-semibold text-white">
                   Assignment Description
                 </h1>
                 <MarkdownViewer
@@ -327,6 +325,13 @@ export default function Slug() {
                   content={assignment && assignment.description}
                 />
 
+
+
+            <div className="grid h-full grid-cols-6 gap-x-8">
+
+              
+              <div className="col-span-2">
+           
                 <b className="text-white">ASSOCIATED FILES</b>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
                 <div className="mt-4 cursor-pointer rounded-lg border border-neutral-800/50 bg-neutral-800/50 px-4 py-1 text-white hover:bg-neutral-700/10">
@@ -381,13 +386,7 @@ export default function Slug() {
                 {hints.map((hint, idx) => {
                   return (
                     <div
-                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg"
-                      enter="transition-opacity duration-75"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="transition-opacity duration-150"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
+                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg transition-opacity duration-75 opacity-0 hover:opacity-100 transition-opacity duration-150"
                       onClick={() => showHint(idx)}
                       style={{
                         cursor: 'pointer',
@@ -402,9 +401,8 @@ export default function Slug() {
                           </span>
                         </p>
                       </div>
-                      <span style={{ color: 'white' }}>
-                        {assignment && assignment.challenge.hints[idx].penalty}{' '}
-                        points
+                      <span className="text-sm mt-1 text-white">
+                        {assignment && assignment.challenge.hints[idx].penalty} points
                       </span>
                     </div>
                   );
@@ -420,23 +418,27 @@ export default function Slug() {
                   }
                 ></iframe>
 
-                <p className="mt-6 font-semibold text-white">
+                <p className="font-semibold text-white">
                   STUDENT SUBMISSIONS
                 </p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 grid grid-cols-3 gap-x-2">
+                <div className="mt-4 grid grid-cols-1 gap-x-2  w-full">
                   {submissions.length === 0 && 'No students in class...'}
                   {submissions.map((submission, idx) => (
                     <div
                       key={idx}
-                      className="rounded-lg bg-neutral-800 px-2 py-1 text-white"
+                      className="hover:bg-neutral-800/40 cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white"
                     >
-                      <h1>
+                      <h1 className='flex'>
                         {submission.name}{' '}
                         {submission.submitted ? (
-                          <i className="fas fa-check ml-2 text-green-500"></i>
+                        <div className='ml-auto'>
+                            <i title="Completed!" className="fas fa-check  text-green-500"></i>
+                        </div>
                         ) : (
-                          <i className="fas fa-clock  ml-2 text-red-400"></i>
+                          <div className='ml-auto'>
+                          <i title="Incomplete!" className=" fas fa-clock  text-red-400 "></i>
+                          </div>
                         )}
                       </h1>
                     </div>

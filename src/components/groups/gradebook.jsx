@@ -70,109 +70,71 @@ const Gradebook = ({ classroomId }) => {
       </Head>
       <StandardNav />
 
-      <button
+
+
+      <div className="max-w-6xl mx-auto mt-10">
+
+
+
+<div className='flex'>
+<h1 className='text-3xl font-semibold text-white'>Gradebook</h1>
+<div className='ml-auto'>
+<button
         onClick={() => (window.location.href = ``)}
-        className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+        className=" rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
         style={{
           fontSize: '15px',
-          marginLeft: '100px',
         }}
       >
         <i className="fa fa-arrow-left" style={{ color: 'white' }}></i> Back
       </button>
-      <div
-        className="mt-4 grid grid-cols-4 gap-x-4"
-        style={{ backgroundColor: '#333', color: '#fff', margin: '100px' }}
-      >
-        <div className="col-span-4 rounded-lg bg-neutral-800/50 px-4 py-3 ">
-          <div
-            className={`mt-4 grid grid-cols-${assignments.length + 2} gap-x-4`}
-            style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}
-          >
-            <div>Student</div>
-            {assignments.map((assignment) => (
-              <div key={assignment.id}>{assignment.name}</div>
-            ))}
-            <div>Final Grade</div>
-          </div>
-
-          <div style={{ overflow: 'auto', minHeight: '500px' }}>
-            {students.map((student, index) => (
-              <div
-                key={index}
-                className={`grid grid-cols-${assignments.length + 2} gap-x-4`}
-                style={{
-                  backgroundColor: '#444',
-                  marginTop: '10px',
-                  padding: '10px',
-                }}
-              >
-                <div style={{ color: 'white' }}>{student.name}</div>
-                {assignments.map((assignment) => (
-                  <div style={{ color: 'white' }}>
-                    {student[assignment.name].grade === null
-                      ? 'NA'
-                      : student[assignment.name].grade}
-                    /{student[assignment.name].total}
-                    {student[assignment.name].late ? (
-                      <span
-                        style={{
-                          fontSize: '12px',
-                          color: 'yellow',
-                          position: 'relative',
-                          bottom: '5px', // adjust this value to move the label up or down
-                          left: '5px', // adjust this value to move the label left or right
-                        }}
-                      >
-                        (LATE)
-                      </span>
-                    ) : student[assignment.name].late !== null ? (
-                      <i
-                        class="fa fa-check-circle"
-                        style={{
-                          color: 'lightgreen',
-                          position: 'relative',
-                          left: '5px',
-                          bottom: '5px',
-                        }}
-                        aria-hidden="true"
-                      ></i>
-                    ) : (
-                      <i
-                        class="fa fa-times"
-                        style={{
-                          color: '#D8504D',
-                          position: 'relative',
-                          left: '5px',
-                          bottom: '5px',
-                        }}
-                        aria-hidden="true"
-                      ></i>
-                    )}
-                  </div>
-                ))}
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <div>
-                    {student.finalGrade === null ? 'NA' : student.finalGrade}%
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <button
-          onClick={refresh}
-          className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-          style={{
-            fontSize: '15px',
-            marginLeft: '100px',
-          }}
-        >
-          Refresh
-        </button>
       </div>
+      </div>
+      <div class="mt-4 mx-auto text-white flex items-center justify-center pb-10 rounded-sm">
+  <table class="min-w-full divide-y divide-neutral-700">
+    <thead class="bg-neutral-800 rounded-sm">
+      <tr>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+          Student
+        </th>
+        {assignments.map((assignment) => (
+          <th key={assignment.id} scope="col" class="cursor-pointerpx-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+            {assignment.name}
+          </th>
+        ))}
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+          Final Grade
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {students.map((student, index) => (
+        <tr key={index} class="bg-neutral-800 hover:bg-neutral-700">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+            {student.name}
+          </td>
+          {assignments.map((assignment) => (
+            <td
+              key={assignment.id}
+              class={`px-6 py-4 whitespace-nowrap text-sm ${
+                student[assignment.name].grade === null ? 'text-yellow-400' : 'text-green-400'
+              }`}
+            >
+              {student[assignment.name].grade === null ? 'N/A' : `${student[assignment.name].grade}/${student[assignment.name].total}`}
+            </td>
+          ))}
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
+            {student.finalGrade === null ? 'N/A' : `${student.finalGrade}%`}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+
       <Footer />
     </>
   );
