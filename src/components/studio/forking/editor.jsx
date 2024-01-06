@@ -131,7 +131,7 @@ const Editor = (props) => {
         method: 'GET',
       };
       const response = await fetch(
-        `http://localhost:3001/challenges/basicInfo/${slugName}`,
+        `http://localhost:3001/challenges/${slugName}/basicInfo`,
         requestOptions
       );
       const data = await response.json();
