@@ -6,7 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
-import { Tooltip } from 'react-tooltip'
+import { Tooltip } from 'react-tooltip';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
@@ -230,26 +230,28 @@ export default function TeacherView({ group }) {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
-        /* bold */
-
-
+          /* bold */
         </style>
       </Head>
       <StandardNav />
-      <div className=" min-h-screen max-w-6xl mx-auto grid grid-cols-10 gap-x-8 ">
-
-        <div className='col-span-2'>
+      <div className=" mx-auto grid min-h-screen max-w-6xl grid-cols-10 gap-x-8 ">
+        <div className="col-span-2">
           {/* side nav bar */}
 
-          <div class="flex flex-col mt-20 text-xl text-white">
-  <p  onClick={() => setViewGradebook(true)}
- class=" hover:bg-neutral-800 px-2 cursor-pointer"><i className="fas fa-table mr-2 "></i> Gradebook </p>
-  <p onClick={() => setViewSettings(true)}
- class="hover:bg-neutral-800 px-2 mt-2 cursor-pointer"><i className="fas fa-cogs mr-2"></i>Settings </p>
-
-</div>
-
+          <div class="mt-20 flex flex-col text-xl text-white">
+            <p
+              onClick={() => setViewGradebook(true)}
+              class=" cursor-pointer px-2 hover:bg-neutral-800"
+            >
+              <i className="fas fa-table mr-2 "></i> Gradebook{' '}
+            </p>
+            <p
+              onClick={() => setViewSettings(true)}
+              class="mt-2 cursor-pointer px-2 hover:bg-neutral-800"
+            >
+              <i className="fas fa-cogs mr-2"></i>Settings{' '}
+            </p>
+          </div>
         </div>
         <div className="col-span-8  mt-10 ">
           <div className="flex">
@@ -257,8 +259,6 @@ export default function TeacherView({ group }) {
               {classroom.name}
             </h1>
             <div className="ml-auto">
-             
-
               <button
                 onClick={() => {
                   setViewCreateAssignment(true);
@@ -268,14 +268,10 @@ export default function TeacherView({ group }) {
               >
                 <i className="fas fa-plus-circle"></i> Create Assignment
               </button>
-
-     
             </div>
           </div>
           <div className="mt-4 grid grid-cols-6 gap-x-8">
             <div className="col-span-4 rounded-lg    py-3 ">
-
-
               <h1 className="text-xl font-semibold text-white">
                 {' '}
                 Course Description{' '}
@@ -288,23 +284,31 @@ export default function TeacherView({ group }) {
               </div>
               {/* LOOPING THROUGH MEMBERS */}
 
-              <h1 className="text-xl font-semibold text-white mb-2"> Members</h1>
-              <div className="grid grid-cols-4 gap-y-2 gap-x-4">
+              <h1 className="mb-2 text-xl font-semibold text-white">
+                {' '}
+                Members
+              </h1>
+              <div className="grid grid-cols-4 gap-x-4 gap-y-2">
                 {classroom.teachers && classroom.teachers.length === 0 ? (
                   <div style={{ color: 'white' }}>No teachers yet...</div>
                 ) : (
                   classroom.teachers &&
                   classroom.teachers.map((teacher, idx) => {
-                    const i = defaultImages.length - 1 - (idx % defaultImages.length);
+                    const i =
+                      defaultImages.length - 1 - (idx % defaultImages.length);
                     return (
-                      <div key={idx} className="flex items-center space-x-2 rounded-lg ">
+                      <div
+                        key={idx}
+                        className="flex items-center space-x-2 rounded-lg "
+                      >
                         <img
                           src={defaultImages[i]}
                           className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
                           alt={`Teacher ${teacher.username}`}
                         />
-                        <h1 className="text-white truncate">
-                          <i className="fas fa-user-shield"></i> {teacher.username}
+                        <h1 className="truncate text-white">
+                          <i className="fas fa-user-shield"></i>{' '}
+                          {teacher.username}
                         </h1>
                       </div>
                     );
@@ -331,122 +335,123 @@ export default function TeacherView({ group }) {
                   })}
               </div>
 
-
-              <div className="col-span-6 rounded-lg l ">
-              <div className="flex items-center ">
-                <h1 className="text-xl text-white font-semibold mt-10 mb-2">Announcements</h1>
-                <div className='ml-auto mt-10 mb-2'>
-                  <button
-                    className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-
-                    onClick={handleOpenModal}
-                  >
-                    New Post
-                  </button>
-                </div>
-              </div>
-              <ul>
-                {isModalOpen && (
-                  <div>
-                    <textarea
-                      value={announcement}
-                      onChange={(e) => setAnnouncement(e.target.value)}
-                      rows="4"
-                      cols="50"
-                      className=' my-4 w-full bg-neutral-800 border border-neutral-800/50 rounded-lg p-2 text-white'
-                    ></textarea>
+              <div className="l col-span-6 rounded-lg ">
+                <div className="flex items-center ">
+                  <h1 className="mb-2 mt-10 text-xl font-semibold text-white">
+                    Announcements
+                  </h1>
+                  <div className="mb-2 ml-auto mt-10">
                     <button
-                      onClick={() => createAnnouncement(announcement)}
-                      className='bg-blue-600 px-2 py-1 text-white rounded-lg hover:bg-blue-600/50 mr-2'
+                      className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                      onClick={handleOpenModal}
                     >
-                      Post
-                    </button>
-                    <button onClick={handleCloseModal}
-                      className='bg-blue-600 px-2 py-1 text-white rounded-lg hover:bg-blue-600/50 mr-2'
-                    >
-                      Cancel
+                      New Post
                     </button>
                   </div>
-                )}
-                {classroom.announcements &&
-                  classroom.announcements
-                    .slice()
-                    .reverse()
-                    .map((announcementObj, idx) => {
-                      if (idx === editingAnnouncementIdx) {
-                        return (
-                          <div key={idx}>
-                            <textarea
-                              value={announcement}
-                              onChange={(e) => setAnnouncement(e.target.value)}
-                              rows="4"
-                              cols="50"
-                              style={styles.textarea}
-                            ></textarea>
-                            <button
-                              onClick={() =>
-                                updateAnnouncement(
-                                  announcementObj.id,
-                                  announcement
-                                )
-                              }
-                              style={styles.button}
-                            >
-                              Update
-                            </button>
-                            <button
-                              onClick={() => setEditingAnnouncementIdx(-1)}
-                              style={styles.button}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div style={{ position: 'relative' }} key={idx}>
-                            <li
-                              onClick={() => {
-                                setEditingAnnouncementIdx(idx);
-                                setAnnouncement(announcementObj.message);
-                              }}
-                              className="list-none mb-4 px-4 py-2 cursor-pointer rounded-lg bg-neutral-800  w-fullhover:border-blue-500 border border-neutral-900/50"
-                             
-                            >
-                              <span className="text-white" style={{ fontSize: '13px' }}>
-                                {new Date(
-                                  announcementObj.createdAt
-                                ).toLocaleDateString()}
-                              </span>{' '}
-                              <br></br>{' '}
-                              <span className="text-white" style={{ fontSize: '17px' }}>
-                                {announcementObj.message}
-                              </span>
-                            </li>
-                            <span
-                              onClick={() =>
-                                deleteAnnouncement(announcementObj.id)
-                              }
-
-
-                              className='text-sm bg-neutral-800 px-2  rounded-lg hover:bg-neutral-800/50 absolute mr-2 mb-1 right-0 bottom-0 cursor-pointer text-white'
-                            >
-                              <i
-                                className="fa fa-trash text-red-500 mr-1"
-
+                </div>
+                <ul>
+                  {isModalOpen && (
+                    <div>
+                      <textarea
+                        value={announcement}
+                        onChange={(e) => setAnnouncement(e.target.value)}
+                        rows="4"
+                        cols="50"
+                        className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
+                      ></textarea>
+                      <button
+                        onClick={() => createAnnouncement(announcement)}
+                        className="mr-2 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                      >
+                        Post
+                      </button>
+                      <button
+                        onClick={handleCloseModal}
+                        className="mr-2 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {classroom.announcements &&
+                    classroom.announcements
+                      .slice()
+                      .reverse()
+                      .map((announcementObj, idx) => {
+                        if (idx === editingAnnouncementIdx) {
+                          return (
+                            <div key={idx}>
+                              <textarea
+                                value={announcement}
+                                onChange={(e) =>
+                                  setAnnouncement(e.target.value)
+                                }
+                                rows="4"
+                                cols="50"
+                                style={styles.textarea}
+                              ></textarea>
+                              <button
+                                onClick={() =>
+                                  updateAnnouncement(
+                                    announcementObj.id,
+                                    announcement
+                                  )
+                                }
+                                style={styles.button}
                               >
-                                {' '}
-
-                              </i>
-                              Delete
-                            </span>
-                          </div>
-                        );
-                      }
-                    })}
-              </ul>
-            </div>
-
+                                Update
+                              </button>
+                              <button
+                                onClick={() => setEditingAnnouncementIdx(-1)}
+                                style={styles.button}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div style={{ position: 'relative' }} key={idx}>
+                              <li
+                                onClick={() => {
+                                  setEditingAnnouncementIdx(idx);
+                                  setAnnouncement(announcementObj.message);
+                                }}
+                                className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
+                              >
+                                <span
+                                  className="text-white"
+                                  style={{ fontSize: '13px' }}
+                                >
+                                  {new Date(
+                                    announcementObj.createdAt
+                                  ).toLocaleDateString()}
+                                </span>{' '}
+                                <br></br>{' '}
+                                <span
+                                  className="text-white"
+                                  style={{ fontSize: '17px' }}
+                                >
+                                  {announcementObj.message}
+                                </span>
+                              </li>
+                              <span
+                                onClick={() =>
+                                  deleteAnnouncement(announcementObj.id)
+                                }
+                                className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
+                              >
+                                <i className="fa fa-trash mr-1 text-red-500">
+                                  {' '}
+                                </i>
+                                Delete
+                              </span>
+                            </div>
+                          );
+                        }
+                      })}
+                </ul>
+              </div>
             </div>
             <div className="col-span-2   px-4 py-3">
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
@@ -459,7 +464,7 @@ export default function TeacherView({ group }) {
                       onClick={() => {
                         window.location.href = '/assignments/' + assignment.id;
                       }}
-                      className="mb-2 border-l-4 border-green-600 cursor-pointer rounded-sm  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
+                      className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
                     >
                       <h2 className="text-md text-white">
                         <Tooltip id="quiz-tooltip" place="left" />
@@ -468,22 +473,39 @@ export default function TeacherView({ group }) {
                         <Tooltip id="assessment-tooltip" place="left" />
 
                         {assignment.category === 'quiz' && (
-
-                          <i title="quiz" className="fas fa-question-circle" data-tooltip-id="quiz-tooltip" data-tooltip-content="Quiz"></i>
-
-
+                          <i
+                            title="quiz"
+                            className="fas fa-question-circle"
+                            data-tooltip-id="quiz-tooltip"
+                            data-tooltip-content="Quiz"
+                          ></i>
                         )}
                         {assignment.category === 'test' && (
-                          <i title="test" className="fas fa-clipboard-check" data-tooltip-id="test-tooltip" data-tooltip-content="Test"></i>
+                          <i
+                            title="test"
+                            className="fas fa-clipboard-check"
+                            data-tooltip-id="test-tooltip"
+                            data-tooltip-content="Test"
+                          ></i>
                         )}
                         {assignment.category === 'homework' && (
-                          <i title="homework" className="fas fa-book" data-tooltip-id="homework-tooltip" data-tooltip-content="Homework"></i>
+                          <i
+                            title="homework"
+                            className="fas fa-book"
+                            data-tooltip-id="homework-tooltip"
+                            data-tooltip-content="Homework"
+                          ></i>
                         )}
                         {assignment.category === 'assessment' && (
-                          <i title="assessment" className="fas fa-file-alt" data-tooltip-id="assessment-tooltip" data-tooltip-content="Assessment"></i>
+                          <i
+                            title="assessment"
+                            className="fas fa-file-alt"
+                            data-tooltip-id="assessment-tooltip"
+                            data-tooltip-content="Assessment"
+                          ></i>
                         )}
 
-                        <span className='ml-0.5'>   {assignment.name}{' '}</span>
+                        <span className="ml-0.5"> {assignment.name} </span>
                       </h2>
                       <p className="text-white">
                         Due: {parseDate(assignment.dueDate)}{' '}
@@ -491,19 +513,14 @@ export default function TeacherView({ group }) {
                     </div>
                   ))}
 
-                <button className="text-sm float-right rounded-sm bg-neutral-900  py-1 text-white">
+                <button className="float-right rounded-sm bg-neutral-900 py-1  text-sm text-white">
                   <i className="fas fa-external-link-alt"></i> View All
                 </button>
               </div>
             </div>
             <br></br>
-         
           </div>
         </div>
-
-
-
-        
       </div>
 
       <input

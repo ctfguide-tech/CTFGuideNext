@@ -189,7 +189,7 @@ export default function Groups() {
                   className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50"
                   onClick={() => {
                     classroom.isPayedFor
-                      ? (window.location.href = `/groups/${classroom.classCode}/${userId}`)
+                      ? (window.location.href = `/groups/${classroom.classCode}/home`)
                       : '';
                   }}
                 >
@@ -224,7 +224,7 @@ export default function Groups() {
                   key={idx}
                   className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50"
                   onClick={() => {
-                    window.location.href = `/groups/${classroom.classCode}/${userId}`;
+                    window.location.href = `/groups/${classroom.classCode}/home`;
                   }}
                 >
                   <h1 className="text-3xl font-semibold text-neutral-300">
