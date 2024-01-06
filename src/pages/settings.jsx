@@ -143,7 +143,7 @@ export default function Dashboard() {
       const userId = auth.currentUser.uid;
 
       const response = await fetch(
-        'http://localhost:3001/payments/stripe/create-checkout-session',
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -184,7 +184,7 @@ export default function Dashboard() {
       const userId = localStorage.getItem('uid');
 
       const response = await fetch(
-        'http://localhost:3001/payments/stripe/update-card',
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/update-card`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -211,7 +211,7 @@ export default function Dashboard() {
     try {
       const subscriptionType = document.getElementById('paymentType').value;
       const userId = localStorage.getItem('uid');
-      const url = `http://localhost:3001/payments/stripe/cancel`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/cancel`;
       const response = await fetch(url, {
         method: 'PUT',
         body: JSON.stringify({

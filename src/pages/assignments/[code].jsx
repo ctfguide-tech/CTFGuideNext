@@ -5,7 +5,7 @@ import { ProgressCircle } from '@tremor/react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useEffect, useState } from 'react';
 
-const baseUrl = `http://localhost:3001`;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function Slug() {
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
