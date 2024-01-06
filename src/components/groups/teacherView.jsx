@@ -19,7 +19,7 @@ const defaultImages = [
   'https://robohash.org/jasoncalcanis',
 ];
 
-export default function TeacherView({ uid, group }) {
+export default function TeacherView({ group }) {
   const [classroom, setClassroom] = useState({});
   const [inviteEmail, setInviteEmail] = useState('');
   const [open, setOpen] = useState(false);
@@ -31,7 +31,6 @@ export default function TeacherView({ uid, group }) {
   const [announcement, setAnnouncement] = useState('');
   const [viewSettings, setViewSettings] = useState(false);
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
-  // const [upgraded, setUpgraded] = useState(false);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
 
   const [viewGradebook, setViewGradebook] = useState(false);
@@ -131,10 +130,12 @@ export default function TeacherView({ uid, group }) {
     let formattedDate = `${month}/${day}/${year} ${strTime}`;
     return formattedDate;
   };
+
   const createAnnouncement = async (message) => {
     setAnnouncement('');
     try {
       if (message.length < 1) return;
+      message = localStorage.getItem('username') + ': ' + message;
       const classCode = classroom.classCode;
       const url = `${baseUrl}/classroom/announcements`;
       const response = await fetch(url, {
@@ -220,6 +221,7 @@ export default function TeacherView({ uid, group }) {
     navigator.clipboard.writeText(copyText.value);
     copyText.type = 'hidden';
   }
+
   return (
     <>
       <Head>
@@ -230,6 +232,7 @@ export default function TeacherView({ uid, group }) {
         </style>
       </Head>
       <StandardNav />
+
       <div className=" min-h-screen  ">
         <div className="mx-auto mt-10 max-w-6xl">
           <div className="flex">

@@ -45,66 +45,78 @@ export default function Slug() {
     return formattedDate;
   };
 
-  const getAssignment = async () => {
+  const makePostRequest = async (url, auth, body) => {
     try {
-      console.log('Getting the assignments');
-      const params = window.location.href.split('/');
-      if (params.length < 5) {
-        return;
+      let requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      if (auth) {
+        const token = localStorage.getItem('idToken');
+        requestOptions.headers.Authorization = 'Bearer ' + token;
       }
-      const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[4]}`;
-      const requestOptions = { method: 'GET' };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      if (data.success) {
-        const isAuth = await authenticate(data.body);
-        if (isAuth) {
-          setAssignment(data.body);
-          await getSubmissions(data.body);
-        } else {
-          console.log('You are not apart of this class');
-          window.location.href = '/groups';
-        }
-      } else {
-        console.log(data.message);
-      }
+      return data;
     } catch (err) {
       console.log(err);
+      return null;
+    }
+  };
+
+  const makeGetRequest = async (url, auth) => {
+    try {
+      let requestOptions = { method: 'GET' };
+      if (auth) {
+        const token = localStorage.getItem('idToken');
+        requestOptions.headers = { Authorization: 'Bearer ' + token };
+      }
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  };
+
+  const getAssignment = async () => {
+    const params = window.location.href.split('/');
+    if (params.length < 5) {
+      return;
+    }
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[4]}`;
+    const data = await makeGetRequest(url, false);
+    if (data && data.success) {
+      const isAuth = await authenticate(data.body);
+      if (isAuth) {
+        setAssignment(data.body);
+        await getSubmissions(data.body);
+      } else {
+        console.log('You are not apart of this class');
+        window.location.href = '/groups';
+      }
     }
   };
 
   const getSubmissions = async (assignment) => {
-    try {
-      console.log('getting the who submitted what for teacher view');
-      const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
-      const requestOptions = { method: 'GET' };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
-        setSubmissions(data.body);
-      } else {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
+    const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
+    const data = await makeGetRequest(url, false);
+    if (data && data.success) {
+      setSubmissions(data.body);
+    } else {
+      console.log('Unable to get submissions');
     }
   };
 
   const authenticate = async (assignment) => {
-    try {
-      console.log('authenticating user');
-      const uid = localStorage.getItem('uid');
-      const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
-      const response = await fetch(url, { method: 'GET' });
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        return true;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    return false;
+    const uid = localStorage.getItem('uid');
+    const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
+    const data = await makeGetRequest(url, false);
+    return data.success;
   };
 
   const getChallenge = async () => {
@@ -120,7 +132,6 @@ export default function Slug() {
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      // console.log(data);
       if (data.success) {
         setChallenge(data.body);
       }
@@ -177,12 +188,16 @@ export default function Slug() {
       console.log(data);
 
       if (data.length > 0) {
-        const { password, serviceName, url, userName } = data[0];
+        const { password, serviceName, url, userName, minutesRemaining, id } =
+          data[0];
+
         setPassword(password);
         setServiceName(serviceName);
         setTerminalUrl(url);
         setUserName(userName);
-        setFoundTerminal(true);
+        setMinutesRemaining(minutesRemaining);
+
+        await getTerminalStatus(id);
       } else {
         console.log('No termainl... creating a new one');
         await createTerminal();
@@ -192,13 +207,29 @@ export default function Slug() {
     }
   };
 
+  const getTerminalStatus = async (id) => {
+    if (!foundTerminal) {
+      const username = localStorage.getItem('username');
+      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
+      const response = await fetch(url, { method: 'GET' });
+      if (response.ok) {
+        setFoundTerminal(true);
+      } else {
+        setTimeout(async () => {
+          await getTerminalStatus(id);
+        }, 3000);
+      }
+    }
+  };
+
   useEffect(() => {
     if (assignment === null) {
       getAssignment();
     } else if (!challenge) {
       getChallenge();
     }
-    // fetchTerminal();
+
+    fetchTerminal();
   }, [assignment]);
 
   const checkFlag = () => {
@@ -210,69 +241,47 @@ export default function Slug() {
   };
 
   const showHint = async (i) => {
-    try {
-      const url = `${baseUrl}/challenges/hints-update`;
-      const userId = localStorage.getItem('uid');
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          hintsUsed: i,
-          uid: userId,
-          challengeId: assignment.challenge.id,
-        }),
-      };
-
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        let tmp = [...hints];
-        tmp[i].message = assignment.challenge.hints[i].message;
-        tmp[i].penalty =
-          '(-' + assignment.challenge.hints[i].penalty + ') points';
-        setHints(tmp);
-      }
-    } catch (err) {
-      console.log(err);
+    const url = `${baseUrl}/challenges/hints-update`;
+    const userId = localStorage.getItem('uid');
+    const body = {
+      hintsUsed: i,
+      uid: userId,
+      challengeId: assignment.challenge.id,
+    };
+    const data = await makePostRequest(url, false, body);
+    if (data && data.success) {
+      let tmp = [...hints];
+      tmp[i].message = assignment.challenge.hints[i].message;
+      tmp[i].penalty =
+        '(-' + assignment.challenge.hints[i].penalty + ') points';
+      setHints(tmp);
+    } else {
+      console.log('problem when feching hints');
     }
   };
 
   const submitAssignment = async () => {
-    try {
-      setLoading(true);
-      const params = window.location.href.split('/');
-      const userId = localStorage.getItem('uid');
-      const token = localStorage.getItem('idToken');
-      const url = `${baseUrl}/submission/create`;
+    setLoading(true);
+    const params = window.location.href.split('/');
+    const userId = localStorage.getItem('uid');
+    const url = `${baseUrl}/submission/create`;
 
-      const body = {
-        solved: flagInput === assignment.solution.keyword,
-        userId: userId,
-        classroomId: assignment.classroomId,
-        assignmentId: parseInt(params[4]),
-        keyword: flagInput,
-        challengeId: assignment.challengeId,
-        totalPoints: assignment.totalPoints,
-        hints: assignment.challenge.hints,
-      };
+    const body = {
+      solved: flagInput === assignment.solution.keyword,
+      userId: userId,
+      classroomId: assignment.classroomId,
+      assignmentId: parseInt(params[4]),
+      keyword: flagInput,
+      challengeId: assignment.challengeId,
+      totalPoints: assignment.totalPoints,
+      hints: assignment.challenge.hints,
+    };
 
-      const requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        },
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
+    const data = await makePostRequest(url, true, body);
+    if (data && data.success) {
       setSubmitted(true);
-      console.log(data);
-    } catch (err) {
-      console.log(err);
     }
+
     setLoading(false);
   };
 
@@ -406,7 +415,7 @@ export default function Slug() {
                 <iframe
                   className="h-full w-full"
                   src={
-                    terminalUrl ||
+                    (foundTerminal && terminalUrl) ||
                     'https://terminal.ctfguide.com/wetty/ssh/root'
                   }
                 ></iframe>

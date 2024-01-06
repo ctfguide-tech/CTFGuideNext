@@ -12,6 +12,7 @@ const styles = {
   h5: { fontSize: '1.4rem' },
   h6: { fontSize: '1.2rem' },
 };
+
 export default function Createchall(props) {
   const pages = [
     {
@@ -62,40 +63,41 @@ export default function Createchall(props) {
   };
 
   const sendToFileApi = async () => {
-    const token = localStorage.getItem('idToken');
     const isValid = await validateNewChallege();
-    if (selectedFile && token && isValid) {
+    if (isValid) {
       try {
-        // const formData = new FormData();
-        // formData.append('file', selectedFile);
-        // formData.append('jwtToken', token);
-        // const response = await fetch(
-        //   `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
-        //   {
-        //     method: 'POST',
-        //     body: formData,
-        //   }
-        // );
-        //
-        // const readableStream = response.body;
-        // const textDecoder = new TextDecoder();
-        // const reader = readableStream.getReader();
-        //
-        // let result = await reader.read();
-        //
-        // let fileId = '';
-        // while (!result.done) {
-        //   fileId = textDecoder.decode(result.value);
-        //   result = await reader.read();
-        // }
-        //
-        // if (response.ok) {
-        //   console.log('File uploaded successfully!');
-        //   await uploadChallenge(fileId);
-        // } else {
-        //   console.error('File upload failed.');
-        // }
-        await uploadChallenge('');
+        if (!selectedFile) {
+          await uploadChallenge('');
+          return;
+        }
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('jwtToken', token);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        const readableStream = response.body;
+        const textDecoder = new TextDecoder();
+        const reader = readableStream.getReader();
+
+        let result = await reader.read();
+        let fileId = '';
+        while (!result.done) {
+          fileId = textDecoder.decode(result.value);
+          result = await reader.read();
+        }
+
+        if (response.ok) {
+          console.log('File uploaded successfully!');
+          await uploadChallenge(fileId);
+        } else {
+          console.error('File upload failed.');
+        }
       } catch (error) {
         console.error('Error during file upload:', error);
       }
@@ -150,15 +152,24 @@ export default function Createchall(props) {
 
   const getChallenge = async (slugName) => {
     try {
+      const token = localStorage.getItem('idToken');
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${slugName}`;
+
       var requestOptions = {
         method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
       };
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${slugName}`,
-        requestOptions
-      );
+
+      const response = await fetch(url, requestOptions);
       const data = await response.json();
-      return data.success;
+
+      if (data.success) {
+        return data.body.exists;
+      } else {
+        return false;
+      }
     } catch (err) {
       console.log(err);
       return false;

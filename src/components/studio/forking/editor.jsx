@@ -38,41 +38,46 @@ const Editor = (props) => {
     return true;
   };
 
+  // This will need to change a little because we may need to send the accociated fileId
+  // to this aswell for asking for a new one
   const sendToFileApi = async () => {
-    const token = localStorage.getItem('idToken');
     const isValid = await validateNewChallege();
-    if (selectedFile && token && isValid) {
+    if (isValid) {
       try {
-        // const formData = new FormData();
-        // formData.append('file', selectedFile);
-        // formData.append('jwtToken', token);
-        // const response = await fetch(
-        //   `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
-        //   {
-        //     method: 'POST',
-        //     body: formData,
-        //   }
-        // );
-        //
-        // const readableStream = response.body;
-        // const textDecoder = new TextDecoder();
-        // const reader = readableStream.getReader();
-        //
-        // let result = await reader.read();
-        //
-        // let fileId = '';
-        // while (!result.done) {
-        //   fileId = textDecoder.decode(result.value);
-        //   result = await reader.read();
-        // }
-        //
-        // if (response.ok) {
-        //   console.log('File uploaded successfully!');
-        //   await uploadChallenge(fileId);
-        // } else {
-        //   console.error('File upload failed.');
-        // }
-        await uploadChallenge('123321');
+        if (!selectedFile) {
+          await uploadChallenge('');
+          return;
+        }
+        const token = localStorage.getItem('idToken');
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('jwtToken', token);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        const readableStream = response.body;
+        const textDecoder = new TextDecoder();
+        const reader = readableStream.getReader();
+
+        let result = await reader.read();
+
+        let fileId = '';
+        while (!result.done) {
+          fileId = textDecoder.decode(result.value);
+          result = await reader.read();
+        }
+
+        if (response.ok) {
+          console.log('File uploaded successfully!');
+          await uploadChallenge(fileId);
+        } else {
+          console.error('File upload failed.');
+        }
       } catch (error) {
         console.error('Error during file upload:', error);
       }
@@ -103,9 +108,11 @@ const Editor = (props) => {
         commands: finalConfig,
         fileId: fileId,
       };
+
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
       const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment`;
       const token = localStorage.getItem('idToken');
+
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -120,8 +127,10 @@ const Editor = (props) => {
           username: localStorage.getItem('username'),
         }),
       };
+
       const response = await fetch(url, requestOptions);
       const data = await response.json();
+
       if (data.success) {
         window.location.reload();
       }
@@ -156,6 +165,7 @@ const Editor = (props) => {
         setExistingConfig(data.body.commands.replace(' && ', '\n'));
         setPenalty(data.body.hintsPenalty);
       }
+
       return true;
     } catch (err) {
       console.log(err);
