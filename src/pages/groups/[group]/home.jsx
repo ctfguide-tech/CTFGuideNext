@@ -13,7 +13,7 @@ export default function GroupDisplay() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(group) {
+    if (group) {
       checkPermissions();
     }
   }, [group]);
@@ -29,7 +29,7 @@ export default function GroupDisplay() {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token,
         },
-        body: JSON.stringify({ classCode: group, uid: userUid}),
+        body: JSON.stringify({ classCode: group, uid: userUid }),
       });
       const res = await response.json();
       if (res.success) {
