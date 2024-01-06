@@ -8,6 +8,8 @@ import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseClientUrl = `localhost:3000`;
+
 const defaultImages = [
   'https://robohash.org/pranavramesh',
   'https://robohash.org/laphatize',
@@ -33,6 +35,7 @@ export default function TeacherView({ uid, group }) {
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
 
   const [viewGradebook, setViewGradebook] = useState(false);
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -74,7 +77,7 @@ export default function TeacherView({ uid, group }) {
       if (data.success) {
         setColor('lightgreen');
         setInviteLink(
-          `localhost:3000/groups/invites/${classroom.classCode}/${data.body}`
+          `${baseClientUrl}/groups/invites/${classroom.classCode}/${data.body}`
         );
       } else {
         setMessage(data.message);

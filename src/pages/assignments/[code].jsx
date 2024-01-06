@@ -11,6 +11,7 @@ export default function Slug() {
   const [flagInput, setFlagInput] = useState('');
   const [submissions, setSubmissions] = useState([]);
   const [solved, setSolved] = useState(null);
+
   const [hints, setHints] = useState([
     { message: '', penalty: '' },
     { message: '', penalty: '' },
@@ -20,6 +21,13 @@ export default function Slug() {
   const [challenge, setChallenge] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [terminalUrl, setTerminalUrl] = useState('');
+  const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState('');
+  const [serviceName, setServiceName] = useState('');
+  const [minutesRemaining, setMinutesRemaining] = useState(-1);
+  const [foundTerminal, setFoundTerminal] = useState(false);
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
@@ -112,9 +120,72 @@ export default function Slug() {
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (data.success) {
         setChallenge(data.body);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const createTerminal = async () => {
+    try {
+      let min = 10000;
+      let max = 99999;
+
+      const code = Math.floor(Math.random() * (max - min + 1)) + min;
+      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
+
+      const body = {
+        jwtToken: localStorage.getItem('idToken'),
+        TerminalGroupName: 'schell-class-session',
+        TerminalID: code,
+        classID: 'psu101',
+        organizationName: 'PSU',
+        userID: localStorage.getItem('username'),
+        slug: challenge.slug,
+      };
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      };
+
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchTerminal = async () => {
+    try {
+      const token = localStorage.getItem('idToken');
+      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
+      const requestOptions = {
+        method: 'GET',
+        redirect: 'follow',
+      };
+
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.length > 0) {
+        const { password, serviceName, url, userName } = data[0];
+        setPassword(password);
+        setServiceName(serviceName);
+        setTerminalUrl(url);
+        setUserName(userName);
+        setFoundTerminal(true);
+      } else {
+        console.log('No termainl... creating a new one');
+        await createTerminal();
       }
     } catch (err) {
       console.log(err);
@@ -127,12 +198,7 @@ export default function Slug() {
     } else if (!challenge) {
       getChallenge();
     }
-    // spin up the terminal
-    // first we get the assignment
-    // then we auth
-    // then fetch submissions if this is teacherview
-    // we need to fetch the file name for "associated files"
-    // on hints pressed make a call to the database to update the analytic that got created when user view challenge
+    // fetchTerminal();
   }, [assignment]);
 
   const checkFlag = () => {
@@ -339,7 +405,10 @@ export default function Slug() {
               <div className="col-span-4 h-60 bg-black px-4">
                 <iframe
                   className="h-full w-full"
-                  src="https://terminal.ctfguide.com/wetty/ssh/root"
+                  src={
+                    terminalUrl ||
+                    'https://terminal.ctfguide.com/wetty/ssh/root'
+                  }
                 ></iframe>
 
                 <p className="mt-6 font-semibold text-white">

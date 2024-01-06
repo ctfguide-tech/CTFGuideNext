@@ -3,8 +3,8 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 
-const Gradebook = () => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const Gradebook = ({ classroomId }) => {
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
 
@@ -27,36 +27,37 @@ const Gradebook = () => {
     }
   };
 
-  useEffect(() => {
-    const params = window.location.href.split('/');
-    const classCode = params[4];
-
-    const getAssignments = async () => {
-      try {
-        var requestOptions = {
-          method: 'GET',
-        };
-        console.log(classCode);
-        const response = await fetch(
-          `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`,
-          requestOptions
-        );
-        const data = await response.json();
-        if (data.success) {
-          setAssignments(data.body.assignments);
-          await getStudentsSubmissionsFinalGrades(data.body.id);
-        } else {
-          console.log(data);
-        }
-      } catch (err) {
-        console.log(err);
+  const getAssignments = async () => {
+    try {
+      const params = window.location.href.split('/');
+      const classCode = params[4];
+      var requestOptions = {
+        method: 'GET',
+      };
+      console.log(classCode);
+      const response = await fetch(
+        `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`,
+        requestOptions
+      );
+      const data = await response.json();
+      if (data.success) {
+        setAssignments(data.body.assignments);
+        await getStudentsSubmissionsFinalGrades(data.body.id);
+      } else {
+        console.log(data);
       }
-    };
-
-    if (classCode) {
-      getAssignments();
+    } catch (err) {
+      console.log(err);
     }
+  };
+
+  useEffect(() => {
+    getAssignments();
   }, []);
+
+  const refresh = () => {
+    getAssignments();
+  };
 
   return (
     <>
@@ -80,7 +81,7 @@ const Gradebook = () => {
         <i className="fa fa-arrow-left" style={{ color: 'white' }}></i> Back
       </button>
       <div
-        className="mt-4 grid grid-cols-6 gap-x-4"
+        className="mt-4 grid grid-cols-4 gap-x-4"
         style={{ backgroundColor: '#333', color: '#fff', margin: '100px' }}
       >
         <div className="col-span-4 rounded-lg bg-neutral-800/50 px-4 py-3 ">
@@ -161,6 +162,16 @@ const Gradebook = () => {
             ))}
           </div>
         </div>
+        <button
+          onClick={refresh}
+          className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+          style={{
+            fontSize: '15px',
+            marginLeft: '100px',
+          }}
+        >
+          Refresh
+        </button>
       </div>
       <Footer />
     </>

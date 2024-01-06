@@ -95,7 +95,7 @@ export default function Createchall(props) {
         // } else {
         //   console.error('File upload failed.');
         // }
-        await uploadChallenge('16');
+        await uploadChallenge('');
       } catch (error) {
         console.error('Error during file upload:', error);
       }
