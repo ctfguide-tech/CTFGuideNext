@@ -61,21 +61,17 @@ const ViewAllAssignments = () => {
         </style>
       </Head>
       <StandardNav />
-      <div className="mx-auto mt-6 flex grid max-w-6xl grid-cols-3 justify-center gap-x-8">
+      <div className="mx-auto mt-6   max-w-6xl  justify-center ">
         <h1 className="mx-auto text-2xl font-semibold text-white">
           Assignments
         </h1>
-      </div>
-
-      <div className="mx-auto mt-10 flex grid max-w-6xl grid-cols-3 justify-center gap-x-8">
-        <div className="text-white">Collumn 1</div>
-
-        <div className="mt-1">
-          <h2 className="mb-4 text-lg font-semibold text-white">
+        <h2 className="mb-4 text-lg font-semibold text-white mt-4">
             Upcoming Assignments
           </h2>
-          {classroom &&
+        
+        {classroom &&
             classroom.assignments &&
+            classroom.assignments.length > 0 ? (
             classroom.assignments
               .filter((assignment) => new Date(assignment.dueDate) > new Date())
               .map((assignment) => (
@@ -129,26 +125,26 @@ const ViewAllAssignments = () => {
                     <span className="ml-0.5"> {assignment.name} </span>
                   </h2>
                   <p className="text-white">
-                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.points}
-                    pts
+                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.points} pts
                   </p>
                 </div>
-              ))}
-        </div>
+              ))
+          ) : (
+            <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white">
+              <h1 className="text-white">No assignments available</h1>
+            </div>
+          )}
 
-        <div className="text-white">Collumn 3</div>
-      </div>
-
-      <div className="mx-auto mt-10 flex grid max-w-6xl grid-cols-3 justify-center gap-x-8">
-        <div className="text-white">Collumn 1</div>
-
-        <div className="mt-1">
+        
+      
+      
           <h2 className="mb-4 text-lg font-semibold text-white">
             Past Assignments
           </h2>
           {/*Make so that subitted assignments are also here*/}
           {classroom &&
             classroom.assignments &&
+            classroom.assignments.length > 0 ? (
             classroom.assignments
               .filter((assignment) => new Date(assignment.dueDate) < new Date())
               .map((assignment) => (
@@ -206,14 +202,18 @@ const ViewAllAssignments = () => {
                     pts
                   </p>
                 </div>
-              ))}
+              ))
+          ) : (
+            <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white">
+              <h1 className="text-white">No assignments available</h1>
+            </div>
+          )}
         </div>
 
-        <div className="text-white">Collumn 3</div>
-      </div>
-
+            
       <Footer />
-    </>
+      </>
+
   );
 };
 
