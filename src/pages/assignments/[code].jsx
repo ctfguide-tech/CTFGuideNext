@@ -288,7 +288,7 @@ export default function Slug() {
   };
 
   const routeToSubmission = (id) => {
-    window.location.replace(`/assignments/${assignment.id}/submissions/${id}`)
+    window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
 
   return (
@@ -410,27 +410,25 @@ export default function Slug() {
                   );
                 })}
               </div>
-                
-              <div className="col-span-4 h-60 bg-black px-4">
-              <div className="hint mb-2 text-gray-400">
-              <span className="font-semibold text-white   ">
-                {' '}
-                <span className="text-blue-500"></span>
-              </span>{' '}
-              Login as{' '}
-              <span className="text-yellow-400">{userName}</span> using
-              the password{' '}
-              <span className="text-yellow-400">{password}</span>
-              <div className="float-right ml-auto flex  cursor-pointer">
-                <span
-                  style={{ cursor: 'pointer' }}
-                  className=" text-gray-300 hover:bg-black"
-                >
-                  Container will stop in: {minutesRemaining} minutes
-                </span>
 
-              </div>
-            </div>
+              <div className="col-span-4 h-60 bg-black px-4">
+                <div className="hint mb-2 text-gray-400">
+                  <span className="font-semibold text-white   ">
+                    {' '}
+                    <span className="text-blue-500"></span>
+                  </span>{' '}
+                  Login as <span className="text-yellow-400">{userName}</span>{' '}
+                  using the password{' '}
+                  <span className="text-yellow-400">{password}</span>
+                  <div className="float-right ml-auto flex  cursor-pointer">
+                    <span
+                      style={{ cursor: 'pointer' }}
+                      className=" text-gray-300 hover:bg-black"
+                    >
+                      Container will stop in: {minutesRemaining} minutes
+                    </span>
+                  </div>
+                </div>
                 <iframe
                   className="h-full w-full"
                   src={
