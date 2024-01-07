@@ -26,6 +26,7 @@ const ViewAllAssignments = () => {
       console.log('Error when getting classroom info');
     }
   };
+
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1;
