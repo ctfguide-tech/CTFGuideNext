@@ -508,7 +508,7 @@ export default function Createchall(props) {
               <div className="bg-neutral-850 mb-10 mt-10 rounded-lg border border-neutral-500 px-4 py-2 text-white">
                 <b>🗒️ A note about file uploads</b>
                 <h1>
-                  Please assume that files are places in the home directory.
+                  Please assume that files are placed in the home directory.
                 </h1>
               </div>
             </div>
