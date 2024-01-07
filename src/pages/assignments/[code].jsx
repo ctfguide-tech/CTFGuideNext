@@ -7,28 +7,28 @@ import { useEffect, useState } from 'react';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function Slug() {
+  // assignment stuff
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
   const [submissions, setSubmissions] = useState([]);
   const [solved, setSolved] = useState(null);
 
+  // challenge stuff
   const [hints, setHints] = useState([
     { message: '', penalty: '' },
     { message: '', penalty: '' },
     { message: '', penalty: '' },
   ]);
-
   const [challenge, setChallenge] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // terminal stuff
   const [terminalUrl, setTerminalUrl] = useState('');
-
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
-
   const [foundTerminal, setFoundTerminal] = useState(false);
 
   const parseDate = (dateString) => {
@@ -290,6 +290,8 @@ export default function Slug() {
   const routeToSubmission = (id) => {
     window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
+
+  console.log(submissions);
 
   return (
     <>
