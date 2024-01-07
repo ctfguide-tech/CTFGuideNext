@@ -266,7 +266,7 @@ export default function TeacherView({ group }) {
                 }}
                 className="rounded-lg bg-blue-600/80 px-4 py-2 text-white hover:bg-blue-600/50"
               >
-                <i className="fas fa-plus-circle"></i> Create Assignment
+                <i className="fas fa-plus-circle pe-2"></i> Create Assignment
               </button>
             </div>
           </div>
@@ -456,8 +456,7 @@ export default function TeacherView({ group }) {
             <div className="col-span-2   px-4 py-3">
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
-                {classroom &&
-                  classroom.assignments &&
+                {classroom && classroom.assignments && classroom.assignments.length > 0 ? (
                   classroom.assignments.map((assignment) => (
                     <div
                       key={assignment.id}
@@ -507,12 +506,15 @@ export default function TeacherView({ group }) {
 
                         <span className="ml-0.5"> {assignment.name} </span>
                       </h2>
-                      <p className="text-white">
-                        Due: {parseDate(assignment.dueDate)}{' '}
-                      </p>
+                      <p className="text-white">Due: {parseDate(assignment.dueDate)} </p>
                     </div>
-                  ))}
-
+                  ))
+                ) : (
+                  <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white">
+                    <h1 className='text-lg pe-6'>No assignments here yet</h1>
+                    <h2 className='text-sm pe-6'>Create an assignment with the button above!</h2>
+                    </div>
+                )}
                 <button className="text-sm float-right rounded-sm bg-neutral-900  py-1 text-white" onClick = {() => {
                   window.location.href = `../groups/view-all-assignments`
                 }}>

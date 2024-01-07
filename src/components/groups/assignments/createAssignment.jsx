@@ -428,7 +428,7 @@ export default function CreateGroup(props) {
                   className="mt-4  rounded-lg bg-blue-700 px-5 py-1 text-xl text-white hover:bg-blue-600/50"
                 >
                   {' '}
-                  continue
+                  Continue
                 </button>
                 <br></br>
                 <br></br>
