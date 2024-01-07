@@ -28,7 +28,7 @@ export default function Createchall(props) {
       name: 'Challenge Creation',
       href: './',
       current: true,
-      click: () => {},
+      click: () => { },
     },
   ];
   const [contentPreview, setContentPreview] = useState('');
@@ -612,7 +612,18 @@ export default function Createchall(props) {
           </div>
         </div>
       </main>
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );

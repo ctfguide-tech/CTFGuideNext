@@ -20,7 +20,7 @@ const ChallengeSelectView = ({ updateChallenge }) => {
         <div >
             <h1 className="  text-3xl  text-white"
 > Select a challenge to fork</h1>
-            <div className=' grid grid-cols-4 text-left mt-4    '>
+            <div className=' grid grid-cols-4 text-left mt-4  gap-x-4  gap-y-4  '>
 
                 {Array.isArray(challenges) && challenges.map((challenge, index) => (
                     <Challenge key={index} data={challenge} updateData={updateChallenge} />

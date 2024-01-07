@@ -10,6 +10,10 @@ import { Menu } from '@headlessui/react';
 import ForkChallenge from './fork-challenge';
 import CreateChallenge from './create-challenge';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 export default function CreateGroup(props) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [open, setOpen] = useState(false);
@@ -29,35 +33,47 @@ export default function CreateGroup(props) {
   const [errMessage, setErrMessage] = useState([]);
 
   const validateForm = () => {
+    if(!toast.isToastActive){
     let errorList = [];
     if (!dueDate) {
       errorList.push('Invalid due date');
+      toast.error('Invalid due date');
     }
     if (!time) {
       errorList.push('Invalid Time');
+      toast.error('Invalid Time');
     }
     if (!selectedOption) {
       errorList.push('Please select a challenge option');
+      toast.error('Please select a challenge option');
     }
     if (!selectedCategory) {
       errorList.push('Please select a category');
+      toast.error('Please select a category');
     }
     if (!assignmentPoints < 0) {
       errorList.push('Points value cant be less than 0');
+      toast.error('Points value cant be less than 0');
     }
     if (!title) {
       errorList.push('Invalid title');
+      toast.error('Invalid title');
     }
+    /*
     if (new Date() > new Date(dueDate)) {
+      console.log(`Date:  ${new Date(dueDate)} `);
       errorList.push('Due date is in the past');
     }
+    */
     if (latePenalty === '') {
       errorList.push('Enter late penalty');
+      toast.error('Enter late penalty');
     }
     setErrMessage(errorList);
     if (errorList.length > 0) {
       return false;
     } else return true;
+  };
   };
 
   const onSubmit = async () => {
@@ -228,9 +244,8 @@ export default function CreateGroup(props) {
                                       {({ active }) => (
                                         <a
                                           href="#"
-                                          className={`${
-                                            active ? '' : ''
-                                          } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
+                                          className={`${active ? '' : ''
+                                            } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
                                           onClick={() =>
                                             setSelectedCategory('Test')
                                           }
@@ -243,9 +258,8 @@ export default function CreateGroup(props) {
                                       {({ active }) => (
                                         <a
                                           href="#"
-                                          className={`${
-                                            active ? '' : ''
-                                          } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
+                                          className={`${active ? '' : ''
+                                            } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
                                           onClick={() =>
                                             setSelectedCategory('Quiz')
                                           }
@@ -258,9 +272,8 @@ export default function CreateGroup(props) {
                                       {({ active }) => (
                                         <a
                                           href="#"
-                                          className={`${
-                                            active ? '' : ''
-                                          } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
+                                          className={`${active ? '' : ''
+                                            } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
                                           onClick={() =>
                                             setSelectedCategory('Homework')
                                           }
@@ -273,9 +286,8 @@ export default function CreateGroup(props) {
                                       {({ active }) => (
                                         <a
                                           href="#"
-                                          className={`${
-                                            active ? '' : ''
-                                          } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
+                                          className={`${active ? '' : ''
+                                            } group  flex items-center bg-neutral-800 px-4 py-2 text-sm text-white hover:bg-neutral-900`}
                                           onClick={() =>
                                             setSelectedCategory('Assessment')
                                           }
@@ -318,11 +330,10 @@ export default function CreateGroup(props) {
                 <h1 className="mt-10 text-sm text-white">Assignment Type</h1>
                 <div className="grid-row-1 mt-2 grid grid-cols-3 gap-4 gap-x-4 text-white ">
                   <div
-                    className={`cursor-pointer bg-neutral-800 px-2 py-2 text-center ${
-                      selectedOption === 'existingChallenge'
+                    className={`cursor-pointer bg-neutral-800 px-2 py-2 text-center ${selectedOption === 'existingChallenge'
                         ? 'border-2 border-blue-600'
                         : 'border-2 border-neutral-800 hover:border-neutral-900 hover:bg-neutral-900'
-                    }`}
+                      }`}
                     onClick={() => {
                       setSelectedOption('existingChallenge');
                     }}
@@ -337,11 +348,10 @@ export default function CreateGroup(props) {
                     </h1>
                   </div>
                   <div
-                    className={`cursor-pointer bg-neutral-800 px-2 py-2 text-center ${
-                      selectedOption === 'customChallenge'
+                    className={`cursor-pointer bg-neutral-800 px-2 py-2 text-center ${selectedOption === 'customChallenge'
                         ? 'border-2 border-blue-600'
                         : 'border-2 border-neutral-800 hover:border-neutral-900 hover:bg-neutral-900'
-                    }`}
+                      }`}
                     onClick={() => {
                       setSelectedOption('customChallenge');
                     }}
@@ -355,7 +365,7 @@ export default function CreateGroup(props) {
                   </div>
                   <div
                     className={`bg-neutral-900 px-2 py-2 text-center`}
-                    // onClick={() => setSelectedOption('dynamicLab')}
+                  // onClick={() => setSelectedOption('dynamicLab')}
                   >
                     <i className="fas fa-robot text-3xl text-green-500"></i>
                     <h1 className="text-lg font-semibold">
@@ -432,11 +442,15 @@ export default function CreateGroup(props) {
                 </button>
                 <br></br>
                 <br></br>
+                {
+                  /*
                 {errMessage.map((err, idx) => (
                   <div key={idx} style={{ color: 'red' }}>
                     {err}
                   </div>
                 ))}
+                */
+                } 
               </div>
             </div>
           </div>
@@ -513,7 +527,18 @@ export default function CreateGroup(props) {
           </Transition.Root>
         </div>
       </div>
-
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );

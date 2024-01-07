@@ -80,7 +80,7 @@ const ViewAllAssignments = () => {
                   onClick={() => {
                     window.location.href = '/assignments/' + assignment.id;
                   }}
-                  className="mb-2 cursor-pointer rounded-sm border-l-4 border-gray-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
+                  className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
                 >
                   {/* Make assignment box look pretty */}
                   <h2 className="text-md text-white">
