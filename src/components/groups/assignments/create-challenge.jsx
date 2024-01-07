@@ -4,6 +4,9 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const styles = {
   h1: { fontSize: '2.4rem' },
   h2: { fontSize: '2rem' },
@@ -49,6 +52,16 @@ export default function Createchall(props) {
   const validateNewChallege = async () => {
     for (const p of penalty) {
       if (p > 0) {
+        toast.warn('Please enter negative values for points', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        });
         setPenaltyErr("Can't have a positive value for penalties");
         return false;
       }
@@ -57,6 +70,16 @@ export default function Createchall(props) {
     const nameExists = await getChallenge(newChallengeName);
     if (nameExists) {
       setErrMessage('Challenge name already exists, please change the name');
+      toast.warn('Challenge name already exists', {
+        position: 'bottom-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
       return false;
     }
     return true;
@@ -70,6 +93,7 @@ export default function Createchall(props) {
           await uploadChallenge('');
           return;
         }
+        const token = localStorage.getItem('idToken');
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('jwtToken', token);
@@ -143,6 +167,16 @@ export default function Createchall(props) {
       const data = await response.json();
 
       if (data.success) {
+        toast.success('Assignment Created', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        });
         window.location.reload();
       }
     } catch (err) {
@@ -165,6 +199,8 @@ export default function Createchall(props) {
       const response = await fetch(url, requestOptions);
       const data = await response.json();
 
+      console.log(data);
+
       if (data.success) {
         return data.body.exists;
       } else {
@@ -182,9 +218,19 @@ export default function Createchall(props) {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+    console.log(event.target.files[0]);
+    toast.success(`Successfully uploaded ${event.target.files[0].name}`, {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
   };
 
-  console.log(newConfig);
   return (
     <>
       <Head>
@@ -566,6 +612,7 @@ export default function Createchall(props) {
           </div>
         </div>
       </main>
+      <ToastContainer />
       <Footer />
     </>
   );

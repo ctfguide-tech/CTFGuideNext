@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
-
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
   {
@@ -63,6 +62,7 @@ export default function Createchall() {
     const isValid = await validateNewChallege();
     if (isValid) {
       try {
+        const token = localStorage.getItem('idToken');
         if (!selectedFile) {
           await uploadChallenge('');
           return;
@@ -141,7 +141,7 @@ export default function Createchall() {
       console.log(data);
 
       if (data.success) {
-        window.location.reload();
+        window.location.href = '/create/new';
       }
     } catch (err) {
       console.log(err);
