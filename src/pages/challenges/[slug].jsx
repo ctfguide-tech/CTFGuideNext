@@ -38,9 +38,17 @@ export default function Challenge() {
     NO_PLACE,
     NO_PLACE,
   ]);
+
   const [award, setAward] = useState('');
   const [terminalUsername, setTerminalUsername] = useState('...');
   const [terminalPassword, setTerminalPassword] = useState('...');
+
+  const [terminalUrl, setTerminalUrl] = useState('');
+  const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState('');
+  const [serviceName, setServiceName] = useState('');
+  const [minutesRemaining, setMinutesRemaining] = useState(-1);
+  const [foundTerminal, setFoundTerminal] = useState(false);
 
   const [difficulty, setDifficulty] = useState('');
   const [alreadySolved, setAlreadySolved] = useState(false);
@@ -91,137 +99,119 @@ export default function Challenge() {
     susername: 'Loading...',
     spassword: 'Loading...',
   });
-  const fetchActiveTerminals = async () => {
-    var raw = '';
 
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
+  const getTerminalStatus = async (id) => {
+    console.log('getting terminal status');
+    if (!foundTerminal) {
+      const username = localStorage.getItem('username');
+      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
+      const response = await fetch(url, { method: 'GET' });
 
-    fetch(
-      `${
-        process.env.NEXT_PUBLIC_TERM_URL
-      }Terminal/getAllUserTerminals?jwtToken=${localStorage.getItem(
-        'idToken'
-      )}`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
+      console.log(response);
 
-        // handle if empty array
-        if (result.length == 0) {
-          try {
-            //      window.alert("no terminals found")
-            fetchTerminalData();
-          } catch (err) {
-            console.log(err);
-            setTerminalUsername('Something went wrong.');
-            setTerminalPassword('Something went wrong.');
-          }
-        } else {
-          setTerminalUsername(result[0].userName);
-          setTerminalPassword(result[0].password);
-
-          setTimeout(function () {
-            document.getElementById('termurl').classList.remove('absolute');
-
-            document.getElementById('termurl').classList.remove('opacity-0');
-            document.getElementById('terminalLoader').classList.add('hidden');
-            //window.alert(               JSON.stringify(result[0])                        )
-            document.getElementById('termurl').src = result[0].url;
-          }, 15000);
-
-          document.getElementById('timer').innerText =
-            result[0].minutesRemaining + ' minutes';
-          let minutes = result[0].minutesRemaining;
-          setInterval(function () {
-            // drop minutes
-            if (minutes == 0) {
-              window.alert(
-                'Your terminal session has expired. Please refresh the page to start a new session.'
-              );
-              window.location.reload();
-            }
-            minutes = minutes - 1;
-            document.getElementById('timer').innerText = minutes + ' minutes';
-          }, 60000);
-        }
-      })
-      .catch((error) => console.log('error', error));
-
-    // send request
-  };
-  const fetchTerminalData = async () => {
-    try {
-      console.log(
-        '[debug] Creating new container session because nothing was found.'
-      );
-      var myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-      // random 4 digit number
-      let code = Math.floor(Math.random() * 9000) + 1000;
-
-      // create a secure random password
-      var password = '';
-      var possible =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-      for (var i = 0; i < 10; i++)
-        password += possible.charAt(
-          Math.floor(Math.random() * possible.length)
-        );
-
-      fileurl =
-        'https://file-system-run-qi6ms4rtoa-ue.a.run.app/files/info.zip?id=2222';
-      console.log('Injecting file: ' + fileurl);
-
-      var raw = JSON.stringify({
-        jwtToken: localStorage.getItem('idToken'),
-        TerminalGroupName: 'school-class-session', // temp
-        TerminalID: `${code}`,
-        classID: 'psu58102', // temp
-        dockerLocation: 'ctf_base_wetty_terminal', // temp
-        maxCpuLimit: '500m', // temp
-        maxMemoryLimit: '512Mi', // temp
-        minCpuLimit: '250m', // temp
-        minMemoryLimit: '256Mi', // temp
-        terminalUsername: localStorage.getItem('username'),
-        organizationName: 'PSU', // temp
-        terminalPassword: '',
-        userID: localStorage.getItem('username'),
-      });
-
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow',
-      };
-
-      fetch(
-        process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal',
-        requestOptions
-      )
-        .then((response) => {
-          response.json();
-        })
-        .then((result) => {
-          setTimeout(() => {
-            // fetchActiveTerminals();
-          }, 2000);
-        })
-        .catch((error) => console.log('error', error));
-    } catch (err) {
-      console.log(err);
-      setTerminalUsername('Something went wrong.');
-      setTerminalPassword('Something went wrong.');
+      if (response.ok) {
+        setFoundTerminal(true);
+        console.log('The terminal is now ready');
+        document.getElementById('termurl').classList.remove('absolute');
+        document.getElementById('termurl').classList.remove('opacity-0');
+        document.getElementById('terminalLoader').classList.add('hidden');
+      } else {
+        setTimeout(() => {
+          getTerminalStatus(id);
+        }, 3000);
+      }
     }
   };
 
-  const fetchData = async () => {
+  const fetchTerminal = async () => {
+    try {
+      console.log('fetching terminal');
+      const token = localStorage.getItem('idToken');
+      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
+      const requestOptions = {
+        method: 'GET',
+        redirect: 'follow',
+      };
+
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.length > 0) {
+        const { password, serviceName, url, userName, minutesRemaining, id } =
+          data[0];
+
+        setServiceName(serviceName);
+        setTerminalUrl(url);
+        setTerminalUsername(userName);
+        setTerminalPassword(password);
+        setMinutesRemaining(minutesRemaining);
+
+        document.getElementById('timer').innerText =
+          minutesRemaining + ' minutes';
+        let minutes = minutesRemaining;
+
+        setInterval(function () {
+          // drop minutes
+          if (minutes == 0) {
+            window.alert(
+              'Your terminal session has expired. Please refresh the page to start a new session.'
+            );
+            window.location.reload();
+          }
+          minutes = minutes - 1;
+          document.getElementById('timer').innerText = minutes + ' minutes';
+        }, 60000);
+
+        getTerminalStatus(id);
+      } else {
+        console.log('No termainl... creating a new one');
+        createTerminal();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log(terminalUrl);
+
+  const createTerminal = async () => {
+    try {
+      let min = 1000;
+      let max = 9999;
+
+      const code = Math.floor(Math.random() * (max - min + 1)) + min;
+      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
+
+      const body = {
+        jwtToken: localStorage.getItem('idToken'),
+        TerminalGroupName: 'schell-class-session',
+        TerminalID: code,
+        classID: 'psu101',
+        organizationName: 'PSU',
+        userID: localStorage.getItem('username'),
+        slug: slug,
+      };
+
+      console.log(body);
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      };
+
+      const response = await fetch(url, requestOptions);
+      if (response.ok) {
+        fetchTerminal();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getChallengeData = async () => {
     try {
       const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug;
       const requestOptions = {
@@ -241,8 +231,6 @@ export default function Challenge() {
       availableHints.forEach((hint, index) => {
         updateHintMessage(hint, index);
       });
-
-      await fetchActiveTerminals();
     } catch (err) {
       console.log(err);
     }
@@ -270,19 +258,20 @@ export default function Challenge() {
 
   useEffect(() => {
     if (slug) {
-      fetchLeaderboard();
-      fetchComments();
-      if (challenge.upvotes) {
-        setLikeCount(challenge.upvotes);
-      }
+      // fetchLeaderboard();
+      // fetchComments();
+      // if (challenge.upvotes) {
+      //   setLikeCount(challenge.upvotes);
+      // }
       // fetchLikeUrl();
-      fetchData();
-      const award = localStorage.getItem('award');
-      if (award) {
-        setAward(award);
-      }
+      getChallengeData();
+      fetchTerminal();
     }
-  }, []);
+    const award = localStorage.getItem('award');
+    if (award) {
+      setAward(award);
+    }
+  }, [slug]);
 
   // console.log(challenge);
 
@@ -817,6 +806,7 @@ export default function Challenge() {
               className="absolute w-full bg-white opacity-0"
               height="500"
               id="termurl"
+              src={foundTerminal ? terminalUrl : ''}
             ></iframe>
           </div>
           <div className="mt-10  rounded-lg px-5 pb-20">
