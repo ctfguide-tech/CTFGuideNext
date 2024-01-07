@@ -6,6 +6,7 @@ import { app } from '../../config/firebaseConfig.js';
 import Markdown from 'react-markdown';
 
 // Kshitij
+import { Tooltip } from 'react-tooltip'
 
 import 'firebase/storage';
 import Head from 'next/head';
@@ -58,9 +59,13 @@ export default function Users() {
 
 
     const [openBio, setOpenBio] = useState(false);
-    const [banner, bannerState] = useState(false);
+    const [bioBanner, bannerState] = useState(false);
     const [badges, setbadges] = useState([]);
 
+
+    const [selectedBanner, setSelectedBanner] = useState(null);
+    const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
+    const [banner, setBanner] = useState('https://images.unsplash.com/photo-1500964757637-c85e8a162699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3903&q=80');
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -158,22 +163,99 @@ export default function Users() {
         }
     }
 
+    const handleBannerChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedBanner(file);
+    }
 
-    useEffect(() => {
-        if (!user) {
+
+    const handleBannerSave = async () => {
+        if (!selectedBanner) {
+            console.log("No image selected");
+            setIsBannerPopupOpen(false)
             return;
         }
 
-        const fetchPfp = async () => {
-            try {
+
+        // upload to firebase storage
+        try {
+            const storage = getStorage();
+            const metadata = {
+                contentType: 'image/jpeg',
+            };
 
 
-            } catch {
+            const storageRef = ref(storage, `${userData.email}/pictures/banner`);
+            const uploadTask = uploadBytesResumable(storageRef, selectedImage, metadata)
 
 
-            }
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // progress function
+                    const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused');
+                            break;
+                        case 'running':
+                            console.log('Upload is running');
+                            break;
+                    }
+                },
+                (error) => {
+                    switch (error.code) {
+                        case 'storage/unauthorized':
+                            console.log('User does not have permission to access the object');
+                            break;
+                        case 'storage/canceled':
+                            console.log('User canceled the upload');
+                            break;
+                        case 'storage/unknown':
+                            console.log('Unknown error occurred, inspect error.serverResponse');
+                            break;
+                    }
+                },
+                async () => {
+                    const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
+
+
+                    console.log(imageUrl)
+
+
+                    const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/updateBanner';
+                    const requestOptions = {
+                        method: 'POST', headers: {
+                            'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                        },
+                        body: JSON.stringify({ imageUrl }),
+                    };
+                    const response = await fetch(endPoint, requestOptions);
+                    const result = await response.json();
+
+
+                    console.log(result)
+
+
+                    if (response.ok) {
+                        console.log("profile picture uploaded successfully");
+                    } else {
+                        console.log("Failed to upload profile picture");
+                    }
+                    window.location.reload();
+                }
+            );
+            setIsBannerPopupOpen(false);
+
+
+        } catch (err) {
+            console.log(err);
+            console.log("An error occured while uploading profile picture");
         }
-    })
+    }
+
+
+
 
 
     // Friend useEffect
@@ -408,12 +490,8 @@ export default function Users() {
                 const result = await response.json();
 
                 if (result) {
-
                     setPfp(result)
                 }
-
-
-
 
             } catch (err) {
                 console.log('failed to get profile picture')
@@ -518,8 +596,6 @@ export default function Users() {
     }
 
 
-
-
     const handlePopupOpen = () => {
         setIsPopupOpen(true);
     }
@@ -529,23 +605,48 @@ export default function Users() {
         setIsPopupOpen(false);
     }
 
+    //  // get user's profile picture
+    //  useEffect(() => {
+    //     if (!user) {
+    //         return;
+    //     }
+    //     const fetchData = async () => {
+    //         try {
+    //             const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/pfp';
+    //             const requestOptions = {
+    //                 method: 'GET', headers: {
+    //                     'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+    //                 },
+    //             };
+    //             const response = await fetch(endPoint, requestOptions);
+    //             const result = await response.json();
+
+    //             if (result) {
+    //                 setPfp(result)
+    //             }
+
+    //         } catch (err) {
+    //             console.log('failed to get profile picture')
+    //         }
+    //     };
+    //     fetchData();
+    // }, [user]);
+
+    const handleBannerPopupOpen = () => {
+        setIsBannerPopupOpen(true);
+    }
+
+
+    const handleBannerPopupClose = () => {
+        setIsBannerPopupOpen(false);
+    }
 
     const handleClick = () => {
 
-
     }
 
 
-    const handleDrop = () => {
 
-
-    }
-
-
-    const handleDragOver = () => {
-
-
-    }
 
 
 
@@ -683,18 +784,141 @@ export default function Users() {
                     </Transition.Root>
                 }
 
+                {/* BANNER POP-UP */}
+                {ownUser &&
+                    <Transition.Root show={isBannerPopupOpen} as={Fragment}>
+                        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={handlePopupClose}>
+
+
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                            >
+                                <div onClick={() => {
+                                    handleBannerPopupClose()
+                                    localStorage.setItem("22-18-update", false)
+                                }}
+                                    className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
+                            </Transition.Child>
+                            <div className="flex items-end justify-center min-h-screen pt-4 px-4 text-center sm:block sm:p-0">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                >
+                                    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="max-w-6xl relative inline-block align-bottom w-5/6 pb-10 pt-10 bg-gray-900 border border-gray-700 rounded-lg px-20 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
+                                        <div>
+                                            <div className="mt-3 sm:mt-5">
+                                                <h1 className="text-white text-4xl text-center pb-10">Change Banner</h1>
+                                                <div className="grid grid-rows-2 flex justify-center items-center">
+                                                    <div className="h-80 w-full flex-1 items-center justify-center">
+                                                        <img
+                                                            className="mt-10 h-40 w-full border border-neutral-600 lg:h-30 sm:w-full"
+                                                            src={banner}
+                                                            alt=""
+                                                        />
+                                                        <h1 className="text-white text-xl text-center font-bold mt-4">
+                                                            Current Banner
+                                                        </h1>
+                                                    </div>
+                                                    {/* INPUT BOX */}
+                                                    <div
+                                                        className="h-72 w-80 border border-neutral-800 mx-60 relative rounded-lg p-4 text-center cursor-pointer flex items-center justify-center"
+                                                        onClick={handleClick}
+                                                        onDrop={handleImageChange}
+                                                        onDragOver={handleImageChange}
+                                                    >
+                                                        <label htmlFor="profileImageInput">
+                                                            {selectedImage ? (
+                                                                <div>
+                                                                    <img
+                                                                        src={URL.createObjectURL(selectedImage)}
+                                                                        alt="Selected Profile Picture"
+                                                                        className="mx-auto h-48 w-48 object-cover rounded-full"
+                                                                    />
+                                                                    <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
+                                                                        New Banner
+                                                                    </h1>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="">
+                                                                    <svg
+                                                                        className="mx-auto h-12 w-12 text-gray-400"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        viewBox="0 0 24 24"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            strokeWidth="2"
+                                                                            d="M12 4v16m8-8H4"
+                                                                        />
+                                                                    </svg>
+                                                                    <p className="mt-5 text-sm text-gray-600">Click here or Drag an Image!</p>
+                                                                </div>
+                                                            )}
+                                                        </label>
+                                                    </div>
+                                                    <input
+                                                        className="hidden"
+                                                        type="file"
+                                                        id="profileImageInput"
+                                                        onChange={handleImageChange}
+                                                        accept="image/*"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-2 pt-5">
+                                                    <div className="flex items-center justify-end">
+                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-neutral-800 hover:text-neutral-500"
+                                                            onClick={handleBannerPopupClose}>Close
+                                                        </button>
+                                                    </div>
+                                                    <div className="flex items-center justify-start">
+                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-green-900 hover:text-neutral-500"
+                                                            onClick={handleSaveChanges}>Save
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Transition.Child>
+                            </div>
+                        </Dialog>
+                    </Transition.Root>
+                }
+
 
                 {/* BANNER */}
                 <div
-                    style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1500964757637-c85e8a162699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3903&q=80")' }}
-                    className="h-40 w-full object-cover lg:h-30"
+                    style={{ backgroundSize: "cover", backgroundImage: `url(${banner})` }}
+                    className="h-40 w-full object-cover lg:h-40"
                     alt=""
                 >
+                    <div className="bottom-0 p-2">
+                        <button className="ml-3" onClick={handleBannerPopupOpen}
+                            data-tooltip-id="change-banner"
+                            data-tooltip-content="Change Banner"
+                            data-tooltip-place="bottom-end">
+                            <Tooltip id="change-banner" />
+                            <i class="text-2xl text-neutral-700 hover:text-gray-400 fas fa-pen-square"></i>{' '}
+                        </button>
+                    </div>
                 </div>
                 {/* NAME CARD */}
                 <div className="mx-auto max-w-7xl   border border-neutral-900">
 
-                    <div className="-mt-16 mb-2 mx-auto max-w-6xl">
+                    <div className=" -mt-16 mb-2 mx-auto max-w-6xl">
                         <div className="flex ">
                             {/* Profile Picture */}
                             <div className="flex">
@@ -717,7 +941,7 @@ export default function Users() {
                                     )}
                             </div>
 
-                            <div className="pt-6 -ml-7 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
+                            <div className="pt-6 -ml-3 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                                 <div className="ml-8 w-32 flex-auto md:block">
                                     <div className="flex flex-col mt-14">
                                         {/* TOP LINE */}
@@ -730,9 +954,14 @@ export default function Users() {
                                             <h1 className="ml-2 truncate text-3xl font-bold text-blue-600">
                                                 #12
                                             </h1>
-                                            <button className="ml-3 text-xl text-white hover:text-gray-400">
-                                                <i class="fas fa-solid fa-user-plus"></i>{' '}
+                                            <button className="ml-3"
+                                                data-tooltip-id="friend-user"
+                                                data-tooltip-content="Add Friend"
+                                                data-tooltip-place="top">
+                                                <i class="text-xl text-white hover:text-gray-400 fas fa-solid fa-user-plus"></i>{' '}
+                                                <Tooltip id="friend-user"/>
                                             </button>
+                                            
                                         </div>
 
                                         {/* BOTTOM LINE */}
@@ -1026,6 +1255,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Challenge Uno</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-green-600">Easy</h1>
                                                     </div>
                                                 </div>
@@ -1053,6 +1286,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Hello</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-red-600">Hard</h1>
                                                     </div>
                                                 </div>
@@ -1080,6 +1317,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">1 + 1</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-blue-600">Beginner</h1>
                                                     </div>
                                                 </div>
@@ -1107,6 +1348,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Solve World Hunger</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-purple-400">INSANE</h1>
                                                     </div>
                                                 </div>
@@ -1134,6 +1379,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">P = NP</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-pink-200">IMPOSSIBLE</h1>
                                                     </div>
                                                 </div>
@@ -1161,6 +1410,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">CTF</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-orange-600">Medium</h1>
                                                     </div>
                                                 </div>
@@ -1186,7 +1439,7 @@ export default function Users() {
                                     <div className="bg-green-600 rounded-md">
                                         <div className="ml-1 relative isolate overflow-hidden rounded-md bg-neutral-900 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
                                             <div className="relative mx-auto max-w-7xl px-5">
-                                            <div
+                                                <div
                                                     className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                                                     aria-hidden="true"
                                                 >
@@ -1202,6 +1455,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Challenge 1</h1>
                                                         <h1 className="text-xl text-white">Creator: Kshitij</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-green-600">Easy</h1>
                                                     </div>
                                                 </div>
@@ -1213,7 +1470,7 @@ export default function Users() {
                                     <div className="bg-red-600 rounded-md mx-2">
                                         <div className=" ml-1 relative isolate overflow-hidden rounded-md bg-neutral-900 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
                                             <div className="relative mx-auto max-w-7xl px-5">
-                                            <div
+                                                <div
                                                     className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                                                     aria-hidden="true"
                                                 >
@@ -1229,6 +1486,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Challenge 2</h1>
                                                         <h1 className="text-xl text-white">Creator: Pranav</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-red-600">Hard</h1>
                                                     </div>
                                                 </div>
@@ -1240,7 +1501,7 @@ export default function Users() {
                                     <div className="bg-blue-600 rounded-md">
                                         <div className=" ml-1 relative isolate overflow-hidden rounded-md bg-neutral-900 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
                                             <div className="relative mx-auto max-w-7xl px-5">
-                                            <div
+                                                <div
                                                     className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                                                     aria-hidden="true"
                                                 >
@@ -1256,6 +1517,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Challenge 3</h1>
                                                         <h1 className="text-xl text-white">Creator: Abhi</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-blue-600">Beginner</h1>
                                                     </div>
                                                 </div>
@@ -1267,7 +1532,7 @@ export default function Users() {
                                     <div className="bg-purple-400 rounded-md my-2">
                                         <div className=" ml-1 relative isolate overflow-hidden rounded-md bg-black/10 bg-neutral-900 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
                                             <div className="relative mx-auto max-w-7xl px-5">
-                                            <div
+                                                <div
                                                     className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                                                     aria-hidden="true"
                                                 >
@@ -1283,6 +1548,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Challenge 4</h1>
                                                         <h1 className="text-xl text-white">Creator: Scratch</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-purple-400">INSANE</h1>
                                                     </div>
                                                 </div>
@@ -1294,7 +1563,7 @@ export default function Users() {
                                     <div className="bg-pink-200 rounded-md mx-2 my-2">
                                         <div className=" ml-1 relative isolate overflow-hidden rounded-md bg-black/10 bg-neutral-900 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
                                             <div className="relative mx-auto max-w-7xl px-5">
-                                            <div
+                                                <div
                                                     className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                                                     aria-hidden="true"
                                                 >
@@ -1310,6 +1579,10 @@ export default function Users() {
                                                     <div className="mt-4 text-lg leading-8 text-gray-300">
                                                         <h1 className="text-2xl font-semibold text-white">Challenge 5</h1>
                                                         <h1 className="text-xl text-white">Creator: Staz</h1>
+                                                        <p className="text-white font-bold text-lg ">
+                                                            <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
+                                                            1.2k
+                                                        </p>
                                                         <h1 className="text-xl font-bold text-pink-200">IMPOSSIBLE</h1>
                                                     </div>
                                                 </div>
@@ -1319,9 +1592,9 @@ export default function Users() {
 
 
                                     <div className="bg-orange-600 rounded-md my-2">
-                                        <div className="relative isolate overflow-hidden rounded-md bg-black/10 bg-neutral-900 pt-1 pb-5 ring-1 ring-white/10 hover:ring-neutral-600">
-                                            <div className="relative mx-auto max-w-7xl px-5">
-                                            <div
+                                        <div className="flex items-center relative isolate overflow-hidden rounded-md bg-black/10 bg-neutral-900 h-full pt-1 pb- ring-1 ring-white/10 hover:ring-neutral-600">
+                                            <div className="relative mx-auto px-5">
+                                                <div
                                                     className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                                                     aria-hidden="true"
                                                 >
@@ -1333,11 +1606,11 @@ export default function Users() {
                                                         }}
                                                     />
                                                 </div>
-                                                <div className="mx-auto lg:mx-0 lg:max-w-3xl">
-                                                    <div className="flex justify-center mt-4 text-lg leading-8 text-gray-300">
+                                                <div className=" mx-auto lg:mx-0 lg:max-w-3xl">
+                                                    <div className="flex justify-center  text-lg leading-8 text-gray-300">
                                                         <h1 className="text-3xl text-white">View All Pinned Challenges </h1>
                                                         <p className="mr-8 flex items-center justify-center text-white text-5xl">
-                                                            <i class="fas fa-solid fa-arrow-right"></i>
+                                                            <i class="fas fa-solid fa-chevron-right"></i>
 
                                                         </p>
 
@@ -1367,7 +1640,7 @@ export default function Users() {
             </main >
             <Footer />
             {
-                banner && (
+                bioBanner && (
                     <div
                         style={{ backgroundColor: '#212121' }}
                         id="savebanner"
