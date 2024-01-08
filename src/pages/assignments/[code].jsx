@@ -144,8 +144,9 @@ export default function Slug() {
 
   const createTerminal = async () => {
     try {
-      let min = 10000;
-      let max = 99999;
+      console.log('Creating a terminal');
+      let min = 1000;
+      let max = 9999;
 
       const code = Math.floor(Math.random() * (max - min + 1)) + min;
       const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
@@ -167,9 +168,9 @@ export default function Slug() {
       };
 
       const response = await fetch(url, requestOptions);
-      const data = await response.json();
+      console.log(response);
 
-      console.log(data);
+      fetchTerminal();
     } catch (err) {
       console.log(err);
     }
@@ -177,6 +178,7 @@ export default function Slug() {
 
   const fetchTerminal = async () => {
     try {
+      console.log('Fetching a terminal');
       const token = localStorage.getItem('idToken');
       const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
       const requestOptions = {
@@ -210,6 +212,7 @@ export default function Slug() {
   };
 
   const getTerminalStatus = async (id) => {
+    console.log('Getting terminal status');
     if (!foundTerminal) {
       const username = localStorage.getItem('username');
       const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
@@ -230,9 +233,13 @@ export default function Slug() {
     } else if (!challenge) {
       getChallenge();
     }
-
-    fetchTerminal();
   }, [assignment]);
+
+  useEffect(() => {
+    if (challenge) {
+      fetchTerminal();
+    }
+  }, [challenge]);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -290,8 +297,6 @@ export default function Slug() {
   const routeToSubmission = (id) => {
     window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
-
-  console.log(submissions);
 
   return (
     <>
@@ -433,10 +438,7 @@ export default function Slug() {
                 </div>
                 <iframe
                   className="h-full w-full"
-                  src={
-                    (foundTerminal && terminalUrl) ||
-                    'https://terminal.ctfguide.com/wetty/ssh/root'
-                  }
+                  src={(foundTerminal && terminalUrl) || ''}
                 ></iframe>
 
                 <p className="font-semibold text-white">STUDENT SUBMISSIONS</p>
