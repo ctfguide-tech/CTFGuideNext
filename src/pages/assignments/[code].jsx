@@ -5,6 +5,9 @@ import { ProgressCircle } from '@tremor/react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useEffect, useState } from 'react';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function Slug() {
   // assignment stuff
@@ -22,11 +25,12 @@ export default function Slug() {
   const [challenge, setChallenge] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetchingTerminal, setFetchingTerminal] = useState(false);
 
   // terminal stuff
   const [terminalUrl, setTerminalUrl] = useState('');
-  const [password, setPassword] = useState('');
-  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('...');
+  const [userName, setUserName] = useState('...');
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
@@ -168,9 +172,13 @@ export default function Slug() {
       };
 
       const response = await fetch(url, requestOptions);
-      console.log(response);
+      if (response.ok) {
+        console.log('The terminal was created successfully');
+      } else {
+        console.log('Failed to create the terminal');
+      }
 
-      fetchTerminal();
+      await fetchTerminal();
     } catch (err) {
       console.log(err);
     }
@@ -178,6 +186,7 @@ export default function Slug() {
 
   const fetchTerminal = async () => {
     try {
+      setFetchingTerminal(true);
       console.log('Fetching a terminal');
       const token = localStorage.getItem('idToken');
       const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
@@ -189,8 +198,6 @@ export default function Slug() {
       const response = await fetch(url, requestOptions);
       const data = await response.json();
 
-      console.log(data);
-
       if (data.length > 0) {
         const { password, serviceName, url, userName, minutesRemaining, id } =
           data[0];
@@ -200,6 +207,7 @@ export default function Slug() {
         setTerminalUrl(url);
         setUserName(userName);
         setMinutesRemaining(minutesRemaining);
+        console.log('We updated terminal data');
 
         await getTerminalStatus(id);
       } else {
@@ -208,6 +216,7 @@ export default function Slug() {
       }
     } catch (err) {
       console.log(err);
+      setFetchingTerminal(false);
     }
   };
 
@@ -218,9 +227,12 @@ export default function Slug() {
       const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
       const response = await fetch(url, { method: 'GET' });
       if (response.ok) {
+        console.log('Termainl status is OK');
         setFoundTerminal(true);
+        console.log('Displaying terminal');
       } else {
         setTimeout(async () => {
+          console.log('Terminal status failed');
           await getTerminalStatus(id);
         }, 3000);
       }
@@ -234,12 +246,6 @@ export default function Slug() {
       getChallenge();
     }
   }, [assignment]);
-
-  useEffect(() => {
-    if (challenge) {
-      fetchTerminal();
-    }
-  }, [challenge]);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -436,10 +442,30 @@ export default function Slug() {
                     </span>
                   </div>
                 </div>
-                <iframe
+                {!foundTerminal && (
+                  <span
+                    style={{
+                      color: 'white',
+                      backgroundColor: 'gray',
+                      borderRadius: '5px',
+                      transition: 'background 0.5s ease',
+                      padding: '10px 20px',
+                      marginLeft: '40%',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      boxShadow: '0px 10px 20px rgba(0,0,0,0.1)',
+                    }}
+                    disabled={fetchingTerminal}
+                    onClick={fetchTerminal}
+                  >
+                    {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                  </span>
+                )}
+
+                <embed
                   className="h-full w-full"
                   src={(foundTerminal && terminalUrl) || ''}
-                ></iframe>
+                ></embed>
 
                 <p className="font-semibold text-white">STUDENT SUBMISSIONS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
@@ -488,7 +514,18 @@ export default function Slug() {
           </div>
         </div>
       </div>
-
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );

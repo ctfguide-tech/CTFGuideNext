@@ -18,13 +18,11 @@ export default function Groups() {
   const [color, setColor] = useState('');
   const [teacherClassrooms, setTeacherClassrooms] = useState([]);
   const [studentClassrooms, setStudentClassrooms] = useState([]);
-  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const getAllClassrooms = async () => {
       const uid = localStorage.getItem('uid');
       if (!uid) return;
-      setUserId(uid);
       const url = `${baseUrl}/classroom/all-classrooms?uid=${uid}`;
       const response = await fetch(url);
       const data = await response.json();

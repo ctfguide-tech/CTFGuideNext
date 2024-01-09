@@ -7,44 +7,30 @@ import { Transition, Fragment, Dialog } from '@headlessui/react';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
-const basePaymentLink = 'https://buy.stripe.com/test_aEU5na60V8sBbfOcMN'; // this will need to change soon
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function CreateGroup() {
-  const baseUrl = 'http://localhost:3001'; // change this in deployment
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL; // change this in deployment
 
   const [selectedOption, setSelectedOption] = useState(null);
-
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [seats, setSeats] = useState(0);
-  const [time, setTime] = useState('');
-  const [startingDate, setStartingDate] = useState(new Date());
   const [usingPaymentLink, setUsingPaymentLink] = useState(false);
-  const [paymentLink, setPaymentLink] = useState('');
-
-  const getPaymentLinkForSeats = async () => {
-    try {
-      const res = await fetch(
-        `${baseUrl}/classroom/getPaymentLinkForClassCreate`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ quantity: seats }),
-        }
-      );
-      const resJson = await res.json();
-      if (resJson.success) {
-        setPaymentLink(`${resJson.body}?classCode`);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const createClass = async () => {
     try {
       if (seats <= 0) {
+        toast.error('Invalid number of seats');
+        return;
+      } else if (name.trim().length === 0) {
+        toast.error('Please enter a course title');
+        return;
+      } else if (!selectedOption) {
+        toast.error('Please select a payment method');
         return;
       }
 
@@ -307,23 +293,6 @@ export default function CreateGroup() {
                   />
                 </div>
 
-                <h1 className="mt-4 text-sm text-white">
-                  What time do you expect you'll start to use CTFGuide in the
-                  classroom.
-                </h1>
-
-                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
-                  <input
-                    type="time"
-                    name="username"
-                    id="username"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="Just needs to be an estimate."
-                  />
-                </div>
-
                 <div className="bg-neutral-850 mt-4 rounded-lg border border-neutral-500 px-4 py-2 text-white">
                   <b>✨ Why do we ask for this information?</b>
                   <h1>
@@ -346,7 +315,6 @@ export default function CreateGroup() {
                   {' '}
                   Submit
                 </button>
-                <div style={{ color: 'white' }}>{paymentLink}</div>
               </div>
             </div>
           </div>
@@ -424,6 +392,18 @@ export default function CreateGroup() {
         </div>
       </div>
 
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );
