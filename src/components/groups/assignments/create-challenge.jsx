@@ -28,7 +28,7 @@ export default function Createchall(props) {
       name: 'Challenge Creation',
       href: './',
       current: true,
-      click: () => { },
+      click: () => {},
     },
   ];
   const [contentPreview, setContentPreview] = useState('');

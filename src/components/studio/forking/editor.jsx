@@ -2,6 +2,9 @@ import React from 'react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useState, useEffect } from 'react';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Editor = (props) => {
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
@@ -25,13 +28,14 @@ const Editor = (props) => {
   const validateNewChallege = async () => {
     for (const p of penalty) {
       if (p > 0) {
-        setPenaltyErr("Can't have a positive value for penalties");
+        toast.error('Please enter negative values for the points');
         return false;
       }
     }
     setPenaltyErr('');
     const nameExists = await getChallenge(false, newChallengeName);
     if (nameExists) {
+      toast.error('Challenge name already exists');
       setErrMessage('Challenge name already exists, please change the name');
       return false;
     }
@@ -517,6 +521,18 @@ const Editor = (props) => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };
