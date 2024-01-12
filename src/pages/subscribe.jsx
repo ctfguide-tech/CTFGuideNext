@@ -31,12 +31,13 @@ export default function Subscribe() {
                     <h2 className='text-center text-lg '>• Access to more powerful, virtualized Kubernetes containers</h2>
                     <h2 className='text-center text-lg '>• Customized images</h2>
                     <h2 className='text-center text-lg '>• Blue name colors on comments, profile page, etc</h2>
-                    <h2 className='text-center text-lg '>• A cool badge to show your support!</h2>
-                    <h2 className='pl-4 pt-8'><span className='text-left font-bold text-2xl'>Billed: $5</span><span className='text-left text-lg text-slate-400'>/mo</span></h2>
+                    <h2 className='text-center text-lg '>• A cool badge on your profile to show your support!</h2>
+                    <h2 className='pl-4 pt-8'><span className='text-left font-bold text-2xl'>Billed: $4.99</span><span className='text-left text-lg text-slate-400'>/mo</span></h2>
                     <h2 className='pl-4'><span className='text-left text-lg text-slate-400'>Prices are marked in USD</span></h2>
                     <div className='pt-4'>
                         <button
                             type="submit"
+                            onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
                             className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             Subscribe
@@ -48,15 +49,16 @@ export default function Subscribe() {
                     <h1 className='text-center text-2xl font-bold pr-5'>CTFGuide Pro Yearly</h1>
                     <h2 className='text-center text-lg '>• Everything that Monthly gives</h2>
                     <h2 className='text-center text-lg '>• Gold name colors on comments, profile page, etc</h2>
-                    <h2 className='text-center text-lg '>• A <span className='text-yellow-600'>even cooler</span> badge to show your support!</h2>
+                    <h2 className='text-center text-lg '>• A <span className='text-yellow-600'>even cooler</span> badge on your profile to show your support!</h2>
                     <br></br>
                     <br></br>
                     <br></br>
-                    <h2 className='pl-4 pt-5'><span className='text-left font-bold text-2xl'>Billed: $55</span><span className='text-left text-lg text-slate-400'>/yr</span></h2>
+                    <h2 className='pl-4 pt-5'><span className='text-left font-bold text-2xl'>Billed: $54.99</span><span className='text-left text-lg text-slate-400'>/yr</span></h2>
                     <h2 className='pl-4'><span className='text-left text-lg text-slate-400'>Prices are marked in USD</span></h2>
                     <div className='pt-4'>
                         <button
                             type="submit"
+                            onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
                             className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             Subscribe
