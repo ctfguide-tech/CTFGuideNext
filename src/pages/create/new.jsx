@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
   {
@@ -24,6 +28,7 @@ const styles = {
 export default function Createchall() {
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
+  const [sending, setSending] = useState(false);
 
   const [hints, setHints] = useState([
     'No hints set',
@@ -45,11 +50,10 @@ export default function Createchall() {
   const validateNewChallege = async () => {
     for (const p of penalty) {
       if (p > 0) {
-        setPenaltyErr("Can't have a positive value for penalties");
+        toast.error('Please enter negative values for the points');
         return false;
       }
     }
-    setPenaltyErr('');
     const nameExists = await getChallenge(newChallengeName);
     if (nameExists) {
       setErrMessage('Challenge name already exists, please change the name');
@@ -104,6 +108,7 @@ export default function Createchall() {
   };
 
   const uploadChallenge = async (fileId) => {
+    setSending(true);
     try {
       const nConfig = newConfig.replace('\n', ' && ');
       const token = localStorage.getItem('idToken');
@@ -138,14 +143,17 @@ export default function Createchall() {
 
       const response = await fetch(url, requestOptions);
       const data = await response.json();
-      console.log(data);
 
       if (data.success) {
-        window.location.href = '/create/new';
+        toast.success(data.message);
+        window.location.href = '/create';
+      } else {
+        toast.error(data.message);
       }
     } catch (err) {
       console.log(err);
     }
+    setSending(false);
   };
 
   const getChallenge = async (slugName) => {
@@ -513,6 +521,7 @@ export default function Createchall() {
 
           <button
             onClick={sendToFileApi}
+            disabled={sending}
             className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
           >
             <i class="fas fa-send"></i> Create Challenge
@@ -563,6 +572,18 @@ export default function Createchall() {
           </div>
         </div>
       </main>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );

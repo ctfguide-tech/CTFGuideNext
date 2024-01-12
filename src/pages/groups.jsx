@@ -7,6 +7,10 @@ import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, Fragment, useState } from 'react';
 import { getAuth } from 'firebase/auth';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const auth = getAuth();
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
@@ -77,6 +81,25 @@ export default function Groups() {
     }
   };
 
+  function copy(idx) {
+    var copyText = document.getElementById('copyBox' + idx);
+    copyText.type = 'text';
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    copyText.type = 'hidden';
+
+    toast.success('Copied to clipboard!', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
+  }
   return (
     <>
       <Head>
@@ -196,10 +219,43 @@ export default function Groups() {
                   </h1>
                   {!classroom.isPayedFor ? (
                     <p className="text-neutral-400">
-                      <i className="fas fa-times"></i> Class Not Paied{' '}
-                      <span style={{ fontSize: '12px' }}>
-                        {classroom.paymentLink}
+                      <i
+                        className="fas fa-times"
+                        style={{ color: '#D8504D' }}
+                      ></i>{' '}
+                      Class Not Paid{' '}
+                      <span className="text-neutral-400">
+                        <i className="fas fa-users"></i>{' '}
+                        {classroom.numberOfSeats}{' '}
                       </span>
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          color: 'lightblue',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        <br></br>
+                        <button
+                          style={{ marginTop: '10px' }}
+                          className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                          onClick={() => {
+                            window.location.href = classroom.paymentLink;
+                          }}
+                        >
+                          Pay Now
+                        </button>
+                        <i
+                          style={{ fontSize: '15px', padding: '10px' }}
+                          onClick={() => copy(idx)}
+                          className="far fa-copy cursor-pointer text-white hover:text-neutral-400"
+                        ></i>
+                      </span>
+                      <input
+                        type="hidden"
+                        id={'copyBox' + idx}
+                        value={classroom.paymentLink || ''}
+                      ></input>
                     </p>
                   ) : (
                     <p className="text-neutral-400">
@@ -313,6 +369,7 @@ export default function Groups() {
           </Transition.Root>
         </div>
       </div>
+      <ToastContainer />
       <Footer />
     </>
   );

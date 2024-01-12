@@ -32,20 +32,44 @@ export default function CreateGroup(props) {
   const [errMessage, setErrMessage] = useState([]);
 
   const parseDate = () => {
-    let dateStr = dueDate;
-    let dateParts = dateStr.split('-');
-    let inputDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-    let currentDate = new Date();
-    if (
-      inputDate.getFullYear() === currentDate.getFullYear() &&
-      inputDate.getMonth() === currentDate.getMonth() &&
-      inputDate.getDate() === currentDate.getDate()
-    ) {
-      return 0;
-    } else if (inputDate.getTime() < currentDate.getTime()) {
+    try {
+      let dateStr = dueDate;
+      let dateParts = dateStr.split('-');
+      let inputDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+      let currentDate = new Date();
+      if (
+        inputDate.getFullYear() === currentDate.getFullYear() &&
+        inputDate.getMonth() === currentDate.getMonth() &&
+        inputDate.getDate() === currentDate.getDate()
+      ) {
+        let givenTime = time;
+        let givenDateTime = new Date(
+          `${new Date().toISOString().split('T')[0]}T${givenTime}:00`
+        );
+
+        let time1 = currentDate.toString().split(' ')[4];
+        let time2 = givenDateTime.toString().split(' ')[4];
+        let [hours1, minutes1, seconds1] = time1.split(':').map(Number);
+        let [hours2, minutes2, seconds2] = time2.split(':').map(Number);
+
+        let date1 = new Date(2024, 0, 1, hours1, minutes1, seconds1);
+        let date2 = new Date(2024, 0, 1, hours2, minutes2, seconds2);
+
+        if (date1.getTime() < date2.getTime()) {
+          return 1;
+        } else if (date1.getTime() > date2.getTime()) {
+          return -1;
+        } else {
+          return 0;
+        }
+      } else if (inputDate.getTime() < currentDate.getTime()) {
+        return -1;
+      } else {
+        return 1;
+      }
+    } catch (err) {
+      console.log(err);
       return -1;
-    } else {
-      return 1;
     }
   };
 

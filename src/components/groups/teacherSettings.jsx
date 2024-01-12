@@ -4,11 +4,14 @@ import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
-import { ToastContainer, toast } from 'react-toastify';
 
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
+const frontend_baselink = `localhost:3000`;
+
 const categoryToIdx = {
   test: 0,
   quiz: 1,
@@ -90,7 +93,7 @@ export default function teacherSettings({ classroom }) {
       console.log(data);
       if (data.success) {
         setInviteLink(
-          `localhost:3000/groups/invites/${classroom.classCode}/${data.body}`
+          `${frontend_baselink}/groups/invites/${classroom.classCode}/${data.body}`
         );
       } else {
         setInviteLink(data.message);
@@ -250,8 +253,8 @@ export default function teacherSettings({ classroom }) {
     }
   };
 
-  function copy() {
-    var copyText = document.getElementById('copyBox');
+  function copy(tags) {
+    var copyText = document.getElementById(tags);
     copyText.type = 'text';
     copyText.select();
     copyText.setSelectionRange(0, 99999);
@@ -333,8 +336,8 @@ export default function teacherSettings({ classroom }) {
                         >
                           {classroom.classCode}{' '}
                           <i
-                            onClick={copy}
-                            class="far fa-copy cursor-pointer text-white hover:text-neutral-400"
+                            onClick={() => copy('copyBox')}
+                            className="far fa-copy cursor-pointer text-white hover:text-neutral-400"
                           ></i>
                         </p>
                       </div>
@@ -439,7 +442,10 @@ export default function teacherSettings({ classroom }) {
                         {inviteLink}
                       </p>
                       <div className="ml-auto">
-                        <i className="far fa-copy cursor-pointer text-white hover:text-neutral-400"></i>
+                        <i
+                          onClick={() => copy('copyBox2')}
+                          className="far fa-copy cursor-pointer text-white hover:text-neutral-400"
+                        ></i>
                       </div>
                     </div>
                   </div>
@@ -689,8 +695,20 @@ export default function teacherSettings({ classroom }) {
         id="copyBox"
         value={classroom.classCode || ''}
       ></input>
+      <input type="hidden" id="copyBox2" value={inviteLink || ''}></input>
 
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
 
       <Footer />
     </>
