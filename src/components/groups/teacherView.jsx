@@ -456,7 +456,9 @@ export default function TeacherView({ group }) {
             <div className="col-span-2   px-4 py-3">
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
-                {classroom && classroom.assignments && classroom.assignments.length > 0 ? (
+                {classroom &&
+                classroom.assignments &&
+                classroom.assignments.length > 0 ? (
                   classroom.assignments.map((assignment) => (
                     <div
                       key={assignment.id}
@@ -506,19 +508,25 @@ export default function TeacherView({ group }) {
 
                         <span className="ml-0.5"> {assignment.name} </span>
                       </h2>
-                      <p className="text-white">Due: {parseDate(assignment.dueDate)} </p>
+                      <p className="text-white">
+                        Due: {parseDate(assignment.dueDate)}{' '}
+                      </p>
                     </div>
                   ))
                 ) : (
-                  <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white">
-                    <h1 className='text-lg pe-6'>No assignments here yet</h1>
-                    <h2 className='text-sm pe-6'>Create an assignment with the button above!</h2>
-                    </div>
+                  <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
+                    <h1 className="pe-6 text-lg">No assignments here yet</h1>
+                    <h2 className="pe-6 text-sm">
+                      Create an assignment with the button above!
+                    </h2>
+                  </div>
                 )}
-                <button className="text-sm float-right rounded-sm bg-neutral-900  py-1 text-white" onClick = {() => {
-                  window.location.href = `../${classroom.classCode}/view-all-assignments`
-                }}>
-                  
+                <button
+                  className="float-right rounded-sm bg-neutral-900 py-1  text-sm text-white"
+                  onClick={() => {
+                    window.location.href = `../${classroom.classCode}/view-all-assignments`;
+                  }}
+                >
                   <i className="fas fa-external-link-alt"></i> View All
                 </button>
               </div>

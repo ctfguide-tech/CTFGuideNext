@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
-import { ProgressCircle } from '@tremor/react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useEffect, useState } from 'react';
 
@@ -9,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export default function Slug() {
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
@@ -148,6 +148,7 @@ export default function Slug() {
 
   const createTerminal = async () => {
     try {
+      toast.info('Creating a terminal');
       console.log('Creating a terminal');
       let min = 1000;
       let max = 9999;
@@ -186,6 +187,7 @@ export default function Slug() {
 
   const fetchTerminal = async () => {
     try {
+      toast.info('Fetching terminal...');
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
       const token = localStorage.getItem('idToken');
@@ -227,6 +229,7 @@ export default function Slug() {
       const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
       const response = await fetch(url, { method: 'GET' });
       if (response.ok) {
+        toast.info('Terminal status is OK');
         console.log('Termainl status is OK');
         setFoundTerminal(true);
         console.log('Displaying terminal');
@@ -250,7 +253,9 @@ export default function Slug() {
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
       setSolved(true);
+      toast.success('Flag is Correct, Good Job!');
     } else {
+      toast.success('Flag is incorrct');
       setSolved(false);
     }
   };
@@ -294,6 +299,7 @@ export default function Slug() {
 
     const data = await makePostRequest(url, true, body);
     if (data && data.success) {
+      toast.success('Assignment has been submitted');
       setSubmitted(true);
     }
 
