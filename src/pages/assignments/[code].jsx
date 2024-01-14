@@ -101,6 +101,8 @@ export default function Slug() {
       if (isAuth) {
         setAssignment(data.body);
         await getSubmissions(data.body);
+
+
       } else {
         console.log('You are not apart of this class');
         window.location.href = '/groups';
@@ -246,6 +248,7 @@ export default function Slug() {
     if (assignment === null) {
       getAssignment();
     } else if (!challenge) {
+      
       getChallenge();
     }
   }, [assignment]);
@@ -313,7 +316,7 @@ export default function Slug() {
   return (
     <>
       <Head>
-        <title>Coming Soon - CTFGuide</title>
+        <title>Assignment View - CTFGuide</title>
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -402,11 +405,11 @@ export default function Slug() {
                 )}
 
                 <p className="mt-6 font-semibold text-white">HINTS</p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
+                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
                 {hints.map((hint, idx) => {
                   return (
                     <div
-                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-0 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
                       onClick={() => showHint(idx)}
                       style={{
                         cursor: 'pointer',
@@ -430,55 +433,59 @@ export default function Slug() {
                 })}
               </div>
 
-              <div className="col-span-4 h-60 bg-black px-4">
-                <div className="hint mb-2 text-gray-400">
-                  <span className="font-semibold text-white   ">
-                    {' '}
-                    <span className="text-blue-500"></span>
-                  </span>{' '}
-                  Login as <span className="text-yellow-400">{userName}</span>{' '}
-                  using the password{' '}
-                  <span className="text-yellow-400">{password}</span>
-                  <div className="float-right ml-auto flex  cursor-pointer">
-                    <span
-                      style={{ cursor: 'pointer' }}
-                      className=" text-gray-300 hover:bg-black"
-                    >
-                      Container will stop in: {minutesRemaining} minutes
-                    </span>
-                  </div>
-                </div>
-                {!foundTerminal && (
+              <div className="col-span-4   ">
+       
+
+                <div className='h-full bg-black px-4 mx-auto'>
+           {!foundTerminal && (
+  <div>
+                 <br/>
+                <br/></div>
+            )}
+            {!foundTerminal && (
+                  <div className=' mx-auto text-center '>
+                 
                   <span
-                    style={{
-                      color: 'white',
-                      backgroundColor: 'gray',
-                      borderRadius: '5px',
-                      transition: 'background 0.5s ease',
-                      padding: '10px 20px',
-                      marginLeft: '40%',
-                      fontSize: '16px',
-                      cursor: 'pointer',
-                      boxShadow: '0px 10px 20px rgba(0,0,0,0.1)',
-                    }}
+                    className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                     disabled={fetchingTerminal}
                     onClick={fetchTerminal}
                   >
                     {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
                   </span>
+                  </div>
                 )}
-
+                {userName !== '...' && (
+                  <div className="hint mb-2 text-gray-400">
+                    <span className="font-semibold text-white   ">
+                      {' '}
+                      <span className="text-blue-500"></span>
+                    </span>{' '}
+                    Login as <span className="text-yellow-400">{userName}</span> using the password{' '}
+                    <span className="text-yellow-400">{password}</span>
+                    <div className="float-right ml-auto flex  cursor-pointer">
+                      {minutesRemaining !== -1 && (
+                        <span
+                          style={{ cursor: 'pointer' }}
+                          className="text-gray-300 hover:bg-black"
+                        >
+                          Container will stop in: {minutesRemaining} minutes
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+            
                 <embed
-                  className="h-full w-full"
+                  className="h-1/2 w-full"
                   src={(foundTerminal && terminalUrl) || ''}
                 ></embed>
-
-                <p className="font-semibold text-white">STUDENT SUBMISSIONS</p>
+              </div>
+              <p className="mt-10 font-semibold text-white">STUDENT SUBMISSIONS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
                 <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
                   {submissions.length === 0 && (
                     <div style={{ color: 'white' }}>
-                      No Students in class...
+                     No students have completed this assignment yet.
                     </div>
                   )}
                   {submissions.map((submission, idx) => (
@@ -508,6 +515,7 @@ export default function Slug() {
                     </div>
                   ))}
                 </div>
+             
               </div>
               <button
                 onClick={submitAssignment}

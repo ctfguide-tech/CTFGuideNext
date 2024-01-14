@@ -7,8 +7,10 @@ import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
 import { Tooltip } from 'react-tooltip';
-
+import { Link } from 'react-router-dom';
+import LoadingBar from 'react-top-loading-bar';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const baseClientUrl = `localhost:3000`;
 
 const defaultImages = [
@@ -33,6 +35,7 @@ export default function TeacherView({ group }) {
   const [viewSettings, setViewSettings] = useState(false);
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
+  const [progress,setProgress] = useState(0); // for loader
 
   const [viewGradebook, setViewGradebook] = useState(false);
 
@@ -60,6 +63,8 @@ export default function TeacherView({ group }) {
       }
     };
     getClassroom();
+
+    setProgress(progress + 100)
   }, []);
 
   const handleInvite = async () => {
@@ -130,6 +135,9 @@ export default function TeacherView({ group }) {
     let strTime = hours + ':' + minutes + ampm;
     let formattedDate = `${month}/${day}/${year} ${strTime}`;
     return formattedDate;
+
+
+
   };
 
   const createAnnouncement = async (message) => {
@@ -234,42 +242,91 @@ export default function TeacherView({ group }) {
         </style>
       </Head>
       <StandardNav />
-      <div className=" mx-auto grid min-h-screen max-w-6xl grid-cols-10 gap-x-8 ">
-        <div className="col-span-2">
-          {/* side nav bar */}
+<LoadingBar color="#0062ff" progress={progress}
+    onLoaderFinished={() => setProgress(0)} />
+      {/* second nav bar */}
+      <div className="bg-neutral-800">
+      <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                  <div className="flex h-10 justify-between">
+                    <div className="flex">
+          
+                  
+                      <div className="hidden md:ml-6 md:flex ">
+                        {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:font-bold" */}
+                        <a
+                            href="../../home"
+                            className="ml-2 inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200 "
+                        >
+                          Home
+                        </a>
+                        <a
+                            href="../../gradebook"
+                            className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                        >
+                          Gradebook
+                        </a>
+                        <a
+                            onClick={() => setViewSettings(true)}
+                            className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                        >
+                          Settings
+                        </a>
+                        <a
+                            href="../../assignents"
+                            className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                        >
+                          Assignments
+                        </a>
+                    
 
-          <div class="mt-20 flex flex-col text-xl text-white">
-            <p
-              onClick={() => setViewGradebook(true)}
-              class=" cursor-pointer px-2 hover:bg-neutral-800"
-            >
-              <i className="fas fa-table mr-2 "></i> Gradebook{' '}
-            </p>
-            <p
-              onClick={() => setViewSettings(true)}
-              class="mt-2 cursor-pointer px-2 hover:bg-neutral-800"
-            >
-              <i className="fas fa-cogs mr-2"></i>Settings{' '}
-            </p>
-          </div>
-        </div>
-        <div className="col-span-8  mt-10 ">
-          <div className="flex">
-            <h1 className="text-3xl font-semibold text-white">
-              {classroom.name}
-            </h1>
-            <div className="ml-auto">
+                      
+                   
+                 
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                    
+                    <button
+                onClick={() => {
+                  setViewCreateAssignment(true);
+                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-plus-circle pe-2"></i> New Assignment
+              </button>
+
               <button
                 onClick={() => {
                   setViewCreateAssignment(true);
                   // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
                 }}
-                className="rounded-lg bg-blue-600/80 px-4 py-2 text-white hover:bg-blue-600/50"
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
-                <i className="fas fa-plus-circle pe-2"></i> Create Assignment
+                <i className="fas fa-bullhorn pe-2"></i> New Post
               </button>
-            </div>
+                    </div>
+                  </div>
+                </div>
+
+                </div>
+      <div className=" mx-auto grid min-h-screen max-w-6xl  ">
+     
+        <div className="mt-10 ">
+          <div className="flex">
+            <h1 className="text-3xl font-semibold text-white">
+              {classroom.name}
+              
+            </h1>
+
+            
+
+   
+
+     
           </div>
+
+          <hr className='border-neutral-800 mt-2 text-neutral-800 '></hr>
           <div className="mt-4 grid grid-cols-6 gap-x-8">
             <div className="col-span-4 rounded-lg    py-3 ">
               <h1 className="text-xl font-semibold text-white">
@@ -530,8 +587,24 @@ export default function TeacherView({ group }) {
                   <i className="fas fa-external-link-alt"></i> View All
                 </button>
               </div>
+
+              <h1 className="mt-10 text-xl font-semibold text-white">Platform Updates</h1>
+              <div className='rounded-t-lg bg-neutral-800 px-4 mt-2 text-white text-md py-2'> 
+                  <b>Expected Downtime </b> <span className='bg-yellow-800 rounded-lg px-4 text-sm '>alerts</span>
+              </div>
+              <div className='rounded-b-lg bg-neutral-700/50 px-4 text-sm text-white py-2'> 
+                 <p>Our terminal platform will be recieving some updates meaning that students will not be able to complete any virtual labs during this time.
+
+                  <br></br>   <br></br>
+
+                  <i>Affected services: EDU, Terminals, Create a VM, and Virtual Labs</i>
+                 </p>
+              </div>
             </div>
+
+            
             <br></br>
+            
           </div>
         </div>
       </div>

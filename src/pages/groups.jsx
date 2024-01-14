@@ -176,26 +176,7 @@ export default function Groups() {
               </div>
             </motion.div>
 
-            <div id="group-grid" className="mt-4 grid hidden grid-cols-2 gap-4">
-              <div className="rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 hover:bg-[#2c2c2c]">
-                <h1 className="text-xl text-white">CSE 597A</h1>
-                <p className="text-white">Introduction to Computer Security</p>
-              </div>
-
-              <div className="grid-cols-3 rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 hover:bg-[#2c2c2c]">
-                <div className="col-span-2">
-                  <h1 className="text-xl text-white">CSE 527A</h1>
-                  <p className="text-white">
-                    Cybersecurity: a surface level understanding
-                  </p>
-                </div>
-              </div>
-
-              <div className="rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 hover:bg-[#2c2c2c]">
-                <h1 className="text-xl text-white">CSE 597WC</h1>
-                <p className="text-white">Introduction to Computer Security</p>
-              </div>
-            </div>
+    
           </div>
           <h1 className="mt-10 text-2xl text-white">
             {teacherClassrooms.length === 0
@@ -214,7 +195,7 @@ export default function Groups() {
                       : '';
                   }}
                 >
-                  <h1 className="text-3xl font-semibold text-neutral-300">
+                  <h1 className="text-xl truncate font-semibold text-neutral-300">
                     {classroom.name}
                   </h1>
                   {!classroom.isPayedFor ? (
