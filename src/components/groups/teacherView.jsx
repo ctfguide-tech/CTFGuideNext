@@ -193,6 +193,7 @@ export default function TeacherView({ group }) {
     return <TeacherSettings classroom={classroom} />;
   }
 
+
   const styles = {
     textarea: {
       width: '100%',
@@ -235,7 +236,7 @@ export default function TeacherView({ group }) {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-          /* bold */
+        /* bold */
         </style>
       </Head>
       <StandardNav />
@@ -251,30 +252,34 @@ export default function TeacherView({ group }) {
             <div className="flex">
               <div className="hidden md:ml-6 md:flex ">
                 {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:font-bold" */}
-                <a
-                  href="../../home"
+                <button
+                  onClick={() => {
+                    window.location.href = `../${classroom.classCode}/home`;
+                  }}
                   className="ml-2 inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200 "
                 >
                   Home
-                </a>
-                <a
-                  href="../../gradebook"
+                </button>
+                <button
+                  onClick={() => {
+                    window.location.href = `../${classroom.classCode}/view-all-assignments`;
+                  }}
+                  className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                >
+                  Assignments
+                </button>
+                <button
+                  onClick={() => setViewGradebook(true)}
                   className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                 >
                   Gradebook
-                </a>
-                <a
+                </button>
+                <button
                   onClick={() => setViewSettings(true)}
                   className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                 >
                   Settings
-                </a>
-                <a
-                  href="../../assignents"
-                  className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                >
-                  Assignments
-                </a>
+                </button>
               </div>
             </div>
             <div className="flex items-center">
@@ -430,7 +435,7 @@ export default function TeacherView({ group }) {
                                 cols="50"
                                 style={styles.textarea}
                               ></textarea>
-                              <button
+                              <button className='rounded-lg'
                                 onClick={() =>
                                   updateAnnouncement(
                                     announcementObj.id,
@@ -441,7 +446,7 @@ export default function TeacherView({ group }) {
                               >
                                 Update
                               </button>
-                              <button
+                              <button className='rounded-lg'
                                 onClick={() => setEditingAnnouncementIdx(-1)}
                                 style={styles.button}
                               >
@@ -497,8 +502,8 @@ export default function TeacherView({ group }) {
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
                 {classroom &&
-                classroom.assignments &&
-                classroom.assignments.length > 0 ? (
+                  classroom.assignments &&
+                  classroom.assignments.length > 0 ? (
                   classroom.assignments.map((assignment) => (
                     <div
                       key={assignment.id}
