@@ -31,6 +31,19 @@ import { useRouter } from 'next/router';
 import useRef from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 
+const shades = [
+  'ml-1 h-5 w-5 bg-green-000',
+  'ml-1 h-5 w-5 bg-green-100',
+  'ml-1 h-5 w-5 bg-green-200',
+  'ml-1 h-5 w-5 bg-green-300',
+  'ml-1 h-5 w-5 bg-green-400',
+  'ml-1 h-5 w-5 bg-green-500',
+  'ml-1 h-5 w-5 bg-green-600',
+  'ml-1 h-5 w-5 bg-green-700',
+  'ml-1 h-5 w-5 bg-green-800',
+  'ml-1 h-5 w-5 bg-green-900',
+];
+
 export default function Users() {
   const router = useRouter();
   const { user } = router.query;
@@ -1105,11 +1118,7 @@ export default function Users() {
                               style={{
                                 marginBottom: '2px',
                               }}
-                              className={`ml-1 h-5 w-5 bg-green-${
-                                activity[idx + j] + activity[idx + j] > 0
-                                  ? 3
-                                  : 0
-                              }00`}
+                              className={`${shades[activity[idx + j]]}`}
                             ></div>
                           ))}
                         </div>
@@ -1120,7 +1129,6 @@ export default function Users() {
               </div>
             </div>
 
-            {/* MIDDLE */}
             <div className="flex grid h-full w-full grid-cols-1 justify-center">
               <div className="mb-4 flex h-48 justify-center rounded-sm bg-neutral-800 p-4 shadow">
                 <div className="rows-1 grid">
@@ -1131,7 +1139,6 @@ export default function Users() {
                 </div>
               </div>
             </div>
-
             {/* RIGHT SIDE CONTENT */}
             <div className="ml-4 h-full w-1/3">
               <div className="grid h-full grid-cols-1 rounded-sm bg-neutral-800">

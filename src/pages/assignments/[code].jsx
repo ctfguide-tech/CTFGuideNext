@@ -35,6 +35,9 @@ export default function Slug() {
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
 
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const [useEffectLoading, setUseEffectLoading] = useState(true);
+
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1;
@@ -101,8 +104,6 @@ export default function Slug() {
       if (isAuth) {
         setAssignment(data.body);
         await getSubmissions(data.body);
-
-
       } else {
         console.log('You are not apart of this class');
         window.location.href = '/groups';
@@ -193,13 +194,13 @@ export default function Slug() {
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
       const token = localStorage.getItem('idToken');
-      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
+      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
       const requestOptions = {
         method: 'GET',
         redirect: 'follow',
       };
 
-      const response = await fetch(url, requestOptions);
+      const response = await fetch(reqUrl, requestOptions);
       const data = await response.json();
 
       if (data.length > 0) {
@@ -211,7 +212,8 @@ export default function Slug() {
         setTerminalUrl(url);
         setUserName(userName);
         setMinutesRemaining(minutesRemaining);
-        console.log('We updated terminal data');
+        console.log('We updated terminal data', id);
+        console.log(url);
 
         await getTerminalStatus(id);
       } else {
@@ -248,7 +250,6 @@ export default function Slug() {
     if (assignment === null) {
       getAssignment();
     } else if (!challenge) {
-      
       getChallenge();
     }
   }, [assignment]);
@@ -313,6 +314,39 @@ export default function Slug() {
     window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
 
+  const deleteTerminal = async (code) => {
+    try {
+      console.log('deleting terminal');
+
+      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
+
+      const body = {
+        jwtToken: localStorage.getItem('idToken'),
+        TerminalGroupName: 'schell-class-session',
+        TerminalID: code,
+        classID: 'psu101',
+        organizationName: 'PSU',
+        userID: localStorage.getItem('username'),
+        slug: challenge.slug,
+      };
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      };
+
+      const response = await fetch(url, requestOptions);
+      if (response.ok) {
+        console.log('The terminal was deleted successfully');
+      } else {
+        console.log('Failed to delete the terminal');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -340,6 +374,7 @@ export default function Slug() {
 
               <h1 className="text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
+                <button onClick={() => deleteTerminal('2281')}> del </button>
               </h1>
             </div>
           </div>
@@ -434,58 +469,65 @@ export default function Slug() {
               </div>
 
               <div className="col-span-4   ">
-       
-
-                <div className='h-full bg-black px-4 mx-auto'>
-           {!foundTerminal && (
-  <div>
-                 <br/>
-                <br/></div>
-            )}
-            {!foundTerminal && (
-                  <div className=' mx-auto text-center '>
-                 
-                  <span
-                    className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                    disabled={fetchingTerminal}
-                    onClick={fetchTerminal}
-                  >
-                    {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
-                  </span>
-                  </div>
-                )}
-                {userName !== '...' && (
-                  <div className="hint mb-2 text-gray-400">
-                    <span className="font-semibold text-white   ">
-                      {' '}
-                      <span className="text-blue-500"></span>
-                    </span>{' '}
-                    Login as <span className="text-yellow-400">{userName}</span> using the password{' '}
-                    <span className="text-yellow-400">{password}</span>
-                    <div className="float-right ml-auto flex  cursor-pointer">
-                      {minutesRemaining !== -1 && (
-                        <span
-                          style={{ cursor: 'pointer' }}
-                          className="text-gray-300 hover:bg-black"
-                        >
-                          Container will stop in: {minutesRemaining} minutes
-                        </span>
-                      )}
+                <div className="mx-auto h-full bg-black px-4">
+                  {!foundTerminal && (
+                    <div>
+                      <br />
+                      <br />
                     </div>
-                  </div>
-                )}
-            
-                <embed
-                  className="h-1/2 w-full"
-                  src={(foundTerminal && terminalUrl) || ''}
-                ></embed>
-              </div>
-              <p className="mt-10 font-semibold text-white">STUDENT SUBMISSIONS</p>
+                  )}
+                  {!foundTerminal && (
+                    <div className=" mx-auto text-center ">
+                      <span
+                        className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                        disabled={fetchingTerminal}
+                        onClick={fetchTerminal}
+                      >
+                        {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                      </span>
+                    </div>
+                  )}
+                  {userName !== '...' && (
+                    <div className="hint mb-2 text-gray-400">
+                      <span className="font-semibold text-white   ">
+                        {' '}
+                        <span className="text-blue-500"></span>
+                      </span>{' '}
+                      Login as{' '}
+                      <span className="text-yellow-400">{userName}</span> using
+                      the password{' '}
+                      <span className="text-yellow-400">{password}</span>
+                      <div className="float-right ml-auto flex  cursor-pointer">
+                        {minutesRemaining !== -1 && (
+                          <span
+                            style={{ cursor: 'pointer' }}
+                            className="text-gray-300 hover:bg-black"
+                          >
+                            Container will stop in: {minutesRemaining} minutes
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {foundTerminal ? (
+                    <embed
+                      id="myembed"
+                      className="h-1/2 w-full"
+                      src={terminalUrl}
+                    ></embed>
+                  ) : (
+                    <p>Loading...</p>
+                  )}
+                </div>
+                <p className="mt-10 font-semibold text-white">
+                  STUDENT SUBMISSIONS
+                </p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
                 <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
                   {submissions.length === 0 && (
                     <div style={{ color: 'white' }}>
-                     No students have completed this assignment yet.
+                      No students have completed this assignment yet.
                     </div>
                   )}
                   {submissions.map((submission, idx) => (
@@ -515,7 +557,6 @@ export default function Slug() {
                     </div>
                   ))}
                 </div>
-             
               </div>
               <button
                 onClick={submitAssignment}
