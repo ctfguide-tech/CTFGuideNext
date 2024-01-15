@@ -212,8 +212,8 @@ export default function Slug() {
         setTerminalUrl(url);
         setUserName(userName);
         setMinutesRemaining(minutesRemaining);
-        console.log('We updated terminal data', id);
-        console.log(url);
+        console.log('Terminal data ID: ', id);
+        console.log('Terminal url: ', url);
 
         await getTerminalStatus(id);
       } else {
@@ -227,22 +227,41 @@ export default function Slug() {
   };
 
   const getTerminalStatus = async (id) => {
-    console.log('Getting terminal status');
-    if (!foundTerminal) {
-      const username = localStorage.getItem('username');
-      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
-      const response = await fetch(url, { method: 'GET' });
-      if (response.ok) {
-        toast.info('Terminal status is OK');
-        console.log('Termainl status is OK');
-        setFoundTerminal(true);
-        console.log('Displaying terminal');
-      } else {
-        setTimeout(async () => {
-          console.log('Terminal status failed');
-          await getTerminalStatus(id);
-        }, 3000);
+    try {
+      console.log('Getting terminal status');
+      if (!foundTerminal) {
+        const username = localStorage.getItem('username');
+        const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
+        const response = await fetch(url, { method: 'GET' });
+
+        const readableStream = response.body;
+        const textDecoder = new TextDecoder();
+        const reader = readableStream.getReader();
+        let result = await reader.read();
+
+        while (!result.done) {
+          let stat = textDecoder.decode(result.value);
+          console.log('Response from getTerminalStatus: ', stat);
+          if (stat !== 'active') {
+            throw new Error('Not active');
+          }
+          result = await reader.read();
+        }
+
+        if (response.ok) {
+          toast.info('Terminal status is OK');
+          console.log('Termainl status is OK');
+          setTimeout(() => {
+            setFoundTerminal(true);
+          }, 8000);
+          console.log('Displaying terminal');
+        }
       }
+    } catch (err) {
+      setTimeout(async () => {
+        console.log('Terminal status failed');
+        await getTerminalStatus(id);
+      }, 3000);
     }
   };
 
@@ -259,7 +278,7 @@ export default function Slug() {
       setSolved(true);
       toast.success('Flag is Correct, Good Job!');
     } else {
-      toast.success('Flag is incorrct');
+      toast.error('Flag is incorrct');
       setSolved(false);
     }
   };
@@ -374,7 +393,7 @@ export default function Slug() {
 
               <h1 className="text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
-                <button onClick={() => deleteTerminal('2281')}> del </button>
+                <button onClick={() => deleteTerminal('2399')}> del </button>
               </h1>
             </div>
           </div>

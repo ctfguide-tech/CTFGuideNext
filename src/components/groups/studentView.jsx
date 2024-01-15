@@ -4,6 +4,7 @@ import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 // import { loadStripe } from '@stripe/stripe-js';
 // const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+import Announcements from '@/components/groups/announcements';
 
 export default function StudentView({ group }) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
@@ -79,7 +80,7 @@ export default function StudentView({ group }) {
   const leaveClass = async () => {
     try {
       const classroomId = classroom.id;
-      const uid = localStorage.getItem("uid");
+      const uid = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/leave`;
       const response = await fetch(url, {
         method: 'POST',
@@ -100,7 +101,7 @@ export default function StudentView({ group }) {
   const cancelFreeTrial = async () => {
     try {
       const classroomId = classroom.id;
-      const uid = localStorage.getItem("uid");
+      const uid = localStorage.getItem('uid');
       const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
       const response = await fetch(url, {
         method: 'POST',
@@ -251,62 +252,13 @@ export default function StudentView({ group }) {
               </div>
             </div>
             <br></br>
-            <div className="col-span-6 rounded-lg border-l border-neutral-800 bg-neutral-800/50 px-4 py-3">
-              <div className="flex items-center">
-                <h1 className="text-xl text-white">Announcements</h1>
-              </div>
-              <ul
-                style={{
-                  color: 'white',
-                  padding: '0',
-                  margin: '0',
-                  height: '300px',
-                  overflowY: 'auto',
-                }}
-              >
-                {classroom.announcements &&
-                  classroom.announcements
-                    .slice()
-                    .reverse()
-                    .map((announcementObj, idx) => {
-                      return (
-                        <div style={{ position: 'relative' }} key={idx}>
-                          <li
-                            className="mb-4 cursor-pointer rounded-lg bg-neutral-900 p-3 hover:bg-neutral-900/50"
-                            style={{
-                              marginLeft: '10px',
-                              marginTop: '10px',
-                              cursor: 'default',
-                            }}
-                          >
-                            <span style={{ fontSize: '13px' }}>
-                              {new Date(
-                                announcementObj.createdAt
-                              ).toLocaleDateString()}
-                            </span>{' '}
-                            <br></br>{' '}
-                            <span style={{ fontSize: '17px' }}>
-                              {announcementObj.message}
-                            </span>
-                          </li>
-                          <span
-                            onClick={() =>
-                              deleteAnnouncement(announcementObj.id)
-                            }
-                            style={{
-                              fontSize: '15px',
-                              position: 'absolute',
-                              right: '0',
-                              paddingRight: '10px',
-                              bottom: '0',
-                              cursor: 'pointer',
-                            }}
-                          ></span>
-                        </div>
-                      );
-                    })}
-              </ul>
-            </div>
+            {classroom && classroom.announcements && (
+              <Announcements
+                isTeacher={false}
+                classCode={classroom.classCode}
+                announcementsProp={classroom.announcements}
+              />
+            )}
           </div>
         </div>
       </div>

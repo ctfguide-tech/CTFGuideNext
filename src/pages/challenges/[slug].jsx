@@ -174,7 +174,7 @@ export default function Challenge() {
     }
   };
 
-  console.log(terminalUrl);
+  // console.log(terminalUrl);
 
   const createTerminal = async () => {
     try {

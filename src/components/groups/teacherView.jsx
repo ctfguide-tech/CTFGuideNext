@@ -7,7 +7,10 @@ import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Gradebook from '@/components/groups/gradebook';
 import { Tooltip } from 'react-tooltip';
-import { Link } from 'react-router-dom';
+
+import Announcements from '@/components/groups/announcements';
+import ClassroomNav from '@/components/groups/classroomNav';
+
 import LoadingBar from 'react-top-loading-bar';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -29,23 +32,13 @@ export default function TeacherView({ group }) {
   const [message, setMessage] = useState('');
   const [color, setColor] = useState('gray');
   const [inviteLink, setInviteLink] = useState('');
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [announcement, setAnnouncement] = useState('');
+
   const [viewSettings, setViewSettings] = useState(false);
-  const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
   const [progress, setProgress] = useState(0); // for loader
-
   const [viewGradebook, setViewGradebook] = useState(false);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const getClassroom = async () => {
@@ -96,31 +89,6 @@ export default function TeacherView({ group }) {
     }
   };
 
-  const updateAnnouncement = async (id, message) => {
-    try {
-      if (!id) return;
-      const url = `${baseUrl}/classroom/announcements/${id}`;
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
-      });
-      const data = await response.json();
-      let classroomAnnouncements = classroom.announcements;
-      setClassroom((prevClassroom) => ({
-        ...prevClassroom,
-        announcements: classroomAnnouncements.map((announcement) =>
-          announcement.id === id ? data.body : announcement
-        ),
-      }));
-      console.log(data.message);
-    } catch (err) {
-      console.log(err);
-    }
-    setAnnouncement('');
-    setEditingAnnouncementIdx(-1);
-  };
-
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
@@ -137,50 +105,6 @@ export default function TeacherView({ group }) {
     return formattedDate;
   };
 
-  const createAnnouncement = async (message) => {
-    setAnnouncement('');
-    try {
-      if (message.length < 1) return;
-      message = message + ' - ' + localStorage.getItem('username');
-      const classCode = classroom.classCode;
-      const url = `${baseUrl}/classroom/announcements`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ classCode, message }),
-      });
-      const data = await response.json();
-      classroom.announcements.push(data.body);
-      console.log(data.message);
-    } catch (err) {
-      console.log(err);
-    }
-    setAnnouncement('');
-    setIsModalOpen(false);
-  };
-
-  const deleteAnnouncement = async (id) => {
-    try {
-      if (!id) return;
-      const url = `${baseUrl}/classroom/announcements/${id}`;
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await response.json();
-      setClassroom((prevClassroom) => ({
-        ...prevClassroom,
-        announcements: prevClassroom.announcements.filter(
-          (announcement) => announcement.id !== id
-        ),
-      }));
-      console.log(data.message);
-    } catch (err) {
-      console.log(err);
-    }
-    setAnnouncement('');
-  };
-
   if (viewGradebook) {
     return <Gradebook classroomId={classroom.id} />;
   }
@@ -192,33 +116,6 @@ export default function TeacherView({ group }) {
   if (viewSettings) {
     return <TeacherSettings classroom={classroom} />;
   }
-
-
-  const styles = {
-    textarea: {
-      width: '100%',
-      padding: '10px',
-      margin: '10px 0',
-      border: '1px solid white',
-      borderRadius: '5px',
-      backgroundColor: '#333',
-      color: '#fff',
-      resize: 'none',
-      fontSize: '16px',
-    },
-    button: {
-      backgroundColor: '#333',
-      color: '#fff',
-      border: 'none',
-      padding: '10px 20px',
-      textAlign: 'center',
-      textDecoration: 'none',
-      display: 'inline-block',
-      fontSize: '16px',
-      margin: '4px 2px',
-      cursor: 'pointer',
-    },
-  };
 
   function copy() {
     var copyText = document.getElementById('copyBox');
@@ -236,7 +133,7 @@ export default function TeacherView({ group }) {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-        /* bold */
+          /* bold */
         </style>
       </Head>
       <StandardNav />
@@ -249,39 +146,7 @@ export default function TeacherView({ group }) {
       <div className="bg-neutral-800">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
-            <div className="flex">
-              <div className="hidden md:ml-6 md:flex ">
-                {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:font-bold" */}
-                <button
-                  onClick={() => {
-                    window.location.href = `../${classroom.classCode}/home`;
-                  }}
-                  className="ml-2 inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200 "
-                >
-                  Home
-                </button>
-                <button
-                  onClick={() => {
-                    window.location.href = `../${classroom.classCode}/view-all-assignments`;
-                  }}
-                  className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                >
-                  Assignments
-                </button>
-                <button
-                  onClick={() => setViewGradebook(true)}
-                  className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                >
-                  Gradebook
-                </button>
-                <button
-                  onClick={() => setViewSettings(true)}
-                  className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                >
-                  Settings
-                </button>
-              </div>
-            </div>
+            {classroom && <ClassroomNav classCode={classroom.classCode} />}
             <div className="flex items-center">
               <button
                 onClick={() => {
@@ -295,8 +160,7 @@ export default function TeacherView({ group }) {
 
               <button
                 onClick={() => {
-                  setViewCreateAssignment(true);
-                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                  setIsModalOpen(true);
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
@@ -366,8 +230,6 @@ export default function TeacherView({ group }) {
                       <div
                         key={idx}
                         className="flex items-center space-x-2 rounded-lg  "
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedStudent(student)}
                       >
                         <img
                           src={defaultImages[i]}
@@ -380,130 +242,22 @@ export default function TeacherView({ group }) {
                   })}
               </div>
 
-              <div className="l col-span-6 rounded-lg ">
-                <div className="flex items-center ">
-                  <h1 className="mb-2 mt-10 text-xl font-semibold text-white">
-                    Announcements
-                  </h1>
-                  <div className="mb-2 ml-auto mt-10">
-                    <button
-                      className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-                      onClick={handleOpenModal}
-                    >
-                      New Post
-                    </button>
-                  </div>
-                </div>
-                <ul>
-                  {isModalOpen && (
-                    <div>
-                      <textarea
-                        value={announcement}
-                        onChange={(e) => setAnnouncement(e.target.value)}
-                        rows="4"
-                        cols="50"
-                        className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
-                      ></textarea>
-                      <button
-                        onClick={() => createAnnouncement(announcement)}
-                        className="mr-2 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-                      >
-                        Post
-                      </button>
-                      <button
-                        onClick={handleCloseModal}
-                        className="mr-2 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                  {classroom.announcements &&
-                    classroom.announcements
-                      .slice()
-                      .reverse()
-                      .map((announcementObj, idx) => {
-                        if (idx === editingAnnouncementIdx) {
-                          return (
-                            <div key={idx}>
-                              <textarea
-                                value={announcement}
-                                onChange={(e) =>
-                                  setAnnouncement(e.target.value)
-                                }
-                                rows="4"
-                                cols="50"
-                                style={styles.textarea}
-                              ></textarea>
-                              <button className='rounded-lg'
-                                onClick={() =>
-                                  updateAnnouncement(
-                                    announcementObj.id,
-                                    announcement
-                                  )
-                                }
-                                style={styles.button}
-                              >
-                                Update
-                              </button>
-                              <button className='rounded-lg'
-                                onClick={() => setEditingAnnouncementIdx(-1)}
-                                style={styles.button}
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          );
-                        } else {
-                          return (
-                            <div style={{ position: 'relative' }} key={idx}>
-                              <li
-                                onClick={() => {
-                                  setEditingAnnouncementIdx(idx);
-                                  setAnnouncement(announcementObj.message);
-                                }}
-                                className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
-                              >
-                                <span
-                                  className="text-white"
-                                  style={{ fontSize: '13px' }}
-                                >
-                                  {new Date(
-                                    announcementObj.createdAt
-                                  ).toLocaleDateString()}
-                                </span>{' '}
-                                <br></br>{' '}
-                                <span
-                                  className="text-white"
-                                  style={{ fontSize: '17px' }}
-                                >
-                                  {announcementObj.message}
-                                </span>
-                              </li>
-                              <span
-                                onClick={() =>
-                                  deleteAnnouncement(announcementObj.id)
-                                }
-                                className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
-                              >
-                                <i className="fa fa-trash mr-1 text-red-500">
-                                  {' '}
-                                </i>
-                                Delete
-                              </span>
-                            </div>
-                          );
-                        }
-                      })}
-                </ul>
-              </div>
+              {classroom && classroom.announcements && (
+                <Announcements
+                  isTeacher={true}
+                  classCode={classroom.classCode}
+                  announcementsProp={classroom.announcements}
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                />
+              )}
             </div>
             <div className="col-span-2   px-4 py-3">
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
                 {classroom &&
-                  classroom.assignments &&
-                  classroom.assignments.length > 0 ? (
+                classroom.assignments &&
+                classroom.assignments.length > 0 ? (
                   classroom.assignments.map((assignment) => (
                     <div
                       key={assignment.id}
