@@ -211,7 +211,6 @@ const Announcement = ({
           .slice()
           .reverse()
           .map((announcementObj, idx) => {
-            console.log(idx);
             if (idx === editingAnnouncementIdx) {
               return (
                 <div key={idx}>

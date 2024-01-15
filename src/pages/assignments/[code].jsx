@@ -22,6 +22,7 @@ export default function Slug() {
     { message: '', penalty: '' },
     { message: '', penalty: '' },
   ]);
+
   const [challenge, setChallenge] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,9 +35,6 @@ export default function Slug() {
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
-
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const [useEffectLoading, setUseEffectLoading] = useState(true);
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
