@@ -46,13 +46,21 @@ const Announcement = ({
     setAnnouncement('');
     try {
       console.log(message);
+      const token = localStorage.getItem('idToken');
       if (message.length < 1) return;
-      message = message + ' - ' + localStorage.getItem('username');
       const url = `${baseUrl}/classroom/announcements`;
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ classCode, message }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({
+          classCode,
+          message,
+          type: 'IMPORTANT',
+          username: localStorage.getItem('username'),
+        }),
       });
 
       const data = await response.json();
@@ -147,9 +155,7 @@ const Announcement = ({
                       }}
                     >
                       <span style={{ fontSize: '13px' }}>
-                        {new Date(
-                          announcementObj.createdAt
-                        )}
+                        {new Date(announcementObj.createdAt)}
                       </span>{' '}
                       <br></br>{' '}
                       <span style={{ fontSize: '17px' }}>
@@ -240,6 +246,7 @@ const Announcement = ({
                 </div>
               );
             } else {
+              console.log(announcementObj);
               return (
                 <div style={{ position: 'relative' }} key={idx}>
                   <li
@@ -250,12 +257,16 @@ const Announcement = ({
                     className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
                   >
                     <span className="text-white" style={{ fontSize: '13px' }}>
-                      {new Date(announcementObj.createdAt).toLocaleDateString()} &nbsp; 
-                      {new Date(announcementObj.createdAt).toLocaleTimeString()}  <br></br> {announcementObj.message}
-
+                      {announcementObj.author}{' '}
+                      {new Date(announcementObj.createdAt).toLocaleDateString()}{' '}
+                      &nbsp;
+                      {new Date(
+                        announcementObj.createdAt
+                      ).toLocaleTimeString()}{' '}
+                      {`(${announcementObj.type}) `}
+                      <br></br> {announcementObj.message}
                     </span>{' '}
                     <br></br>{' '}
-            
                   </li>
                   <span
                     onClick={() => deleteAnnouncement(announcementObj.id)}
