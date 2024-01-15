@@ -149,7 +149,7 @@ const Announcement = ({
                       <span style={{ fontSize: '13px' }}>
                         {new Date(
                           announcementObj.createdAt
-                        ).toLocaleDateString()}
+                        )}
                       </span>{' '}
                       <br></br>{' '}
                       <span style={{ fontSize: '17px' }}>
@@ -251,12 +251,12 @@ const Announcement = ({
                     className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
                   >
                     <span className="text-white" style={{ fontSize: '13px' }}>
-                      {new Date(announcementObj.createdAt).toLocaleDateString()}
+                      {new Date(announcementObj.createdAt).toLocaleDateString()} &nbsp; 
+                      {new Date(announcementObj.createdAt).toLocaleTimeString()}  <br></br> {announcementObj.message}
+
                     </span>{' '}
                     <br></br>{' '}
-                    <span className="text-white" style={{ fontSize: '17px' }}>
-                      {announcementObj.message}
-                    </span>
+            
                   </li>
                   <span
                     onClick={() => deleteAnnouncement(announcementObj.id)}
