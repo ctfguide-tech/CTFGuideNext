@@ -144,33 +144,7 @@ export default function TeacherView({ group }) {
         onLoaderFinished={() => setProgress(0)}
       />
       {/* second nav bar */}
-      <div className="bg-neutral-800">
-        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-10 justify-between">
-            {classroom && <ClassroomNav classCode={classroom.classCode} />}
-            <div className="flex items-center">
-              <button
-                onClick={() => {
-                  setViewCreateAssignment(true);
-                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-plus-circle pe-2"></i> New Assignment
-              </button>
 
-              <button
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-bullhorn pe-2"></i> New Post
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
         <div className="mt-10 ">
           <div className="flex">

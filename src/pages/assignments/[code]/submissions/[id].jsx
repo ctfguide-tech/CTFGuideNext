@@ -21,224 +21,55 @@ export default function Slug() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const parseDate = (dateString) => {
-    let dateObject = new Date(dateString);
-    let month = dateObject.getMonth() + 1;
-    let day = dateObject.getDate();
-    let year = dateObject.getFullYear();
-    let hours = dateObject.getHours();
-    let minutes = dateObject.getMinutes();
-    let ampm = hours >= 12 ? ' PM' : ' AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    let strTime = hours + ':' + minutes + ampm;
-    let formattedDate = `${month}/${day}/${year} ${strTime}`;
-    return formattedDate;
-  };
-
-  const getAssignment = async () => {
-    try {
-      console.log('Getting the assignments');
-      const params = window.location.href.split('/');
-      if (params.length < 5) {
-        return;
-      }
-      const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[4]}`;
-      const requestOptions = { method: 'GET' };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
-        const isAuth = await authenticate(data.body);
-        if (isAuth) {
-          setAssignment(data.body);
-          await getSubmissions(data.body);
-        } else {
-          console.log('You are not apart of this class');
-          window.location.href = '/groups';
-        }
-      } else {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const getSubmissions = async (assignment) => {
-    try {
-      console.log('getting the who submitted what for teacher view');
-      const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
-      const requestOptions = { method: 'GET' };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
-        setSubmissions(data.body);
-      } else {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const authenticate = async (assignment) => {
-    try {
-      console.log('authenticating user');
-      const uid = localStorage.getItem('uid');
-      const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
-      const response = await fetch(url, { method: 'GET' });
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        return true;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    return false;
-  };
-
-  const getChallenge = async () => {
-    try {
-      console.log('getting the challenge');
-      const token = localStorage.getItem('idToken');
-      const url = `${baseUrl}/challenges/${assignment.challenge.slug}?assignmentId=${assignment.id}`;
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        setChallenge(data.body);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    if (assignment === null) {
-      getAssignment();
-    } else if (!challenge) {
-      getChallenge();
-    }
-    // spin up the terminal
-    // first we get the assignment
-    // then we auth
-    // then fetch submissions if this is teacherview
-    // we need to fetch the file name for "associated files"
-    // on hints pressed make a call to the database to update the analytic that got created when user view challenge
-  }, [assignment]);
-
-  const checkFlag = () => {
-    if (assignment && flagInput === assignment.solution.keyword) {
-      setSolved(true);
-    } else {
-      setSolved(false);
-    }
-  };
-
-  const showHint = async (i) => {
-    try {
-      const url = `${baseUrl}/challenges/hints-update`;
-      const userId = localStorage.getItem('uid');
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          hintsUsed: i,
-          uid: userId,
-          challengeId: assignment.challenge.id,
-        }),
-      };
-
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        let tmp = [...hints];
-        tmp[i].message = assignment.challenge.hints[i].message;
-        tmp[i].penalty =
-          '(-' + assignment.challenge.hints[i].penalty + ') points';
-        setHints(tmp);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const submitAssignment = async () => {
-    try {
-      setLoading(true);
-      const params = window.location.href.split('/');
-      const userId = localStorage.getItem('uid');
-      const token = localStorage.getItem('idToken');
-      const url = `${baseUrl}/submission/create`;
-
-      const body = {
-        solved: flagInput === assignment.solution.keyword,
-        userId: userId,
-        classroomId: assignment.classroomId,
-        assignmentId: parseInt(params[4]),
-        keyword: flagInput,
-        challengeId: assignment.challengeId,
-        totalPoints: assignment.totalPoints,
-        hints: assignment.challenge.hints,
-      };
-
-      const requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        },
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      setSubmitted(true);
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading(false);
-  };
 
 
   // fetch kana log
   useEffect(() => {
     ;(async function () {
 
-        
+          const AsciinemaPlayer = await import('asciinema-player')
+let player;
         var requestOptions = {
             method: 'GET',
             redirect: 'follow'
             };
-              
-            fetch(`https://file-system-run-qi6ms4rtoa-ue.a.run.app/files/get/log?jwtToken=${localStorage.getItem('idToken')}&slug=fork_of_challenge_232`, requestOptions)
+              var password = "bS<P5>vh"
+            fetch(`https://file-system-run-qi6ms4rtoa-ue.a.run.app/files/get/log?password=${password}&slug=test_101z`, requestOptions)
                 .then(async response => {
                     // set file variable to the response
                     
                 //    AsciinemaPlayer.create('', document.getElementById('demo'));
                 
-                     const AsciinemaPlayer = await import('asciinema-player')
-                    AsciinemaPlayer.create({ data: response }, document.getElementById('demo'), {
-                        // smaller font
-                        fontSize: 12,
-
+                    player = AsciinemaPlayer.create({ data: response }, document.getElementById('demo'), {
+                      fit: false, 
+                      terminalFontSize: 30,
                     });
+
 
 
                 })
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
-            })()
+
+
+            function seekToTime(seconds) {
+              player.seek(seconds).then(() => {
+                  console.log(`Current time: ${player.getCurrentTime()}`);
+              });
+            }
+            
+            // Add click event listeners to list items
+            document.querySelectorAll('.clickable').forEach(item => {
+                item.addEventListener('click', function() {
+                    const time = parseInt(this.id.replace('seek', ''));
+                    seekToTime(time);
+                });
+            });
+            })
+            
+            ()
+
+
 
   //    AsciinemaPlayerLibrary.create(src, ref.current, asciinemaOptions)
 
@@ -247,6 +78,8 @@ export default function Slug() {
   
 
   }, [])
+
+
 
 
   return (
@@ -275,16 +108,25 @@ export default function Slug() {
 
           <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-4 py-4 ">
             <div className="mx-auto max-w-6xl">
-              <h1 className="text-3xl font-semibold text-white">
-                {assignment && assignment.name}{' '}
+         <div className="flex">
+          <div>
+          <h1 className="text-3xl font-semibold text-white">
+                {assignment && assignment.name || "Pranav's Submission"}{' '}
               </h1>
 
               <h1 className="text-white">
-                Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
+                Submitted at 01/12/24 11:45PM
               </h1>
+         </div>
+
+         <div className='ml-auto'>
+            <div className='bg-white px-3 rounded-md py-2'>
+              <h1 className='text-4xl font-bold text-blue-600'>85%</h1>
+            </div>
+         </div>
             </div>
           </div>
-
+</div>
           <div className="mx-auto mt-4 max-w-6xl">
 
 
@@ -292,16 +134,55 @@ export default function Slug() {
             <div className="">
      
 
-                <div className='grid grid-cols-2 gap-x-8'>
-                    <div>
-                    <h1 className='text-white text-xl mb-2'>Session Recording</h1>
-                <div className="border border-neutral-800" id="demo"> 
+                <div className='grid grid-cols-4 gap-x-8'>
+                    <div className='col-span-3'>
+                <div className="border border-neutral-800 h-1/2  w-full" id="demo"> 
 
                         </div>
                 
                     </div>
                     <div>
-                    <h1 className='text-white text-xl mb-2'>Kana AI</h1>
+
+                    <ol className="relative border-s border-gray-200 dark:border-gray-700">                  
+           
+                    <li id="seek0" onclick="seekToTime(0)" className="hover:bg-neutral-800 p-4 mb-10 ms-4 clickable">
+        <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">00:00</time>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Initial Terminal Access</h3>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">The student accessed the terminal and executed a 'clear' command, resetting the terminal view.</p>
+    </li>
+
+    <li id="seek1" onclick="seekToTime(1)" className="mb-10 ms-4 clickable hover:bg-neutral-800 p-4">
+        <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">00:01</time>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Executing 'ls' Command</h3>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Student executed 'ls' to list files in the current directory.</p>
+    </li>
+
+    <li id="seek9" onclick="seekToTime(9)" className="mb-10 ms-4 clickable hover:bg-neutral-800 p-4">
+        <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">00:09</time>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Directory Navigation Error</h3>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Attempted to navigate to a 'secret' directory, resulting in an error: 'No such file or directory'.</p>
+    </li>
+
+    <li id="seek47" onclick="seekToTime(47)" className="mb-10 ms-4 clickable hover:bg-neutral-800 p-4">
+        <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">00:47</time>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Discovery of '.secret' Directory</h3>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Successfully navigated to the '.secret' directory and listed its contents, revealing 'flag.txt'.</p>
+</li>
+
+
+<li id="seek51" onclick="seekToTime(51)" className="mb-10 ms-4 clickable hover:bg-neutral-800 p-4">
+    <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+    <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">00:51</time>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Opening 'flag.txt'</h3>
+    <p className="text-base font-normal text-gray-500 dark:text-gray-400">Student opened 'flag.txt' in a text editor, revealing the message "Nice job! You found me!" along with the text "flag_waves".</p>
+</li>
+
+</ol>
+
 
                
                     </div>
