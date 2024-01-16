@@ -268,9 +268,3 @@ ul {
   --rt-transition-closing-delay: 0.10s;
 }
 
-.tooltip {
-  padding: 8px 16px;
-  border-radius: 3px;
-  font-size: 50%;
-  width: max-content;
-}

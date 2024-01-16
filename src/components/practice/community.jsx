@@ -93,57 +93,6 @@ export function Community({ challenges }) {
                     return 1;
                   }
                   return 0;
-<<<<<<< HEAD
-                  })
-                  );
-                  setCategory(e.target.value);
-                  }}
-                  value={category}
-                  >
-                  <option value="all">All</option>
-                  <option value="forensics">forensics</option>
-                  <option value="cryptography">cryptography</option>
-                  <option value="web">web</option>
-                  <option value="reverse engineering">reverse engineering</option>
-                  <option value="programming">programming</option>
-                  <option value="pwn">pwn</option>
-                  <option value="steganography">steganography</option>
-                  <option value="basic">basic</option>
-                  </select>
-                  </div>
-                  <div className="w-full ml-4">
-                  <label
-                           htmlFor="search"
-                           className="block text-sm font-medium leading-5 text-gray-200"
-                         >
-                  Search
-                  </label>
-                  <input
-                  id="search"
-                  style={{ backgroundColor: '#212121' }}
-                  onChange={search}
-                  placeholder="Search for a Challenge"
-                  className="mt-1 block w-full rounded py-2 pr-40 pl-3 pr-10 text-base leading-6 border-none text-white focus:outline-none sm:text-sm sm:leading-5"
-                  ></input>
-                  </div>
-                  </div>
-                  <div className="mt-6 max-w-6xl text-left">
-    <h1 className="text-3xl font-semibold text-white"> Community Challenges </h1>
-    <div className="mt-4 grid grid-cols-1 gap-4 gap-y-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {results.length > 0
-        ? results
-            .filter((challenge) => {
-              if (
-                difficulty.toLowerCase() !== 'all' &&
-                challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()
-              ) {
-                return false;
-              }
-              if (
-                filter !== '' &&
-                challenge.category.includes(filter.toLowerCase())
-              ) {
-=======
                 })
               );
               setCategory(e.target.value);
@@ -208,7 +157,6 @@ export function Community({ challenges }) {
                 ) {
                   return false;
                 }
->>>>>>> origin/profile-changes
                 return true;
               })
               .map((challenge, index) => (

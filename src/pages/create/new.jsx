@@ -108,6 +108,8 @@ export default function Createchall() {
       const nConfig = newConfig.replace('\n', ' && ');
       const token = localStorage.getItem('idToken');
 
+      console.log([category])
+
       const challengeInfo = {
         name: newChallengeName,
         category: [category],

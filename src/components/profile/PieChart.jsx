@@ -1,11 +1,29 @@
 import React from 'react';
+import { Tooltip } from 'react-tooltip';
 
 const PieChart = ({ data }) => {
+  const [hoveredValue, setHoveredValue] = React.useState(null);
+  let colors = ['#1976D2', '#4CAF50', '#FB8C00', '#7E57C2', '#E57373'];
+
+  const isAllZero = data.every(value => value === 0);
+
+  if (isAllZero) {
+    data = [1]
+    colors = ['#384c74']
+  }
   const total = data.reduce((acc, value) => acc + value, 0);
 
   let startAngle = 0;
-  const colors = ['#1976D2', '#4CAF50', '#FB8C00', '#7E57C2', '#E57373'];
   const holeRadius = 0.8;
+
+  const handleMouseOver = (value) => {
+    setHoveredValue(value);
+  };
+
+  const handleMouseOut = () => {
+    setHoveredValue(null);
+  }
+
 
   const donutSections = data.map((value, index) => {
     const percentage = (value / total) * 100;
@@ -36,9 +54,32 @@ const PieChart = ({ data }) => {
       stroke: 'gray',
       strokeWidth: '0.01',
     };
+
+    let tooltipContent;
+    if (colors[index % colors.length] === '#1976D2') {
+      tooltipContent = `Beginner: ${value}`;
+    } else if (colors[index % colors.length] === '#4CAF50') {
+      tooltipContent = `Easy: ${value}`;
+    } else if (colors[index % colors.length] === '#FB8C00') {
+      tooltipContent = `Medium: ${value}`;
+    } else if (colors[index % colors.length] === '#7E57C2') {
+      tooltipContent = `Hard: ${value}`;
+    } else if (colors[index % colors.length] === '#E57373') {
+      tooltipContent = `Insane: ${value}`;
+    }
+
+
     startAngle += angle;
 
-    return <path key={index} d={pathData} style={style} />;
+    return <path
+      key={index}
+      d={pathData}
+      style={style}
+      data-tooltip-content={tooltipContent}
+      data-tooltip-id="pie-chart-tooltip"
+      data-tooltip-place="top"
+      onMouseOver={() => handleMouseOver(value)}
+      onMouseOut={handleMouseOut} />;
   });
 
   const centerX = 0;
@@ -50,14 +91,32 @@ const PieChart = ({ data }) => {
     fill: '#fff',
   };
 
+  if (isAllZero) {
+    return (
+      <div>
+        <svg width="170" height="170" viewBox="-1 -1 2 2">
+          {donutSections}
+          <text x={centerX} y={centerY} style={ {fontSize: 0.2, textAnchor: 'text-middle', fill: '#fff' }}>
+            <tspan className="font-bold" x={centerX} dx="-0.725" dy="-0.05">No Challenges</tspan>
+            <tspan className="font-bold" x={centerX} dx="-0.53" dy="0.3">Solved Yet</tspan>
+          </text>
+        </svg>
+      </div>
+    );
+  }
+
   return (
-    <svg width="170" height="170" viewBox="-1 -1 2 2">
-      {donutSections}
-      <text x={centerX} y={centerY} style={numberStyle}>
-        <tspan className="font-bold" x={centerX} dx="-0.19" dy="-0.1">{45}</tspan>
-        <tspan x={centerX} dx="-0.48" dy="0.35">Solved</tspan>
-      </text>
-    </svg>
+    <div>
+      <Tooltip id="pie-chart-tooltip" />
+      <svg width="170" height="170" viewBox="-1 -1 2 2">
+        {donutSections}
+
+        <text x={centerX} y={centerY} style={numberStyle}>
+          <tspan className="font-bold" x={centerX} dx="-0.19" dy="-0.1">{total}</tspan>
+          <tspan x={centerX} dx="-0.48" dy="0.35">Solved</tspan>
+        </text>
+      </svg>
+    </div>
   );
 };
 
