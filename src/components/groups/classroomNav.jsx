@@ -1,4 +1,3 @@
-import { useState } from 'react';
 const ClassroomNav = ({ classCode }) => {
   return (
     <div className="flex">
@@ -21,13 +20,13 @@ const ClassroomNav = ({ classCode }) => {
           Assignments
         </button>
         <button
-          onClick={() => {}}
+          onClick={() => (window.location.href = `../${classCode}/gradebook`)}
           className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
         >
           Gradebook
         </button>
         <button
-          onClick={() => {}}
+          onClick={() => (window.location.href = `../${classCode}/settings`)}
           className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
         >
           Settings

@@ -3,17 +3,14 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import TeacherSettings from '@/components/groups/teacherSettings';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
-import Gradebook from '@/components/groups/gradebook';
 import { Tooltip } from 'react-tooltip';
 
 import Announcements from '@/components/groups/announcements';
 import ClassroomNav from '@/components/groups/classroomNav';
-
 import LoadingBar from 'react-top-loading-bar';
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
 
 const defaultImages = [
@@ -33,10 +30,8 @@ export default function TeacherView({ group }) {
   const [color, setColor] = useState('gray');
   const [inviteLink, setInviteLink] = useState('');
 
-  const [viewSettings, setViewSettings] = useState(false);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
-  const [progress, setProgress] = useState(0); // for loader
-  const [viewGradebook, setViewGradebook] = useState(false);
+  const [progress, setProgress] = useState(0); // for the loader
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -106,25 +101,8 @@ export default function TeacherView({ group }) {
     return formattedDate;
   };
 
-  if (viewGradebook) {
-    return <Gradebook classroomId={classroom.id} />;
-  }
-
   if (viewCreateAssignment) {
     return <CreateAssignment classroomId={classroom.id} />;
-  }
-
-  if (viewSettings) {
-    return <TeacherSettings classroom={classroom} />;
-  }
-
-  function copy() {
-    var copyText = document.getElementById('copyBox');
-    copyText.type = 'text';
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(copyText.value);
-    copyText.type = 'hidden';
   }
 
   return (
@@ -145,6 +123,7 @@ export default function TeacherView({ group }) {
       />
       {/* second nav bar */}
 
+      {classroom && <ClassroomNav classCode={classroom.classCode} />}
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
         <div className="mt-10 ">
           <div className="flex">

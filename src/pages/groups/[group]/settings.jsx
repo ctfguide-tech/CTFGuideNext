@@ -28,18 +28,18 @@ const defaultImages = [
   'https://robohash.org/jasoncalcanis',
 ];
 
-export default function teacherSettings({ classroom }) {
+export default function teacherSettings() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteLink, setInviteLink] = useState(
     'ctfguide.com/invite/*****/********'
   );
   const [inviteActivated, setInviteActivated] = useState(false);
 
-  const [description, setDescription] = useState(classroom.description);
-  const [numberOfSeats, setNumberOfSeats] = useState(classroom.numberOfSeats);
-  const [isOpen, setIsOpen] = useState(classroom.open ? 'open' : 'close');
-  const [nameOfClassroom, setNameOfClassroom] = useState(classroom.name);
-  const [emailDomain, setEmailDomain] = useState(classroom.org);
+  const [description, setDescription] = useState('');
+  const [numberOfSeats, setNumberOfSeats] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [nameOfClassroom, setNameOfClassroom] = useState('');
+  const [emailDomain, setEmailDomain] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const [showOverlay, setShowOverlay] = useState(false);
@@ -47,12 +47,80 @@ export default function teacherSettings({ classroom }) {
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(-1);
 
+  const [originalNumberOfSeats, setOriginalNumberOfSeats] = useState(0);
+
   const [weightIdx, setWeightIdx] = useState(0);
-  const [weights, setWeights] = useState(classroom.weights);
-  const [category, setCategory] = useState(
-    classroom.category.length > 0 ? classroom.category[0] : 0
-  );
-  // console.log(classroom);
+  const [weights, setWeights] = useState([]);
+  const [category, setCategory] = useState(0);
+  const [classCode, setClassCode] = useState('');
+  const [classroomId, setClassroomId] = useState(-1);
+  const [pricingPlan, setPricingPlan] = useState('');
+  const [students, setStudents] = useState([]);
+  const [filteredOptions, setFileredOptions] = useState([]);
+
+  useEffect(() => {
+    const getClassroom = async () => {
+      const classCode = window.location.href.split('/')[4];
+      setClassCode(classCode);
+      if (!classCode) return;
+      const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`;
+      const requestOptions = {
+        method: 'GET',
+      };
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.success) {
+        let classroom = data.body;
+        setDescription(classroom.description);
+        setNumberOfSeats(classroom.numberOfSeats);
+        setIsOpen(classroom.open ? 'open' : 'close');
+        setNameOfClassroom(classroom.name);
+        setEmailDomain(classroom.org);
+        setWeights(classroom.weights);
+        setCategory(classroom.category.length > 0 ? classroom.category[0] : 0);
+        setPricingPlan(classroom.pricingPlan);
+        setClassroomId(classroom.id);
+        setStudents(classroom.sutdents);
+        const filteredOptions = classroom.students.filter((option) =>
+          option.username.toLowerCase().includes(searchInput.toLowerCase())
+        );
+        setOriginalNumberOfSeats(classroom.numberOfSeats);
+        setFileredOptions(filteredOptions);
+        let isAuth = await checkPermissions(classCode);
+        if (!isAuth) {
+          window.location.replace('/groups');
+        }
+      } else {
+        console.log('Error when getting classroom info');
+        console.log(data.message);
+      }
+    };
+    getClassroom();
+  }, []);
+
+  const checkPermissions = async (classCode) => {
+    try {
+      const userUid = localStorage.getItem('uid');
+      const url = `${baseUrl}/classroom/check-if-teacher`;
+      const token = localStorage.getItem('idToken');
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({ classCode: classCode, uid: userUid }),
+      });
+      const res = await response.json();
+      if (res.success) {
+        return res.isTeacher;
+      } else {
+        window.location.replace('/login');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const actions = [
     'Are you sure you want to delete the class all data will be lost',
@@ -68,7 +136,7 @@ export default function teacherSettings({ classroom }) {
     if (
       value !== '' &&
       !isNaN(value) &&
-      parseInt(value) >= classroom.numberOfSeats
+      parseInt(value) >= originalNumberOfSeats
     ) {
       setNumberOfSeats(value);
     }
@@ -80,7 +148,7 @@ export default function teacherSettings({ classroom }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(email)) {
       setInviteLink('generating...');
-      const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
+      const url = `${baseUrl}/classroom/getAccessToken?classCode=${classCode}&email=${email}`;
       const token = localStorage.getItem('idToken');
       const requestOptions = {
         method: 'GET',
@@ -93,7 +161,7 @@ export default function teacherSettings({ classroom }) {
       console.log(data);
       if (data.success) {
         setInviteLink(
-          `${frontend_baselink}/groups/invites/${classroom.classCode}/${data.body}`
+          `${frontend_baselink}/groups/invites/${classCode}/${data.body}`
         );
       } else {
         setInviteLink(data.message);
@@ -112,13 +180,13 @@ export default function teacherSettings({ classroom }) {
           Authorization: 'Bearer ' + token,
         },
         body: JSON.stringify({
-          classroomId: classroom.id,
-          classCode: classroom.classCode,
+          classroomId: classroomId,
+          classCode: classCode,
         }),
       });
       const data = await response.json();
       if (data.success) {
-        window.location.href = '/groups';
+        window.location.href = `/groups/${classCode}/home`;
       } else {
         window.location.replace('/login');
         console.log('Error when removing classroom');
@@ -131,7 +199,6 @@ export default function teacherSettings({ classroom }) {
   const leaveClass = async () => {
     try {
       const uidOfTeacher = localStorage.getItem('uid');
-      const classroomId = classroom.id;
       const url = `${baseUrl}/classroom/leave`;
       const response = await fetch(url, {
         method: 'POST',
@@ -144,7 +211,7 @@ export default function teacherSettings({ classroom }) {
       });
       const data = await response.json();
       if (data.success) {
-        window.location.href = `/groups`;
+        window.location.href = `/groups/${classCode}/home`;
       } else {
         console.log(data.message);
       }
@@ -155,8 +222,6 @@ export default function teacherSettings({ classroom }) {
 
   const removeStudent = async () => {
     try {
-      const uidOfTeacher = localStorage.getItem('uid');
-      const classroomId = classroom.id;
       const userId = selectedStudent.uid;
       const url = `${baseUrl}/classroom/blackListStudent`;
       const response = await fetch(url, {
@@ -167,7 +232,7 @@ export default function teacherSettings({ classroom }) {
       const data = await response.json();
       if (data.success) {
         console.log('The student has been blackListed');
-        window.location.href = `/groups/${classroom.classCode}/${uidOfTeacher}`;
+        window.location.href = `/groups/${classCode}/home`;
       } else {
         console.log('Error when removing classroom');
       }
@@ -190,8 +255,6 @@ export default function teacherSettings({ classroom }) {
 
   const addSeatToClass = async (seatsToAdd) => {
     try {
-      const classroomId = classroom.id;
-      const pricingPlan = classroom.pricingPlan;
       const url = `${baseUrl}/classroom/add-seat`;
       const response = await fetch(url, {
         method: 'POST',
@@ -205,7 +268,7 @@ export default function teacherSettings({ classroom }) {
           await stripe.redirectToCheckout({ sessionId: data.sessionId });
         } else {
           console.log('Seat has been updated');
-          window.location.href = ``;
+          window.location.href = `/groups/${classCode}/home`;
         }
       } else {
         console.log('Error when adding seat');
@@ -218,7 +281,7 @@ export default function teacherSettings({ classroom }) {
   const saveChanges = async () => {
     try {
       const reqBody = {
-        classCode: classroom.classCode,
+        classCode: classCode,
         nameOfClassroom: nameOfClassroom,
         org: emailDomain,
         openStatus: isOpen === 'open',
@@ -239,11 +302,12 @@ export default function teacherSettings({ classroom }) {
       if (data.success) {
         console.log('The class has been updated');
         const newNumberOfSeats = parseInt(numberOfSeats);
-        if (classroom.numberOfSeats !== newNumberOfSeats) {
-          const seatsToAdd = newNumberOfSeats - classroom.numberOfSeats;
+        console.log(newNumberOfSeats);
+        if (originalNumberOfSeats < newNumberOfSeats) {
+          const seatsToAdd = newNumberOfSeats - originalNumberOfSeats;
           await addSeatToClass(seatsToAdd);
         } else {
-          window.location.href = ``;
+          window.location.href = `/groups/${classCode}/home`;
         }
       } else {
         window.location.replace('/login');
@@ -273,10 +337,6 @@ export default function teacherSettings({ classroom }) {
     });
   }
 
-  const filteredOptions = classroom.students.filter((option) =>
-    option.username.toLowerCase().includes(searchInput.toLowerCase())
-  );
-
   return (
     <>
       <Head>
@@ -298,7 +358,9 @@ export default function teacherSettings({ classroom }) {
 
                 <div className="ml-auto">
                   <button
-                    onClick={() => (window.location.href = ``)}
+                    onClick={() =>
+                      (window.location.href = `/groups/${classCode}/home`)
+                    }
                     className=" rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
                     style={{
                       fontSize: '15px',
@@ -317,7 +379,7 @@ export default function teacherSettings({ classroom }) {
                 <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
                   <div className="sm:col-span-6">
                     <h2 className="text-xl font-medium text-white">
-                      Payed by {classroom.pricingPlan}
+                      Payed by {pricingPlan}
                     </h2>
                     <p className="mt-1 text-sm text-white">
                       All changes will be applied after clicking the save button
@@ -334,7 +396,7 @@ export default function teacherSettings({ classroom }) {
                           className="mx-auto text-center text-white"
                           style={{ fontSize: '20px' }}
                         >
-                          {classroom.classCode}{' '}
+                          {classCode}{' '}
                           <i
                             onClick={() => copy('copyBox')}
                             className="far fa-copy cursor-pointer text-white hover:text-neutral-400"
@@ -690,11 +752,7 @@ export default function teacherSettings({ classroom }) {
         </div>
       </div>
 
-      <input
-        type="hidden"
-        id="copyBox"
-        value={classroom.classCode || ''}
-      ></input>
+      <input type="hidden" id="copyBox" value={classCode || ''}></input>
       <input type="hidden" id="copyBox2" value={inviteLink || ''}></input>
 
       <ToastContainer
