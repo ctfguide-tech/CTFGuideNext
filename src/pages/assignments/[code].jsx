@@ -200,6 +200,7 @@ export default function Slug() {
 
       const response = await fetch(reqUrl, requestOptions);
       const data = await response.json();
+      console.log(data);
 
       if (data.length > 0) {
         const { password, serviceName, url, userName, minutesRemaining, id } =
@@ -334,7 +335,6 @@ export default function Slug() {
   const deleteTerminal = async (code) => {
     try {
       console.log('deleting terminal');
-
       const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
 
       const body = {
@@ -354,6 +354,7 @@ export default function Slug() {
       };
 
       const response = await fetch(url, requestOptions);
+      console.log(response);
       if (response.ok) {
         console.log('The terminal was deleted successfully');
       } else {
@@ -391,7 +392,7 @@ export default function Slug() {
 
               <h1 className="text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
-                <button onClick={() => deleteTerminal('2399')}> del </button>
+                <button onClick={() => deleteTerminal('9735')}> del </button>
               </h1>
             </div>
           </div>

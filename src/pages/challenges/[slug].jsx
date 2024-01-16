@@ -49,11 +49,10 @@ export default function Challenge() {
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
+  const [fetchingTerminal, setFetchingTerminal] = useState(false);
 
   const [difficulty, setDifficulty] = useState('');
   const [alreadySolved, setAlreadySolved] = useState(false);
-
-  let fileurl = '';
 
   const [progress, setProgress] = useState(0);
   const [eta, setEta] = useState(15);
@@ -73,7 +72,7 @@ export default function Challenge() {
     };
   }, []);
 
-  useEffect(() => {
+  const loadBar = () => {
     const interval = setInterval(() => {
       setProgress((prevProgress) => {
         const newProgress = prevProgress + 100 / (15 * 10);
@@ -88,7 +87,7 @@ export default function Challenge() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  };
 
   // Kshitij
   const [hintMessages, setHintMessages] = useState([]);
@@ -101,76 +100,84 @@ export default function Challenge() {
   });
 
   const getTerminalStatus = async (id) => {
-    console.log('getting terminal status');
-    if (!foundTerminal) {
-      const username = localStorage.getItem('username');
-      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
-      const response = await fetch(url, { method: 'GET' });
+    try {
+      console.log('Getting terminal status');
+      if (!foundTerminal) {
+        const username = localStorage.getItem('username');
+        const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
+        const response = await fetch(url, { method: 'GET' });
 
-      console.log(response);
+        const readableStream = response.body;
+        const textDecoder = new TextDecoder();
+        const reader = readableStream.getReader();
+        let result = await reader.read();
 
-      if (response.ok) {
-        setFoundTerminal(true);
-        console.log('The terminal is now ready');
-        document.getElementById('termurl').classList.remove('absolute');
-        document.getElementById('termurl').classList.remove('opacity-0');
-        document.getElementById('terminalLoader').classList.add('hidden');
-      } else {
-        setTimeout(() => {
-          getTerminalStatus(id);
-        }, 3000);
+        while (!result.done) {
+          let stat = textDecoder.decode(result.value);
+          console.log('Response from getTerminalStatus: ', stat);
+          if (stat !== 'active') {
+            throw new Error('Not active');
+          }
+          result = await reader.read();
+        }
+
+        if (response.ok) {
+          // toast.info('Terminal status is OK');
+          console.log('Termainl status is OK');
+          setTimeout(() => {
+            setFoundTerminal(true);
+          }, 8000);
+
+          console.log('Displaying terminal');
+          document.getElementById('termurl').classList.remove('absolute');
+          document.getElementById('termurl').classList.remove('opacity-0');
+          document.getElementById('terminalLoader').classList.add('hidden');
+        }
       }
+    } catch (err) {
+      setTimeout(async () => {
+        console.log('Terminal status failed');
+        await getTerminalStatus(id);
+      }, 3000);
     }
   };
 
   const fetchTerminal = async () => {
     try {
-      console.log('fetching terminal');
+      loadBar();
+      // toast.info('Fetching terminal...');
+      setFetchingTerminal(true);
+      console.log('Fetching a terminal');
       const token = localStorage.getItem('idToken');
-      const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
+      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
       const requestOptions = {
         method: 'GET',
         redirect: 'follow',
       };
 
-      const response = await fetch(url, requestOptions);
+      const response = await fetch(reqUrl, requestOptions);
       const data = await response.json();
-
-      console.log(data);
 
       if (data.length > 0) {
         const { password, serviceName, url, userName, minutesRemaining, id } =
           data[0];
 
+        setTerminalPassword(password);
         setServiceName(serviceName);
         setTerminalUrl(url);
-        setTerminalUsername(userName);
-        setTerminalPassword(password);
+        setTerminalUsername(serviceName);
         setMinutesRemaining(minutesRemaining);
+        console.log('Terminal data ID: ', id);
+        console.log('Terminal url: ', url);
 
-        document.getElementById('timer').innerText =
-          minutesRemaining + ' minutes';
-        let minutes = minutesRemaining;
-
-        setInterval(function () {
-          // drop minutes
-          if (minutes == 0) {
-            window.alert(
-              'Your terminal session has expired. Please refresh the page to start a new session.'
-            );
-            window.location.reload();
-          }
-          minutes = minutes - 1;
-          document.getElementById('timer').innerText = minutes + ' minutes';
-        }, 60000);
-
-        getTerminalStatus(id);
+        await getTerminalStatus(id);
       } else {
         console.log('No termainl... creating a new one');
-        createTerminal();
+        await createTerminal();
       }
     } catch (err) {
       console.log(err);
+      setFetchingTerminal(false);
     }
   };
 
@@ -178,6 +185,8 @@ export default function Challenge() {
 
   const createTerminal = async () => {
     try {
+      // toast.info('Creating a terminal');
+      console.log('Creating a terminal');
       let min = 1000;
       let max = 9999;
 
@@ -191,10 +200,8 @@ export default function Challenge() {
         classID: 'psu101',
         organizationName: 'PSU',
         userID: localStorage.getItem('username'),
-        slug: slug,
+        slug: challenge.slug,
       };
-
-      console.log(body);
 
       const requestOptions = {
         method: 'POST',
@@ -204,8 +211,12 @@ export default function Challenge() {
 
       const response = await fetch(url, requestOptions);
       if (response.ok) {
-        fetchTerminal();
+        console.log('The terminal was created successfully');
+      } else {
+        console.log('Failed to create the terminal');
       }
+
+      await fetchTerminal();
     } catch (err) {
       console.log(err);
     }
@@ -265,7 +276,7 @@ export default function Challenge() {
       // }
       // fetchLikeUrl();
       getChallengeData();
-      fetchTerminal();
+      // fetchTerminal();
     }
     const award = localStorage.getItem('award');
     if (award) {
@@ -801,13 +812,30 @@ export default function Challenge() {
               ></img>
             </div>
 
-            <iframe
-              onError={() => window.location.reload()}
-              className="absolute w-full bg-white opacity-0"
-              height="500"
-              id="termurl"
-              src={foundTerminal ? terminalUrl : ''}
-            ></iframe>
+            {foundTerminal ? (
+              <embed
+                onError={() => window.location.reload()}
+                className="absolute w-full bg-white opacity-0"
+                height="500"
+                id="termurl"
+                src={foundTerminal ? terminalUrl : ''}
+              ></embed>
+            ) : (
+              <p>Loading...</p>
+            )}
+
+            <br></br>
+            {!foundTerminal && (
+              <div className=" mx-auto text-center ">
+                <span
+                  className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                  disabled={fetchingTerminal}
+                  onClick={fetchTerminal}
+                >
+                  {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                </span>
+              </div>
+            )}
           </div>
           <div className="mt-10  rounded-lg px-5 pb-20">
             <h1 className="text-3xl font-semibold text-white">Comments</h1>
