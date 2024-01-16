@@ -32,6 +32,10 @@ const Gradebook = () => {
     try {
       const params = window.location.href.split('/');
       const classCode = params[4];
+      let isAuth = await checkPermissions(classCode);
+      if (!isAuth) {
+        window.location.href = `/groups/${classCode}/home`;
+      }
       setClassCode(classCode);
       var requestOptions = {
         method: 'GET',
@@ -56,6 +60,30 @@ const Gradebook = () => {
   useEffect(() => {
     getAssignments();
   }, []);
+
+  const checkPermissions = async (classCode) => {
+    try {
+      const userUid = localStorage.getItem('uid');
+      const url = `${baseUrl}/classroom/check-if-teacher`;
+      const token = localStorage.getItem('idToken');
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({ classCode: classCode, uid: userUid }),
+      });
+      const res = await response.json();
+      if (res.success) {
+        return res.isTeacher;
+      } else {
+        window.location.replace('/login');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const refresh = () => {
     getAssignments();
