@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
+import CreateAssignment from '@/components/groups/assignments/createAssignment';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const Gradebook = () => {
@@ -13,10 +14,10 @@ const Gradebook = () => {
   const [classCode, setClassCode] = useState('');
   const [classroom, setClassroom] = useState({});
   const [progress, setProgress] = useState(0);
+  const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
 
   const router = useRouter();
   const { group } = router.query;
-
 
   const getStudentsSubmissionsFinalGrades = async (classroomId) => {
     try {
@@ -98,6 +99,10 @@ const Gradebook = () => {
     getAssignments();
   };
 
+  if(viewCreateAssignment) {
+   return <CreateAssignment />
+  }
+
   return (
     <>
       <Head>
@@ -121,7 +126,6 @@ const Gradebook = () => {
               <button
                 onClick={() => {
                   setViewCreateAssignment(true);
-                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
