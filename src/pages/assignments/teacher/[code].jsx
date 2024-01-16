@@ -391,7 +391,6 @@ export default function Slug() {
 
               <h1 className="text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
-                <button onClick={() => deleteTerminal('2399')}> del </button>
               </h1>
             </div>
           </div>
@@ -407,16 +406,9 @@ export default function Slug() {
 
             <div className="grid h-full grid-cols-6 gap-x-8">
               <div className="col-span-2">
-                <b className="text-white">ASSOCIATED FILES</b>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 cursor-pointer rounded-lg border border-neutral-800/50 bg-neutral-800/50 px-4 py-1 text-white hover:bg-neutral-700/10">
-                  <h1 className="text-md">
-                    <i className="fas fa-file-archive mr-2 text-white"></i>{' '}
-                    this_is_flag.zip
-                  </h1>
-                </div>
+          
 
-                <p className="mt-6 font-semibold text-white">FLAG SUBMISSION</p>
+                <p className="mt-2 font-semibold text-white">FLAG SUBMISSION</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
 
                 <input

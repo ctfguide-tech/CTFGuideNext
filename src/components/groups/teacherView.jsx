@@ -241,7 +241,7 @@ export default function TeacherView({ group }) {
                     <div
                       key={assignment.id}
                       onClick={() => {
-                        window.location.href = '/assignments/' + assignment.id;
+                        window.location.href = '/assignments/teacher/' + assignment.id + '';
                       }}
                       className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
                     >
