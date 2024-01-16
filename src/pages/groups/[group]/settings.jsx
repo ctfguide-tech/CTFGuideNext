@@ -4,7 +4,8 @@ import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
-
+import ClassroomNav from '@/components/groups/classroomNav';
+import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -34,6 +35,7 @@ export default function teacherSettings() {
     'ctfguide.com/invite/*****/********'
   );
   const [inviteActivated, setInviteActivated] = useState(false);
+  const [classroom, setClassroom] = useState({});
 
   const [description, setDescription] = useState('');
   const [numberOfSeats, setNumberOfSeats] = useState(0);
@@ -57,6 +59,11 @@ export default function teacherSettings() {
   const [pricingPlan, setPricingPlan] = useState('');
   const [students, setStudents] = useState([]);
   const [filteredOptions, setFileredOptions] = useState([]);
+
+
+  const router = useRouter();
+  const { group } = router.query;
+
 
   useEffect(() => {
     const getClassroom = async () => {
@@ -347,6 +354,25 @@ export default function teacherSettings() {
         </style>
       </Head>
       <StandardNav />
+      <div className="bg-neutral-800">
+        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-10 justify-between">
+            {classroom && <ClassroomNav classCode={group} />}
+            <div className="flex items-center">
+              <button
+                onClick={() => {
+                  setViewCreateAssignment(true);
+                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-plus-circle pe-2"></i> New Assignment
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
       <div id="general" className="">
         <div className="mx-auto flex max-w-6xl">
           <div className="flex-1 xl:overflow-y-auto">

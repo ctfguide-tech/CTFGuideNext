@@ -5,6 +5,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { useRouter } from 'next/router';
+import ClassroomNav from '@/components/groups/ClassroomNav';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
 
@@ -49,19 +50,36 @@ const ViewAllAssignments = () => {
 
   return (
     <>
-      <Head>
-        <title>Assignments - CTFGuide</title>
-        <meta
-          name="description"
-          content="Cybersecurity made easy for everyone"
-        />
+   <Head>
+        <title>View all Assignments - CTFGuide</title>
         <style>
           @import
-          url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+          url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+          /* bold */
         </style>
       </Head>
       <StandardNav />
+      <div className="bg-neutral-800">
+        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-10 justify-between">
+            {classroom && <ClassroomNav classCode={classroom.classCode} />}
+            <div className="flex items-center">
+              <button
+                onClick={() => {
+                  setViewCreateAssignment(true);
+                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-plus-circle pe-2"></i> New Assignment
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="mx-auto mt-6   max-w-6xl  justify-center ">
+
         <h1 className="mx-auto text-2xl font-semibold text-white">
           Assignments
         </h1>

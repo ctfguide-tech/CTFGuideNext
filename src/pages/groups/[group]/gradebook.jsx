@@ -2,12 +2,21 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
+import LoadingBar from 'react-top-loading-bar';
+import ClassroomNav from '@/components/groups/classroomNav';
+import { useRouter } from 'next/router';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const Gradebook = () => {
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [classCode, setClassCode] = useState('');
+  const [classroom, setClassroom] = useState({});
+  const [progress, setProgress] = useState(0);
+
+  const router = useRouter();
+  const { group } = router.query;
+
 
   const getStudentsSubmissionsFinalGrades = async (classroomId) => {
     try {
@@ -99,7 +108,30 @@ const Gradebook = () => {
         </style>
       </Head>
       <StandardNav />
+      <LoadingBar
+        color="#0062ff"
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
+      <div className="bg-neutral-800">
+        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-10 justify-between">
+            {classroom && <ClassroomNav classCode={group} />}
+            <div className="flex items-center">
+              <button
+                onClick={() => {
+                  setViewCreateAssignment(true);
+                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-plus-circle pe-2"></i> New Assignment
+              </button>
 
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="mx-auto mt-10 max-w-6xl">
         <div className="flex">
           <h1 className="text-3xl font-semibold text-white">Gradebook</h1>
