@@ -154,13 +154,18 @@ const Announcement = ({
                         cursor: 'default',
                       }}
                     >
-                      <span style={{ fontSize: '13px' }}>
-                        {new Date(announcementObj.createdAt)}
+                      <span className="text-white" style={{ fontSize: '13px' }}>
+                        {announcementObj.author}{' '}
+                        {new Date(
+                          announcementObj.createdAt
+                        ).toLocaleDateString()}{' '}
+                        &nbsp;
+                        {new Date(
+                          announcementObj.createdAt
+                        ).toLocaleTimeString()}{' '}
+                        {`(${announcementObj.type}) `}
+                        <br></br> {announcementObj.message}
                       </span>{' '}
-                      <br></br>{' '}
-                      <span style={{ fontSize: '17px' }}>
-                        {announcementObj.message}
-                      </span>
                     </li>
                     <span
                       onClick={() => deleteAnnouncement(announcementObj.id)}
@@ -187,6 +192,17 @@ const Announcement = ({
         <h1 className="mb-2 mt-10 text-xl font-semibold text-white">
           Announcements
         </h1>
+        <div className='ml-auto mt-8 '>
+        <button
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-bullhorn pe-2"></i> New Post
+              </button>
+
+        </div>
       </div>
       <ul></ul>
       {isModalOpen && (
