@@ -25,6 +25,7 @@ function classNames(...classes) {
 }
 
 const auth = getAuth();
+const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 const adminList = ["pranav,"]
 
@@ -176,7 +177,7 @@ export function StandardNav() {
                         </Disclosure.Button>
                       </div>
                       <div className="flex flex-shrink-0 items-center">
-                        <Link href="../dashboard" aria-label="Dashboard">
+                        <Link href = "../dashboard" aria-label="Dashboard">
 
 
                           {isAdmin ? <LogoAdmin /> : <Logo />}

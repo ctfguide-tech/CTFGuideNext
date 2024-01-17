@@ -193,15 +193,14 @@ const Announcement = ({
           Announcements
         </h1>
         <div className='ml-auto mt-8 '>
-        <button
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-bullhorn pe-2"></i> New Post
-              </button>
-
+          <button
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+            className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+          >
+            <i className="fas fa-bullhorn pe-2"></i> New Post
+          </button>
         </div>
       </div>
       <ul></ul>
@@ -272,7 +271,7 @@ const Announcement = ({
                     }}
                     className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
                   >
-                    <span className="text-white" style={{ fontSize: '13px' }}>
+                    <span className="text-white" style={{ fontSize: '15px' }}>
                       {announcementObj.author}{' '}
                       {new Date(announcementObj.createdAt).toLocaleDateString()}{' '}
                       &nbsp;
