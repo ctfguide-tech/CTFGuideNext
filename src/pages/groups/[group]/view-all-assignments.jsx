@@ -4,13 +4,18 @@ import { Footer } from '@/components/Footer';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
+
 import { useRouter } from 'next/router';
+
 import ClassroomNav from '@/components/groups/ClassroomNav';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
 
 const ViewAllAssignments = () => {
   const [classroom, setClassroom] = useState({});
+  const [isTeacher, setIsTeacher] = useState(false);
+
+  const router = useRouter();
 
   const getClassroom = async () => {
     const params = window.location.href.split('/');
@@ -23,6 +28,10 @@ const ViewAllAssignments = () => {
     const data = await response.json();
     if (data.success) {
       setClassroom(data.body);
+      const isAuth = auth(data.body);
+      if (!isAuth) {
+        router.replace('/groups');
+      }
     } else {
       console.log('Error when getting classroom info');
     }
@@ -44,13 +53,29 @@ const ViewAllAssignments = () => {
     return formattedDate;
   };
 
+  const auth = (classroom) => {
+    const uid = localStorage.getItem('uid');
+    const isStudent = classroom.students.map(
+      (student) => uid === student.uid
+    )[0];
+    const isTeacher = classroom.teachers.map(
+      (teacher) => uid === teacher.uid
+    )[0];
+    if (!(isStudent || isTeacher)) {
+      return false;
+    } else {
+      setIsTeacher(isTeacher);
+      return true;
+    }
+  };
+
   useEffect(() => {
     getClassroom();
   }, []);
 
   return (
     <>
-   <Head>
+      <Head>
         <title>View all Assignments - CTFGuide</title>
         <style>
           @import
@@ -73,165 +98,163 @@ const ViewAllAssignments = () => {
               >
                 <i className="fas fa-plus-circle pe-2"></i> New Assignment
               </button>
-
             </div>
           </div>
         </div>
       </div>
       <div className="mx-auto mt-6   max-w-6xl  justify-center ">
-
         <h1 className="mx-auto text-2xl font-semibold text-white">
           Assignments
         </h1>
-        <h2 className="mb-4 text-lg font-semibold text-white mt-4">
-            Upcoming Assignments
-          </h2>
-        
+        <h2 className="mb-4 mt-4 text-lg font-semibold text-white">
+          Upcoming Assignments
+        </h2>
+
         {classroom &&
-            classroom.assignments &&
-            classroom.assignments.length > 0 ? (
-            classroom.assignments
-              .filter((assignment) => new Date(assignment.dueDate) > new Date())
-              .map((assignment) => (
-                <div
-                  key={assignment.id}
-                  onClick={() => {
-                    window.location.href = '/assignments/' + assignment.id;
-                  }}
-                  className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
-                >
-                  {/* Make assignment box look pretty */}
-                  <h2 className="text-md text-white">
-                    <Tooltip id="quiz-tooltip" place="left" />
-                    <Tooltip id="test-tooltip" place="left" />
-                    <Tooltip id="homework-tooltip" place="left" />
-                    <Tooltip id="assessment-tooltip" place="left" />
+        classroom.assignments &&
+        classroom.assignments.length > 0 ? (
+          classroom.assignments
+            .filter((assignment) => new Date(assignment.dueDate) > new Date())
+            .map((assignment) => (
+              <div
+                key={assignment.id}
+                onClick={() => {
+                  router.replace(
+                    `/assignments/${isTeacher ? 'teacher' : 'student'}/${
+                      assignment.id
+                    }`
+                  );
+                }}
+                className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
+              >
+                {/* Make assignment box look pretty */}
+                <h2 className="text-md text-white">
+                  <Tooltip id="quiz-tooltip" place="left" />
+                  <Tooltip id="test-tooltip" place="left" />
+                  <Tooltip id="homework-tooltip" place="left" />
+                  <Tooltip id="assessment-tooltip" place="left" />
 
-                    {assignment.category === 'quiz' && (
-                      <i
-                        title="quiz"
-                        className="fas fa-question-circle"
-                        data-tooltip-id="quiz-tooltip"
-                        data-tooltip-content="Quiz"
-                      ></i>
-                    )}
-                    {assignment.category === 'test' && (
-                      <i
-                        title="test"
-                        className="fas fa-clipboard-check"
-                        data-tooltip-id="test-tooltip"
-                        data-tooltip-content="Test"
-                      ></i>
-                    )}
-                    {assignment.category === 'homework' && (
-                      <i
-                        title="homework"
-                        className="fas fa-book"
-                        data-tooltip-id="homework-tooltip"
-                        data-tooltip-content="Homework"
-                      ></i>
-                    )}
-                    {assignment.category === 'assessment' && (
-                      <i
-                        title="assessment"
-                        className="fas fa-file-alt"
-                        data-tooltip-id="assessment-tooltip"
-                        data-tooltip-content="Assessment"
-                      ></i>
-                    )}
+                  {assignment.category === 'quiz' && (
+                    <i
+                      title="quiz"
+                      className="fas fa-question-circle"
+                      data-tooltip-id="quiz-tooltip"
+                      data-tooltip-content="Quiz"
+                    ></i>
+                  )}
+                  {assignment.category === 'test' && (
+                    <i
+                      title="test"
+                      className="fas fa-clipboard-check"
+                      data-tooltip-id="test-tooltip"
+                      data-tooltip-content="Test"
+                    ></i>
+                  )}
+                  {assignment.category === 'homework' && (
+                    <i
+                      title="homework"
+                      className="fas fa-book"
+                      data-tooltip-id="homework-tooltip"
+                      data-tooltip-content="Homework"
+                    ></i>
+                  )}
+                  {assignment.category === 'assessment' && (
+                    <i
+                      title="assessment"
+                      className="fas fa-file-alt"
+                      data-tooltip-id="assessment-tooltip"
+                      data-tooltip-content="Assessment"
+                    ></i>
+                  )}
 
-                    <span className="ml-0.5"> {assignment.name} </span>
-                  </h2>
-                  <p className="text-white">
-                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.totalPoints} pts
-                  </p>
-                </div>
-              ))
-          ) : (
-            <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white">
-              <h1 className="text-white">No assignments available</h1>
-            </div>
-          )}
+                  <span className="ml-0.5"> {assignment.name} </span>
+                </h2>
+                <p className="text-white">
+                  Due: {parseDate(assignment.dueDate)} | 0/
+                  {assignment.totalPoints} pts
+                </p>
+              </div>
+            ))
+        ) : (
+          <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
+            <h1 className="text-white">No assignments available</h1>
+          </div>
+        )}
 
-        
-      
-      
-          <h2 className="mb-4 text-lg font-semibold text-white">
-            Past Assignments
-          </h2>
-          {/*Make so that subitted assignments are also here*/}
-          {classroom &&
-            classroom.assignments &&
-            classroom.assignments.length > 0 ? (
-            classroom.assignments
-              .filter((assignment) => new Date(assignment.dueDate) < new Date())
-              .map((assignment) => (
-                <div
-                  key={assignment.id}
-                  onClick={() => {
-                    window.location.href = '/assignments/' + assignment.id;
-                  }}
-                  className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
-                >
-                  {/* Make assignment look pretty*/}
-                  <h2 className="text-md text-white">
-                    <Tooltip id="quiz-tooltip" place="left" />
-                    <Tooltip id="test-tooltip" place="left" />
-                    <Tooltip id="homework-tooltip" place="left" />
-                    <Tooltip id="assessment-tooltip" place="left" />
+        <h2 className="mb-4 text-lg font-semibold text-white">
+          Past Assignments
+        </h2>
+        {/*Make so that subitted assignments are also here*/}
+        {classroom &&
+        classroom.assignments &&
+        classroom.assignments.length > 0 ? (
+          classroom.assignments
+            .filter((assignment) => new Date(assignment.dueDate) < new Date())
+            .map((assignment) => (
+              <div
+                key={assignment.id}
+                onClick={() => {
+                  window.location.href = '/assignments/' + assignment.id;
+                }}
+                className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
+              >
+                {/* Make assignment look pretty*/}
+                <h2 className="text-md text-white">
+                  <Tooltip id="quiz-tooltip" place="left" />
+                  <Tooltip id="test-tooltip" place="left" />
+                  <Tooltip id="homework-tooltip" place="left" />
+                  <Tooltip id="assessment-tooltip" place="left" />
 
-                    {assignment.category === 'quiz' && (
-                      <i
-                        title="quiz"
-                        className="fas fa-question-circle"
-                        data-tooltip-id="quiz-tooltip"
-                        data-tooltip-content="Quiz"
-                      ></i>
-                    )}
-                    {assignment.category === 'test' && (
-                      <i
-                        title="test"
-                        className="fas fa-clipboard-check"
-                        data-tooltip-id="test-tooltip"
-                        data-tooltip-content="Test"
-                      ></i>
-                    )}
-                    {assignment.category === 'homework' && (
-                      <i
-                        title="homework"
-                        className="fas fa-book"
-                        data-tooltip-id="homework-tooltip"
-                        data-tooltip-content="Homework"
-                      ></i>
-                    )}
-                    {assignment.category === 'assessment' && (
-                      <i
-                        title="assessment"
-                        className="fas fa-file-alt"
-                        data-tooltip-id="assessment-tooltip"
-                        data-tooltip-content="Assessment"
-                      ></i>
-                    )}
+                  {assignment.category === 'quiz' && (
+                    <i
+                      title="quiz"
+                      className="fas fa-question-circle"
+                      data-tooltip-id="quiz-tooltip"
+                      data-tooltip-content="Quiz"
+                    ></i>
+                  )}
+                  {assignment.category === 'test' && (
+                    <i
+                      title="test"
+                      className="fas fa-clipboard-check"
+                      data-tooltip-id="test-tooltip"
+                      data-tooltip-content="Test"
+                    ></i>
+                  )}
+                  {assignment.category === 'homework' && (
+                    <i
+                      title="homework"
+                      className="fas fa-book"
+                      data-tooltip-id="homework-tooltip"
+                      data-tooltip-content="Homework"
+                    ></i>
+                  )}
+                  {assignment.category === 'assessment' && (
+                    <i
+                      title="assessment"
+                      className="fas fa-file-alt"
+                      data-tooltip-id="assessment-tooltip"
+                      data-tooltip-content="Assessment"
+                    ></i>
+                  )}
 
-                    <span className="ml-0.5"> {assignment.name} </span>
-                  </h2>
-                  <p className="text-white">
-                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.totalPoints} pts
-                    pts
-                  </p>
-                </div>
-              ))
-          ) : (
-            <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white">
-              <h1 className="text-white">No assignments available</h1>
-            </div>
-          )}
-        </div>
+                  <span className="ml-0.5"> {assignment.name} </span>
+                </h2>
+                <p className="text-white">
+                  Due: {parseDate(assignment.dueDate)} | 0/
+                  {assignment.totalPoints} pts pts
+                </p>
+              </div>
+            ))
+        ) : (
+          <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
+            <h1 className="text-white">No assignments available</h1>
+          </div>
+        )}
+      </div>
 
-            
       <Footer />
-      </>
-
+    </>
   );
 };
 
