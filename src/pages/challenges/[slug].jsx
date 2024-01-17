@@ -212,11 +212,10 @@ export default function Challenge() {
       const response = await fetch(url, requestOptions);
       if (response.ok) {
         console.log('The terminal was created successfully');
+        await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
       }
-
-      await fetchTerminal();
     } catch (err) {
       console.log(err);
     }
@@ -283,8 +282,6 @@ export default function Challenge() {
       setAward(award);
     }
   }, [slug]);
-
-  // console.log(challenge);
 
   const fetchSolvedUsers = async () => {
     try {

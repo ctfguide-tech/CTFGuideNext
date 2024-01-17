@@ -150,7 +150,7 @@ export default function Slug() {
 
   const createTerminal = async () => {
     try {
-      toast.info('Creating a terminal');
+      // toast.info('Creating a terminal');
       console.log('Creating a terminal');
       let min = 1000;
       let max = 9999;
@@ -177,24 +177,18 @@ export default function Slug() {
       const response = await fetch(url, requestOptions);
       if (response.ok) {
         console.log('The terminal was created successfully');
+        await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
       }
-
-      setTimeout(async () => {
-        await fetchTerminal();
-      }, 1000);
     } catch (err) {
       console.log(err);
-      setTimeout(async () => {
-        await createTerminal();
-      }, 3000);
     }
   };
 
   const fetchTerminal = async () => {
     try {
-      toast.info('Fetching terminal...');
+      // toast.info('Fetching terminal...');
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
       const token = localStorage.getItem('idToken');
@@ -253,7 +247,7 @@ export default function Slug() {
         }
 
         if (response.ok) {
-          toast.info('Terminal status is OK');
+          // toast.info('Terminal status is OK');
           console.log('Termainl status is OK');
           setTimeout(() => {
             setFoundTerminal(true);
@@ -407,15 +401,14 @@ export default function Slug() {
                 {assignment && assignment.name}{' '}
               </h1>
 
-              <h1 className="text-white flex">
+              <h1 className="flex text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
-
-                <div className='ml-auto'>
-                <span className='bg-white rounded-lg px-4 text-blue-600 font-semibold'>TEACHER VIEW</span>
-
+                <div className="ml-auto">
+                  <span className="rounded-lg bg-white px-4 font-semibold text-blue-600">
+                    TEACHER VIEW
+                  </span>
                 </div>
               </h1>
-
             </div>
           </div>
 
