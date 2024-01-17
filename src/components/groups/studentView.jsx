@@ -33,6 +33,7 @@ export default function StudentView({ group }) {
       console.log(data);
       if (data.success) {
         setFreeTrialDaysLeft(data.body.daysLeft);
+        console.log(data.body.daysLeft);
         toast.info(
           `You have ${data.body.daysLeft} days until the free trial expires`
         );
@@ -68,7 +69,9 @@ export default function StudentView({ group }) {
       const data = await response.json();
       if (data.success) {
         setClassroom(data.body);
-        await getFreeTrialStatus(data.body.id);
+        if (data.body.pricingPlan === 'student') {
+          await getFreeTrialStatus(data.body.id);
+        }
       } else {
         console.log(data.message);
       }

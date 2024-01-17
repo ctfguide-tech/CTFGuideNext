@@ -95,7 +95,7 @@ export default function Slug() {
     if (params.length < 5) {
       return;
     }
-    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[4]}`;
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
     const data = await makeGetRequest(url, false);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
@@ -406,8 +406,6 @@ export default function Slug() {
 
             <div className="grid h-full grid-cols-6 gap-x-8">
               <div className="col-span-2">
-          
-
                 <p className="mt-2 font-semibold text-white">FLAG SUBMISSION</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
 
