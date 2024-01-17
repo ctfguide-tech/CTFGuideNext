@@ -143,7 +143,7 @@ const ViewAllAssignments = () => {
                     <span className="ml-0.5"> {assignment.name} </span>
                   </h2>
                   <p className="text-white">
-                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.points} pts
+                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.totalPoints} pts
                   </p>
                 </div>
               ))
@@ -216,7 +216,7 @@ const ViewAllAssignments = () => {
                     <span className="ml-0.5"> {assignment.name} </span>
                   </h2>
                   <p className="text-white">
-                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.points} pts
+                    Due: {parseDate(assignment.dueDate)} | 0/{assignment.totalPoints} pts
                     pts
                   </p>
                 </div>

@@ -35,7 +35,7 @@ export default function StudentView({ group }) {
         setFreeTrialDaysLeft(data.body.daysLeft);
         console.log(data.body.daysLeft);
         toast.info(
-          `You have ${data.body.daysLeft} days until the free trial expires`
+          `You have ${data.body.daysLeft} days until your free trial expires`
         );
       } else {
         console.log(data.message);

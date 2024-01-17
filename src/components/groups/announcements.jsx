@@ -283,7 +283,7 @@ const Announcement = ({
                     }}
                     className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
                   >
-                    <span className="text-white" style={{ fontSize: '13px' }}>
+                    <span className="text-white" style={{ fontSize: '15px' }}>
                       {announcementObj.author}{' '}
                       {new Date(announcementObj.createdAt).toLocaleDateString()}{' '}
                       &nbsp;
