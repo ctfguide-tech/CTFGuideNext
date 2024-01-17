@@ -476,8 +476,8 @@ export default function teacherSettings() {
                       id="classroom-status"
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                     >
-                      <option value="open">open</option>
-                      <option value="close">close</option>
+                      <option value="open">Open</option>
+                      <option value="close">Close</option>
                     </select>
                   </div>
 
