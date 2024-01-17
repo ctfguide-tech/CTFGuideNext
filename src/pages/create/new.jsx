@@ -123,7 +123,7 @@ export default function Createchall() {
         difficulty,
         category,
         commands: nConfig,
-        fileId: fileId,
+        fileIds: fileId,
       };
 
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/create`;
