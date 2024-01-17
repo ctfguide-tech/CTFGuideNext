@@ -181,9 +181,14 @@ export default function Slug() {
         console.log('Failed to create the terminal');
       }
 
-      await fetchTerminal();
+      setTimeout(async () => {
+        await fetchTerminal();
+      }, 1000);
     } catch (err) {
       console.log(err);
+      setTimeout(async () => {
+        await createTerminal();
+      }, 3000);
     }
   };
 
@@ -211,8 +216,8 @@ export default function Slug() {
         setTerminalUrl(url);
         setUserName(userName);
         setMinutesRemaining(minutesRemaining);
-        console.log('Terminal data ID: ', id);
-        console.log('Terminal url: ', url);
+        console.log('Terminal data ID:', id);
+        console.log('Terminal url:', url);
 
         await getTerminalStatus(id);
       } else {
@@ -271,6 +276,7 @@ export default function Slug() {
       getChallenge();
     }
   }, [assignment]);
+  console.log(assignment);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -364,7 +370,8 @@ export default function Slug() {
   //     console.log(err);
   //   }
   // };
-  console.log(submissions);
+
+  // console.log(submissions);
 
   return (
     <>
@@ -378,7 +385,9 @@ export default function Slug() {
       <StandardNav />
 
       <div style={{ marginLeft: '15%' }}>
-        <ClassroomNav />
+        {assignment && (
+          <ClassroomNav classCode={assignment.classroom.classCode} />
+        )}
       </div>
 
       <div className=" min-h-screen  ">
@@ -492,13 +501,13 @@ export default function Slug() {
                   )}
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
-                      <span
+                      <button
                         className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                         disabled={fetchingTerminal}
                         onClick={fetchTerminal}
                       >
                         {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
-                      </span>
+                      </button>
                     </div>
                   )}
                   {userName !== '...' && (

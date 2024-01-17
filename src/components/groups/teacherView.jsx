@@ -112,7 +112,7 @@ export default function TeacherView({ group }) {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-        /* bold */
+          /* bold */
         </style>
       </Head>
       <StandardNav />
@@ -170,6 +170,7 @@ export default function TeacherView({ group }) {
               >
                 {classroom.description}
               </div>
+
               {/* LOOPING THROUGH MEMBERS */}
 
               <h1 className="mb-2 text-xl font-semibold text-white">
@@ -232,23 +233,31 @@ export default function TeacherView({ group }) {
               )}
             </div>
             <div className="col-span-2   px-4 py-3">
-              <h1 className="text-xl font-semibold text-white">Upcoming Assignments</h1>
+              <h1 className="text-xl font-semibold text-white">
+                Upcoming Assignments
+              </h1>
               <div className="mt-1 ">
                 {classroom &&
-                  classroom.assignments &&
-                  classroom.assignments.length > 0 ? (
+                classroom.assignments &&
+                classroom.assignments.length > 0 ? (
                   classroom.assignments
-                    .filter((assignment) => new Date(assignment.dueDate) > new Date())
+                    .filter(
+                      (assignment) => new Date(assignment.dueDate) > new Date()
+                    )
                     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
                     .slice(0, 5)
                     .map((assignment) => (
                       <div
                         key={assignment.id}
                         onClick={() => {
-                          window.location.href = '/assignments/teacher/' + assignment.id + '';
+                          window.location.href =
+                            '/assignments/teacher/' + assignment.id + '';
                         }}
-                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(assignment.dueDate) < new Date() ? 'border-red-600' : 'border-green-600'
-                          } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}
+                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${
+                          new Date(assignment.dueDate) < new Date()
+                            ? 'border-red-600'
+                            : 'border-green-600'
+                        } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}
                       >
                         <h2 className="text-md text-white">
                           <Tooltip id="quiz-tooltip" place="left" />
