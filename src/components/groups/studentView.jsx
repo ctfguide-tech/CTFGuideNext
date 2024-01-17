@@ -4,6 +4,7 @@ import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import Announcements from '@/components/groups/announcements';
 import { Tooltip } from 'react-tooltip';
+import Link from 'next/link';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -288,14 +289,12 @@ export default function StudentView({ group }) {
                     </h2>
                   </div>
                 )}
-                <button
+                <Link
                   className="float-right rounded-sm bg-neutral-900 py-1  text-sm text-white"
-                  onClick={() => {
-                    window.location.href = `../${classroom.classCode}/view-all-assignments`;
-                  }}
+                  href={`/groups/${classroom.classCode}/view-all-assignments`}
                 >
                   <i className="fas fa-external-link-alt"></i> View All
-                </button>
+                </Link>
               </div>
 
               <h1 className="mt-10 text-xl font-semibold text-white">

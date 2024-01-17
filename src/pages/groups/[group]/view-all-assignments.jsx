@@ -7,7 +7,8 @@ import { Tooltip } from 'react-tooltip';
 
 import { useRouter } from 'next/router';
 
-import ClassroomNav from '@/components/groups/ClassroomNav';
+import ClassroomNav from '@/components/groups/classroomNav';
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
 

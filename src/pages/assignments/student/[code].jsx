@@ -3,11 +3,12 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import ClassroomNav from '@/components/groups/classroomNav';
-import { useRouter } from 'next/router';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Slug() {
@@ -58,8 +59,6 @@ export default function Slug() {
       theme: 'dark',
     });
   }
-
-
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
@@ -201,18 +200,14 @@ export default function Slug() {
       const response = await fetch(url, requestOptions);
       if (response.ok) {
         console.log('The terminal was created successfully');
+        await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
       }
 
-      setTimeout(async () => {
-        await fetchTerminal();
-      }, 1000);
     } catch (err) {
       console.log(err);
-      setTimeout(async () => {
-        await createTerminal();
-      }, 3000);
+      toast.error("Terminal failed to createl, please refresh the page"); 
     }
   };
 
