@@ -101,7 +101,6 @@ export default function CreateGroup(props) {
         toast.error('Invalid title');
       }
 
-      console.log(parseDate());
       if (parseDate() === -1) {
         errorList.push('Duedate isin the past');
         toast.error('duedate is in the past');

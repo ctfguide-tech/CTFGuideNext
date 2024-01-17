@@ -12,9 +12,12 @@ const Announcement = ({
   const [announcement, setAnnouncement] = useState('');
 
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
+  const [makingNewPost, setMakingNewPost] = useState(false);
 
   const handleCloseModal = () => {
+    setEditingAnnouncementIdx(-1);
     setIsModalOpen(false);
+    setMakingNewPost(false);
   };
 
   const updateAnnouncement = async (id, message) => {
@@ -75,6 +78,8 @@ const Announcement = ({
     }
     setAnnouncement('');
     setIsModalOpen(false);
+    setEditingAnnouncementIdx(-1);
+    setMakingNewPost(false);
   };
 
   const deleteAnnouncement = async (id) => {
@@ -192,16 +197,18 @@ const Announcement = ({
         <h1 className="mb-2 mt-10 text-xl font-semibold text-white">
           Announcements
         </h1>
-        <div className='ml-auto mt-8 '>
-        <button
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-bullhorn pe-2"></i> New Post
-              </button>
-
+        <div className="ml-auto mt-8 ">
+          <button
+            disabled={editingAnnouncementIdx !== -1}
+            onClick={() => {
+              setMakingNewPost(true);
+              setIsModalOpen(true);
+              setAnnouncement('');
+            }}
+            className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+          >
+            <i className="fas fa-bullhorn pe-2"></i> New Post
+          </button>
         </div>
       </div>
       <ul></ul>
@@ -209,7 +216,9 @@ const Announcement = ({
         <div style={{ paddingBottom: '15px' }}>
           <textarea
             value={announcement}
-            onChange={(e) => setAnnouncement(e.target.value)}
+            onChange={(e) => {
+              setAnnouncement(e.target.value);
+            }}
             rows="4"
             cols="50"
             className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
@@ -267,8 +276,10 @@ const Announcement = ({
                 <div style={{ position: 'relative' }} key={idx}>
                   <li
                     onClick={() => {
-                      setEditingAnnouncementIdx(idx);
-                      setAnnouncement(announcementObj.message);
+                      if (!makingNewPost) {
+                        setEditingAnnouncementIdx(idx);
+                        setAnnouncement(announcementObj.message);
+                      }
                     }}
                     className="w-fullhover:border-blue-500 mb-4 cursor-pointer list-none rounded-lg border border-neutral-900/50  bg-neutral-800 px-4 py-2"
                   >

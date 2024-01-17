@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ClassroomNav from '@/components/groups/classroomNav';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -311,7 +312,7 @@ export default function Slug() {
       solved: flagInput === assignment.solution.keyword,
       userId: userId,
       classroomId: assignment.classroomId,
-      assignmentId: parseInt(params[4]),
+      assignmentId: parseInt(params[5]),
       keyword: flagInput,
       challengeId: assignment.challengeId,
       totalPoints: assignment.totalPoints,
@@ -331,38 +332,39 @@ export default function Slug() {
     window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
 
-  const deleteTerminal = async (code) => {
-    try {
-      console.log('deleting terminal');
-
-      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
-
-      const body = {
-        jwtToken: localStorage.getItem('idToken'),
-        TerminalGroupName: 'schell-class-session',
-        TerminalID: code,
-        classID: 'psu101',
-        organizationName: 'PSU',
-        userID: localStorage.getItem('username'),
-        slug: challenge.slug,
-      };
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      };
-
-      const response = await fetch(url, requestOptions);
-      if (response.ok) {
-        console.log('The terminal was deleted successfully');
-      } else {
-        console.log('Failed to delete the terminal');
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const deleteTerminal = async (code) => {
+  //   try {
+  //     console.log('deleting terminal');
+  //
+  //     const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
+  //
+  //     const body = {
+  //       jwtToken: localStorage.getItem('idToken'),
+  //       TerminalGroupName: 'schell-class-session',
+  //       TerminalID: code,
+  //       classID: 'psu101',
+  //       organizationName: 'PSU',
+  //       userID: localStorage.getItem('username'),
+  //       slug: challenge.slug,
+  //     };
+  //
+  //     const requestOptions = {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(body),
+  //     };
+  //
+  //     const response = await fetch(url, requestOptions);
+  //     if (response.ok) {
+  //       console.log('The terminal was deleted successfully');
+  //     } else {
+  //       console.log('Failed to delete the terminal');
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  console.log(submissions);
 
   return (
     <>
@@ -374,6 +376,11 @@ export default function Slug() {
         </style>
       </Head>
       <StandardNav />
+
+      <div style={{ marginLeft: '15%' }}>
+        <ClassroomNav />
+      </div>
+
       <div className=" min-h-screen  ">
         <div className="mx-auto mt-4">
           <a
