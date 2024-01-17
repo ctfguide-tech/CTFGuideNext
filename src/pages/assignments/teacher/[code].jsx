@@ -384,11 +384,11 @@ export default function Slug() {
       </Head>
       <StandardNav />
 
-      <div style={{ marginLeft: '15%' }}>
+   
+      <div className='max-w-7xl mx-auto'>
         {assignment && (
-          <ClassroomNav classCode={assignment.classroom.classCode} />
-        )}
-      </div>
+                  <ClassroomNav classCode={assignment.classroom.classCode} />
+                )}</div>  
 
       <div className=" min-h-screen  ">
         <div className="mx-auto mt-4">
@@ -405,9 +405,15 @@ export default function Slug() {
                 {assignment && assignment.name}{' '}
               </h1>
 
-              <h1 className="text-white">
+              <h1 className="text-white flex">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
+
+                <div className='ml-auto'>
+                <span className='bg-white rounded-lg px-4 text-blue-600 font-semibold'>TEACHER VIEW</span>
+
+                </div>
               </h1>
+
             </div>
           </div>
 

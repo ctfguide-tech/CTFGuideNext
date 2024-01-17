@@ -133,7 +133,7 @@ const Announcement = ({
     return (
       <div className="col-span-6 rounded-lg border-l border-neutral-800 bg-neutral-800/50 px-4 py-3">
         <div className="flex items-center">
-          <h1 className="text-xl text-white">Announcements</h1>
+          <h1 className="text-xl text-white font-semibold">Announcements</h1>
         </div>
         <ul
           style={{
@@ -168,7 +168,12 @@ const Announcement = ({
                         {new Date(
                           announcementObj.createdAt
                         ).toLocaleTimeString()}{' '}
-                        {`(${announcementObj.type}) `}
+                        <span
+                          className="bg-green-900 ml-4 text-sm text-white px-2 py-1 rounded-md"
+                          style={{ marginRight: '5px' }}
+                        >
+                          {`${announcementObj.type}`}
+                        </span>
                         <br></br> {announcementObj.message}
                       </span>{' '}
                     </li>

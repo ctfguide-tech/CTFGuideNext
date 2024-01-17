@@ -139,11 +139,7 @@ export default function StudentView({ group }) {
         </style>
       </Head>
       <StandardNav />
-      <div className="bg-neutral-800">
-        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-10 justify-between"></div>
-        </div>
-      </div>
+ 
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
         <div className="mt-10 ">
           <div className="flex">
@@ -215,7 +211,7 @@ export default function StudentView({ group }) {
                     );
                   })}
               </div>
-
+                  <br></br>
               {classroom && classroom.announcements && (
                 <Announcements
                   isTeacher={false}
@@ -234,7 +230,7 @@ export default function StudentView({ group }) {
                     <div
                       key={assignment.id}
                       onClick={() => {
-                        window.location.href = '/assignments/' + assignment.id;
+                        window.location.href = '/assignments/student/' + assignment.id;
                       }}
                       className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
                     >
