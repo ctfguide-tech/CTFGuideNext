@@ -48,6 +48,7 @@ export default function Createchall(props) {
 
   const [newConfig, setNewConfig] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const validateNewChallege = async () => {
     for (const p of penalty) {
@@ -88,6 +89,7 @@ export default function Createchall(props) {
   const sendToFileApi = async () => {
     const isValid = await validateNewChallege();
     if (isValid) {
+      setIsCreating(true);
       try {
         if (!selectedFile) {
           await uploadChallenge('');
@@ -562,9 +564,10 @@ export default function Createchall(props) {
 
           <button
             onClick={sendToFileApi}
+            disabled={isCreating}
             className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
           >
-            <i class="fas fa-send"></i> Create Challenge
+            <i class="fas fa-send"></i> {isCreating ? "Creating Challenge..." : "Create Challenge"} 
           </button>
 
           <button className="mr-2 mt-6 hidden rounded-sm border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white shadow-lg hover:bg-blue-800">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const Announcement = ({
   isTeacher,
   classCode,
@@ -47,8 +48,15 @@ const Announcement = ({
 
   const createAnnouncement = async (message) => {
     setAnnouncement('');
+    setIsModalOpen(false);
+    setEditingAnnouncementIdx(-1);
+    setMakingNewPost(false);
     try {
-      console.log(message);
+
+      let tmp = announcements;
+      tmp.push({author: localStorage.getItem("username"), createdAt: new Date(), message, type: "IMPORTANT"});
+      setAnnouncements(tmp);
+
       const token = localStorage.getItem('idToken');
       if (message.length < 1) return;
       const url = `${baseUrl}/classroom/announcements`;
@@ -67,19 +75,14 @@ const Announcement = ({
       });
 
       const data = await response.json();
-
-      let tmp = announcements;
-      tmp.push(data.body);
-      setAnnouncements(tmp);
-
-      console.log(data.message);
+      if(!data.success) {
+        let t = announcements;
+        t.pop();
+        setAnnouncements(t);
+      }
     } catch (err) {
       console.log(err);
     }
-    setAnnouncement('');
-    setIsModalOpen(false);
-    setEditingAnnouncementIdx(-1);
-    setMakingNewPost(false);
   };
 
   const deleteAnnouncement = async (id) => {
@@ -276,7 +279,6 @@ const Announcement = ({
                 </div>
               );
             } else {
-              console.log(announcementObj);
               return (
                 <div style={{ position: 'relative' }} key={idx}>
                   <li

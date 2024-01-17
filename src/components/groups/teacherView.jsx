@@ -85,7 +85,6 @@ export default function TeacherView({ group }) {
   };
 
   const parseDate = (dateString) => {
-    console.log(dateString);
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
     let day = dateObject.getDate();
