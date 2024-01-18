@@ -26,6 +26,7 @@ export default function Groups() {
   useEffect(() => {
     const getAllClassrooms = async () => {
       const uid = localStorage.getItem('uid');
+      console.log("Uid of user we are making the req with", uid);
       if (!uid) return;
       const url = `${baseUrl}/classroom/all-classrooms?uid=${uid}`;
       const response = await fetch(url);

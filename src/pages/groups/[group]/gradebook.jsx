@@ -15,6 +15,7 @@ const Gradebook = () => {
   const [classroom, setClassroom] = useState({});
   const [progress, setProgress] = useState(0);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   const router = useRouter();
   const { group } = router.query;
@@ -40,17 +41,11 @@ const Gradebook = () => {
 
   const getAssignments = async () => {
     try {
-      const params = window.location.href.split('/');
-      const classCode = params[4];
-      let isAuth = await checkPermissions(classCode);
-      if (!isAuth) {
-        window.location.href = `/groups/${classCode}/home`;
-      }
+      const classCode = window.location.href.split("/")[4];
       setClassCode(classCode);
       var requestOptions = {
         method: 'GET',
       };
-      console.log(classCode);
       const response = await fetch(
         `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`,
         requestOptions
@@ -68,11 +63,21 @@ const Gradebook = () => {
   };
 
   useEffect(() => {
-    getAssignments();
+    const authenticate = async () => {
+      const auth = await checkPermissions();
+      if(!auth) {
+        router.replace("/groups");
+      } else {
+        await getAssignments();
+        setLoadingAuth(false);
+      }
+    }
+    authenticate();
   }, []);
 
-  const checkPermissions = async (classCode) => {
+  const checkPermissions = async () => {
     try {
+      const classCode = window.location.href.split("/")[4];
       const userUid = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/check-if-teacher`;
       const token = localStorage.getItem('idToken');
@@ -85,19 +90,25 @@ const Gradebook = () => {
         body: JSON.stringify({ classCode: classCode, uid: userUid }),
       });
       const res = await response.json();
+      console.log(res);
       if (res.success) {
         return res.isTeacher;
       } else {
-        window.location.replace('/login');
+        return false;
       }
     } catch (err) {
       console.log(err);
+      return false;
     }
   };
 
   const refresh = () => {
     getAssignments();
   };
+
+  if(loadingAuth) {
+    return <></>
+  }
 
   if(viewCreateAssignment) {
    return <CreateAssignment />

@@ -36,7 +36,6 @@ export default function teacherSettings() {
   );
   const [inviteActivated, setInviteActivated] = useState(false);
   const [classroom, setClassroom] = useState({});
-
   const [description, setDescription] = useState('');
   const [numberOfSeats, setNumberOfSeats] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -48,9 +47,7 @@ export default function teacherSettings() {
   const [searchInput, setSearchInput] = useState('');
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(-1);
-
   const [originalNumberOfSeats, setOriginalNumberOfSeats] = useState(0);
-
   const [weightIdx, setWeightIdx] = useState(0);
   const [weights, setWeights] = useState([]);
   const [category, setCategory] = useState(0);
@@ -59,54 +56,62 @@ export default function teacherSettings() {
   const [pricingPlan, setPricingPlan] = useState('');
   const [students, setStudents] = useState([]);
   const [filteredOptions, setFileredOptions] = useState([]);
-
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   const router = useRouter();
   const { group } = router.query;
 
+  const getClassroom = async () => {
+    const classCode = window.location.href.split('/')[4];
+    setClassCode(classCode);
+    if (!classCode) return;
+    const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`;
+    const requestOptions = {
+      method: 'GET',
+    };
+    const response = await fetch(url, requestOptions);
+    const data = await response.json();
+    if (data.success) {
+      let classroom = data.body;
+      setDescription(classroom.description);
+      setNumberOfSeats(classroom.numberOfSeats);
+      setIsOpen(classroom.open ? 'open' : 'close');
+      setNameOfClassroom(classroom.name);
+      setEmailDomain(classroom.org);
+      setWeights(classroom.weights);
+      setCategory(classroom.category.length > 0 ? classroom.category[0] : 0);
+      setPricingPlan(classroom.pricingPlan);
+      setClassroomId(classroom.id);
+      setStudents(classroom.sutdents);
+      const filteredOptions = classroom.students.filter((option) =>
+        option.username.toLowerCase().includes(searchInput.toLowerCase())
+      );
+
+      setOriginalNumberOfSeats(classroom.numberOfSeats);
+      setFileredOptions(filteredOptions);
+
+    } else {
+      console.log('Error when getting classroom info');
+      console.log(data.message);
+    }
+  };
 
   useEffect(() => {
-    const getClassroom = async () => {
-      const classCode = window.location.href.split('/')[4];
-      setClassCode(classCode);
-      if (!classCode) return;
-      const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`;
-      const requestOptions = {
-        method: 'GET',
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
-        let classroom = data.body;
-        setDescription(classroom.description);
-        setNumberOfSeats(classroom.numberOfSeats);
-        setIsOpen(classroom.open ? 'open' : 'close');
-        setNameOfClassroom(classroom.name);
-        setEmailDomain(classroom.org);
-        setWeights(classroom.weights);
-        setCategory(classroom.category.length > 0 ? classroom.category[0] : 0);
-        setPricingPlan(classroom.pricingPlan);
-        setClassroomId(classroom.id);
-        setStudents(classroom.sutdents);
-        const filteredOptions = classroom.students.filter((option) =>
-          option.username.toLowerCase().includes(searchInput.toLowerCase())
-        );
-        setOriginalNumberOfSeats(classroom.numberOfSeats);
-        setFileredOptions(filteredOptions);
-        let isAuth = await checkPermissions(classCode);
-        if (!isAuth) {
-          window.location.replace('/groups');
-        }
+    const authenticate = async () => {
+      let isAuth = await checkPermissions();
+      if (!isAuth) {
+        window.location.replace('/groups');
       } else {
-        console.log('Error when getting classroom info');
-        console.log(data.message);
+        await getClassroom();
+        setLoadingAuth(false);
       }
-    };
-    getClassroom();
+    }
+    authenticate();
   }, []);
 
-  const checkPermissions = async (classCode) => {
+  const checkPermissions = async () => {
     try {
+      const classCode = window.location.href.split('/')[4];
       const userUid = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/check-if-teacher`;
       const token = localStorage.getItem('idToken');
@@ -122,10 +127,11 @@ export default function teacherSettings() {
       if (res.success) {
         return res.isTeacher;
       } else {
-        window.location.replace('/login');
+        return false;
       }
     } catch (err) {
       console.log(err);
+      return false;
     }
   };
 
@@ -342,6 +348,10 @@ export default function teacherSettings() {
       progress: undefined,
       theme: 'dark',
     });
+  }
+
+  if(loadingAuth) {
+    return <></>
   }
 
   return (

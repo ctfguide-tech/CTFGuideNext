@@ -15,7 +15,6 @@ export default function Slug() {
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
-  const [submissions, setSubmissions] = useState([]);
   const [solved, setSolved] = useState(null);
 
     const router = useRouter();
@@ -125,21 +124,11 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
-        await getSubmissions(data.body);
+        getChallenge(data.body);
       } else {
         console.log('You are not apart of this class');
         window.location.href = '/groups';
       }
-    }
-  };
-
-  const getSubmissions = async (assignment) => {
-    const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
-    const data = await makeGetRequest(url, false);
-    if (data && data.success) {
-      setSubmissions(data.body);
-    } else {
-      console.log('Unable to get submissions');
     }
   };
 
@@ -150,7 +139,7 @@ export default function Slug() {
     return data.success;
   };
 
-  const getChallenge = async () => {
+  const getChallenge = async (assignment) => {
     try {
       console.log('getting the challenge');
       const token = localStorage.getItem('idToken');
@@ -212,6 +201,7 @@ export default function Slug() {
   };
 
   const fetchTerminal = async () => {
+    if(!challenge) return;
     try {
       termDebug('Fetching terminal...');
       setFetchingTerminal(true);
@@ -291,11 +281,8 @@ export default function Slug() {
   useEffect(() => {
     if (assignment === null) {
       getAssignment();
-    } else if (!challenge) {
-      getChallenge();
     }
-  }, [assignment]);
-  console.log(assignment);
+  }, []);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -604,6 +591,8 @@ export default function Slug() {
                       
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
+                  {
+                    challenge &&
                       <button
                         className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                         disabled={fetchingTerminal}
@@ -611,6 +600,7 @@ export default function Slug() {
                       >
                         {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
                       </button>
+                  }
                       <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
                     </div>
                   )}
