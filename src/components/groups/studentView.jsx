@@ -36,9 +36,13 @@ export default function StudentView({ group }) {
       if (data.success) {
         setFreeTrialDaysLeft(data.body.daysLeft);
         console.log(data.body.daysLeft);
-        toast.info(
-          `You have ${data.body.daysLeft} days until your free trial expires`
-        );
+        if(data.body.daysLeft > 0) {
+          toast.info(
+            `You have ${data.body.daysLeft} days until your free trial expires`
+          );
+        } else {
+          toast.info("The free trial is over and has been paid for");
+        }
       } else {
         console.log(data.message);
       }
