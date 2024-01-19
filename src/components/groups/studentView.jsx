@@ -36,7 +36,7 @@ export default function StudentView({ group }) {
       if (data.success) {
         setFreeTrialDaysLeft(data.body.daysLeft);
         console.log(data.body.daysLeft);
-        if(data.body.daysLeft > 0) {
+        if (data.body.daysLeft > 0) {
           toast.info(
             `You have ${data.body.daysLeft} days until your free trial expires`
           );
@@ -137,13 +137,14 @@ export default function StudentView({ group }) {
       const token = localStorage.getItem("idToken");
       const body = { classroomId: classroom.id, operation: "joinClass" }
       const requestOptions = {
-        method: "PUT", 
-        headers: {'Content-Type': 'application/json', Authorization: "Bearer " + token},
-        body: JSON.stringify(body)}
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json', Authorization: "Bearer " + token },
+        body: JSON.stringify(body)
+      }
       const response = await fetch(url, requestOptions);
       const data = await response.json();
       console.log(data);
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -162,7 +163,7 @@ export default function StudentView({ group }) {
         </style>
       </Head>
       <StandardNav />
- 
+
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
         <div className="mt-10 ">
           <div className="flex">
@@ -171,7 +172,7 @@ export default function StudentView({ group }) {
             </h1>
           </div>
 
-          <button style={{color: "white"}} onClick={payForFreeTrialNow}>Pay for trial Now</button>
+          <button style={{ color: "white" }} onClick={payForFreeTrialNow}>Pay for trial Now</button>
 
           <hr className="mt-2 border-neutral-800 text-neutral-800 "></hr>
           <div className="mt-4 grid grid-cols-6 gap-x-8">
@@ -182,9 +183,16 @@ export default function StudentView({ group }) {
               </h1>
               <div
                 style={{ color: 'white', cursor: 'default' }}
-                className="mb-4 cursor-pointer rounded-sm  "
+                className="mb-4 cursor-pointer rounded-sm"
               >
-                {classroom.description}
+                <textarea
+                  value={classroom.description}
+                  id="bio"
+                  name="bio"
+                  rows={8}
+                  className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-1.5 sm:text-base sm:leading-6 p-0" // Remove padding
+                  readOnly
+                />
               </div>
               {/* LOOPING THROUGH MEMBERS */}
 
@@ -236,7 +244,7 @@ export default function StudentView({ group }) {
                     );
                   })}
               </div>
-                  <br></br>
+              <br></br>
               {classroom && classroom.announcements && (
                 <Announcements
                   isTeacher={false}
@@ -249,8 +257,8 @@ export default function StudentView({ group }) {
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
                 {classroom &&
-                classroom.assignments &&
-                classroom.assignments.length > 0 ? (
+                  classroom.assignments &&
+                  classroom.assignments.length > 0 ? (
                   classroom.assignments.map((assignment) => (
                     <div
                       key={assignment.id}
