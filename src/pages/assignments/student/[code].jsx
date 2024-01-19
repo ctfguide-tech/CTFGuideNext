@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import ClassroomNav from '@/components/groups/classroomNav';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Slug() {
@@ -192,11 +191,12 @@ export default function Slug() {
         await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
+        toast.error("Unable to create the terminal, please refresh the page and try again");
       }
 
     } catch (err) {
       console.log(err);
-      toast.error("Terminal failed to createl, please refresh the page"); 
+      toast.error("Terminal failed to create, please refresh the page"); 
     }
   };
 
@@ -592,13 +592,13 @@ export default function Slug() {
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
                   {
-                    challenge &&
+                    challenge && !fetchingTerminal && !foundTerminal &&
                       <button
                         className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                         disabled={fetchingTerminal}
                         onClick={fetchTerminal}
                       >
-                        {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                        Launch Terminal 
                       </button>
                   }
                       <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
