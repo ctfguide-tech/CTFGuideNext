@@ -33,10 +33,10 @@ export default function StudentView({ group }) {
       console.log(data);
       if (data.success) {
         setFreeTrialDaysLeft(data.body.daysLeft);
+        document.getElementById("trialMsg").classList.remove("hidden");
+        document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
         console.log(data.body.daysLeft);
-        toast.info(
-          `You have ${data.body.daysLeft} days until your free trial expires`
-        );
+        
       } else {
         console.log(data.message);
       }
@@ -302,21 +302,16 @@ export default function StudentView({ group }) {
                 Platform Updates
               </h1>
               <div className="text-md mt-2 rounded-t-lg bg-neutral-800 px-4 py-2 text-white">
-                <b>Expected Downtime </b>{' '}
-                <span className="rounded-lg bg-yellow-800 px-4 text-sm ">
-                  alerts
+                <b>Developer Notice </b>{' '}
+                <span className="rounded-lg float-right bg-blue-800 px-4 text-sm ">
+                  updates
                 </span>
               </div>
               <div className="rounded-b-lg bg-neutral-700/50 px-4 py-2 text-sm text-white">
                 <p>
-                  Our terminal platform will be recieving some updates meaning
-                  that students will not be able to complete any virtual labs
-                  during this time.
+                 Thanks for signing up for CTFGuide Groups. We are excited to get your feedback on our platform. Give us a follow on our Twitter/X <a className="text-blue-500" href="https://twitter.com/@ctfguideapp">@ctfguideapp </a>for updates on our platform. <br></br> <br></br>
                   <br></br> <br></br>
-                  <i>
-                    Affected services: EDU, Terminals, Create a VM, and Virtual
-                    Labs
-                  </i>
+                
                 </p>
               </div>
             </div>
@@ -344,6 +339,26 @@ export default function StudentView({ group }) {
         pauseOnHover
         theme="dark"
       />
+
+  <div id="trialMsg" className="hidden fixed inset-x-0 bottom-0">
+    <div className="flex items-center gap-x-6 bg-black px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+      <p className="text-xl leading-6 text-white">
+        <a href="#">
+          <strong className="font-semibold">Free Trial</strong>
+          <svg viewBox="0 0 2 2" className="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true">
+            <circle cx={1} cy={1} r={1} />
+          </svg>
+        </a>
+
+      <span id="trialStatus"></span>
+      </p>
+      <div className="flex flex-1 justify-end">
+
+      </div>
+    </div>
+  </div>
+
+
       <Footer />
     </>
   );
