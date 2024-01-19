@@ -196,7 +196,7 @@ export function StandardNav() {
                     </Disclosure.Button>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
-                    <Link href="../dashboard" aria-label="Dashboard">
+                    <Link href={`${baseUrl}`} aria-label="Dashboard">
                       {isAdmin ? <LogoAdmin /> : <Logo />}
                     </Link>
                   </div>
