@@ -54,7 +54,7 @@ const Announcement = ({
     try {
 
       let tmp = announcements;
-      tmp.push({author: localStorage.getItem("username"), createdAt: new Date(), message, type: "IMPORTANT"});
+      tmp.push({ author: localStorage.getItem("username"), createdAt: new Date(), message, type: "IMPORTANT" });
       setAnnouncements(tmp);
 
       const token = localStorage.getItem('idToken');
@@ -75,7 +75,7 @@ const Announcement = ({
       });
 
       const data = await response.json();
-      if(!data.success) {
+      if (!data.success) {
         let t = announcements;
         t.pop();
         setAnnouncements(t);
@@ -298,7 +298,16 @@ const Announcement = ({
                         announcementObj.createdAt
                       ).toLocaleTimeString()}{' '}
                       {`(${announcementObj.type}) `}
-                      <br></br> {announcementObj.message}
+                      <br></br>
+                      <textarea
+                        value={announcementObj.message}
+                        id="bio"
+                        name="bio"
+                        rows={2}
+                        className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-0 sm:text-sm sm:leading-6 p-0"
+                        readOnly
+                      />
+
                     </span>{' '}
                     <br></br>{' '}
                   </li>

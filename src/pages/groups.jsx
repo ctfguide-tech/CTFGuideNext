@@ -196,7 +196,7 @@ export default function Groups() {
                       : '';
                   }}
                 >
-                  <h1 className="text-xl truncate font-semibold text-neutral-300">
+                  <h1 className="text-3xl truncate font-semibold text-neutral-300">
                     {classroom.name}
                   </h1>
                   {!classroom.isPayedFor ? (
