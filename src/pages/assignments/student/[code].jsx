@@ -3,18 +3,18 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import ClassroomNav from '@/components/groups/classroomNav';
-import { useRouter } from 'next/router';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Slug() {
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
-  const [submissions, setSubmissions] = useState([]);
   const [solved, setSolved] = useState(null);
 
     const router = useRouter();
@@ -58,8 +58,6 @@ export default function Slug() {
       theme: 'dark',
     });
   }
-
-
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
@@ -126,21 +124,11 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
-        await getSubmissions(data.body);
+        getChallenge(data.body);
       } else {
         console.log('You are not apart of this class');
         window.location.href = '/groups';
       }
-    }
-  };
-
-  const getSubmissions = async (assignment) => {
-    const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
-    const data = await makeGetRequest(url, false);
-    if (data && data.success) {
-      setSubmissions(data.body);
-    } else {
-      console.log('Unable to get submissions');
     }
   };
 
@@ -151,7 +139,7 @@ export default function Slug() {
     return data.success;
   };
 
-  const getChallenge = async () => {
+  const getChallenge = async (assignment) => {
     try {
       console.log('getting the challenge');
       const token = localStorage.getItem('idToken');
@@ -201,22 +189,19 @@ export default function Slug() {
       const response = await fetch(url, requestOptions);
       if (response.ok) {
         console.log('The terminal was created successfully');
+        await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
       }
 
-      setTimeout(async () => {
-        await fetchTerminal();
-      }, 1000);
     } catch (err) {
       console.log(err);
-      setTimeout(async () => {
-        await createTerminal();
-      }, 3000);
+      toast.error("Terminal failed to createl, please refresh the page"); 
     }
   };
 
   const fetchTerminal = async () => {
+    if(!challenge) return;
     try {
       termDebug('Fetching terminal...');
       setFetchingTerminal(true);
@@ -296,11 +281,8 @@ export default function Slug() {
   useEffect(() => {
     if (assignment === null) {
       getAssignment();
-    } else if (!challenge) {
-      getChallenge();
     }
-  }, [assignment]);
-  console.log(assignment);
+  }, []);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -609,6 +591,8 @@ export default function Slug() {
                       
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
+                  {
+                    challenge &&
                       <button
                         className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                         disabled={fetchingTerminal}
@@ -616,6 +600,7 @@ export default function Slug() {
                       >
                         {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
                       </button>
+                  }
                       <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
                     </div>
                   )}

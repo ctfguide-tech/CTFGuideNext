@@ -17,7 +17,6 @@ import { app } from '../config/firebaseConfig';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import 'reactjs-popup/dist/index.css';
-import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import { LogoAdmin } from './LogoAdmin';
 
@@ -41,6 +40,7 @@ const DEFAULT_NOTIFICATION = {
 export function StandardNav() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [points, setPoints] = useState('');
+  const [notifications, setNotifications] = useState([]);
 
   const router = useRouter();
 
@@ -141,12 +141,34 @@ export function StandardNav() {
 
           setUsername(data.username);
           setPoints(data.points);
+          
         })
         .catch((err) => {
           console.log(err);
         });
     } catch {}
   }, []);
+
+
+  const fetchNotifications = async () => {
+    try {
+      const uid = localStorage.getItem("uid");
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/notification/${uid}`;
+      const requestOptions = { method: "GET" }; 
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+
+      console.log(data);
+      if(data.success) {
+        setNotifications(data.body);
+      } else {
+        setNotifications(["Unable to get notification, try again"]);
+      }
+
+    } catch(err) {
+      console.log(err);
+    }
+  }
 
   return (
     <>
@@ -180,43 +202,43 @@ export function StandardNav() {
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
                     {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:font-bold" */}
-                    <a
+                    <Link
                       href={`${baseUrl}/dashboard`}
                       className="ml-2 inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200 "
                     >
                       Dashboard
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href={`${baseUrl}/learn`}
                       className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
                       Learn
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href={`${baseUrl}/groups`}
                       className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
                       Groups
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href={`${baseUrl}/practice`}
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
                       Practice
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href={`${baseUrl}/create`}
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
                       Create
-                    </a>
+                    </Link>
 
-                    <a
+                    <Link
                       href={`${baseUrl}/live`}
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
                       Live
-                    </a>
+                    </Link>
 
                     <a
                       href={`${baseUrl}/edu`}
@@ -235,6 +257,26 @@ export function StandardNav() {
                   </div>
                 </div>
                 <div className="flex items-center">
+
+
+
+
+
+
+
+
+                    <div
+                    onClick={fetchNotifications}
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                    >
+                     Notifications 
+                    </div>
+
+
+
+
+
+
                   <div
                     className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1"
                     style={{ backgroundColor: '#212121', borderWidth: '0px' }}

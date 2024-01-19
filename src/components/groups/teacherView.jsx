@@ -85,7 +85,6 @@ export default function TeacherView({ group }) {
   };
 
   const parseDate = (dateString) => {
-    console.log(dateString);
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
     let day = dateObject.getDate();
@@ -112,7 +111,7 @@ export default function TeacherView({ group }) {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-          /* bold */
+        /* bold */
         </style>
       </Head>
       <StandardNav />
@@ -166,9 +165,16 @@ export default function TeacherView({ group }) {
               </h1>
               <div
                 style={{ color: 'white', cursor: 'default' }}
-                className="mb-4 cursor-pointer rounded-sm  "
+                className="mb-4 cursor-pointer rounded-sm"
               >
-                {classroom.description}
+                <textarea
+                  value={classroom.description}
+                  id="bio"
+                  name="bio"
+                  rows={8}
+                  className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-1.5 sm:text-base sm:leading-6 p-0" // Remove padding
+                  readOnly
+                />
               </div>
 
               {/* LOOPING THROUGH MEMBERS */}
@@ -238,8 +244,8 @@ export default function TeacherView({ group }) {
               </h1>
               <div className="mt-1 ">
                 {classroom &&
-                classroom.assignments &&
-                classroom.assignments.length > 0 ? (
+                  classroom.assignments &&
+                  classroom.assignments.length > 0 ? (
                   classroom.assignments
                     .filter(
                       (assignment) => new Date(assignment.dueDate) > new Date()
@@ -253,11 +259,10 @@ export default function TeacherView({ group }) {
                           window.location.href =
                             '/assignments/teacher/' + assignment.id + '';
                         }}
-                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${
-                          new Date(assignment.dueDate) < new Date()
+                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(assignment.dueDate) < new Date()
                             ? 'border-red-600'
                             : 'border-green-600'
-                        } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}
+                          } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}
                       >
                         <h2 className="text-md text-white">
                           <Tooltip id="quiz-tooltip" place="left" />

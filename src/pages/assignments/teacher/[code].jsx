@@ -102,6 +102,7 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
+        getChallenge(data.body);
         await getSubmissions(data.body);
       } else {
         console.log('You are not apart of this class');
@@ -127,7 +128,7 @@ export default function Slug() {
     return data.success;
   };
 
-  const getChallenge = async () => {
+  const getChallenge = async (assignment) => {
     try {
       console.log('getting the challenge');
       const token = localStorage.getItem('idToken');
@@ -187,6 +188,7 @@ export default function Slug() {
   };
 
   const fetchTerminal = async () => {
+    if(!challenge) return;
     try {
       // toast.info('Fetching terminal...');
       setFetchingTerminal(true);
@@ -266,11 +268,8 @@ export default function Slug() {
   useEffect(() => {
     if (assignment === null) {
       getAssignment();
-    } else if (!challenge) {
-      getChallenge();
     }
-  }, [assignment]);
-  console.log(assignment);
+  }, []);
 
   const checkFlag = () => {
     if (assignment && flagInput === assignment.solution.keyword) {
@@ -502,13 +501,17 @@ export default function Slug() {
                   )}
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
-                      <button
-                        className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                        disabled={fetchingTerminal}
-                        onClick={fetchTerminal}
-                      >
-                        {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
-                      </button>
+                      {
+                        challenge && 
+                          <button
+                            className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                            disabled={fetchingTerminal}
+                            onClick={fetchTerminal}
+                          >
+                            {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                          </button>
+                      }
+
                     </div>
                   )}
                   {userName !== '...' && (

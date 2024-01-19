@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const Announcement = ({
   isTeacher,
   classCode,
@@ -47,8 +48,15 @@ const Announcement = ({
 
   const createAnnouncement = async (message) => {
     setAnnouncement('');
+    setIsModalOpen(false);
+    setEditingAnnouncementIdx(-1);
+    setMakingNewPost(false);
     try {
-      console.log(message);
+
+      let tmp = announcements;
+      tmp.push({ author: localStorage.getItem("username"), createdAt: new Date(), message, type: "IMPORTANT" });
+      setAnnouncements(tmp);
+
       const token = localStorage.getItem('idToken');
       if (message.length < 1) return;
       const url = `${baseUrl}/classroom/announcements`;
@@ -67,19 +75,14 @@ const Announcement = ({
       });
 
       const data = await response.json();
-
-      let tmp = announcements;
-      tmp.push(data.body);
-      setAnnouncements(tmp);
-
-      console.log(data.message);
+      if (!data.success) {
+        let t = announcements;
+        t.pop();
+        setAnnouncements(t);
+      }
     } catch (err) {
       console.log(err);
     }
-    setAnnouncement('');
-    setIsModalOpen(false);
-    setEditingAnnouncementIdx(-1);
-    setMakingNewPost(false);
   };
 
   const deleteAnnouncement = async (id) => {
@@ -276,7 +279,6 @@ const Announcement = ({
                 </div>
               );
             } else {
-              console.log(announcementObj);
               return (
                 <div style={{ position: 'relative' }} key={idx}>
                   <li
@@ -296,7 +298,16 @@ const Announcement = ({
                         announcementObj.createdAt
                       ).toLocaleTimeString()}{' '}
                       {`(${announcementObj.type}) `}
-                      <br></br> {announcementObj.message}
+                      <br></br>
+                      <textarea
+                        value={announcementObj.message}
+                        id="bio"
+                        name="bio"
+                        rows={2}
+                        className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-0 sm:text-sm sm:leading-6 p-0"
+                        readOnly
+                      />
+
                     </span>{' '}
                     <br></br>{' '}
                   </li>

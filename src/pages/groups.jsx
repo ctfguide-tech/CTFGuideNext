@@ -26,6 +26,7 @@ export default function Groups() {
   useEffect(() => {
     const getAllClassrooms = async () => {
       const uid = localStorage.getItem('uid');
+      console.log("Uid of user we are making the req with", uid);
       if (!uid) return;
       const url = `${baseUrl}/classroom/all-classrooms?uid=${uid}`;
       const response = await fetch(url);
@@ -195,7 +196,7 @@ export default function Groups() {
                       : '';
                   }}
                 >
-                  <h1 className="text-xl truncate font-semibold text-neutral-300">
+                  <h1 className="text-3xl truncate font-semibold text-neutral-300">
                     {classroom.name}
                   </h1>
                   {!classroom.isPayedFor ? (

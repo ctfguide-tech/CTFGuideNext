@@ -4,9 +4,19 @@ import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import Announcements from '@/components/groups/announcements';
 import { Tooltip } from 'react-tooltip';
+import Link from 'next/link';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const defaultImages = [
+  'https://robohash.org/pranavramesh',
+  'https://robohash.org/laphatize',
+  'https://robohash.org/stevewilkers',
+  'https://robohash.org/rickast',
+  'https://robohash.org/picoarc',
+  'https://robohash.org/jasoncalcanis',
+];
 
 export default function StudentView({ group }) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
@@ -14,14 +24,6 @@ export default function StudentView({ group }) {
   const [classroom, setClassroom] = useState({});
   const [freeTrialDaysLeft, setFreeTrialDaysLeft] = useState(0);
 
-  const defaultImages = [
-    'https://robohash.org/pranavramesh',
-    'https://robohash.org/laphatize',
-    'https://robohash.org/stevewilkers',
-    'https://robohash.org/rickast',
-    'https://robohash.org/picoarc',
-    'https://robohash.org/jasoncalcanis',
-  ];
 
   const getFreeTrialStatus = async (classroomId) => {
     try {
@@ -37,6 +39,13 @@ export default function StudentView({ group }) {
         document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
         console.log(data.body.daysLeft);
         
+        if (data.body.daysLeft > 0) {
+          toast.info(
+            `You have ${data.body.daysLeft} days until your free trial expires`
+          );
+        } else {
+          toast.info("The free trial is over and has been paid for");
+        }
       } else {
         console.log(data.message);
       }
@@ -125,6 +134,24 @@ export default function StudentView({ group }) {
     }
   };
 
+  const payForFreeTrialNow = async () => {
+    try {
+      const url = `${baseUrl}/payments/stripe/pay-payment-intent`;
+      const token = localStorage.getItem("idToken");
+      const body = { classroomId: classroom.id, operation: "joinClass" }
+      const requestOptions = {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json', Authorization: "Bearer " + token },
+        body: JSON.stringify(body)
+      }
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const viewGrades = () => {
     // see the students grades
   };
@@ -139,7 +166,7 @@ export default function StudentView({ group }) {
         </style>
       </Head>
       <StandardNav />
- 
+
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
         <div className="mt-10 ">
           <div className="flex">
@@ -147,6 +174,8 @@ export default function StudentView({ group }) {
               {classroom.name}
             </h1>
           </div>
+
+          <button style={{ color: "white" }} onClick={payForFreeTrialNow}>Pay for trial Now</button>
 
           <hr className="mt-2 border-neutral-800 text-neutral-800 "></hr>
           <div className="mt-4 grid grid-cols-6 gap-x-8">
@@ -157,9 +186,16 @@ export default function StudentView({ group }) {
               </h1>
               <div
                 style={{ color: 'white', cursor: 'default' }}
-                className="mb-4 cursor-pointer rounded-sm  "
+                className="mb-4 cursor-pointer rounded-sm"
               >
-                {classroom.description}
+                <textarea
+                  value={classroom.description}
+                  id="bio"
+                  name="bio"
+                  rows={8}
+                  className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-1.5 sm:text-base sm:leading-6 p-0" // Remove padding
+                  readOnly
+                />
               </div>
               {/* LOOPING THROUGH MEMBERS */}
 
@@ -211,7 +247,7 @@ export default function StudentView({ group }) {
                     );
                   })}
               </div>
-                  <br></br>
+              <br></br>
               {classroom && classroom.announcements && (
                 <Announcements
                   isTeacher={false}
@@ -224,8 +260,8 @@ export default function StudentView({ group }) {
               <h1 className="text-xl font-semibold text-white">Assignments</h1>
               <div className="mt-1 ">
                 {classroom &&
-                classroom.assignments &&
-                classroom.assignments.length > 0 ? (
+                  classroom.assignments &&
+                  classroom.assignments.length > 0 ? (
                   classroom.assignments.map((assignment) => (
                     <div
                       key={assignment.id}
@@ -288,14 +324,12 @@ export default function StudentView({ group }) {
                     </h2>
                   </div>
                 )}
-                <button
+                <Link
                   className="float-right rounded-sm bg-neutral-900 py-1  text-sm text-white"
-                  onClick={() => {
-                    window.location.href = `../${classroom.classCode}/view-all-assignments`;
-                  }}
+                  href={`/groups/${classroom.classCode}/view-all-assignments`}
                 >
                   <i className="fas fa-external-link-alt"></i> View All
-                </button>
+                </Link>
               </div>
 
               <h1 className="mt-10 text-xl font-semibold text-white">

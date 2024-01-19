@@ -24,9 +24,13 @@ export default function Login() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      localStorage.removeItem("uid");
+      localStorage.removeItem("email");
       if (user) {
         const uid = user.uid;
+        const email = user.email;
         localStorage.setItem("uid", uid);
+        localStorage.setItem("email", email);
       }
     });
   }, []);
@@ -52,8 +56,9 @@ export default function Login() {
               localStorage.setItem('idToken', idToken);
 
               // Sotre username
-
               localStorage.setItem('username', parsed.username);
+
+              localStorage.setItem("email", parsed.email);
 
               if (!parsed.email) {
                 // User hasn't finished onboarding.
@@ -113,7 +118,9 @@ export default function Login() {
                   window.location.replace('/onboarding');
                   return;
                 }
+
                 localStorage.setItem('username', parsed.username);
+                localStorage.setItem("email", parsed.email);
 
                 // Store related API endpoints in local storage.
                 localStorage.setItem('userLikesUrl', parsed.userLikesUrl);

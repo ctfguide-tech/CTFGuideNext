@@ -143,6 +143,7 @@ export default function Challenge() {
   };
 
   const fetchTerminal = async () => {
+    if(!challenge) return;
     try {
       loadBar();
       // toast.info('Fetching terminal...');
@@ -818,7 +819,7 @@ export default function Challenge() {
                 src={foundTerminal ? terminalUrl : ''}
               ></embed>
             ) : (
-              <p>Loading...</p>
+              <></>
             )}
 
             <br></br>
