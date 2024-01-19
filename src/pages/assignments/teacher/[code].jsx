@@ -181,9 +181,11 @@ export default function Slug() {
         await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
+        toast.error("Unable to create the terminal, please refresh the page and try again");
       }
     } catch (err) {
       console.log(err);
+      toast.error("Unable to create the terminal, please refresh the page and try again");
     }
   };
 
@@ -281,6 +283,8 @@ export default function Slug() {
     }
   };
 
+  console.log(challenge);
+
   const showHint = async (i) => {
     const url = `${baseUrl}/challenges/hints-update`;
     const userId = localStorage.getItem('uid');
@@ -331,40 +335,6 @@ export default function Slug() {
     window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
 
-  // const deleteTerminal = async (code) => {
-  //   try {
-  //     console.log('deleting terminal');
-  //
-  //     const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
-  //
-  //     const body = {
-  //       jwtToken: localStorage.getItem('idToken'),
-  //       TerminalGroupName: 'schell-class-session',
-  //       TerminalID: code,
-  //       classID: 'psu101',
-  //       organizationName: 'PSU',
-  //       userID: localStorage.getItem('username'),
-  //       slug: challenge.slug,
-  //     };
-  //
-  //     const requestOptions = {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(body),
-  //     };
-  //
-  //     const response = await fetch(url, requestOptions);
-  //     if (response.ok) {
-  //       console.log('The terminal was deleted successfully');
-  //     } else {
-  //       console.log('Failed to delete the terminal');
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  // console.log(submissions);
 
   return (
     <>

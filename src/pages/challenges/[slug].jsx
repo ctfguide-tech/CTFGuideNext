@@ -7,14 +7,15 @@ import { Transition, Dialog } from '@headlessui/react';
 import {
   XMarkIcon,
   HeartIcon,
-  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import {
   CheckCircleIcon,
-  CheckIcon,
   FlagIcon,
 } from '@heroicons/react/20/solid';
 
@@ -44,8 +45,6 @@ export default function Challenge() {
   const [terminalPassword, setTerminalPassword] = useState('...');
 
   const [terminalUrl, setTerminalUrl] = useState('');
-  const [password, setPassword] = useState('');
-  const [userName, setUserName] = useState('');
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
@@ -71,6 +70,8 @@ export default function Challenge() {
       clearInterval(interval);
     };
   }, []);
+
+  // console.log(challenge);
 
   const loadBar = () => {
     const interval = setInterval(() => {
@@ -186,7 +187,6 @@ export default function Challenge() {
 
   const createTerminal = async () => {
     try {
-      // toast.info('Creating a terminal');
       console.log('Creating a terminal');
       let min = 1000;
       let max = 9999;
@@ -216,9 +216,11 @@ export default function Challenge() {
         await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
+        toast.error("Unable to create the terminal, please refresh the page and try again");
       }
     } catch (err) {
       console.log(err);
+      toast.error("Unable to create terminal please refresh and try again");
     }
   };
 
@@ -269,14 +271,13 @@ export default function Challenge() {
 
   useEffect(() => {
     if (slug) {
-      // fetchLeaderboard();
-      // fetchComments();
-      // if (challenge.upvotes) {
-      //   setLikeCount(challenge.upvotes);
-      // }
-      // fetchLikeUrl();
+      fetchLeaderboard();
+      //fetchComments();
+      if (challenge.upvotes) {
+        setLikeCount(challenge.upvotes);
+       }
+       fetchLikeUrl();
       getChallengeData();
-      // fetchTerminal();
     }
     const award = localStorage.getItem('award');
     if (award) {
@@ -350,7 +351,9 @@ export default function Challenge() {
           }),
         };
         const response = await fetch(endPoint, requestOptions);
+        console.log(await response.json());
         const { success, incorrect, error } = await response.json();
+
 
         if (error) {
           document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
@@ -787,7 +790,7 @@ export default function Challenge() {
               <span className="inline-block text-2xl font-semibold text-white">
                 {Math.round(progress)}%
               </span>
-              <h1 className="text-center text-xl">Launching Terminal</h1>
+              <h1 className="text-center text-xl">{!fetchingTerminal ? "Launch Terminal" : "Launching Terminal"}</h1>
               <div className="relative mx-auto max-w-xl ">
                 <div className="flex  items-center justify-between">
                   <span className="inline-block rounded-full px-2 py-1 text-xs font-semibold uppercase text-blue-800 "></span>
@@ -823,17 +826,17 @@ export default function Challenge() {
             )}
 
             <br></br>
-            {!foundTerminal && (
+            {challenge && !fetchingTerminal && !foundTerminal &&
               <div className=" mx-auto text-center ">
                 <span
                   className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                   disabled={fetchingTerminal}
                   onClick={fetchTerminal}
                 >
-                  {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                  Launch Terminal
                 </span>
               </div>
-            )}
+            }
           </div>
           <div className="mt-10  rounded-lg px-5 pb-20">
             <h1 className="text-3xl font-semibold text-white">Comments</h1>
@@ -1112,6 +1115,18 @@ export default function Challenge() {
         ℹ We provide accessible environments for everyone to run cybersecurity
         tools. Abuse and unnecessary computation is prohibited.
       </p>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );

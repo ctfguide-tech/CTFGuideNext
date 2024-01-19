@@ -30,6 +30,7 @@ const ViewAllAssignments = () => {
     if (data.success) {
       setClassroom(data.body);
       const isAuth = auth(data.body);
+      console.log(isAuth);
       if (!isAuth) {
         router.replace('/groups');
       }
@@ -56,10 +57,10 @@ const ViewAllAssignments = () => {
 
   const auth = (classroom) => {
     const uid = localStorage.getItem('uid');
-    const isStudent = classroom.students.map(
+    const isStudent = classroom.students.filter(
       (student) => uid === student.uid
     )[0];
-    const isTeacher = classroom.teachers.map(
+    const isTeacher = classroom.teachers.filter(
       (teacher) => uid === teacher.uid
     )[0];
     if (!(isStudent || isTeacher)) {
