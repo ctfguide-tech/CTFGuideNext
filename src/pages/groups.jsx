@@ -6,6 +6,7 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, Fragment, useState } from 'react';
+import request from '../utils/request';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,9 +24,8 @@ export default function Groups() {
   useEffect(() => {
     const getAllClassrooms = async () => {
       const url = `${baseUrl}/classroom/all-classrooms`;
-      const response = await fetch(url, {credentials: 'include'});
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
         setTeacherClassrooms(data.teacher);
         setStudentClassrooms(data.student);
       } else {

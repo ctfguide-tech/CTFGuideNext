@@ -9,6 +9,7 @@ import { Tooltip } from 'react-tooltip';
 import Announcements from '@/components/groups/announcements';
 import ClassroomNav from '@/components/groups/classroomNav';
 import LoadingBar from 'react-top-loading-bar';
+import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
@@ -39,13 +40,8 @@ export default function TeacherView({ group }) {
     const getClassroom = async () => {
       const classroomCode = group;
       const url = `${baseUrl}/classroom/classroom-by-classcode/${classroomCode}`;
-      const requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'GET');
+      if (data && data.success) {
         setClassroom(data.body);
       } else {
         console.log('Error when getting classroom info');

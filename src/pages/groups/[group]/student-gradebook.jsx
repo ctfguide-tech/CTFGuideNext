@@ -3,8 +3,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import LoadingBar from 'react-top-loading-bar';
-import ClassroomNav from '@/components/groups/classroomNav';
-import { useRouter } from 'next/router';
+import router from 'next/router';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,17 +11,15 @@ const StudentGradebook = () => {
   const [assignments, setAssignments] = useState([]);
   const [name, setName] = useState("");
   const [finalGrade, setFinalGrade] = useState(0);
+  const classCode = window.location.href.split("/")[4];
 
   const fetchFinalGrade = async () => {
     try {
       const classCode = window.location.href.split("/")[4];
-      const token = localStorage.getItem("idToken");
-
       const response = await fetch(`${baseUrl}/submission/student-finalgrade/${classCode}`, {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
         credentials: 'include'
       });
@@ -43,11 +40,11 @@ const StudentGradebook = () => {
     }
   }
 
+  console.log(assignments);
+
   useEffect(() => {
     fetchFinalGrade()
   }, []);
-
-  // hi nav
 
   return (
     <>
@@ -74,7 +71,7 @@ const StudentGradebook = () => {
           <div className="ml-auto">
             <button
               onClick={() =>
-                (window.location.href = `/groups/${classCode}/home`)
+                router.push(`/groups/${classCode}/home`)
               }
               className=" rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
               style={{

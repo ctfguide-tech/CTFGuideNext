@@ -8,6 +8,8 @@ import Link from 'next/link';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import request from '@/utils/request';
+import router from 'next/router';
 
 const defaultImages = [
   'https://robohash.org/pranavramesh',
@@ -26,15 +28,13 @@ export default function StudentView({ group }) {
     try {
       console.log('Getting free trial status');
       const url = `${baseUrl}/classroom/getFreeTrialStatus/${classroomId}`;
-      const response = await fetch(url, { method: "GET", credentials: 'include' });
-      const data = await response.json();
-      console.log(data);
+      const data = await request(url, 'GET', null);
       if (data.success) {
         if(data.body.daysLeft > 0) {
           document.getElementById("trialMsg").classList.remove("hidden");
           document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
         } else {
-          toast.info("The free trial is over and has been paid for");
+          toast.info("The free trial has expired");
         }
       } else {
         console.log(data.message);
@@ -64,9 +64,8 @@ export default function StudentView({ group }) {
     const classroomCode = group;
     const getClassroom = async () => {
       const url = `${baseUrl}/classroom/classroom-by-classcode/${classroomCode}`;
-      const response = await fetch(url, {method: "GET", credentials: 'include'});
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
         setClassroom(data.body);
         if (data.body.pricingPlan === 'student') {
           await getFreeTrialStatus(data.body.id);
@@ -78,23 +77,14 @@ export default function StudentView({ group }) {
     getClassroom();
   }, []);
 
-  const viewProfile = (student) => {
-    console.log('Link to a page to view this students profile');
-  };
-
   const leaveClass = async () => {
     try {
       const classroomId = classroom.id;
       const url = `${baseUrl}/classroom/leave`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ isTeacher: false, classroomId }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        window.location.href = `/groups`;
+      const body = { classroomId, isTeacher: false };
+      const data = await request(url, 'POST', body);
+      if (data && data.success) {
+        router.push('/groups');
       } else {
         console.log(data.message);
       }
@@ -107,20 +97,17 @@ export default function StudentView({ group }) {
     try {
       const classroomId = classroom.id;
       const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ operation: 'joinClass', classroomId }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        console.log(data);
+      const body = { classroomId, operation: "joinClass" };
+      const data = await request(url, 'POST', body);
+      if (data && data.success) {
+        toast.success("Free trial cancelled");
       } else {
         console.log(data.message);
+        toast.error("Unable to cancel free trial");
       }
     } catch (err) {
       console.log(err);
+      toast.error("Unable to cancel free trial");
     }
   };
 
@@ -128,14 +115,14 @@ export default function StudentView({ group }) {
     try {
       const url = `${baseUrl}/payments/stripe/pay-payment-intent`;
       const body = { classroomId: classroom.id, operation: "joinClass" }
-      const requestOptions = {
-        method: "PUT",
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(body)
+      const data = await request(url, 'PUT', body);
+      if (data && data.success) {
+        toast.success("Free trial successfully activated");
+        document.getElementById("trialMsg").classList.add("hidden");
+      } else {
+        console.log(data.message);
+        toast.error("Unable to activate free trial");
       }
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
       console.log(data);
     } catch (err) {
       console.log(err);
@@ -143,7 +130,7 @@ export default function StudentView({ group }) {
   };
 
   const viewGrades = () => {
-    // see the students grades
+    router.push('/groups/' + classroom.classCode + '/student-gradebook');
   };
 
   return (
@@ -163,9 +150,10 @@ export default function StudentView({ group }) {
             <h1 className="text-3xl font-semibold text-white">
               {classroom.name}
             </h1>
+            <button style={{ color: "white" }} onClick={payForFreeTrialNow}>Pay for trial Now</button>
+            <button style={{ color: "white" }} onClick={viewGrades}>View Grades</button>
           </div>
 
-          <button style={{ color: "white" }} onClick={payForFreeTrialNow}>Pay for trial Now</button>
 
           <hr className="mt-2 border-neutral-800 text-neutral-800 "></hr>
           <div className="mt-4 grid grid-cols-6 gap-x-8">

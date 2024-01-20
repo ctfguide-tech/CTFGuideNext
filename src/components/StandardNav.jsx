@@ -73,55 +73,55 @@ export function StandardNav() {
   const [username, setUsername] = useState(null);
 
     useEffect(() => {
-      const fetchNotification = async () => {
-        const endPoint =
-          process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-          },
-        };
-        try {
-          const response = await fetch(endPoint, requestOptions);
-          const result = await response.json();
-          if (!result || !result.length) return;
-
-          setNotificationData(
-            result.map((notification) => {
-              const currentDate = new Date();
-              const createdAt = new Date(notification.createdAt);
-              const timedelta = currentDate - createdAt;
-              console.log(notification);
-              let noti = '';
-
-              let seconds = Math.floor(timedelta / 1000);
-              let minutes = Math.floor(seconds / 60);
-              seconds = seconds % 60;
-              let hours = Math.floor(minutes / 60);
-              minutes = minutes % 60;
-              let days = Math.floor(hours / 24);
-              hours = hours % 24;
-
-              if (days) noti = days + ' days';
-              else if (hours) noti = hours + ' hours';
-              else if (minutes) noti = minutes + ' minutes';
-              else noti = seconds = ' seconds';
-
-              return {
-                message: notification.message,
-                receivedTime: noti + ' ago',
-                detailPage: '/events',
-                image:
-                  'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
-              };
-            })
-          );
-        } catch (error) {}
+    const fetchNotification = async () => {
+      const endPoint =
+        process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
       };
-      fetchNotification();
-    }, []);
+      try {
+        const response = await fetch(endPoint, requestOptions);
+        const result = await response.json();
+        if (!result || !result.length) return;
+
+        setNotificationData(
+          result.map((notification) => {
+            const currentDate = new Date();
+            const createdAt = new Date(notification.createdAt);
+            const timedelta = currentDate - createdAt;
+            console.log(notification);
+            let noti = '';
+
+            let seconds = Math.floor(timedelta / 1000);
+            let minutes = Math.floor(seconds / 60);
+            seconds = seconds % 60;
+            let hours = Math.floor(minutes / 60);
+            minutes = minutes % 60;
+            let days = Math.floor(hours / 24);
+            hours = hours % 24;
+
+            if (days) noti = days + ' days';
+            else if (hours) noti = hours + ' hours';
+            else if (minutes) noti = minutes + ' minutes';
+            else noti = seconds = ' seconds';
+
+            return {
+              message: notification.message,
+              receivedTime: noti + ' ago',
+              detailPage: '/events',
+              image:
+              'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
+            };
+          })
+        );
+      } catch (error) {}
+    };
+    fetchNotification();
+  }, []);
 
 
   useEffect(() => {
@@ -146,27 +146,6 @@ export function StandardNav() {
   }, []);
 
 
-  const updateAuthToken = async () => {
-    try {
-      console.log("Updating auth token");
-      const idToken = await auth.currentUser.getIdToken(true);
-      document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
-  useEffect(() => {
-    if(auth.currentUser) {
-      updateAuthToken();
-      const intervalId = setInterval(() => {
-        updateAuthToken();
-      }, 14 * 60 * 1000);
-      return () => {
-        clearInterval(intervalId);
-      };
-    }
-  }, [auth]);
 
 
   const fetchNotifications = async () => {
