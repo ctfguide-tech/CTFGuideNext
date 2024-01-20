@@ -69,6 +69,7 @@ export default function Login() {
               localStorage.setItem('notificationsUrl', parsed.notificationsUrl);
               localStorage.setItem('role', parsed.role);
 
+              localStorage.setItem('username', parsed.username);
               document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
 
               window.location.replace('/dashboard');

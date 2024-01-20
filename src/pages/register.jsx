@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,6 +7,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { app } from '../config/firebaseConfig';
+
 const provider = new GoogleAuthProvider();
 
 export default function Register() {
@@ -84,7 +84,6 @@ export default function Register() {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          localStorage.setItem('idToken', user.uid);
           userCredential.user.getIdToken().then((idToken) => {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);

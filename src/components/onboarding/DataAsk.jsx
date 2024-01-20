@@ -17,22 +17,13 @@ export function DataAsk({ props }) {
   function submitData() {
     // Generate JSON to send
 
-
-
-    
     var username = document.getElementById('username').value;
-
-   
-
 
     var birthday = document.getElementById('birthday').value;
     var firstname = document.getElementById('firstname').value;
     var lastname = document.getElementById('lastname').value;
 
     var termsAgreement = document.getElementById('legal').checked;
-
-
-
 
 
     const parts = birthday.split('-');
@@ -98,17 +89,13 @@ export function DataAsk({ props }) {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader(
-        'Authorization',
-        'Bearer ' + localStorage.getItem('idToken')
-      );
+      xhr.withCredentials = true;
+
       xhr.addEventListener('readystatechange', function () {
         if (this.readyState === 4 && this.readyState === 201) {
           var parsed = JSON.parse(this.responseText);
           if (parsed.username) {
             // Sign out
-            localStorage.removeItem('idToken');
-
             // Redirect to login
             window.location.href = '/dashboard';
           }
@@ -141,11 +128,6 @@ export function DataAsk({ props }) {
     
   } 
   
- 
-
-
-
-
 
   return (
     <div className="h-screen my-auto">

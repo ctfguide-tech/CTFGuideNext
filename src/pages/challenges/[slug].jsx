@@ -244,9 +244,10 @@ export default function Challenge() {
       const { difficulty, availableHints } = result.body;
       setChallenge(result.body);
       setDifficulty(difficulty);
-      availableHints.forEach((hint, index) => {
-        updateHintMessage(hint, index);
-      });
+
+      //availableHints.forEach((hint, index) => {
+        //updateHintMessage(hint, index);
+      //});
     } catch (err) {
       console.log(err);
     }
