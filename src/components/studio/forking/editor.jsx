@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
+
 const Editor = (props) => {
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
@@ -54,7 +57,7 @@ const Editor = (props) => {
           await uploadChallenge('');
           return;
         }
-        const token = localStorage.getItem('idToken');
+        const token = auth.currentUser.accessToken;
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('jwtToken', token);
@@ -117,19 +120,17 @@ const Editor = (props) => {
 
       const assignmentInfo = props.assignmentInfo.assignmentInfo;
       const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment`;
-      const token = localStorage.getItem('idToken');
 
       const requestOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
+        credentials: 'include',
         body: JSON.stringify({
           slug: props.slug,
           challengeInfo,
           assignmentInfo,
-          userId: localStorage.getItem('uid'),
           username: localStorage.getItem('username'),
         }),
       };
@@ -149,6 +150,7 @@ const Editor = (props) => {
     try {
       var requestOptions = {
         method: 'GET',
+        credentials: 'include'
       };
 
       const response = await fetch(

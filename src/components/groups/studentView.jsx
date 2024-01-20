@@ -20,32 +20,19 @@ const defaultImages = [
 
 export default function StudentView({ group }) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
-
   const [classroom, setClassroom] = useState({});
-  const [freeTrialDaysLeft, setFreeTrialDaysLeft] = useState(0);
-
 
   const getFreeTrialStatus = async (classroomId) => {
     try {
       console.log('Getting free trial status');
-      const userId = localStorage.getItem('uid');
-      const url = `${baseUrl}/classroom/getFreeTrialStatus/${userId}/${classroomId}`;
-      const response = await fetch(url);
+      const url = `${baseUrl}/classroom/getFreeTrialStatus/${classroomId}`;
+      const response = await fetch(url, { method: "GET", credentials: 'include' });
       const data = await response.json();
       console.log(data);
       if (data.success) {
-        setFreeTrialDaysLeft(data.body.daysLeft);
-        document.getElementById("trialMsg").classList.remove("hidden");
-        document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
-        console.log(data.body.daysLeft);
-
-        document.getElementById("trialMsg").classList.remove("hidden");
-        document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
-
         if(data.body.daysLeft > 0) {
-          toast.info(
-            `You have ${data.body.daysLeft} days until your free trial expires`
-          );
+          document.getElementById("trialMsg").classList.remove("hidden");
+          document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
         } else {
           toast.info("The free trial is over and has been paid for");
         }
@@ -76,8 +63,8 @@ export default function StudentView({ group }) {
   useEffect(() => {
     const classroomCode = group;
     const getClassroom = async () => {
-      const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classroomCode}`;
-      const response = await fetch(url);
+      const url = `${baseUrl}/classroom/classroom-by-classcode/${classroomCode}`;
+      const response = await fetch(url, {method: "GET", credentials: 'include'});
       const data = await response.json();
       if (data.success) {
         setClassroom(data.body);
@@ -98,12 +85,12 @@ export default function StudentView({ group }) {
   const leaveClass = async () => {
     try {
       const classroomId = classroom.id;
-      const uid = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/leave`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isTeacher: false, classroomId, userId: uid }),
+        credentials: 'include',
+        body: JSON.stringify({ isTeacher: false, classroomId }),
       });
       const data = await response.json();
       if (data.success) {
@@ -119,12 +106,12 @@ export default function StudentView({ group }) {
   const cancelFreeTrial = async () => {
     try {
       const classroomId = classroom.id;
-      const uid = localStorage.getItem('uid');
       const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ operation: 'joinClass', classroomId, uid }),
+        credentials: 'include',
+        body: JSON.stringify({ operation: 'joinClass', classroomId }),
       });
       const data = await response.json();
       if (data.success) {
@@ -140,11 +127,11 @@ export default function StudentView({ group }) {
   const payForFreeTrialNow = async () => {
     try {
       const url = `${baseUrl}/payments/stripe/pay-payment-intent`;
-      const token = localStorage.getItem("idToken");
       const body = { classroomId: classroom.id, operation: "joinClass" }
       const requestOptions = {
         method: "PUT",
-        headers: { 'Content-Type': 'application/json', Authorization: "Bearer " + token },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(body)
       }
       const response = await fetch(url, requestOptions);

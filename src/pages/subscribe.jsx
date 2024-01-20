@@ -19,9 +19,6 @@ export default function Subscribe() {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = subscriptionTypes[subIdx];
 
-      const userId = localStorage.getItem('uid');
-      const token = localStorage.getItem('idToken');
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
         {
@@ -29,14 +26,13 @@ export default function Subscribe() {
           body: JSON.stringify({
             subType: subscriptionType,
             quantity: 1,
-            uid: userId,
             operation: 'subscription',
             data: {},
           }),
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
           },
+          credentials: 'include'
         }
       );
 

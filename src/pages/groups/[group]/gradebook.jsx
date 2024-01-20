@@ -28,6 +28,7 @@ const Gradebook = () => {
         classroomId;
       var requestOptions = {
         method: 'GET',
+        credentials: 'include'
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
@@ -45,9 +46,10 @@ const Gradebook = () => {
       setClassCode(classCode);
       var requestOptions = {
         method: 'GET',
+        credentials: 'include'
       };
       const response = await fetch(
-        `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`,
+        `${baseUrl}/classroom/classroom-by-classcode/${classCode}`,
         requestOptions
       );
       const data = await response.json();
@@ -78,19 +80,18 @@ const Gradebook = () => {
   const checkPermissions = async () => {
     try {
       const classCode = window.location.href.split("/")[4];
-      const userUid = localStorage.getItem('uid');
-      const url = `${baseUrl}/classroom/check-if-teacher`;
-      const token = localStorage.getItem('idToken');
+      const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
       const response = await fetch(url, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
-        body: JSON.stringify({ classCode: classCode, uid: userUid }),
+        credentials: 'include',
       });
       const res = await response.json();
+
       console.log(res);
+
       if (res.success) {
         return res.isTeacher;
       } else {

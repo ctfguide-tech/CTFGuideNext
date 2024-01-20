@@ -14,7 +14,8 @@ export default function Dashboard() {
   useEffect(() => {
     try {
       //fetch('api.ctfguide.com/dashboard')
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
+      const requestOptions = { credentials: 'include' }
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, requestOptions)
 
         .then((res) => res.json())
 
@@ -29,7 +30,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/ami`)
+      const requestOptions = { credentials: 'include' }
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/ami`, requestOptions)
         .then((response) => response.json())
         .then((data) => setLoggedIn(data))
         .catch((error) => {

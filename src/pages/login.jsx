@@ -24,14 +24,11 @@ export default function Login() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      localStorage.removeItem("uid");
-      localStorage.removeItem("email");
-      if (user) {
-        const uid = user.uid;
-        const email = user.email;
-        localStorage.setItem("uid", uid);
-        localStorage.setItem("email", email);
-      }
+      document.cookie = "idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      //if (user) {
+        //const uid = user.uid;
+        //const email = user.email;
+      //}
     });
   }, []);
 
@@ -43,6 +40,7 @@ export default function Login() {
       .then((userCredential) => {
         // Fetch ID Token
         userCredential.user.getIdToken().then((idToken) => {
+
           // Send token to backend via HTTPS
           var data = new FormData();
           var xhr = new XMLHttpRequest();
@@ -52,13 +50,8 @@ export default function Login() {
             if (this.readyState === 4) {
               var parsed = JSON.parse(this.responseText);
 
-              // Store Token in local storage.
-              localStorage.setItem('idToken', idToken);
-
               // Sotre username
               localStorage.setItem('username', parsed.username);
-
-              localStorage.setItem("email", parsed.email);
 
               if (!parsed.email) {
                 // User hasn't finished onboarding.
@@ -74,10 +67,10 @@ export default function Login() {
               );
               localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
               localStorage.setItem('notificationsUrl', parsed.notificationsUrl);
-              localStorage.setItem('email', parsed.email);
               localStorage.setItem('role', parsed.role);
 
-              // Redirect to dashboard
+              document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
+
               window.location.replace('/dashboard');
             }
           });
@@ -101,8 +94,6 @@ export default function Login() {
         // Fetch ID Token
         result.user.getIdToken().then((idToken) => {
           // Send token to backend via HTTPS
-          console.log(idToken);
-          localStorage.setItem('idToken', idToken);
 
           var data = new FormData();
           var xhr = new XMLHttpRequest();
@@ -115,12 +106,9 @@ export default function Login() {
 
                 if (!parsed.email) {
                   // User hasn't finished onboarding.
-                  window.location.replace('/onboarding');
+                  //window.location.replace('/onboarding');
                   return;
                 }
-
-                localStorage.setItem('username', parsed.username);
-                localStorage.setItem("email", parsed.email);
 
                 // Store related API endpoints in local storage.
                 localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
@@ -133,8 +121,12 @@ export default function Login() {
                   'notificationsUrl',
                   parsed.notificationsUrl
                 );
-                localStorage.setItem('email', parsed.email);
+
                 localStorage.setItem('role', parsed.role);
+                localStorage.setItem('username', parsed.username);
+
+                // addthing the token to cookies
+                document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
 
                 window.location.replace('/dashboard');
               } catch (error) {

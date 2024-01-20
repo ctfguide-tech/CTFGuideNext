@@ -17,13 +17,10 @@ export default function Register() {
       .then((result) => {
         // Fetch ID Token
         result.user.getIdToken().then((idToken) => {
-          // Send token to backend via HTTPS
-          console.log(idToken);
-          localStorage.setItem('idToken', idToken);
 
+          // Send token to backend via HTTPS
           var data = new FormData();
           var xhr = new XMLHttpRequest();
-
           xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
           xhr.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
@@ -47,9 +44,9 @@ export default function Register() {
                   'notificationsUrl',
                   parsed.notificationsUrl
                 );
-                localStorage.setItem('email', parsed.email);
                 localStorage.setItem('role', parsed.role);
 
+                document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
                 window.location.replace('/dashboard');
               } catch (error) {
                 console.log('Error parsing JSON data:', error);
@@ -96,8 +93,7 @@ export default function Register() {
                 var parsed = JSON.parse(this.responseText);
 
                 // Store Token in local storage.
-                localStorage.setItem('idToken', idToken);
-
+                document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
                 window.location.replace('/onboarding');
               }
             });

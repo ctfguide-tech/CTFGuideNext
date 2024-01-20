@@ -34,7 +34,6 @@ export default function CreateGroup() {
         return;
       }
 
-      const userId = localStorage.getItem('uid');
       const dataObj = {
         org: domain,
         name,
@@ -50,7 +49,8 @@ export default function CreateGroup() {
         const res = await fetch(`${baseUrl}/classroom/create`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, ...dataObj }),
+          credentials: 'include',
+          body: JSON.stringify({ ...dataObj }),
         });
         const resJson = await res.json();
         if (resJson.success) {
@@ -68,13 +68,13 @@ export default function CreateGroup() {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(
           selectedOption === 'student'
             ? { userId, ...dataObj }
             : {
                 subType: selectedOption,
                 quantity: seats,
-                uid: userId,
                 data: { ...dataObj },
                 operation: 'createClass',
               }

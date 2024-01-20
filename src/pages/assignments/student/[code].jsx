@@ -8,6 +8,9 @@ import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Slug() {
@@ -16,7 +19,7 @@ export default function Slug() {
   const [flagInput, setFlagInput] = useState('');
   const [solved, setSolved] = useState(null);
 
-    const router = useRouter();
+  const router = useRouter();
 
   // challenge stuff
   const [hints, setHints] = useState([
@@ -74,7 +77,7 @@ export default function Slug() {
     return formattedDate;
   };
 
-  const makePostRequest = async (url, auth, body) => {
+  const makePostRequest = async (url, body) => {
     try {
       let requestOptions = {
         method: 'POST',
@@ -82,11 +85,9 @@ export default function Slug() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include'
       };
-      if (auth) {
-        const token = localStorage.getItem('idToken');
-        requestOptions.headers.Authorization = 'Bearer ' + token;
-      }
+
       const response = await fetch(url, requestOptions);
       const data = await response.json();
       return data;
@@ -96,13 +97,9 @@ export default function Slug() {
     }
   };
 
-  const makeGetRequest = async (url, auth) => {
+  const makeGetRequest = async (url) => {
     try {
-      let requestOptions = { method: 'GET' };
-      if (auth) {
-        const token = localStorage.getItem('idToken');
-        requestOptions.headers = { Authorization: 'Bearer ' + token };
-      }
+      let requestOptions = { method: 'GET', credentials: 'include' };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
       return data;
@@ -118,7 +115,7 @@ export default function Slug() {
       return;
     }
     const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
-    const data = await makeGetRequest(url, false);
+    const data = await makeGetRequest(url);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
@@ -126,28 +123,24 @@ export default function Slug() {
         getChallenge(data.body);
       } else {
         console.log('You are not apart of this class');
-        window.location.href = '/groups';
+        //window.location.href = '/groups';
       }
     }
   };
 
   const authenticate = async (assignment) => {
-    const uid = localStorage.getItem('uid');
-    const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
-    const data = await makeGetRequest(url, false);
+    const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
+    const data = await makeGetRequest(url);
     return data.success;
   };
 
   const getChallenge = async (assignment) => {
     try {
       console.log('getting the challenge');
-      const token = localStorage.getItem('idToken');
       const url = `${baseUrl}/challenges/${assignment.challenge.slug}?assignmentId=${assignment.id}`;
       const requestOptions = {
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+        credentials: 'include'
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
@@ -170,7 +163,7 @@ export default function Slug() {
       const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
 
       const body = {
-        jwtToken: localStorage.getItem('idToken'),
+        jwtToken: auth.currentUser.accessToken,
         TerminalGroupName: 'schell-class-session',
         TerminalID: code,
         classID: 'psu101',
@@ -206,8 +199,7 @@ export default function Slug() {
       termDebug('Fetching terminal...');
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
-      const token = localStorage.getItem('idToken');
-      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
+      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${auth.currentUser.accessToken}`;
       const requestOptions = {
         method: 'GET',
         redirect: 'follow',
@@ -296,13 +288,11 @@ export default function Slug() {
 
   const showHint = async (i) => {
     const url = `${baseUrl}/challenges/hints-update`;
-    const userId = localStorage.getItem('uid');
     const body = {
       hintsUsed: i,
-      uid: userId,
       challengeId: assignment.challenge.id,
     };
-    const data = await makePostRequest(url, false, body);
+    const data = await makePostRequest(url, body);
     if (data && data.success) {
       let tmp = [...hints];
       tmp[i].message = assignment.challenge.hints[i].message;
@@ -322,12 +312,10 @@ export default function Slug() {
   const submitAssignment = async () => {
     setLoading(true);
     const params = window.location.href.split('/');
-    const userId = localStorage.getItem('uid');
     const url = `${baseUrl}/submission/create`;
 
     const body = {
       solved: flagInput === assignment.solution.keyword,
-      userId: userId,
       classroomId: assignment.classroomId,
       assignmentId: parseInt(params[5]),
       keyword: flagInput,
@@ -336,7 +324,7 @@ export default function Slug() {
       hints: assignment.challenge.hints,
     };
 
-    const data = await makePostRequest(url, true, body);
+    const data = await makePostRequest(url, body);
     if (data && data.success) {
       toast.success('Assignment has been submitted');
       setSubmitted(true);

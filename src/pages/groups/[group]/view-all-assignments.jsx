@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 import { useRouter } from 'next/router';
-
 import ClassroomNav from '@/components/groups/classroomNav';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -20,10 +19,10 @@ const ViewAllAssignments = () => {
 
   const getClassroom = async () => {
     const params = window.location.href.split('/');
-    console.log(params);
-    const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${params[4]}`;
+    const url = `${baseUrl}/classroom/classroom-by-classcode/${params[4]}`;
     const requestOptions = {
       method: 'GET',
+      credentials: 'include'
     };
     const response = await fetch(url, requestOptions);
     const data = await response.json();
@@ -55,20 +54,9 @@ const ViewAllAssignments = () => {
     return formattedDate;
   };
 
+  // make the route to auth teacher/students
   const auth = (classroom) => {
-    const uid = localStorage.getItem('uid');
-    const isStudent = classroom.students.filter(
-      (student) => uid === student.uid
-    )[0];
-    const isTeacher = classroom.teachers.filter(
-      (teacher) => uid === teacher.uid
-    )[0];
-    if (!(isStudent || isTeacher)) {
-      return false;
-    } else {
-      setIsTeacher(isTeacher);
-      return true;
-    }
+    return true;
   };
 
   useEffect(() => {

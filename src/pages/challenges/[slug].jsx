@@ -12,6 +12,9 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
+
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import {
@@ -150,7 +153,7 @@ export default function Challenge() {
       // toast.info('Fetching terminal...');
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
-      const token = localStorage.getItem('idToken');
+      const token = auth.currentUser.accessToken;
       const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
       const requestOptions = {
         method: 'GET',
@@ -195,7 +198,7 @@ export default function Challenge() {
       const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
 
       const body = {
-        jwtToken: localStorage.getItem('idToken'),
+        jwtToken: auth.currentUser.accessToken,
         TerminalGroupName: 'schell-class-session',
         TerminalID: code,
         classID: 'psu101',
@@ -231,8 +234,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
 
       const response = await fetch(endPoint, requestOptions);
@@ -256,8 +259,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const response = await fetch(userLikesUrl, requestOptions);
       const result = await response.json();
@@ -296,8 +299,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const response = await fetch(endPoint, requestOptions);
       const result = await response.json();
@@ -344,8 +347,8 @@ export default function Challenge() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
           },
+          credentials: 'include',
           body: JSON.stringify({
             keyword: flag,
           }),
@@ -381,8 +384,8 @@ export default function Challenge() {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: 'Bearer ' + localStorage.getItem('idToken'),
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                   keyword: flag,
                 }),
@@ -421,7 +424,8 @@ export default function Challenge() {
   const fetchComments = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments'
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments',
+        {credentials: 'include'}
       );
       const { result } = await response.json();
 
@@ -442,8 +446,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const response = await fetch(endPoint, requestOptions);
       const result = await response.json();
@@ -486,7 +490,8 @@ export default function Challenge() {
   const fetchLeaderboard = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/leaderboard'
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/leaderboard',
+        {credentials: 'include'}
       );
       const leaderboards = await response.json();
       const NO_PLACE = 'Not placed';
@@ -520,8 +525,8 @@ export default function Challenge() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('idToken'),
       },
+      credentials: 'include',
       body: JSON.stringify({
         content: comment,
       }),
@@ -550,8 +555,8 @@ export default function Challenge() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const { error } = await fetch(endPoint, requestOptions);
       if (error) {
@@ -567,8 +572,8 @@ export default function Challenge() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const { error } = await fetch(endPoint, requestOptions);
       if (error) {
