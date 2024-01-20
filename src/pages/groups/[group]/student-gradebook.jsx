@@ -44,7 +44,7 @@ const StudentGradebook = () => {
 
     };
 
-
+    //STEPHEN MAKE THE ROUTE PLEEEEEEEASSEEEEEE MY BOY
     const getStudentFinalGrade = async (userId, classroomId) => {
 
 
@@ -72,6 +72,10 @@ const StudentGradebook = () => {
             console.log(err);
         }
     };
+    useEffect(() => {
+        getStudentSubmissions();
+        getAssignments();
+    }, []);
 
     return (
         <>
