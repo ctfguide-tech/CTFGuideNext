@@ -16,39 +16,28 @@ export default function Createchall() {
         setActiveTab(tab);
     }
 
-    function uploadChallenge() {
-        // WARNING: For POST requests, body is set to null by browsers.
-        var data = JSON.stringify({
-            title: document.getElementById('challengeName').innerText,
-            content: document.getElementById('content').value,
-            category: [document.getElementById('category').value],
-            points: 100,
-            difficulty: document.getElementById('difficulty').value.toUpperCase(),
-            keyword: document.getElementById('solution').value,
-            challengeType: 'STANDARD',
-            hints: [document.getElementById('hint1').value, document.getElementById('hint2').value, document.getElementById('hint3').value,],
-            penalties: [10, 15, 20],
-            fileurl : document.getElementById("fileurl").value,
-        });
+  async function uploadChallenge() {
+    // WARNING: For POST requests, body is set to null by browsers.
+    var data = JSON.stringify({
+      title: document.getElementById('challengeName').innerText,
+      content: document.getElementById('content').value,
+      category: [document.getElementById('category').value],
+      points: 100,
+      difficulty: document.getElementById('difficulty').value.toUpperCase(),
+      keyword: document.getElementById('solution').value,
+      challengeType: 'STANDARD',
+      hints: [document.getElementById('hint1').value, document.getElementById('hint2').value, document.getElementById('hint3').value,],
+      penalties: [10, 15, 20],
+      fileurl : document.getElementById("fileurl").value,
+    });
 
-        var xhr = new XMLHttpRequest();
-
-        xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4 || this.status === 201) {
-                window.location.replace('/create');
-            }
-
-            if (this.readyState === 4 && this.status != 201) {
-                window.alert('Something went wrong.');
-            }
-        });
-
-        xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/challenges`);
-        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('idToken'));
-        xhr.setRequestHeader('Content-Type', 'application/json');
-
-        xhr.send(data);
-    }
+    const requestOptions = { method: "POST", credentials: 'include', body: data }
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges`;
+    const response = await fetch(url, requestOptions);
+    const data = await response.json();
+    window.location.href = "/create"
+    console.log(data);
+  }
 
     return (<>
         <Head>

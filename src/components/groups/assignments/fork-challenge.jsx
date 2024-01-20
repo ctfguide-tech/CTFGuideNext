@@ -14,6 +14,7 @@ const styles = {
   h5: { fontSize: '1.4rem' },
   h6: { fontSize: '1.2rem' },
 };
+
 export default function Createchall(props) {
   const pages = [
     {

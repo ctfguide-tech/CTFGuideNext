@@ -21,7 +21,8 @@ export default function Pratice() {
         // setChallenges([...data]);
 
         const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + '/challenges'
+          process.env.NEXT_PUBLIC_API_URL + '/challenges',
+          { credentials: 'include' }
         );
 
         const { result } = await response.json();

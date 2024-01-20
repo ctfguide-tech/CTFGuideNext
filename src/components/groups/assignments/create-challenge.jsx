@@ -95,7 +95,7 @@ export default function Createchall(props) {
           await uploadChallenge('');
           return;
         }
-        const token = localStorage.getItem('idToken');
+        const token = auth.currentUser.accessToken;
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('jwtToken', token);
@@ -135,7 +135,6 @@ export default function Createchall(props) {
   const uploadChallenge = async (fileId) => {
     try {
       const nConfig = newConfig.replace('\n', ' && ');
-      const token = localStorage.getItem('idToken');
       const challengeInfo = {
         name: newChallengeName,
         category: [category],
@@ -155,12 +154,11 @@ export default function Createchall(props) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
+        credentials: 'include',
         body: JSON.stringify({
           challengeInfo,
           assignmentInfo,
-          userId: localStorage.getItem('uid'),
           username: localStorage.getItem('username'),
         }),
       };
@@ -188,14 +186,16 @@ export default function Createchall(props) {
 
   const getChallenge = async (id) => {
     try {
+<<<<<<< HEAD
       const token = localStorage.getItem('idToken');
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${id}`;
+=======
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${slugName}`;
+>>>>>>> 10b9210e58faa6015a5ffc9fee0ac490111d5a7d
 
       var requestOptions = {
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+        credentials: 'include'
       };
 
       const response = await fetch(url, requestOptions);

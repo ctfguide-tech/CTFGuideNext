@@ -7,14 +7,18 @@ import { Transition, Dialog } from '@headlessui/react';
 import {
   XMarkIcon,
   HeartIcon,
-  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
 
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import {
   CheckCircleIcon,
-  CheckIcon,
   FlagIcon,
 } from '@heroicons/react/20/solid';
 
@@ -44,8 +48,6 @@ export default function Challenge() {
   const [terminalPassword, setTerminalPassword] = useState('...');
 
   const [terminalUrl, setTerminalUrl] = useState('');
-  const [password, setPassword] = useState('');
-  const [userName, setUserName] = useState('');
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
@@ -71,6 +73,8 @@ export default function Challenge() {
       clearInterval(interval);
     };
   }, []);
+
+  // console.log(challenge);
 
   const loadBar = () => {
     const interval = setInterval(() => {
@@ -149,7 +153,7 @@ export default function Challenge() {
       // toast.info('Fetching terminal...');
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
-      const token = localStorage.getItem('idToken');
+      const token = auth.currentUser.accessToken;
       const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
       const requestOptions = {
         method: 'GET',
@@ -186,7 +190,6 @@ export default function Challenge() {
 
   const createTerminal = async () => {
     try {
-      // toast.info('Creating a terminal');
       console.log('Creating a terminal');
       let min = 1000;
       let max = 9999;
@@ -195,7 +198,7 @@ export default function Challenge() {
       const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
 
       const body = {
-        jwtToken: localStorage.getItem('idToken'),
+        jwtToken: auth.currentUser.accessToken,
         TerminalGroupName: 'schell-class-session',
         TerminalID: code,
         classID: 'psu101',
@@ -216,9 +219,11 @@ export default function Challenge() {
         await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
+        toast.error("Unable to create the terminal, please refresh the page and try again");
       }
     } catch (err) {
       console.log(err);
+      toast.error("Unable to create terminal please refresh and try again");
     }
   };
 
@@ -229,8 +234,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
 
       const response = await fetch(endPoint, requestOptions);
@@ -239,9 +244,10 @@ export default function Challenge() {
       const { difficulty, availableHints } = result.body;
       setChallenge(result.body);
       setDifficulty(difficulty);
-      availableHints.forEach((hint, index) => {
-        updateHintMessage(hint, index);
-      });
+
+      //availableHints.forEach((hint, index) => {
+        //updateHintMessage(hint, index);
+      //});
     } catch (err) {
       console.log(err);
     }
@@ -254,8 +260,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const response = await fetch(userLikesUrl, requestOptions);
       const result = await response.json();
@@ -269,14 +275,13 @@ export default function Challenge() {
 
   useEffect(() => {
     if (slug) {
-      // fetchLeaderboard();
-      // fetchComments();
-      // if (challenge.upvotes) {
-      //   setLikeCount(challenge.upvotes);
-      // }
-      // fetchLikeUrl();
+      fetchLeaderboard();
+      //fetchComments();
+      if (challenge.upvotes) {
+        setLikeCount(challenge.upvotes);
+       }
+       fetchLikeUrl();
       getChallengeData();
-      // fetchTerminal();
     }
     const award = localStorage.getItem('award');
     if (award) {
@@ -295,8 +300,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const response = await fetch(endPoint, requestOptions);
       const result = await response.json();
@@ -343,14 +348,16 @@ export default function Challenge() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
           },
+          credentials: 'include',
           body: JSON.stringify({
             keyword: flag,
           }),
         };
         const response = await fetch(endPoint, requestOptions);
+        console.log(await response.json());
         const { success, incorrect, error } = await response.json();
+
 
         if (error) {
           document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
@@ -378,8 +385,8 @@ export default function Challenge() {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: 'Bearer ' + localStorage.getItem('idToken'),
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                   keyword: flag,
                 }),
@@ -418,7 +425,8 @@ export default function Challenge() {
   const fetchComments = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments'
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments',
+        {credentials: 'include'}
       );
       const { result } = await response.json();
 
@@ -439,8 +447,8 @@ export default function Challenge() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const response = await fetch(endPoint, requestOptions);
       const result = await response.json();
@@ -483,7 +491,8 @@ export default function Challenge() {
   const fetchLeaderboard = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/leaderboard'
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/leaderboard',
+        {credentials: 'include'}
       );
       const leaderboards = await response.json();
       const NO_PLACE = 'Not placed';
@@ -517,8 +526,8 @@ export default function Challenge() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('idToken'),
       },
+      credentials: 'include',
       body: JSON.stringify({
         content: comment,
       }),
@@ -547,8 +556,8 @@ export default function Challenge() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const { error } = await fetch(endPoint, requestOptions);
       if (error) {
@@ -564,8 +573,8 @@ export default function Challenge() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       };
       const { error } = await fetch(endPoint, requestOptions);
       if (error) {
@@ -787,7 +796,7 @@ export default function Challenge() {
               <span className="inline-block text-2xl font-semibold text-white">
                 {Math.round(progress)}%
               </span>
-              <h1 className="text-center text-xl">Launching Terminal</h1>
+              <h1 className="text-center text-xl">{!fetchingTerminal ? "Launch Terminal" : "Launching Terminal"}</h1>
               <div className="relative mx-auto max-w-xl ">
                 <div className="flex  items-center justify-between">
                   <span className="inline-block rounded-full px-2 py-1 text-xs font-semibold uppercase text-blue-800 "></span>
@@ -823,17 +832,17 @@ export default function Challenge() {
             )}
 
             <br></br>
-            {!foundTerminal && (
+            {challenge && !fetchingTerminal && !foundTerminal &&
               <div className=" mx-auto text-center ">
                 <span
                   className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                   disabled={fetchingTerminal}
                   onClick={fetchTerminal}
                 >
-                  {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
+                  Launch Terminal
                 </span>
               </div>
-            )}
+            }
           </div>
           <div className="mt-10  rounded-lg px-5 pb-20">
             <h1 className="text-3xl font-semibold text-white">Comments</h1>
@@ -1112,6 +1121,18 @@ export default function Challenge() {
         ℹ We provide accessible environments for everyone to run cybersecurity
         tools. Abuse and unnecessary computation is prohibited.
       </p>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );

@@ -14,8 +14,8 @@ export function QuickSettings() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include'
       })
         .then((res) => res.json())
         .then((data) => {

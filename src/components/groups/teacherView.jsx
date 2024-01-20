@@ -38,9 +38,10 @@ export default function TeacherView({ group }) {
   useEffect(() => {
     const getClassroom = async () => {
       const classroomCode = group;
-      const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classroomCode}`;
+      const url = `${baseUrl}/classroom/classroom-by-classcode/${classroomCode}`;
       const requestOptions = {
         method: 'GET',
+        credentials: 'include'
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
@@ -54,6 +55,7 @@ export default function TeacherView({ group }) {
 
     setProgress(progress + 100);
   }, []);
+  console.log(classroom);
 
   const handleInvite = async () => {
     setColor('gray');

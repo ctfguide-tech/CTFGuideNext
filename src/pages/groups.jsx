@@ -6,12 +6,9 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, Fragment, useState } from 'react';
-import { getAuth } from 'firebase/auth';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const auth = getAuth();
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -25,17 +22,14 @@ export default function Groups() {
 
   useEffect(() => {
     const getAllClassrooms = async () => {
-      const uid = localStorage.getItem('uid');
-      console.log("Uid of user we are making the req with", uid);
-      if (!uid) return;
-      const url = `${baseUrl}/classroom/all-classrooms?uid=${uid}`;
-      const response = await fetch(url);
+      const url = `${baseUrl}/classroom/all-classrooms`;
+      const response = await fetch(url, {credentials: 'include'});
       const data = await response.json();
       if (data.success) {
         setTeacherClassrooms(data.teacher);
         setStudentClassrooms(data.student);
       } else {
-        console.log(data.message);
+        console.log(data);
       }
     };
     getAllClassrooms();
@@ -46,16 +40,14 @@ export default function Groups() {
     setColor('gray');
     let code = document.getElementById('joinCode').value;
     try {
-      const userId = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/join`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           classCode: code,
-          userId: userId,
           isTeacher: false,
-          email: auth.currentUser.email,
         }),
       });
       const res = await response.json();

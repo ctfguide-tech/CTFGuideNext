@@ -28,6 +28,7 @@ const Announcement = ({
       const response = await fetch(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ message }),
       });
       const data = await response.json();
@@ -57,15 +58,14 @@ const Announcement = ({
       tmp.push({ author: localStorage.getItem("username"), createdAt: new Date(), message, type: "IMPORTANT" });
       setAnnouncements(tmp);
 
-      const token = localStorage.getItem('idToken');
       if (message.length < 1) return;
       const url = `${baseUrl}/classroom/announcements`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
+        credentials: 'include',
         body: JSON.stringify({
           classCode,
           message,
@@ -92,6 +92,7 @@ const Announcement = ({
       const response = await fetch(url, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
       });
       const data = await response.json();
 

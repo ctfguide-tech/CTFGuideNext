@@ -65,9 +65,10 @@ export default function teacherSettings() {
     const classCode = window.location.href.split('/')[4];
     setClassCode(classCode);
     if (!classCode) return;
-    const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classCode}`;
+    const url = `${baseUrl}/classroom/classroom-by-classcode/${classCode}`;
     const requestOptions = {
       method: 'GET',
+      credentials: 'include'
     };
     const response = await fetch(url, requestOptions);
     const data = await response.json();
@@ -112,16 +113,13 @@ export default function teacherSettings() {
   const checkPermissions = async () => {
     try {
       const classCode = window.location.href.split('/')[4];
-      const userUid = localStorage.getItem('uid');
-      const url = `${baseUrl}/classroom/check-if-teacher`;
-      const token = localStorage.getItem('idToken');
+      const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
       const response = await fetch(url, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
-        body: JSON.stringify({ classCode: classCode, uid: userUid }),
+        credentials: 'include'
       });
       const res = await response.json();
       if (res.success) {
@@ -162,12 +160,9 @@ export default function teacherSettings() {
     if (emailRegex.test(email)) {
       setInviteLink('generating...');
       const url = `${baseUrl}/classroom/getAccessToken?classCode=${classCode}&email=${email}`;
-      const token = localStorage.getItem('idToken');
       const requestOptions = {
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+        credentials: 'include'
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
@@ -185,13 +180,12 @@ export default function teacherSettings() {
   const handleDelete = async () => {
     try {
       const url = `${baseUrl}/classroom/remove`;
-      const token = localStorage.getItem('idToken');
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
+        credentials: 'include',
         body: JSON.stringify({
           classroomId: classroomId,
           classCode: classCode,
@@ -211,15 +205,14 @@ export default function teacherSettings() {
 
   const leaveClass = async () => {
     try {
-      const uidOfTeacher = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/leave`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           isTeacher: true,
           classroomId,
-          userId: uidOfTeacher,
         }),
       });
       const data = await response.json();
@@ -240,6 +233,7 @@ export default function teacherSettings() {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ userId, classroomId }),
       });
       const data = await response.json();
@@ -272,6 +266,7 @@ export default function teacherSettings() {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ pricingPlan, classroomId, seatsToAdd }),
       });
       const data = await response.json();
@@ -302,13 +297,12 @@ export default function teacherSettings() {
         weights,
       };
       const url = `${baseUrl}/classroom/save`;
-      const token = localStorage.getItem('idToken');
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
+        credentials: 'include',
         body: JSON.stringify(reqBody),
       });
       const data = await response.json();

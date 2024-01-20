@@ -8,6 +8,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClassroomNav from '@/components/groups/classroomNav';
 
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function id() {
@@ -53,7 +56,7 @@ export default function id() {
     return formattedDate;
   };
 
-  const makePostRequest = async (url, auth, body) => {
+  const makePostRequest = async (url, body) => {
     try {
       let requestOptions = {
         method: 'POST',
@@ -61,11 +64,8 @@ export default function id() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include'
       };
-      if (auth) {
-        const token = localStorage.getItem('idToken');
-        requestOptions.headers.Authorization = 'Bearer ' + token;
-      }
       const response = await fetch(url, requestOptions);
       const data = await response.json();
       return data;
@@ -75,13 +75,9 @@ export default function id() {
     }
   };
 
-  const makeGetRequest = async (url, auth) => {
+  const makeGetRequest = async (url,) => {
     try {
-      let requestOptions = { method: 'GET' };
-      if (auth) {
-        const token = localStorage.getItem('idToken');
-        requestOptions.headers = { Authorization: 'Bearer ' + token };
-      }
+      let requestOptions = { method: 'GET', credentials: 'include' };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
       return data;
@@ -97,7 +93,7 @@ export default function id() {
       return;
     }
     const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
-    const data = await makeGetRequest(url, false);
+    const data = await makeGetRequest(url);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
@@ -113,7 +109,7 @@ export default function id() {
 
   const getSubmissions = async (assignment) => {
     const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
-    const data = await makeGetRequest(url, false);
+    const data = await makeGetRequest(url);
     if (data && data.success) {
       setSubmissions(data.body);
     } else {
@@ -122,9 +118,8 @@ export default function id() {
   };
 
   const authenticate = async (assignment) => {
-    const uid = localStorage.getItem('uid');
-    const url = `${baseUrl}/classroom/inClass/${uid}/${assignment.classroom.id}`;
-    const data = await makeGetRequest(url, false);
+    const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
+    const data = await makeGetRequest(url);
     return data.success;
   };
 
@@ -135,9 +130,7 @@ export default function id() {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
       const requestOptions = {
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+        credentials: 'include'
       };
       const response = await fetch(url, requestOptions);
       const data = await response.json();
@@ -160,7 +153,7 @@ export default function id() {
       const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
 
       const body = {
-        jwtToken: localStorage.getItem('idToken'),
+        jwtToken: auth.currentUser.accessToken,
         TerminalGroupName: 'schell-class-session',
         TerminalID: code,
         classID: 'psu101',
@@ -181,9 +174,11 @@ export default function id() {
         await fetchTerminal();
       } else {
         console.log('Failed to create the terminal');
+        toast.error("Unable to create the terminal, please refresh the page and try again");
       }
     } catch (err) {
       console.log(err);
+      toast.error("Unable to create the terminal, please refresh the page and try again");
     }
   };
 
@@ -193,8 +188,7 @@ export default function id() {
       // toast.info('Fetching terminal...');
       setFetchingTerminal(true);
       console.log('Fetching a terminal');
-      const token = localStorage.getItem('idToken');
-      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
+      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${auth.currentUser.accessToken}`;
       const requestOptions = {
         method: 'GET',
         redirect: 'follow',
@@ -281,15 +275,15 @@ export default function id() {
     }
   };
 
+  console.log(challenge);
+
   const showHint = async (i) => {
     const url = `${baseUrl}/challenges/hints-update`;
-    const userId = localStorage.getItem('uid');
     const body = {
       hintsUsed: i,
-      uid: userId,
       challengeId: assignment.challenge.id,
     };
-    const data = await makePostRequest(url, false, body);
+    const data = await makePostRequest(url, body);
     if (data && data.success) {
       let tmp = [...hints];
       tmp[i].message = assignment.challenge.hints[i].message;
@@ -304,12 +298,10 @@ export default function id() {
   const submitAssignment = async () => {
     setLoading(true);
     const params = window.location.href.split('/');
-    const userId = localStorage.getItem('uid');
     const url = `${baseUrl}/submission/create`;
 
     const body = {
       solved: flagInput === assignment.solution.keyword,
-      userId: userId,
       classroomId: assignment.classroomId,
       assignmentId: parseInt(params[5]),
       keyword: flagInput,
@@ -318,7 +310,7 @@ export default function id() {
       hints: assignment.challenge.hints,
     };
 
-    const data = await makePostRequest(url, true, body);
+    const data = await makePostRequest(url, body);
     if (data && data.success) {
       toast.success('Assignment has been submitted');
       setSubmitted(true);
@@ -344,7 +336,7 @@ export default function id() {
   //       classID: 'psu101',
   //       organizationName: 'PSU',
   //       userID: localStorage.getItem('username'),
-  //       id: challenge.id,
+  //       slug: challenge.slug,
   //     };
   //
   //     const requestOptions = {

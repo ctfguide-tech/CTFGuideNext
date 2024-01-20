@@ -127,12 +127,9 @@ export default function Dashboard() {
       });
 
       xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-      xhr.setRequestHeader(
-        'Authorization',
-        'Bearer ' + localStorage.getItem('idToken')
-      );
-
+      xhr.withCredentials = true;
       xhr.send();
+
     }
   }
 
@@ -141,7 +138,6 @@ export default function Dashboard() {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById('paymentType').value;
       console.log(subscriptionType);
-      const userId = auth.currentUser.uid;
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
@@ -150,13 +146,13 @@ export default function Dashboard() {
           body: JSON.stringify({
             subType: subscriptionType,
             quantity: 1,
-            uid: userId,
             operation: 'subscription',
             data: {},
           }),
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include'
         }
       );
 
@@ -182,15 +178,14 @@ export default function Dashboard() {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById('paymentType').value;
-      const userId = localStorage.getItem('uid');
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/update-card`,
         {
           method: 'POST',
+          credentials: 'include',
           body: JSON.stringify({
             subType: subscriptionType,
-            uid: userId,
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -211,13 +206,12 @@ export default function Dashboard() {
   const cancelSubscription = async () => {
     try {
       const subscriptionType = document.getElementById('paymentType').value;
-      const userId = localStorage.getItem('uid');
       const url = `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/cancel`;
       const response = await fetch(url, {
         method: 'PUT',
+        credentials: 'include',
         body: JSON.stringify({
           subType: subscriptionType,
-          userId: userId,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -287,11 +281,8 @@ export default function Dashboard() {
               });
 
               xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-              xhr.setRequestHeader(
-                'Authorization',
-                'Bearer ' + localStorage.getItem('idToken')
-              );
               xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.withCredentials = true;
 
               xhr.send(gooddata);
             });
@@ -300,10 +291,7 @@ export default function Dashboard() {
       });
 
       xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-      xhr.setRequestHeader(
-        'Authorization',
-        'Bearer ' + localStorage.getItem('idToken')
-      );
+      xhr.withCredentials = true;
       xhr.send();
     } else {
       var firstName = document.getElementById('first-name').value;
@@ -330,12 +318,8 @@ export default function Dashboard() {
       });
 
       xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-      xhr.setRequestHeader(
-        'Authorization',
-        'Bearer ' + localStorage.getItem('idToken')
-      );
       xhr.setRequestHeader('Content-Type', 'application/json');
-
+      xhr.withCredentials = true;
       xhr.send(data);
     }
   }
@@ -357,12 +341,8 @@ export default function Dashboard() {
     });
 
     xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
-    xhr.setRequestHeader(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('idToken')
-    );
     xhr.setRequestHeader('Content-Type', 'application/json');
-
+    xhr.withCredentials = true;
     xhr.send(data);
   }
 
@@ -390,11 +370,7 @@ export default function Dashboard() {
     });
 
     xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
-    xhr.setRequestHeader(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('idToken')
-    );
-
+    xhr.withCredentials = true;
     xhr.send();
   }
 

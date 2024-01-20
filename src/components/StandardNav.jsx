@@ -128,20 +128,16 @@ export function StandardNav() {
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
+        credentials: 'include'
       })
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
-            router.push('/login');
+            router.push("/login");
+          } else {
+            setUsername(data.username);
+            setPoints(data.points);
           }
-
-          setUsername(data.username);
-          setPoints(data.points);
-          
         })
         .catch((err) => {
           console.log(err);
@@ -150,11 +146,33 @@ export function StandardNav() {
   }, []);
 
 
+  const updateAuthToken = async () => {
+    try {
+      console.log("Updating auth token");
+      const idToken = await auth.currentUser.getIdToken(true);
+      document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    if(auth.currentUser) {
+      updateAuthToken();
+      const intervalId = setInterval(() => {
+        updateAuthToken();
+      }, 14 * 60 * 1000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [auth]);
+
+
   const fetchNotifications = async () => {
     try {
-      const uid = localStorage.getItem("uid");
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/notification/${uid}`;
-      const requestOptions = { method: "GET" }; 
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/notification`;
+      const requestOptions = { method: "GET", credentials: 'include' }; 
       const response = await fetch(url, requestOptions);
       const data = await response.json();
 
@@ -196,7 +214,7 @@ export function StandardNav() {
                     </Disclosure.Button>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
-                    <Link href="../dashboard" aria-label="Dashboard">
+                    <Link href={`${baseUrl}/dashboard`} aria-label="Dashboard">
                       {isAdmin ? <LogoAdmin /> : <Logo />}
                     </Link>
                   </div>

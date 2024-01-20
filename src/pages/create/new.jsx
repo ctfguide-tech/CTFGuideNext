@@ -16,6 +16,9 @@ const pages = [
   },
 ];
 
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
+
 const styles = {
   h1: { fontSize: '2.4rem' },
   h2: { fontSize: '2rem' },
@@ -66,7 +69,7 @@ export default function Createchall() {
     const isValid = await validateNewChallege();
     if (isValid) {
       try {
-        const token = localStorage.getItem('idToken');
+        const token = auth.currentUser.accessToken;
         if (!selectedFile) {
           await uploadChallenge('');
           return;
@@ -111,7 +114,6 @@ export default function Createchall() {
     setSending(true);
     try {
       const nConfig = newConfig.replace('\n', ' && ');
-      const token = localStorage.getItem('idToken');
 
       const challengeInfo = {
         name: newChallengeName,
@@ -131,12 +133,10 @@ export default function Createchall() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
-
+        credentials: 'include',
         body: JSON.stringify({
           challengeInfo,
-          userId: localStorage.getItem('uid'),
           username: localStorage.getItem('username'),
         }),
       };
@@ -158,14 +158,16 @@ export default function Createchall() {
 
   const getChallenge = async (idName) => {
     try {
+<<<<<<< HEAD
       const token = localStorage.getItem('idToken');
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${idName}`;
+=======
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${slugName}`;
+>>>>>>> 10b9210e58faa6015a5ffc9fee0ac490111d5a7d
 
       var requestOptions = {
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+        credentials: 'include'
       };
 
       const response = await fetch(url, requestOptions);

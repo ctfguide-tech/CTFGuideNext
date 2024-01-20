@@ -36,12 +36,8 @@ export default function Careers() {
 
   useEffect(() => {
     try {
-     // fetch('api.ctfguide.com/dashboard')
-      
-     fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
-
+     fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, { credentials: 'include' })
      .then((res) => res.json())
-
         .then((data) => {
           if (data.onboardingComplete == false) {
           }

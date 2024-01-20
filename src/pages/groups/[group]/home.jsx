@@ -20,23 +20,17 @@ export default function GroupDisplay() {
 
   const checkPermissions = async () => {
     try {
-      const userUid = localStorage.getItem('uid');
-      const url = `${baseUrl}/classroom/check-if-teacher`;
-      const token = localStorage.getItem('idToken');
+      const url = `${baseUrl}/classroom/check-if-teacher/${group}`;
       const response = await fetch(url, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
         },
-        body: JSON.stringify({ classCode: group, uid: userUid }),
+        credentials: 'include',
       });
       const res = await response.json();
       if (res.success) {
         setViewAsTeacher(res.isTeacher);
-        console.log(res.message);
-      } else {
-        window.location.replace('/login');
       }
     } catch (err) {
       console.log(err);

@@ -4,6 +4,8 @@ import { Footer } from '@/components/Footer';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import { getAuth } from 'firebase/auth';
+const auth = getAuth();
   
 export default function invite() {
     const router = useRouter();
@@ -30,8 +32,8 @@ export default function invite() {
     }, [invite, token]);
 
     const getClassroom = async classCode => {
-        const url = `http://localhost:3001/classroom/classroom-by-classcode?classCode=${classCode}`
-        const response = await fetch(url);
+        const url = `http://localhost:3001/classroom/classroom-by-classcode/${classCode}`
+        const response = await fetch(url, {credentials: 'include'});
         const data = await response.json();
         if(data.success) {
           setClassroom(data.body);
@@ -40,66 +42,65 @@ export default function invite() {
         }
     };
 
-    const validateUser = async (classCode, token) => {
-        try {
-            const email = localStorage.getItem('email');
-            const url = "http://localhost:3001/classroom/validate-invite-user";
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({classCode: classCode, token: token, email: email})
-            });
-            const res = await response.json();
-            return res.success;
-          } catch(err) {
-            console.log(err);
-            return false;
-          }
+  const validateUser = async (classCode, token) => {
+    try {
+      const url = "http://localhost:3001/classroom/validate-invite-user";
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ classCode: classCode, token: token })
+      });
+      const res = await response.json();
+      return res.success;
+    } catch(err) {
+      console.log(err);
+      return false;
     }
+  }
 
-    const handleAccept = async () => {
-        try {
-            const userId = localStorage.getItem('uid');
-            const email = localStorage.getItem('email');
-            const url = "http://localhost:3001/classroom/join";
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({classCode: invite, userId: userId, isTeacher: true, email: email})
-            });
-            const res = await response.json();
-            if(res.success) {
-                await removeInvite();
-            } else {
-              console.log(res.message);
-            }
-          } catch(err) {
-            console.log(err);
-          }
-    };
-
-    const handleDecline = async () => {
+  const handleAccept = async () => {
+    try {
+      const url = "http://localhost:3001/classroom/join";
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({classCode: invite, isTeacher: true})
+      });
+      const res = await response.json();
+      if(res.success) {
         await removeInvite();
+      } else {
+        console.log(res.message);
+      }
+    } catch(err) {
+      console.log(err);
     }
+  };
 
-    const removeInvite = async () => {
-        try {
-            const email = localStorage.getItem('email');
-            const url = "http://localhost:3001/classroom/remove-invite";
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({classCode: invite, token: token, email: email})
-            });
-            const res = await response.json();
-            console.log(res);
-          } catch(err) {
-            console.log(err);
-          }
-          window.location.href = "/dashboard";
+  const handleDecline = async () => {
+    await removeInvite();
+  }
+
+  const removeInvite = async () => {
+    try {
+      const url = "http://localhost:3001/classroom/remove-invite";
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({classCode: invite, token: token })
+      });
+      const res = await response.json();
+      console.log(res);
+    } catch(err) {
+      console.log(err);
     }
+    window.location.href = "/dashboard";
+  }
 
-    return (
+  return (
         <>
  
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>

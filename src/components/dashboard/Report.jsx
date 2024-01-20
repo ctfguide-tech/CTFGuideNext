@@ -15,8 +15,8 @@ export default function ReportForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
         },
+        credentials: 'include',
         body: JSON.stringify({ message: text, itemid: '' }),
       })
         .then((response) => response.json())
