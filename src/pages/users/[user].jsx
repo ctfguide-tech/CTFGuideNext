@@ -192,7 +192,7 @@ export default function Users() {
             };
 
             const storageRef = ref(storage, `${email}/pictures/banner`);
-            const uploadTask = uploadBytesResumable(storageRef, selectedImage, metadata)
+            const uploadTask = uploadBytesResumable(storageRef, selectedBanner, metadata)
 
 
             uploadTask.on('state_changed',
@@ -531,7 +531,7 @@ export default function Users() {
 
                 console.log(result)
 
-                if (!result) {
+                if (result) {
                     setBanner(result)
                 } else {
                     setBanner('https://images.unsplash.com/photo-1500964757637-c85e8a162699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3903&q=80')
@@ -834,78 +834,90 @@ export default function Users() {
                                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                                 >
                                     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="max-w-6xl relative inline-block align-bottom w-5/6 pb-10 pt-10 bg-gray-900 border border-gray-700 rounded-lg px-20 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
-                                        <div>
-                                            <div className="mt-3 sm:mt-5">
-                                                <h1 className="text-white text-4xl text-center pb-10">Change Banner</h1>
-                                                <div className="grid grid-rows-2 flex justify-center items-center">
-                                                    <div className="h-80 w-full flex-1 items-center justify-center">
-                                                        <img
-                                                            className="mt-10 h-40 w-full border border-neutral-600 lg:h-30 sm:w-full"
-                                                            src={banner}
-                                                            alt=""
-                                                        />
-                                                        <h1 className="text-white text-xl text-center font-bold mt-4">
-                                                            Current Banner
-                                                        </h1>
-                                                    </div>
-                                                    {/* INPUT BOX */}
+                                        <div className="mt-3 sm:mt-5">
+                                            <h1 className="text-white text-4xl text-center pb-10">Change Banner</h1>
+                                            <div className="">
+                                                {/* CURRENT BANNER */}
+                                                <div className=" h-full w-full flex-1">
                                                     <div
-                                                        className="h-72 w-72 border border-neutral-800 mx-60 relative rounded-lg p-4 text-center cursor-pointer flex items-center justify-center"
-                                                        onClick={handleClick}
-                                                        onDrop={handleBannerChange}
-                                                        onDragOver={handleBannerChange}
+                                                        style={{
+                                                            backgroundImage: `url(${banner})`,
+                                                            backgroundSize: "cover",
+                                                            backgroundPosition: "center",
+                                                            width: "100%",
+                                                            height: "12vh",
+                                                        }}
+                                                        className="border border-neutral-600 lg:h-30 sm:w-full"
                                                     >
-                                                        <label htmlFor="profileImageInput">
-                                                            {selectedBanner ? (
-                                                                <div>
-                                                                    <img
-                                                                        src={URL.createObjectURL(selectedBanner)}
-                                                                        alt="Selected Profile Picture"
-                                                                        className="mx-auto h-48 w-96 object-cover"
-                                                                    />
-                                                                    <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
-                                                                        New Banner
-                                                                    </h1>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="">
-                                                                    <svg
-                                                                        className="mx-auto h-12 w-12 text-gray-400"
-                                                                        fill="none"
-                                                                        stroke="currentColor"
-                                                                        viewBox="0 0 24 24"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M12 4v16m8-8H4"
-                                                                        />
-                                                                    </svg>
-                                                                    <p className="mt-5 text-sm text-gray-600">Click here or Drag an Image!</p>
-                                                                </div>
-                                                            )}
-                                                        </label>
                                                     </div>
-                                                    <input
-                                                        className="hidden"
-                                                        type="file"
-                                                        id="profileImageInput"
-                                                        onChange={handleBannerChange}
-                                                        accept="image/*"
-                                                    />
+                                                    <h1 className="text-white text-xl text-center font-bold mt-4">
+                                                        Current Banner
+                                                    </h1>
                                                 </div>
-                                                <div className="grid grid-cols-2 pt-5">
-                                                    <div className="flex items-center justify-end">
-                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-neutral-800 hover:text-neutral-500"
-                                                            onClick={() => handleBannerPopupClose()}>Close
-                                                        </button>
-                                                    </div>
-                                                    <div className="flex items-center justify-start">
-                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-green-900 hover:text-neutral-500"
-                                                            onClick={() => handleBannerSave()}>Save
-                                                        </button>
-                                                    </div>
+                                                {/* INPUT BOX */}
+                                                <div
+                                                    className="mt-10 text-center cursor-pointer"
+                                                    onClick={handleClick}
+                                                    onDrop={handleBannerChange}
+                                                    onDragOver={handleBannerChange}
+                                                >
+                                                    <label htmlFor="bannerImageInput">
+                                                        {selectedBanner ? (
+                                                            <div className="h-full w-full flex-1 justify-center">
+                                                                <div
+                                                                    style={{
+                                                                        backgroundImage: `url(${URL.createObjectURL(selectedBanner)})`,
+                                                                        backgroundSize: "cover",
+                                                                        backgroundPosition: "center",
+                                                                        width: "100%",
+                                                                        height: "12vh",
+                                                                        alt: "Selected Banner"
+                                                                    }}
+                                                                    className="border border-neutral-600 lg:h-30 sm:w-full"
+                                                                >
+                                                                </div>
+                                                                <h1 className="text-white text-xl text-center font-bold mt-4">
+                                                                    New Banner
+                                                                </h1>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="py-20">
+                                                                <svg
+                                                                    className="mx-auto h-12 w-12 text-gray-400"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    viewBox="0 0 24 24"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth="2"
+                                                                        d="M12 4v16m8-8H4"
+                                                                    />
+                                                                </svg>
+                                                                <p className="mt-5 text-sm text-gray-600">Click here or Drag an Image!</p>
+                                                            </div>
+                                                        )}
+                                                    </label>
+                                                </div>
+                                                <input
+                                                    className="hidden"
+                                                    type="file"
+                                                    id="bannerImageInput"
+                                                    onChange={handleBannerChange}
+                                                    accept="image/*"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-2 pt-10">
+                                                <div className="flex items-center justify-end">
+                                                    <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-neutral-800 hover:text-neutral-500"
+                                                        onClick={() => handleBannerPopupClose()}>Close
+                                                    </button>
+                                                </div>
+                                                <div className="flex items-center justify-start">
+                                                    <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-green-900 hover:text-neutral-500"
+                                                        onClick={() => handleBannerSave()}>Save
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -919,8 +931,8 @@ export default function Users() {
 
                 {/* BANNER */}
                 <div
-                    style={{ backgroundSize: "cover", backgroundImage: `url(${banner})` }}
-                    className="h-40 w-full object-cover lg:h-40"
+                    style={{ backgroundSize: "cover", backgroundImage: `url(${banner})`, backgroundPosition: "center" }}
+                    className="h-40 w-full object-cover"
                     alt=""
                 >
                     <div className="flex p-2 grid grid-cols-5">
