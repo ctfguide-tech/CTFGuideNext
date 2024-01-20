@@ -101,7 +101,7 @@ export default function ComingSoon() {
       try {
         console.log('getting the challenge');
         const token = localStorage.getItem('idToken');
-        const url = `${baseUrl}/challenges/${assignment.challenge.slug}?assignmentId=${assignment.id}`;
+        const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
         const requestOptions = {
           method: 'GET',
           headers: {

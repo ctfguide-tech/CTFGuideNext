@@ -74,7 +74,7 @@ export default function Dashboard() {
         const data = await response.json();
         console.log(data);
         setLikes(data);
-        likes.map((like) => console.log(like.challenge.slug));
+        likes.map((like) => console.log(like.challenge.id));
       } catch (error) {}
     };
     fetchData();

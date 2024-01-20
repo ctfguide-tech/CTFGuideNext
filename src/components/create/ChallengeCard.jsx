@@ -25,14 +25,14 @@ export function ChallengeCard({ challenge }) {
           <div className="ml-auto flex">
             {challenge.state == 'STANDARD_VERIFIED' && (
               <div className="mx-auto mx-auto flex rounded-lg bg-neutral-900 py-2.5 pl-5 pr-3 text-center text-center text-white">
-                <a href={`/challenges/${challenge.slug}`}>
+                <a href={`/challenges/${challenge.id}`}>
                   <EyeIcon className="mr-2 h-5 text-white " />{' '}
                 </a>
               </div>
             )}
             {challenge.state == 'STANDARD_PENDING' && (
               <a
-                href={'../create/edit?slug=' + challenge.slug}
+                href={'../create/edit?id=' + challenge.id}
                 className="mx-auto ml-4 mr-2 flex rounded-lg bg-neutral-900 px-2 py-2.5 text-center text-white"
               >
                 <PencilIcon className="mr-2 h-5 text-white " />

@@ -186,10 +186,10 @@ export default function Createchall(props) {
     }
   };
 
-  const getChallenge = async (slugName) => {
+  const getChallenge = async (id) => {
     try {
       const token = localStorage.getItem('idToken');
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${slugName}`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${id}`;
 
       var requestOptions = {
         method: 'GET',

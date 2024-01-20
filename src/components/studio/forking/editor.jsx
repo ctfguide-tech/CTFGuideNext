@@ -16,7 +16,7 @@ const Editor = (props) => {
   const [solution, setSolution] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [category, setCategory] = useState([]);
-  const [newChallengeName, setNewChallengeName] = useState(props.slug);
+  const [newChallengeName, setNewChallengeName] = useState(props.id);
   const [errMessage, setErrMessage] = useState('');
   const [penaltyErr, setPenaltyErr] = useState('');
   const [username, setUsername] = useState('anonymous');
@@ -126,7 +126,7 @@ const Editor = (props) => {
           Authorization: 'Bearer ' + token,
         },
         body: JSON.stringify({
-          slug: props.slug,
+          id: props.id,
           challengeInfo,
           assignmentInfo,
           userId: localStorage.getItem('uid'),
@@ -145,14 +145,14 @@ const Editor = (props) => {
     }
   };
 
-  const getChallenge = async (isDefault, slugName) => {
+  const getChallenge = async (isDefault, idName) => {
     try {
       var requestOptions = {
         method: 'GET',
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${slugName}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${idName}`,
         requestOptions
       );
 
@@ -181,7 +181,7 @@ const Editor = (props) => {
 
   useEffect(() => {
     setUsername(localStorage.getItem('username'));
-    getChallenge(true, props.slug);
+    getChallenge(true, props.id);
   }, []);
 
   const handleFileChange = (event) => {
@@ -210,7 +210,7 @@ const Editor = (props) => {
 
         <div className="mt-4">
           <i className="fas fa-code-branch"></i> You are forking{' '}
-          <span className="mt-4 font-semibold text-blue-500">{props.slug}</span>
+          <span className="mt-4 font-semibold text-blue-500">{props.id}</span>
         </div>
 
         <div id="error" className="mt-4 hidden rounded-md bg-red-500 px-4 py-1">

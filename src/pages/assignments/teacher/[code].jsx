@@ -10,7 +10,7 @@ import ClassroomNav from '@/components/groups/classroomNav';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export default function Slug() {
+export default function id() {
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
@@ -132,7 +132,7 @@ export default function Slug() {
     try {
       console.log('getting the challenge');
       const token = localStorage.getItem('idToken');
-      const url = `${baseUrl}/challenges/${assignment.challenge.slug}?assignmentId=${assignment.id}`;
+      const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
       const requestOptions = {
         method: 'GET',
         headers: {
@@ -166,7 +166,7 @@ export default function Slug() {
         classID: 'psu101',
         organizationName: 'PSU',
         userID: localStorage.getItem('username'),
-        slug: challenge.slug,
+        id: challenge.id,
       };
 
       const requestOptions = {
@@ -344,7 +344,7 @@ export default function Slug() {
   //       classID: 'psu101',
   //       organizationName: 'PSU',
   //       userID: localStorage.getItem('username'),
-  //       slug: challenge.slug,
+  //       id: challenge.id,
   //     };
   //
   //     const requestOptions = {

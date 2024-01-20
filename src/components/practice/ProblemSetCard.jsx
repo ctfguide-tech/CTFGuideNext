@@ -67,7 +67,7 @@ export default function ProblemSetCard({ categoryName }) {
           {' '}
           {cryptoChallenges &&
             cryptoChallenges.map((data) => (
-              <a href={`/challenge?slug=${data.slug}`} className="">
+              <a href={`/challenge?id=${data.id}`} className="">
                 <div
                   className={
                     'ml-4 min-h-[190px] w-full min-w-[200px] flex-shrink-0 cursor-pointer rounded-lg border-t-8 bg-neutral-800 px-3 py-2 py-4 font-semibold  text-white backdrop-blur-lg hover:bg-neutral-800 ' +

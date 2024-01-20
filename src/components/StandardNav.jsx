@@ -71,7 +71,7 @@ export function StandardNav() {
     DEFAULT_NOTIFICATION,
   ]);
   const [username, setUsername] = useState(null);
-  /*
+
     useEffect(() => {
       const fetchNotification = async () => {
         const endPoint =
@@ -122,7 +122,7 @@ export function StandardNav() {
       };
       fetchNotification();
     }, []);
-  */
+
 
   useEffect(() => {
     try {
@@ -261,21 +261,7 @@ export function StandardNav() {
 
 
 
-
-
-
-
-                    <div
-                    onClick={fetchNotifications}
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                    >
-                     Notifications 
-                    </div>
-
-
-
-
-
+    q
 
                   <div
                     className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1"

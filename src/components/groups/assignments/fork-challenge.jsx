@@ -42,7 +42,7 @@ export default function Createchall(props) {
   const [activeTab, setActiveTab] = useState('created');
   const [contentPreview, setContentPreview] = useState('');
   const [challengeSelected, setChallengeSelected] = useState(false);
-  const [challengeSlug, setChallengeSlug] = useState('');
+  const [challengeid, setChallengeid] = useState('');
   const [username, setUsername] = useState('anonymous');
   useEffect(() => {
     setUsername(localStorage.getItem('username'));
@@ -51,11 +51,11 @@ export default function Createchall(props) {
     setActiveTab(tab);
   }
 
-  function updateSelectionState(status, slug) {
+  function updateSelectionState(status, id) {
     setChallengeSelected(true);
-    setChallengeSlug(slug);
+    setChallengeid(id);
 
-    console.log(`Challenge selected: ${slug}`);
+    console.log(`Challenge selected: ${id}`);
   }
 
   return (
@@ -110,7 +110,7 @@ export default function Createchall(props) {
 
         <div className="mx-auto mt-10  max-w-7xl ">
           {challengeSelected ? (
-            <Editor slug={challengeSlug} assignmentInfo={props} />
+            <Editor id={challengeid} assignmentInfo={props} />
           ) : (
             <ChallengeSelectView updateChallenge={updateSelectionState} />
           )}

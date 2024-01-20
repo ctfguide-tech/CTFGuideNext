@@ -48,7 +48,7 @@ const Challenge = ({ data, inCarousel, updateData }) => {
   return (
     <div
       onClick={() => {
-        updateData(true, data.slug);
+        updateData(true, data.id);
       }}
       className={
         classStyle +

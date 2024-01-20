@@ -156,10 +156,10 @@ export default function Createchall() {
     setSending(false);
   };
 
-  const getChallenge = async (slugName) => {
+  const getChallenge = async (idName) => {
     try {
       const token = localStorage.getItem('idToken');
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${slugName}`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${idName}`;
 
       var requestOptions = {
         method: 'GET',
