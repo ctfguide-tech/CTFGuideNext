@@ -8,10 +8,12 @@ import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import request from '@/utils/request';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 const frontend_baselink = `localhost:3000`;
+
 
 const categoryToIdx = {
   test: 0,
@@ -287,40 +289,27 @@ export default function teacherSettings() {
   };
 
   const saveChanges = async () => {
-    try {
-      const reqBody = {
-        classCode: classCode,
-        nameOfClassroom: nameOfClassroom,
-        org: emailDomain,
-        openStatus: isOpen === 'open',
-        description,
-        weights,
-      };
-      const url = `${baseUrl}/classroom/save`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(reqBody),
-      });
-      const data = await response.json();
-      if (data.success) {
-        console.log('The class has been updated');
-        const newNumberOfSeats = parseInt(numberOfSeats);
-        console.log(newNumberOfSeats);
-        if (originalNumberOfSeats < newNumberOfSeats) {
-          const seatsToAdd = newNumberOfSeats - originalNumberOfSeats;
-          await addSeatToClass(seatsToAdd);
-        } else {
-          window.location.href = `/groups/${classCode}/home`;
-        }
+    const reqBody = {
+      nameOfClassroom: nameOfClassroom,
+      org: emailDomain,
+      openStatus: isOpen === 'open',
+      description,
+      weights,
+    };
+
+    const url = `${baseUrl}/classroom/save/${classCode}`;
+    const data = await request(url, 'POST', reqBody);
+
+    if (data && data.success) {
+      console.log('The class has been updated');
+      const newNumberOfSeats = parseInt(numberOfSeats);
+      console.log(newNumberOfSeats);
+      if (originalNumberOfSeats < newNumberOfSeats) {
+        const seatsToAdd = newNumberOfSeats - originalNumberOfSeats;
+        await addSeatToClass(seatsToAdd);
       } else {
-        window.location.replace('/login');
+        window.location.href = `/groups/${classCode}/home`;
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 

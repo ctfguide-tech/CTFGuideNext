@@ -6,6 +6,7 @@ import { Logo } from '@/components/Logo';
 import { Alert } from '@/components/Alert';
 import { useState, useEffect } from 'react';
 import { app } from '../config/firebaseConfig';
+import router from 'next/router';
 
 import {
   getAuth,
@@ -24,11 +25,8 @@ export default function Login() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      // removing the cookie
       document.cookie = "idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      //if (user) {
-        //const uid = user.uid;
-        //const email = user.email;
-      //}
     });
   }, []);
 
@@ -72,7 +70,7 @@ export default function Login() {
               localStorage.setItem('username', parsed.username);
               document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
 
-              window.location.replace('/dashboard');
+              router.push('/dashboard');
             }
           });
           xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
@@ -129,7 +127,8 @@ export default function Login() {
                 // addthing the token to cookies
                 document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
 
-                window.location.replace('/dashboard');
+                router.push('/dashboard');
+
               } catch (error) {
                 console.log('Error parsing JSON data:', error);
               }
@@ -150,6 +149,7 @@ export default function Login() {
         document.getElementById('errorMessage').innerHTML = errorMessage;
       });
   }
+
 
   return (
     <>

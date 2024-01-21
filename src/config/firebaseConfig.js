@@ -12,9 +12,6 @@ import { getAuth } from 'firebase/auth';
 */
 
 //
-
-
-
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_APP_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN,
@@ -25,11 +22,10 @@ const firebaseConfig = {
   measurmentId: process.env.NEXT_PUBLIC_APP_MEASURMENT_ID,
 };
 
-console.log(firebaseConfig);
+//console.log(firebaseConfig);
+
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
-
-
 
 
 // const firebaseConfig = {
@@ -57,39 +53,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-const auth = getAuth();
-
-function checkCookieExists(name) {
- const res = document.cookie.split(';').some((item) => item.trim().startsWith(`${name}=`));
-  console.log(res);
-  return res;
-}
-
-const updateAuthToken = async () => {
-  try {
-    console.log("Updating auth token");
-    if(checkCookieExists('idToken')) {
-      const idToken = await auth.currentUser.getIdToken(true);
-      document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
-    }
-  } catch(err) {
-    console.log(err);
-  }
-}
-
-const updateAuthTokenInterval = () => {
-  if(auth.currentUser) {
-    updateAuthToken();
-    const intervalId = setInterval(() => {
-      updateAuthToken();
-    }, 10 * 60 * 1000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }
-}
-
-updateAuthTokenInterval();
+// make a function to check if the cookie exists
+// if it does, then set the auth token to the cookie
 
 // Initialize Firebase
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -22,26 +23,18 @@ const Announcement = ({
   };
 
   const updateAnnouncement = async (id, message) => {
-    try {
-      if (!id) return;
-      const url = `${baseUrl}/classroom/announcements/${id}`;
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ message }),
-      });
-      const data = await response.json();
-
+    if (!id) return;
+    const url = `${baseUrl}/classroom/announcements/${id}/${classCode}`;
+    const body = { message };
+    const data = await request(url, 'PUT', body);
+    if(data && data.success) {
       setAnnouncements((currentItems) =>
         currentItems.map((item) =>
           item.id === id ? { ...item, message: message } : item
         )
       );
-
+    } else {
       console.log(data.message);
-    } catch (err) {
-      console.log(err);
     }
     setAnnouncement('');
     setEditingAnnouncementIdx(-1);
@@ -52,57 +45,38 @@ const Announcement = ({
     setIsModalOpen(false);
     setEditingAnnouncementIdx(-1);
     setMakingNewPost(false);
-    try {
 
-      let tmp = announcements;
-      tmp.push({ author: localStorage.getItem("username"), createdAt: new Date(), message, type: "IMPORTANT" });
-      setAnnouncements(tmp);
+    const username = localStorage.getItem('username');
 
-      if (message.length < 1) return;
-      const url = `${baseUrl}/classroom/announcements`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          classCode,
-          message,
-          type: 'IMPORTANT',
-          username: localStorage.getItem('username'),
-        }),
-      });
+    let tmp = announcements;
+    tmp.push({ author: username, createdAt: new Date(), message, type: "IMPORTANT" });
+    setAnnouncements(tmp);
+    if (message.length < 1) return;
 
-      const data = await response.json();
-      if (!data.success) {
-        let t = announcements;
-        t.pop();
-        setAnnouncements(t);
-      }
-    } catch (err) {
-      console.log(err);
+    const body = {
+      classCode,
+      message,
+      type: 'IMPORTANT',
+      username,
+    };
+
+    const url = `${baseUrl}/classroom/announcements/${classCode}`;
+    const data = await request(url, 'POST', body);
+    if(data && data.success) {
+      console.log(data.message);
     }
   };
 
   const deleteAnnouncement = async (id) => {
-    try {
-      if (!id) return;
-      const url = `${baseUrl}/classroom/announcements/${id}`;
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-      });
-      const data = await response.json();
-
+    if (!id) return;
+    const url = `${baseUrl}/classroom/announcements/${id}/${classCode}`;
+    const data = await request(url, 'DELETE', null);
+    if(data && data.success) {
       setAnnouncements((currentItems) =>
         currentItems.filter((item) => item.id !== id)
       );
-
+    } else {
       console.log(data.message);
-    } catch (err) {
-      console.log(err);
     }
     setAnnouncement('');
   };

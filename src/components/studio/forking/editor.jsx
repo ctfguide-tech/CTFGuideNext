@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import request from '@/utils/request';
 
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
@@ -37,12 +38,6 @@ const Editor = (props) => {
       }
     }
     setPenaltyErr('');
-    const nameExists = await getChallenge(false, newChallengeName);
-    if (nameExists) {
-      toast.error('Challenge name already exists');
-      setErrMessage('Challenge name already exists, please change the name');
-      return false;
-    }
     return true;
   };
 
@@ -96,53 +91,41 @@ const Editor = (props) => {
   };
 
   const uploadChallenge = async (fileId) => {
-    try {
-      const exConfig = existingConfig.replace('\n', ' && ');
-      const nConfig = newConfig.replace('\n', ' && ');
-      let finalConfig = '';
-      if (exConfig && nConfig) {
-        finalConfig = exConfig + ' && ' + nConfig;
-      } else {
-        finalConfig = exConfig || nConfig;
-      }
+    const classCode = window.location.href.split('/')[4];
 
-      const challengeInfo = {
-        name: newChallengeName,
-        hints,
-        penalty,
-        content: contentPreview,
-        solution,
-        difficulty,
-        category,
-        commands: finalConfig,
-        fileId: fileId,
-      };
+    const exConfig = existingConfig.replace('\n', ' && ');
+    const nConfig = newConfig.replace('\n', ' && ');
+    let finalConfig = '';
+    if (exConfig && nConfig) {
+      finalConfig = exConfig + ' && ' + nConfig;
+    } else {
+      finalConfig = exConfig || nConfig;
+    }
 
-      const assignmentInfo = props.assignmentInfo.assignmentInfo;
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment`;
+    const challengeInfo = {
+      name: newChallengeName,
+      hints,
+      penalty,
+      content: contentPreview,
+      solution,
+      difficulty,
+      category,
+      commands: finalConfig,
+      fileId: fileId,
+    };
 
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          id: props.id,
-          challengeInfo,
-          assignmentInfo,
-          username: localStorage.getItem('username'),
-        }),
-      };
+    const body = {
+      id: props.id,
+      challengeInfo,
+      assignmentInfo: props.assignmentInfo.assignmentInfo,
+      username: localStorage.getItem('username'),
+    };
 
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment/${classCode}`;
+    const data = await request(url, 'POST', body);
 
-      if (data.success) {
-        window.location.reload();
-      }
-    } catch (err) {
-      console.log(err);
+    if (data && data.success) {
+      window.location.reload();
     }
   };
 
