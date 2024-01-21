@@ -3,6 +3,7 @@
 */
 
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 //import { getAnalytics } from "firebase/analytics";
 
 /*
@@ -55,6 +56,40 @@ const firebaseConfig = {
 */
 
 const app = initializeApp(firebaseConfig);
+
+const auth = getAuth();
+
+function checkCookieExists(name) {
+ const res = document.cookie.split(';').some((item) => item.trim().startsWith(`${name}=`));
+  console.log(res);
+  return res;
+}
+
+const updateAuthToken = async () => {
+  try {
+    console.log("Updating auth token");
+    if(checkCookieExists('idToken')) {
+      const idToken = await auth.currentUser.getIdToken(true);
+      document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
+    }
+  } catch(err) {
+    console.log(err);
+  }
+}
+
+const updateAuthTokenInterval = () => {
+  if(auth.currentUser) {
+    updateAuthToken();
+    const intervalId = setInterval(() => {
+      updateAuthToken();
+    }, 14 * 60 * 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }
+}
+
+updateAuthTokenInterval();
 
 // Initialize Firebase
 
