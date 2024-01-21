@@ -21,10 +21,11 @@ import {
   CheckCircleIcon,
   FlagIcon,
 } from '@heroicons/react/20/solid';
+import request from '@/utils/request';
 
 export default function Challenge() {
   const router = useRouter();
-  const { slug } = router.query;
+  const { id } = router.query;
 
   const NO_PLACE = 'Not placed';
 
@@ -204,7 +205,7 @@ export default function Challenge() {
         classID: 'psu101',
         organizationName: 'PSU',
         userID: localStorage.getItem('username'),
-        slug: challenge.slug,
+        challengeID: challenge.id,
       };
 
       const requestOptions = {
@@ -228,29 +229,11 @@ export default function Challenge() {
   };
 
   const getChallengeData = async () => {
-    try {
-      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug;
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-
-      const response = await fetch(endPoint, requestOptions);
-      const result = await response.json();
-
-      const { difficulty, availableHints } = result.body;
-      setChallenge(result.body);
-      setDifficulty(difficulty);
-
-      //availableHints.forEach((hint, index) => {
-        //updateHintMessage(hint, index);
-      //});
-    } catch (err) {
-      console.log(err);
-    }
+    const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id;
+    const result = await request(endPoint, 'GET', null);
+    const { difficulty } = result.body;
+    setChallenge(result.body);
+    setDifficulty(difficulty);
   };
 
   const fetchLikeUrl = async () => {
@@ -274,7 +257,7 @@ export default function Challenge() {
   };
 
   useEffect(() => {
-    if (slug) {
+    if (id) {
       fetchLeaderboard();
       //fetchComments();
       if (challenge.upvotes) {
@@ -287,14 +270,14 @@ export default function Challenge() {
     if (award) {
       setAward(award);
     }
-  }, [slug]);
+  }, [id]);
 
   const fetchSolvedUsers = async () => {
     try {
       const endPoint =
         process.env.NEXT_PUBLIC_API_URL +
         '/challenges/' +
-        slug +
+        id +
         '/completed-users';
       const requestOptions = {
         method: 'GET',
@@ -342,7 +325,7 @@ export default function Challenge() {
         const endPoint =
           process.env.NEXT_PUBLIC_API_URL +
           '/challenges/' +
-          slug +
+          id +
           '/submissions';
         const requestOptions = {
           method: 'POST',
@@ -378,7 +361,7 @@ export default function Challenge() {
                 '/users/' +
                 localStorage.getItem('username') +
                 '/complete-challenge/' +
-                slug +
+                id +
                 '/' +
                 difficulty;
               const requestOptions = {
@@ -425,7 +408,7 @@ export default function Challenge() {
   const fetchComments = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments',
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments',
         {credentials: 'include'}
       );
       const { result } = await response.json();
@@ -442,7 +425,7 @@ export default function Challenge() {
   async function fetchHints() {
     try {
       const endPoint =
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/hint';
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/hint';
       const requestOptions = {
         method: 'GET',
         headers: {
@@ -491,7 +474,7 @@ export default function Challenge() {
   const fetchLeaderboard = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/leaderboard',
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/leaderboard',
         {credentials: 'include'}
       );
       const leaderboards = await response.json();
@@ -521,7 +504,7 @@ export default function Challenge() {
 
   const submitComment = async () => {
     const endPoint =
-      process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/comments';
+      process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments';
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -551,7 +534,7 @@ export default function Challenge() {
     console.log(liked);
     if (!liked) {
       const endPoint =
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/like';
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/like';
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -568,7 +551,7 @@ export default function Challenge() {
       }
     } else {
       const endPoint =
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + slug + '/deletelike';
+        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/deletelike';
       const requestOptions = {
         method: 'POST',
         headers: {

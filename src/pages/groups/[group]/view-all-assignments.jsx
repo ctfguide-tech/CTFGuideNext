@@ -7,36 +7,38 @@ import { Tooltip } from 'react-tooltip';
 
 import { useRouter } from 'next/router';
 import ClassroomNav from '@/components/groups/classroomNav';
+import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
 
 const ViewAllAssignments = () => {
-  const [classroom, setClassroom] = useState({});
+  const [assignments, setAssignments] = useState({});
   const [isTeacher, setIsTeacher] = useState(false);
+  const [classCode, setClassCode] = useState('');
+  const [grades, setGrades] = useState({});
 
   const router = useRouter();
 
-  const getClassroom = async () => {
+  const getAssignments = async () => {
     const params = window.location.href.split('/');
-    const url = `${baseUrl}/classroom/classroom-by-classcode/${params[4]}`;
-    const requestOptions = {
-      method: 'GET',
-      credentials: 'include'
-    };
-    const response = await fetch(url, requestOptions);
-    const data = await response.json();
-    if (data.success) {
-      setClassroom(data.body);
-      const isAuth = auth(data.body);
-      console.log(isAuth);
-      if (!isAuth) {
-        router.replace('/groups');
-      }
+    setClassCode(params[4]);
+    const url = `${baseUrl}/classroom-assignments/fetch-assignments/${params[4]}`;
+    const data = await request(url, 'GET', null);
+    if (data && data.success) {
+      setAssignments(data.body);
     } else {
       console.log('Error when getting classroom info');
     }
   };
+
+  const getGrades = async () => {
+    const params = window.location.href.split('/');
+    const url = `${baseUrl}/submission/student-finalgrade/${params[4]}`;
+    const data = await request(url, 'GET', null);
+    if (data && data.success) setGrades(data.body);
+    else console.log('Error when getting grades');
+  }
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
@@ -60,8 +62,12 @@ const ViewAllAssignments = () => {
   };
 
   useEffect(() => {
-    getClassroom();
+    getAssignments();
+    getGrades()
   }, []);
+
+
+  console.log(grades);
 
   return (
     <>
@@ -77,7 +83,7 @@ const ViewAllAssignments = () => {
       <div className="bg-neutral-800">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
-            {isTeacher && classroom && <ClassroomNav classCode={classroom.classCode} />}
+            {isTeacher && <ClassroomNav classCode={classCode} />}
             <div className="flex items-center">
               {isTeacher && 
               <button
@@ -101,25 +107,23 @@ const ViewAllAssignments = () => {
           Upcoming Assignments
         </h2>
 
-        {classroom &&
-        classroom.assignments &&
-        classroom.assignments.length > 0 ? (
-          classroom.assignments
+        {
+        assignments.length > 0 ? (
+          assignments
             .filter((assignment) => new Date(assignment.dueDate) > new Date())
             .map((assignment) => (
               <div
                 key={assignment.id}
-                onClick={() => {
-                  router.replace(
-                    `/assignments/${isTeacher ? 'teacher' : 'student'}/${
-                      assignment.id
-                    }`
-                  );
-                }}
                 className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
               >
                 {/* Make assignment box look pretty */}
-                <h2 className="text-md text-white">
+                <h2 className="text-md text-white"
+                  onClick={() => {
+                    router.replace(
+                      `/assignments/${isTeacher ? 'teacher' : 'student'}/${assignment.id}`
+                    );
+                  }}
+                >
                   <Tooltip id="quiz-tooltip" place="left" />
                   <Tooltip id="test-tooltip" place="left" />
                   <Tooltip id="homework-tooltip" place="left" />
@@ -161,9 +165,10 @@ const ViewAllAssignments = () => {
                   <span className="ml-0.5"> {assignment.name} </span>
                 </h2>
                 <p className="text-white">
-                  Due: {parseDate(assignment.dueDate)} | 0/
+                  Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
                   {assignment.totalPoints} pts
                 </p>
+                <button onClick={() => router.push(`/groups/${classCode}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
               </div>
             ))
         ) : (
@@ -176,21 +181,24 @@ const ViewAllAssignments = () => {
           Past Assignments
         </h2>
         {/*Make so that subitted assignments are also here*/}
-        {classroom &&
-        classroom.assignments &&
-        classroom.assignments.length > 0 ? (
-          classroom.assignments
+        {
+        
+        assignments.length > 0 ? (
+          assignments
             .filter((assignment) => new Date(assignment.dueDate) < new Date())
             .map((assignment) => (
               <div
                 key={assignment.id}
-                onClick={() => {
-                  window.location.href = '/assignments/' + assignment.id;
-                }}
                 className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
               >
                 {/* Make assignment look pretty*/}
-                <h2 className="text-md text-white">
+                <h2 className="text-md text-white"
+                  onClick={() => {
+                    router.replace(
+                      `/assignments/${isTeacher ? 'teacher' : 'student'}/${assignment.id}`
+                    );
+                  }}
+                >
                   <Tooltip id="quiz-tooltip" place="left" />
                   <Tooltip id="test-tooltip" place="left" />
                   <Tooltip id="homework-tooltip" place="left" />
@@ -232,9 +240,10 @@ const ViewAllAssignments = () => {
                   <span className="ml-0.5"> {assignment.name} </span>
                 </h2>
                 <p className="text-white">
-                  Due: {parseDate(assignment.dueDate)} | 0/
+                  Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
                   {assignment.totalPoints} pts pts
                 </p>
+                <button onClick={() => router.push(`/groups/${classCode}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
               </div>
             ))
         ) : (

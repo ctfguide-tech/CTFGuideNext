@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import request from '@/utils/request';
 
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
@@ -137,14 +138,9 @@ export default function Slug() {
   const getChallenge = async (assignment) => {
     try {
       console.log('getting the challenge');
-      const url = `${baseUrl}/challenges/${assignment.challenge.slug}?assignmentId=${assignment.id}`;
-      const requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
+      const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
+      const data = await request(url, "GET", null);
+      if (data && data.success) {
         setChallenge(data.body);
       }
     } catch (err) {
@@ -169,7 +165,7 @@ export default function Slug() {
         classID: 'psu101',
         organizationName: 'PSU',
         userID: localStorage.getItem('username'),
-        slug: challenge.slug,
+        challengeID: challenge.id,
       };
 
       const requestOptions = {

@@ -82,7 +82,7 @@ const updateAuthTokenInterval = () => {
     updateAuthToken();
     const intervalId = setInterval(() => {
       updateAuthToken();
-    }, 14 * 60 * 1000);
+    }, 10 * 60 * 1000);
     return () => {
       clearInterval(intervalId);
     };

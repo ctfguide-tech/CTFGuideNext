@@ -12,7 +12,6 @@ import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
 export default function id() {
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
@@ -126,7 +125,6 @@ export default function id() {
   const getChallenge = async (assignment) => {
     try {
       console.log('getting the challenge');
-      const token = localStorage.getItem('idToken');
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
       const requestOptions = {
         method: 'GET',
@@ -159,7 +157,7 @@ export default function id() {
         classID: 'psu101',
         organizationName: 'PSU',
         userID: localStorage.getItem('username'),
-        id: challenge.id,
+        challengeID: challenge.id,
       };
 
       const requestOptions = {
