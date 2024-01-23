@@ -32,6 +32,8 @@ export default function Groups() {
       {
         target: '.second',
         content: 'Lets create a classroom by clicking this button here.',
+
+
       }
   ]
   
