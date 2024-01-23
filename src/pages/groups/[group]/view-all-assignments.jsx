@@ -15,11 +15,10 @@ const ViewAllAssignments = () => {
   const [isTeacher, setIsTeacher] = useState(false);
   const [grades, setGrades] = useState({});
 
-  const classCode = window.location.href.split('/')[4];
   const router = useRouter();
+  const { group } = router.query;
 
-
-  const getAssignments = async () => {
+  const getAssignments = async (classCode) => {
     const url = `${baseUrl}/classroom-assignments/fetch-assignments/${classCode}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
@@ -29,7 +28,7 @@ const ViewAllAssignments = () => {
     }
   };
 
-  const getGrades = async () => {
+  const getGrades = async (classCode) => {
     const url = `${baseUrl}/submission/student-finalgrade/${classCode}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) setGrades(data.body);
@@ -52,8 +51,7 @@ const ViewAllAssignments = () => {
     return formattedDate;
   };
 
-  // make the route to auth teacher/students
-  const auth = async () => {
+  const auth = async (classCode) => {
     const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
     const res = await request(url, 'GET', null);
     if(!res) setIsTeacher(false);
@@ -61,15 +59,13 @@ const ViewAllAssignments = () => {
   };
 
   useEffect(() => {
-    if(classCode) {
-      auth();
-      getAssignments();
-      getGrades()
+    if(group) {
+      auth(group);
+      getAssignments(group);
+      getGrades(group)
     }
-  }, [classCode]);
+  }, [group]);
 
-
-  console.log(grades);
 
   return (
     <>
@@ -85,7 +81,7 @@ const ViewAllAssignments = () => {
       <div className="bg-neutral-800">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
-            {isTeacher && <ClassroomNav classCode={classCode} />}
+            {isTeacher && <ClassroomNav classCode={group} />}
             <div className="flex items-center">
               {isTeacher && 
               <button
@@ -170,7 +166,7 @@ const ViewAllAssignments = () => {
                   Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
                   {assignment.totalPoints} pts
                 </p>
-                <button onClick={() => router.push(`/groups/${classCode}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
+                <button onClick={() => router.push(`/groups/${group}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
               </div>
             ))
         ) : (
