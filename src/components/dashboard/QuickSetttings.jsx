@@ -3,8 +3,12 @@ import { useRouter } from 'next/router';
 import { RocketLaunchIcon } from '@heroicons/react/20/solid';
 import { MagnifyingGlassCircleIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+
 export function QuickSettings() {
   const [banner, bannerState] = useState(false);
+  const [open, setOpen] = useState(true)
 
   const router = useRouter();
 
@@ -252,7 +256,61 @@ export function QuickSettings() {
             </p>
           </div>
         </div>
+        <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0" >
+           
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              
+              <Dialog.Panel className="w-full max-w-6xl relative transform overflow-hidden rounded-lg shadow-lg shadow-neutral-800  bg-gradient-to-r from-neutral-900 to-black  px-4  text-left  transition-all ">
+                <div>
+                  
+                  
+                  <div className="mt-3  sm:mt-5 w-full">
+                  <h1 className='text-6xl mb-2 text-white text-center mt-12'>Introducing <span className="font-semibold rainbow_text_animated">CTFGuide AI</span>  </h1>
+                  <h2 className='text-2xl mb-8 text-white text-center'>The world's first <b>AI powered</b> teaching tool for cybersecurity.</h2>
+                  <iframe width="auto" height="500" src="https://www.youtube-nocookie.com/embed/m0I__kMTziU?si=fI-qPfCgP3LAPAZ0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; auto-play;" 
+                                className="mx-auto  mt-4 w-full max-w-4xl rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10"
+                                allowfullscreen autoplay></iframe>
+
+                
+                  </div>
+                  <div className='text-center mt-10 mb-10'>
+                  <a href="../groups" className='text-xl px-4 py-2 text-center cursor-pointer font-semibold bg-blue-800 hover:bg-blue-800/50 rounded-lg text-white w-40'>Try the Demo</a>
+<a onClick={() => { setOpen(false) }} className='ml-4 text-xl cursor-pointer text-center  px-4  py-2 text-white w-40' >Maybe later...</a>
+    
+                  </div>
+                </div>
+             
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
       </div>
+      
     </>
   );
 }
