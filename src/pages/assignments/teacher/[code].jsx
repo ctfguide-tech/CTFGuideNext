@@ -152,7 +152,7 @@ export default function id() {
 
       const body = {
         jwtToken: auth.currentUser.accessToken,
-        TerminalGroupName: 'schell-class-session',
+        TerminalGroupName: 'school-class-session',
         TerminalID: code,
         classID: 'psu101',
         organizationName: 'PSU',

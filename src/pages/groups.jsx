@@ -1,4 +1,11 @@
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
+const JoyRideNoSSR = dynamic(
+  () => import('react-joyride'),
+  { ssr: false }
+)
+
+
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -15,6 +22,21 @@ const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Groups() {
+
+  const steps = [
+      {
+          target: '.first',
+          content: 'This is the main home for accessing all your classrooms.',
+          disableBeacon: true,
+      },
+      {
+        target: '.second',
+        content: 'Lets create a classroom by clicking this button here.',
+      }
+  ]
+  
+
+
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [color, setColor] = useState('');
@@ -94,7 +116,9 @@ export default function Groups() {
     });
   }
   return (
+    
     <>
+    
       <Head>
         <title>Groups - CTFGuide</title>
         <style>
@@ -102,14 +126,31 @@ export default function Groups() {
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
+      <JoyRideNoSSR steps={steps} continuous={true}  disableBeacon={true} showProgress={true} showSkipButton={true} 
+
+      styles={{
+        options: {
+          arrowColor: '#074bf5',
+          backgroundColor: '#1c1c1c',
+     
+
+          overlayColor: '#1c1c1c',
+          primaryColor: '#224ed4',
+          textColor: 'white',
+          width: 500,
+          zIndex: 1000,
+        }
+      }}
+  
+      />
       <StandardNav />
-      <div className=" min-h-screen  ">
-        <div className="mx-auto mt-64 hidden max-w-6xl">
-          <div className="grid grid-cols-2 gap-x-24">
+      <div className=" min-h-screen   ">
+        <div className="mx-auto mt-64 hidden max-w-6xl ">
+          <div className="grid grid-cols-2 gap-x-24 ">
             <div>
               <img src="./groups.png"></img>
             </div>
-            <div>
+            <div className=''>
               <h1 className="mt-10 text-6xl font-semibold text-white ">
                 CTFGuide Groups
               </h1>
@@ -124,14 +165,17 @@ export default function Groups() {
             </div>
           </div>
         </div>
+      
 
-        <div className="mx-auto mt-10 max-w-6xl ">
+        <div className="mx-auto mt-10 max-w-6xl first">
+      
           <div className="flex">
             <h1 className="text-3xl text-white">Groups</h1>
             <div className="ml-auto">
               <a
                 href="./groups/create"
-                className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
+
+                className="ml-4 rounded-lg bg-blue-600 second px-2 py-1 text-white"
               >
                 Create Group
               </a>
@@ -343,8 +387,12 @@ export default function Groups() {
           </Transition.Root>
         </div>
       </div>
+   
+
+          
       <ToastContainer />
       <Footer />
+  
     </>
   );
 }
