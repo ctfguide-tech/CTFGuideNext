@@ -30,7 +30,9 @@ export default function GroupDisplay() {
       });
       const res = await response.json();
       if (res.success) {
-        setViewAsTeacher(res.isTeacher);
+        setViewAsTeacher(true);
+      } else {
+        setViewAsTeacher(false);
       }
     } catch (err) {
       console.log(err);

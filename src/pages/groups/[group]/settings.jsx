@@ -6,8 +6,10 @@ import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import request from '@/utils/request';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
@@ -125,7 +127,7 @@ export default function teacherSettings() {
       });
       const res = await response.json();
       if (res.success) {
-        return res.isTeacher;
+        return true;
       } else {
         return false;
       }

@@ -1,4 +1,5 @@
 import '@/config/firebaseConfig';
+
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
@@ -14,8 +15,6 @@ const updateAuthToken = async (auth) => {
       console.log("Generating new token");
       const idToken = await auth.currentUser.getIdToken(true);
       document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
-    } else {
-      console.log("No user logged in");
     }
 
   } catch(err) {

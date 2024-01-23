@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import request from '@/utils/request';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const Announcement = ({
@@ -22,8 +25,12 @@ const Announcement = ({
     setMakingNewPost(false);
   };
 
+  console.log(announcement);
   const updateAnnouncement = async (id, message) => {
-    if (!id) return;
+    if (!id) {
+      toast.error('Unable to make announcement, Please refresh the page.');
+      return;
+    }
     const url = `${baseUrl}/classroom/announcements/${id}/${classCode}`;
     const body = { message };
     const data = await request(url, 'PUT', body);
@@ -35,6 +42,7 @@ const Announcement = ({
       );
     } else {
       console.log(data.message);
+      toast.error('Unable to make announcement, Please refresh the page.');
     }
     setAnnouncement('');
     setEditingAnnouncementIdx(-1);
@@ -297,6 +305,18 @@ const Announcement = ({
               );
             }
           })}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

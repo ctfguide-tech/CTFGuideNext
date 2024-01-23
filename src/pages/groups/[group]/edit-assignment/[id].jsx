@@ -6,8 +6,11 @@ import { Transition, Dialog } from '@headlessui/react';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
+
+const actions = ["Are you sure you want to delete this assignment?", "Are you sure you want to save this assignment?"];
 
 export default function EditingAssignment() {
   const [name, setName] = useState('');
@@ -20,13 +23,16 @@ export default function EditingAssignment() {
   const [isOpen, setIsOpen] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
+  const [index, setIndex] = useState(0);
 
   const router = useRouter();
   const { id } = router.query;
 
   const getAssignment = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}`;
+    const classCode = router.query.group;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}/${classCode}`;
     const data = await request(url, 'GET', null);
+    console.log(data);
     if (data && data.success) {
       setName(data.body.name);
       setDescription(data.body.description);
@@ -37,16 +43,51 @@ export default function EditingAssignment() {
       setLatePenalty(data.body.latePenalty);
       setIsOpen(data.body.isOpen);
     } else {
+      if(data && data.status === 401) {
+        router.push(`/groups/${classCode}/home`);
+        return;
+      }
       console.log('Error when getting assignment info');
+      toast.error('Error loading assignment, Please refresh the page');
     }
   }
 
   useEffect(() => {
-    getAssignment();
-  }, []);
+    if(id) {
+      getAssignment();
+    }
+  }, [id]);
 
   const handleConfirmClick = async () => {
+    if(index === 0) {
+      handleDelete();
+    } else {
+      handleSave();
+    }
+  }
 
+  const handleDelete = async () => {
+
+  }
+
+  const handleSave = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}`;
+    const body = {
+      name,
+      description,
+      dueDate,
+      aiObjectives,
+      aiPenalties,
+      totalPoints,
+      latePenalty,
+      isOpen
+    }
+    const data = await request(url, 'PUT', body);
+    if (data && data.success) {
+      toast.success('Assignment updated successfully');
+    } else {
+      toast.error('Error updating assignment');
+    }
   }
 
   return (
@@ -292,8 +333,8 @@ export default function EditingAssignment() {
                 <button
                   onClick={() => {
                     setShowOverlay(true);
-                    setMessageOfConfirm(actions[2]);
-                    setIndex(2);
+                    setMessageOfConfirm(actions[1]);
+                    setIndex(1);
                   }}
                   className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
