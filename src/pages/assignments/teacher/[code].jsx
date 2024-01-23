@@ -392,9 +392,9 @@ export default function id() {
 
               <h1 className="flex text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
-                <div className="ml-auto">
-                  <span className="rounded-lg bg-white px-4 font-semibold text-blue-600">
-                    TEACHER VIEW
+                <div className="ml-auto cursor-pointer">
+                  <span className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 font-semibold text-blue-600 ">
+                    Toggle Student View
                   </span>
                 </div>
               </h1>
