@@ -6,12 +6,15 @@ import LoadingBar from 'react-top-loading-bar';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
+import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const Gradebook = () => {
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
-  const [classCode, setClassCode] = useState('');
+
+  const classCode = window.location.href.split("/")[4];
+
   const [classroom, setClassroom] = useState({});
   const [progress, setProgress] = useState(0);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
@@ -26,13 +29,8 @@ const Gradebook = () => {
         baseUrl +
         '/submission/getStudentsSubmissionsFinalGrades/' +
         classroomId;
-      var requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
         setStudents(data.body);
       }
     } catch (err) {
@@ -41,26 +39,13 @@ const Gradebook = () => {
   };
 
   const getAssignments = async () => {
-    try {
-      const classCode = window.location.href.split("/")[4];
-      setClassCode(classCode);
-      var requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(
-        `${baseUrl}/classroom/classroom-by-classcode/${classCode}`,
-        requestOptions
-      );
-      const data = await response.json();
-      if (data.success) {
-        setAssignments(data.body.assignments);
-        await getStudentsSubmissionsFinalGrades(data.body.id);
-      } else {
-        console.log(data);
-      }
-    } catch (err) {
-      console.log(err);
+    const url = `${baseUrl}/classroom/classroom-by-classcode/${classCode}`
+    const data = await request(url, 'GET', null);
+    if (data && data.success) {
+      setAssignments(data.body.assignments);
+      await getStudentsSubmissionsFinalGrades(data.body.id);
+    } else {
+      console.log(data);
     }
   };
 
@@ -78,29 +63,10 @@ const Gradebook = () => {
   }, []);
 
   const checkPermissions = async () => {
-    try {
-      const classCode = window.location.href.split("/")[4];
-      const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-      const res = await response.json();
-
-      console.log(res);
-
-      if (res.success) {
-        return res.isTeacher;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+    const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
+    const res = await request(url, 'GET', null);
+    if(!res) return false;
+    return res.success;
   };
 
   const refresh = () => {

@@ -8,22 +8,19 @@ import { Tooltip } from 'react-tooltip';
 import { useRouter } from 'next/router';
 import ClassroomNav from '@/components/groups/classroomNav';
 import request from '@/utils/request';
-
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-const baseClientUrl = `localhost:3000`;
 
 const ViewAllAssignments = () => {
   const [assignments, setAssignments] = useState({});
   const [isTeacher, setIsTeacher] = useState(false);
-  const [classCode, setClassCode] = useState('');
   const [grades, setGrades] = useState({});
 
+  const classCode = window.location.href.split('/')[4];
   const router = useRouter();
 
+
   const getAssignments = async () => {
-    const params = window.location.href.split('/');
-    setClassCode(params[4]);
-    const url = `${baseUrl}/classroom-assignments/fetch-assignments/${params[4]}`;
+    const url = `${baseUrl}/classroom-assignments/fetch-assignments/${classCode}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       setAssignments(data.body);
@@ -33,8 +30,7 @@ const ViewAllAssignments = () => {
   };
 
   const getGrades = async () => {
-    const params = window.location.href.split('/');
-    const url = `${baseUrl}/submission/student-finalgrade/${params[4]}`;
+    const url = `${baseUrl}/submission/student-finalgrade/${classCode}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) setGrades(data.body);
     else console.log('Error when getting grades');
@@ -57,14 +53,20 @@ const ViewAllAssignments = () => {
   };
 
   // make the route to auth teacher/students
-  const auth = (classroom) => {
-    return true;
+  const auth = async () => {
+    const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
+    const res = await request(url, 'GET', null);
+    if(!res) setIsTeacher(false);
+    setIsTeacher(res.success);
   };
 
   useEffect(() => {
-    getAssignments();
-    getGrades()
-  }, []);
+    if(classCode) {
+      auth();
+      getAssignments();
+      getGrades()
+    }
+  }, [classCode]);
 
 
   console.log(grades);

@@ -124,7 +124,6 @@ export default function id() {
 
   const getChallenge = async (assignment) => {
     try {
-      console.log('getting the challenge');
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
       const requestOptions = {
         method: 'GET',

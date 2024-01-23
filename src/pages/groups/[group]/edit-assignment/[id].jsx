@@ -16,7 +16,9 @@ export default function EditingAssignment() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
+
   const [aiObjectives, setAiObjectives] = useState('');
+
   const [aiPenalties, setAiPenalties] = useState('');
   const [totalPoints, setTotalPoints] = useState('');
   const [latePenalty, setLatePenalty] = useState(0);
@@ -26,13 +28,12 @@ export default function EditingAssignment() {
   const [index, setIndex] = useState(0);
 
   const router = useRouter();
+  const classCode = router.query.group;
   const { id } = router.query;
 
   const getAssignment = async () => {
-    const classCode = router.query.group;
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}/${classCode}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}`;
     const data = await request(url, 'GET', null);
-    console.log(data);
     if (data && data.success) {
       setName(data.body.name);
       setDescription(data.body.description);
@@ -67,11 +68,20 @@ export default function EditingAssignment() {
   }
 
   const handleDelete = async () => {
-
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/delete-assignment/${id}/${classCode}`;
+    const data = await request(url, 'DELETE', null);
+    if (data && data.success) {
+      toast.success('Assignment deleted successfully');
+      setShowOverlay(false);
+      router.push(`/groups/${classCode}/home`);
+    } else {
+      toast.error('Error deleting assignment');
+    }
   }
 
   const handleSave = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}`;
+    const classCode = router.query.group;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}/${classCode}`;
     const body = {
       name,
       description,
@@ -85,6 +95,7 @@ export default function EditingAssignment() {
     const data = await request(url, 'PUT', body);
     if (data && data.success) {
       toast.success('Assignment updated successfully');
+      setShowOverlay(false);
     } else {
       toast.error('Error updating assignment');
     }
@@ -103,11 +114,11 @@ export default function EditingAssignment() {
       <div className="bg-neutral-800">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
-            {/**classroom && <ClassroomNav classCode={group} /> **/}
+            {<ClassroomNav classCode={classCode} /> }
             <div className="flex items-center">
               <button
                 onClick={() => {
-                  setViewCreateAssignment(true);
+
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
@@ -228,7 +239,7 @@ export default function EditingAssignment() {
                     <div className="mt-2">
                       <textarea
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        onChange={(e) => setAiObjectives(e.target.value)}
                         id="bio"
                         name="bio"
                         rows={3}
