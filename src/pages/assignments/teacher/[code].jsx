@@ -26,6 +26,12 @@ export default function id() {
     { message: '', penalty: '' },
   ]);
 
+  function getColorForTime(minutes) {
+    if (minutes >= 40) return 'text-green-400';
+    if (minutes >= 10) return 'text-yellow-400';
+    return 'text-red-400';
+  }
+
   const [challenge, setChallenge] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -385,8 +391,8 @@ export default function id() {
             <i className="fas fa-long-arrow-alt-left"></i> Return Home
           </a>
 
-          <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-4 py-4 ">
-            <div className="mx-auto max-w-6xl">
+          <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-10 py-4 ">
+            <div className="mx-auto ">
               <h1 className="text-3xl font-semibold text-white">
                 {assignment && assignment.name}{' '}
               </h1>
@@ -403,7 +409,7 @@ export default function id() {
             </div>
           </div>
 
-          <div className="mx-auto mt-4 max-w-6xl">
+          <div className="mx-auto mt-4  px-10">
             <h1 className="text-xl font-semibold text-white">
               Assignment Description
             </h1>
@@ -484,50 +490,94 @@ export default function id() {
               </div>
 
               <div className="col-span-4   ">
-                <div className="mx-auto h-full bg-black px-4">
+                                
+<div className="mx-auto h-full bg-black px-4 pb-60 ">
+{userName && (
+  <div className="hint mb-2 text-gray-400 py-4">
+    <span className="font-semibold text-white">
+      Login as <span  id="uname"  onClick={() => {
+        navigator.clipboard.writeText(document.getElementById('uname').innerText)
+        toast.success('Copied to clipboard!', {
+            position: 'bottom-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+          });
+        
+    
+    }
+
+
+        } className="text-yellow-400 cursor-pointer">{userName}</span> using the password <span className="text-yellow-400 cursor-pointer" id="upass"  onClick={() => {
+            navigator.clipboard.writeText(document.getElementById('upass').innerText)
+            toast.success('Copied to clipboard!', {
+                position: 'bottom-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+              });
+            }}
+            
+            >{password}</span>
+    </span>
+
+    {minutesRemaining !== -1 && (
+      <div className="float-right ml-auto flex cursor-pointer">
+        <span style={{ cursor: 'pointer' }} className="text-gray-300 hover:bg-black">
+          Container will stop in: &nbsp;
+          <span className={`font-semibold ${getColorForTime(minutesRemaining)}`}>
+            {minutesRemaining} minutes
+          </span>
+        </span>
+            &nbsp;&nbsp;• 
+        <span className='ml-2 '><i className="fas fa-broadcast-tower text-red-500 fab-beat"></i> Streaming is active.</span>
+      </div>
+    )}
+
+    
+  </div>
+)}
+                        
+
+
+
                   {!foundTerminal && (
                     <div>
                       <br />
                       <br />
                     </div>
                   )}
+                      
+
+                      <div className='hidden bg-red-900 text-center text-white py-4 pb-10'>
+                      <i class="fas fa-handshake-slash text-5xl "></i>
+                        <h1 className='text-2xl font-bold '>Client Disconnection</h1>
+                        <p className='text-2xl px-4'>CTFGuide isn't able to communicate with your terminal correctly. Your session has been reset, please reload the page.</p>
+                      </div>
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
-                      {
-                        challenge && 
-                          <button
-                            className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                            disabled={fetchingTerminal}
-                            onClick={fetchTerminal}
-                          >
-                            {fetchingTerminal ? 'Launching...' : 'Launch Terminal'}
-                          </button>
-                      }
-
+                  {
+                    challenge && !fetchingTerminal && !foundTerminal &&
+                      <button
+                        className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                        disabled={fetchingTerminal}
+                        onClick={fetchTerminal}
+                      >
+                        Launch Terminal 
+                      </button>
+                  }
+                      <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
                     </div>
                   )}
-                  {userName !== '...' && (
-                    <div className="hint mb-2 text-gray-400">
-                      <span className="font-semibold text-white   ">
-                        {' '}
-                        <span className="text-blue-500"></span>
-                      </span>{' '}
-                      Login as{' '}
-                      <span className="text-yellow-400">{userName}</span> using
-                      the password{' '}
-                      <span className="text-yellow-400">{password}</span>
-                      <div className="float-right ml-auto flex  cursor-pointer">
-                        {minutesRemaining !== -1 && (
-                          <span
-                            style={{ cursor: 'pointer' }}
-                            className="text-gray-300 hover:bg-black"
-                          >
-                            Container will stop in: {minutesRemaining} minutes
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
+      
 
                   {foundTerminal ? (
                     <embed
@@ -539,6 +589,7 @@ export default function id() {
                     <p>Loading...</p>
                   )}
                 </div>
+       
                 <p className="mt-10 font-semibold text-white">
                   STUDENT SUBMISSIONS
                 </p>
@@ -579,7 +630,7 @@ export default function id() {
               </div>
               <button
                 onClick={submitAssignment}
-                className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                className="hidden mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                 disabled={loading}
               >
                 {submitted ? 'Resubmit' : 'Submit'}
