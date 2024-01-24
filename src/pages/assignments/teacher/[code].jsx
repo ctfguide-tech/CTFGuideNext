@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClassroomNav from '@/components/groups/classroomNav';
-
+import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
@@ -355,6 +355,8 @@ export default function id() {
 
   // console.log(submissions);
 
+  const router = useRouter();
+
   return (
     <>
       <Head>
@@ -392,9 +394,10 @@ export default function id() {
               <h1 className="flex text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
                 <div className="ml-auto cursor-pointer">
-                  <span className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 font-semibold text-blue-600 ">
-                    Toggle Student View
-                  </span>
+                  <a onClick={ () => router.push(`/assignments/student/${assignment.id}/`)} className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 font-semibold text-blue-600 ">
+                    View as Student
+                  </a>
+                  
                 </div>
               </h1>
             </div>

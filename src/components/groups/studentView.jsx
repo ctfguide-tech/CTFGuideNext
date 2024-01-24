@@ -145,6 +145,7 @@ export default function StudentView({ group }) {
       <StandardNav />
 
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
+
         <div className="mt-10 ">
           <div className="flex">
             <h1 className="text-3xl font-semibold text-white">

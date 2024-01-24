@@ -94,20 +94,20 @@ export default function CreateGroup(props) {
       }
       if (!assignmentPoints < 0) {
         errorList.push('Points value cant be less than 0');
-        toast.error('Points value cant be less than 0');
+        toast.error('The assignment points value must be greater than or equal to 0.');
       }
       if (!title) {
         errorList.push('Invalid title');
-        toast.error('Invalid title');
+        toast.error('Challenge title is invalid.');
       }
 
       if (parseDate() === -1) {
         errorList.push('Duedate isin the past');
-        toast.error('duedate is in the past');
+        toast.error('Please choose a due date in the future.');
       }
       if (latePenalty === '') {
         errorList.push('Enter late penalty');
-        toast.error('Enter late penalty');
+        toast.error('You haven\'t entered a late penalty. If you don\'t want to penalize late submissions, enter 0.');
       }
       setErrMessage(errorList);
       if (errorList.length > 0) {
