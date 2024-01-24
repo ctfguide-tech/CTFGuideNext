@@ -9,6 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
 
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
@@ -41,6 +43,8 @@ export default function Slug() {
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
+
+  const [open, setOpen] = useState(true);
 
   function copy(tags) {
     var copyText = document.getElementById(tags);
@@ -277,7 +281,7 @@ export default function Slug() {
       setSolved(true);
       toast.success('Flag is Correct, Good Job!');
     } else {
-      toast.error('Flag is incorrct');
+      toast.error('Flag is incorrect. Try again!');
       setSolved(false);
     }
   };
@@ -386,21 +390,32 @@ export default function Slug() {
 
 
 
+      <div style={{}} className="mx-auto h-full overflow-hidden">
+      <div className='bg-yellow-900 py-1 text-center text-lg text-white flex items-center justify-center'>
+        You are viewing this page as a student. <button onClick={() => { router.push(`/assignments/teacher/${assignment.id}/`) }} className='ml-4 text-sm bg-white rounded-lg px-2 text-yellow-900'>Exit Student View</button>
+      </div>
+      <div className="grid h-screen max-h-screen resize-x grid-cols-2 gap-0 md:grid-cols-2 lg:grid-cols-2">
+        <div
+          id="1"
+          
+          className="h-100 resize-x px-8 py-4 overflow-scroll"
+        >
+        <div className='flex'>
 
-      <div className=" min-h-screen  ">
-        <div className="mx-auto mt-4">
-    
+<div>
 
-          <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-4 py-4 ">
-            <div className="mx-auto max-w-6xl">
-              <h1 className="text-3xl font-semibold text-white">
-                {assignment && assignment.name}{' '}
-              </h1>
+<h1 className="text-2xl font-bold text-white">
+          {assignment && assignment.name}{' '}
+          </h1>
 
-              <h1 className="text-white flex">
+          <h1 className="text-white ">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
 
-                <div className='ml-auto'>
+             
+              </h1>
+  </div>
+
+              <div className='ml-auto'>
                 <span
             onClick={() => router.back()}
             className="cursor-pointer text-neutral-200 hover:text-neutral-100 mr-4" >
@@ -408,28 +423,35 @@ export default function Slug() {
           </span>
           <button
                 onClick={submitAssignment}
-                className="mt-3 rounded-lg bg-white font-semibold text-blue-600 px-2 py-1  hover:bg-neutral-100"
+                className="mt-3 rounded-lg   bg-blue-700 text-white px-3 py-2 hover:bg-blue-800"
                 disabled={loading}
               >
-                {submitted ? 'Resubmit' : 'Submit'}
+                {submitted ? 'Resubmit' : 'Submit Assignment'}
               </button>
                 </div>
-              </h1>
 
-            </div>
-          </div>
+              </div>
+          <h1 className="mt-4 text-xl font-semibold text-white">
+                Assignment Description
 
-          <div className="mx-auto mt-4 max-w-6xl">
-     
-<input id="boxz" className='hidden'></input>
-<div className="grid h-full grid-cols-6 gap-x-8">
-              <div className="col-span-2">
+          </h1>
+            <MarkdownViewer
+              className="text-white"
+              content={assignment && assignment.description}
+            />
+
+
+<h1 className="mt-4 text-xl font-semibold text-white">
+                 Submission Area
+
+          </h1>
+<div className="w-1/2 bg-neutral-800 px-4 rounded-lg py-3">
                 <p className="mt-2 font-semibold text-white">FLAG SUBMISSION</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
 
                 <input
                   placeholder="Think you got the flag? Enter it here!"
-                  className="mt-4 w-full cursor-pointer rounded-lg border border-neutral-800/50 bg-neutral-800/50 px-4 py-1 text-white hover:bg-neutral-700/10"
+                  className="mt-4 w-full cursor-pointer rounded-lg border border-neutral-700/50 bg-neutral-900 px-4 py-1 text-white hover:bg-neutral-700/10"
                   onChange={(e) => setFlagInput(e.target.value)}
                   value={flagInput}
                 ></input>
@@ -492,23 +514,15 @@ export default function Slug() {
                   );
                 })}
               </div>
+    
+        </div>
 
-              <div className="col-span-4   ">
-              <h1 className="text-xl font-semibold text-white">
-              Assignment Description
-            </h1>
-            <MarkdownViewer
-              className="text-white"
-              content={assignment && assignment.description}
-            />
-      
-              </div>
-     
-            </div>
+  
 
 
-
-<div className="mx-auto h-full bg-black px-4 pb-60 mt-10">
+        <div className="max-h-screen resize-x overflow-hidden bg-black">
+                      
+<div className="mx-auto h-full bg-black px-4 pb-60 ">
 {userName && (
   <div className="hint mb-2 text-gray-400 py-4">
     <span className="font-semibold text-white">
@@ -573,6 +587,12 @@ export default function Slug() {
                     </div>
                   )}
                       
+
+                      <div className='hidden bg-red-900 text-center text-white py-4 pb-10'>
+                      <i class="fas fa-handshake-slash text-5xl "></i>
+                        <h1 className='text-2xl font-bold '>Client Disconnection</h1>
+                        <p className='text-2xl px-4'>CTFGuide isn't able to communicate with your terminal correctly. Your session has been reset, please reload the page.</p>
+                      </div>
                   {!foundTerminal && (
                     <div className=" mx-auto text-center ">
                   {
@@ -601,13 +621,90 @@ export default function Slug() {
                   )}
                 </div>
        
+        </div>
 
 
+      </div>
+    </div>
 
-       
+
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0" >
+           
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              
+              <Dialog.Panel className="border w-full max-w-6xl relative transform overflow-hidden rounded-lg shadow-lg shadow-neutral-800  bg-gradient-to-r from-neutral-900 to-black  px-4  text-left  transition-all ">
+                <div>
+                  
+                  
+                  <div className="mt-3  sm:mt-5 w-full pb-14 px-10">
+                  <h1 className='text-2xl mb-2 text-white text-center mt-12'>Welcome to your CTFGuide Lab enviroment!  </h1>
+                    <p className='text-white'>
+                    <b className='text-xl '> Introduction</b>
+                    <br></br>
+
+                      CTFGuide Labs are a safe enviroment for you to practice your skills in a real world enviroment.  When you're ready to start working on your assignment, click the green "Launch Terminal" button.  This will boot up a computer for you in the cloud. This can take around 30 seconds to a minute depending on the configuration.
+                      <br></br>
+                      <br></br>
+                      <b className='text-xl '> Environment Rules</b>
+                      <ul className='ml-10'>
+                        <li>Modifying the .disregard directory will rest your session. This directory holds important files for your session to run.</li>
+                        <li>Attempting to modify with any of our recording/streaming mechanisms will cause your session to reset.</li>
+                        <li>Interfering with background tasks will result in a session reset.</li>
+                        <li>Do not attempt to brute force or DOS any of the machines.</li>
+                        <li>Do not attempt to attack CTFGuide infrastructure.</li>
+                        <li>Long intensive jobs that aren't related to the challenge are prohibited.</li>
+                        <li>Doing things that are obviously unrelated to the challenge will result in a warning and if it occurs again will result in a session reset.</li>
+                      </ul>
+                    <br></br>
+                      We realize these rules may sound intimidating, but ideally if you just normally work on the problem you will not experience any issues.
+
+                      <br></br>    <br></br>
+                    <b className='text-xl text-white'> Transparency Notice</b>
+                    <br></br>
+                      CTFGuide will use AI to automatically grade your assignment. Your teacher has specified parameters for us to grade you on. We will only use footage from your terminal when making a decision. Your terminal is constantly talking with our servers.
+                    </p>
+    
+                
+                   <div className='mx-auto text-center mt-10'>
+                   <button onClick={() => {setOpen(false)}} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>Start Hacking!</button>
+                   </div>
+                  </div>
+                
+               
+                </div>
+             
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </div>
-      </div>
+      </Dialog>
+    </Transition.Root>
+
+
+
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
