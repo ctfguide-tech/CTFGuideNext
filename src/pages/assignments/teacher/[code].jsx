@@ -394,7 +394,7 @@ export default function id() {
               <h1 className="flex text-white">
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
                 <div className="ml-auto cursor-pointer">
-                  <a onClick={ () => router.push(`/assignments/student/${assignment.id}/`)} className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 font-semibold text-blue-600 ">
+                  <a onClick={ () => router.push(`/assignments/student/${assignment.id}?former=teacher`)} className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 font-semibold text-blue-600 ">
                     View as Student
                   </a>
                   

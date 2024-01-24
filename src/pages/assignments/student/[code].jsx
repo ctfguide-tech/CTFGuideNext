@@ -391,9 +391,11 @@ export default function Slug() {
 
 
       <div style={{}} className="mx-auto h-full overflow-hidden">
-      <div className='bg-yellow-900 py-1 text-center text-lg text-white flex items-center justify-center'>
-        You are viewing this page as a student. <button onClick={() => { router.push(`/assignments/teacher/${assignment.id}/`) }} className='ml-4 text-sm bg-white rounded-lg px-2 text-yellow-900'>Exit Student View</button>
-      </div>
+      {router.query.former === 'teacher' && (
+        <div className='bg-yellow-900 py-1 text-center text-lg text-white flex items-center justify-center'>
+          You are viewing this page as a student. <button onClick={() => { router.push(`/assignments/teacher/${assignment.id}/`) }} className='ml-4 text-sm bg-white rounded-lg px-2 text-yellow-900'>Exit Student View</button>
+        </div>
+      )}
       <div className="grid h-screen max-h-screen resize-x grid-cols-2 gap-0 md:grid-cols-2 lg:grid-cols-2">
         <div
           id="1"
