@@ -15,6 +15,7 @@ const ChallengeSelectView = ({ updateChallenge }) => {
       })
       .catch(error => console.log('error', error));
   }, []); // Added an empty dependency array to prevent infinite requests
+  console.log(challenges)
 
   return (
     <div >
@@ -22,7 +23,7 @@ const ChallengeSelectView = ({ updateChallenge }) => {
       > Select a challenge to fork</h1>
       <div className=' grid grid-cols-4 text-left mt-4  gap-x-4  gap-y-4  '>
 
-        {Array.isArray(challenges) && challenges.map((challenge, index) => (
+        {challenges.map((challenge, index) => (
           <Challenge key={index} data={challenge} updateData={updateChallenge} />
         ))}
       </div>

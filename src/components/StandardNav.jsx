@@ -88,6 +88,8 @@ export function StandardNav() {
         const result = await response.json();
         if (!result || !result.length) return;
 
+        console.log(result);
+
         setNotificationData(
           result.map((notification) => {
             const currentDate = new Date();
@@ -122,30 +124,6 @@ export function StandardNav() {
     };
     fetchNotification();
   }, []);
-
-
-  useEffect(() => {
-    try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-        method: 'GET',
-        credentials: 'include'
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            router.push("/login");
-          } else {
-            setUsername(data.username);
-            setPoints(data.points);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch {}
-  }, []);
-
-
 
 
   const fetchNotifications = async () => {

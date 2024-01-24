@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import request from '@/utils/request';
+
 import { loadStripe } from '@stripe/stripe-js';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
@@ -18,25 +20,15 @@ export default function Subscribe() {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = subscriptionTypes[subIdx];
+      const body = {
+        subType: subscriptionType,
+        quantity: 1,
+        operation: 'subscription',
+        data: {},
+      }
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`;
+      const session = await request(url, 'POST', body);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            subType: subscriptionType,
-            quantity: 1,
-            operation: 'subscription',
-            data: {},
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include'
-        }
-      );
-
-      const session = await response.json();
       if (session.error) {
         toast.error('Payment session failed');
         console.log('Creating the stripe session failed');

@@ -4,7 +4,7 @@ import { Footer } from '@/components/Footer';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
-
+import StudentNav from '@/components/groups/studentNav';
 import { useRouter } from 'next/router';
 import ClassroomNav from '@/components/groups/classroomNav';
 import request from '@/utils/request';
@@ -78,6 +78,7 @@ const ViewAllAssignments = () => {
         </style>
       </Head>
       <StandardNav />
+      {!isTeacher ? <StudentNav classCode={group} /> :
       <div className="bg-neutral-800">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
@@ -86,7 +87,7 @@ const ViewAllAssignments = () => {
               {isTeacher && 
               <button
                 onClick={() => {
-                  setViewCreateAssignment(true);
+                  //setViewCreateAssignment(true);
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
@@ -97,6 +98,8 @@ const ViewAllAssignments = () => {
           </div>
         </div>
       </div>
+      }
+
       <div className="mx-auto mt-6   max-w-6xl  justify-center ">
         <h1 className="mx-auto text-2xl font-semibold text-white">
           Assignments
@@ -166,7 +169,10 @@ const ViewAllAssignments = () => {
                   Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
                   {assignment.totalPoints} pts
                 </p>
+                {
+                  isTeacher && 
                 <button onClick={() => router.push(`/groups/${group}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
+                }
               </div>
             ))
         ) : (
@@ -241,7 +247,11 @@ const ViewAllAssignments = () => {
                   Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
                   {assignment.totalPoints} pts pts
                 </p>
-                <button onClick={() => router.push(`/groups/${classCode}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
+                {
+                  isTeacher && (
+                    <button onClick={() => router.push(`/groups/${group}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
+                  )
+                }
               </div>
             ))
         ) : (

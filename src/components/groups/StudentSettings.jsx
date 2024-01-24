@@ -3,26 +3,17 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import ClassroomNav from '@/components/groups/classroomNav';
+import StudentNav from '@/components/groups/studentNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
 
-const actions = ["Are you sure you want to delete this assignment?", "Are you sure you want to save this assignment?"];
+const actions = ["Are you sure you want to leave this class?", "Are you suer you want to cancel your free trial?", "Are you sure you want to pay for free trial now?"];
 
-export default function EditingAssignment() {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+export default function StudentSettings() {
 
-  const [aiObjectives, setAiObjectives] = useState('');
-  const [aiPenalties, setAiPenalties] = useState('');
-  const [totalPoints, setTotalPoints] = useState('');
-
-  const [latePenalty, setLatePenalty] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(0);
@@ -31,34 +22,56 @@ export default function EditingAssignment() {
   const classCode = router.query.group;
   const { id } = router.query;
 
-  const getAssignment = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}`;
-    const data = await request(url, 'GET', null);
-    if (data && data.success) {
-      setName(data.body.name);
-      setDescription(data.body.description);
-      setDueDate(data.body.dueDate);
-      setAiObjectives(data.body.aiObjectives);
-      setAiPenalties(data.body.aiPenalties);
-      setTotalPoints(data.body.totalPoints);
-      setLatePenalty(data.body.latePenalty);
-      setIsOpen(data.body.isOpen);
-    } else {
-      if(data && data.status === 401) {
-        router.push(`/groups/${classCode}/home`);
-        return;
+  const cancelFreeTrial = async () => {
+    try {
+      const classroomId = classroom.id;
+      const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
+      const body = { classroomId, operation: "joinClass" };
+      const data = await request(url, 'POST', body);
+      if (data && data.success) {
+        toast.success("Free trial cancelled");
+      } else {
+        console.log(data.message);
+        toast.error("Unable to cancel free trial");
       }
-      console.log('Error when getting assignment info');
-      toast.error('Error loading assignment, Please refresh the page');
+    } catch (err) {
+      console.log(err);
+      toast.error("Unable to cancel free trial");
     }
-  }
+  };
 
-  useEffect(() => {
-    if(id) {
-      getAssignment();
+  const payForFreeTrialNow = async () => {
+    try {
+      const url = `${baseUrl}/payments/stripe/pay-payment-intent`;
+      const body = { classroomId: classroom.id, operation: "joinClass" }
+      const data = await request(url, 'PUT', body);
+      if (data && data.success) {
+        toast.success("Free trial successfully activated");
+        document.getElementById("trialMsg").classList.add("hidden");
+      } else {
+        console.log(data.message);
+        toast.error("Unable to activate free trial");
+      }
+      console.log(data);
+    } catch (err) {
+      console.log(err);
     }
-  }, [id]);
-
+  };
+  const leaveClass = async () => {
+    try {
+      const classroomId = classroom.id;
+      const url = `${baseUrl}/classroom/leave`;
+      const body = { classroomId, isTeacher: false };
+      const data = await request(url, 'POST', body);
+      if (data && data.success) {
+        router.push('/groups');
+      } else {
+        console.log(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const handleConfirmClick = async () => {
     if(index === 0) {
       handleDelete();
@@ -67,75 +80,24 @@ export default function EditingAssignment() {
     }
   }
 
-  const handleDelete = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/delete-assignment/${id}/${classCode}`;
-    const data = await request(url, 'DELETE', null);
-    if (data && data.success) {
-      toast.success('Assignment deleted successfully');
-      setShowOverlay(false);
-      router.push(`/groups/${classCode}/home`);
-    } else {
-      toast.error('Error deleting assignment');
-    }
-  }
-
-  const handleSave = async () => {
-    const classCode = router.query.group;
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}/${classCode}`;
-    const body = {
-      name,
-      description,
-      dueDate,
-      aiObjectives,
-      aiPenalties,
-      totalPoints,
-      latePenalty,
-      isOpen
-    }
-    const data = await request(url, 'PUT', body);
-    if (data && data.success) {
-      toast.success('Assignment updated successfully');
-      setShowOverlay(false);
-    } else {
-      toast.error('Error updating assignment');
-    }
-  }
-
   return (
     <>
       <Head>
-        <title>Edit Assignment - CTFGuide</title>
+        <title>Student Settings- CTFGuide</title>
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
       <StandardNav />
-      <div className="bg-neutral-800">
-        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-10 justify-between">
-            {<ClassroomNav classCode={classCode} /> }
-            <div className="flex items-center">
-              <button
-                onClick={() => {
-
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-plus-circle pe-2"></i> New Assignment
-              </button>
-
-            </div>
-          </div>
-        </div>
-      </div>
+      <StudentNav classCode={classCode} />
       <div id="general" className="">
         <div className="mx-auto flex max-w-6xl">
           <div className="flex-1 xl:overflow-y-auto">
             <div className="max-w-4.5xl mx-auto px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
               <div className="flex">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
-                  Edit Assignment
+                  Student Settings (Nothing works in here)
                 </h1>
 
                 <div className="ml-auto">
@@ -175,43 +137,10 @@ export default function EditingAssignment() {
                     <input
                       type="number"
                       autoComplete="off"
-                      value={totalPoints}
+                      value={""}
                       onChange={(e) => setTotalPoints(e.target.value)}
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                     />
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="number-of-seats"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      Assignment Title
-                    </label>
-                    <input
-                      autoComplete="off"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="classroom-status"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      Assignment Status
-                    </label>
-                    <select
-                      value={isOpen}
-                      onChange={(e) => setIsOpen(e.target.value)}
-                      id="classroom-status"
-                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
-                    >
-                      <option value="open">Open</option>
-                      <option value="close">Close</option>
-                    </select>
                   </div>
 
                   <div className="sm:col-span-3">
@@ -224,52 +153,12 @@ export default function EditingAssignment() {
                     <input
                       type="date"
                       autoComplete="off"
-                      value={dueDate}
+                      value={""}
                       onChange={(e) => setDueDate(e.target.value)}
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                     />
                   </div>
 
-                  <div className="sm:col-span-6">
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      AI Objectives
-                    </label>
-                    <div className="mt-2">
-                      <textarea
-                        value={aiObjectives}
-                        onChange={(e) => setAiObjectives(e.target.value)}
-                        id="bio"
-                        name="bio"
-                        rows={3}
-                        className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-6">
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      Assignment Description
-                    </label>
-                    <div className="mt-2">
-                      <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        id="bio"
-                        name="bio"
-                        rows={3}
-                        className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <p className="mt-3 text-sm text-white">
-                      Brief description for your assignment. 
-                    </p>
-                  </div>
                 </div>
                 <Transition.Root show={showOverlay} as={Fragment}>
                   <Dialog
@@ -361,7 +250,7 @@ export default function EditingAssignment() {
                   }}
                   className="ml-4 rounded-lg bg-red-600 px-2 py-1 text-white hover:bg-red-600/50"
                 >
-                  Delete Assignment
+                  Leave Class
                 </button>
               </div>
             </div>

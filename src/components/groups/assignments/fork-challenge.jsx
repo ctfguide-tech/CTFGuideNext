@@ -52,11 +52,9 @@ export default function Createchall(props) {
     setActiveTab(tab);
   }
 
-  function updateSelectionState(status, id) {
+  function updateSelectionState(status, data) {
     setChallengeSelected(true);
-    setChallengeid(id);
-
-    console.log(`Challenge selected: ${id}`);
+    setChallengeid(data);
   }
 
   return (
@@ -111,7 +109,12 @@ export default function Createchall(props) {
 
         <div className="mx-auto mt-10  max-w-7xl ">
           {challengeSelected ? (
-            <Editor id={challengeid} assignmentInfo={props} />
+            <Editor
+              id={challengeid.id}
+              title={challengeid.title}
+              creator={challengeid.creator}
+              assignmentInfo={props}
+            />
           ) : (
             <ChallengeSelectView updateChallenge={updateSelectionState} />
           )}

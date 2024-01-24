@@ -5,6 +5,7 @@ import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import ClassroomNav from '@/components/groups/classroomNav';
+import StudentSettings from "@/components/groups/StudentSettings";
 import { useRouter } from 'next/router';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,7 +16,6 @@ import request from '@/utils/request';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
 const frontend_baselink = `localhost:3000`;
-
 
 const categoryToIdx = {
   test: 0,
@@ -38,6 +38,7 @@ export default function teacherSettings() {
   const [inviteLink, setInviteLink] = useState(
     'ctfguide.com/invite/*****/********'
   );
+  const [isStudent, setIsStudent] = useState(false);
   const [inviteActivated, setInviteActivated] = useState(false);
   const [classroom, setClassroom] = useState({});
   const [description, setDescription] = useState('');
@@ -105,11 +106,12 @@ export default function teacherSettings() {
     const authenticate = async () => {
       let isAuth = await checkPermissions();
       if (!isAuth) {
-        window.location.replace('/groups');
+        setIsStudent(true);
       } else {
+        setIsStudent(false);
         await getClassroom();
-        setLoadingAuth(false);
       }
+      setLoadingAuth(false);
     }
     authenticate();
   }, []);
@@ -136,6 +138,7 @@ export default function teacherSettings() {
       return false;
     }
   };
+
 
   const actions = [
     'Are you sure you want to delete the class all data will be lost',
@@ -251,6 +254,7 @@ export default function teacherSettings() {
       console.log(err);
     }
   };
+  console.log(isStudent);
 
   const handleConfirmClick = async () => {
     if (index === 0) {
@@ -337,6 +341,10 @@ export default function teacherSettings() {
 
   if(loadingAuth) {
     return <></>
+  }
+
+  if(isStudent) {
+    return <StudentSettings />
   }
 
   return (

@@ -57,11 +57,6 @@ export default function Createchall() {
         return false;
       }
     }
-    const nameExists = await getChallenge(newChallengeName);
-    if (nameExists) {
-      setErrMessage('Challenge name already exists, please change the name');
-      return false;
-    }
     return true;
   };
 
@@ -125,7 +120,7 @@ export default function Createchall() {
         difficulty,
         category,
         commands: nConfig,
-        fileIds: fileId,
+        fileId: fileId,
       };
 
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/create`;

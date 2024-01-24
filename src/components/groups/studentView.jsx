@@ -5,11 +5,10 @@ import { useEffect, useState } from 'react';
 import Announcements from '@/components/groups/announcements';
 import { Tooltip } from 'react-tooltip';
 import Link from 'next/link';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
-import router from 'next/router';
+import StudentNav from '@/components/groups/studentNav';
 
 const defaultImages = [
   'https://robohash.org/pranavramesh',
@@ -77,62 +76,6 @@ export default function StudentView({ group }) {
     getClassroom();
   }, []);
 
-  const leaveClass = async () => {
-    try {
-      const classroomId = classroom.id;
-      const url = `${baseUrl}/classroom/leave`;
-      const body = { classroomId, isTeacher: false };
-      const data = await request(url, 'POST', body);
-      if (data && data.success) {
-        router.push('/groups');
-      } else {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const cancelFreeTrial = async () => {
-    try {
-      const classroomId = classroom.id;
-      const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
-      const body = { classroomId, operation: "joinClass" };
-      const data = await request(url, 'POST', body);
-      if (data && data.success) {
-        toast.success("Free trial cancelled");
-      } else {
-        console.log(data.message);
-        toast.error("Unable to cancel free trial");
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Unable to cancel free trial");
-    }
-  };
-
-  const payForFreeTrialNow = async () => {
-    try {
-      const url = `${baseUrl}/payments/stripe/pay-payment-intent`;
-      const body = { classroomId: classroom.id, operation: "joinClass" }
-      const data = await request(url, 'PUT', body);
-      if (data && data.success) {
-        toast.success("Free trial successfully activated");
-        document.getElementById("trialMsg").classList.add("hidden");
-      } else {
-        console.log(data.message);
-        toast.error("Unable to activate free trial");
-      }
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const viewGrades = () => {
-    router.push('/groups/' + classroom.classCode + '/student-gradebook');
-  };
-
   return (
     <>
       <Head>
@@ -143,7 +86,7 @@ export default function StudentView({ group }) {
         </style>
       </Head>
       <StandardNav />
-
+      <StudentNav classCode={classroom.classCode} />
       <div className=" mx-auto grid min-h-screen max-w-6xl  ">
 
         <div className="mt-10 ">
@@ -151,10 +94,7 @@ export default function StudentView({ group }) {
             <h1 className="text-3xl font-semibold text-white">
               {classroom.name}
             </h1>
-            <button style={{ color: "white" }} onClick={payForFreeTrialNow}>Pay for trial Now</button>
-            <button style={{ color: "white" }} onClick={viewGrades}>View Grades</button>
           </div>
-
 
           <hr className="mt-2 border-neutral-800 text-neutral-800 "></hr>
           <div className="mt-4 grid grid-cols-6 gap-x-8">

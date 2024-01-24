@@ -3,7 +3,9 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import LoadingBar from 'react-top-loading-bar';
-import router from 'next/router';
+import {useRouter} from 'next/router';
+import request from '@/utils/request';
+import StudentNav from '@/components/groups/studentNav';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,32 +14,22 @@ const StudentGradebook = () => {
   const [name, setName] = useState("");
   const [finalGrade, setFinalGrade] = useState(0);
   const classCode = window.location.href.split("/")[4];
+  const router = useRouter();
 
   const fetchFinalGrade = async () => {
-    try {
-      const classCode = window.location.href.split("/")[4];
-      const response = await fetch(`${baseUrl}/submission/student-finalgrade/${classCode}`, {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-      if(data.success) {
-        const info = data.body;
-        setName(info["name"] || localStorage.getItem("username"));
-        setFinalGrade(info["finalGrade"] || 0);
-        const asigns = Object.entries(info)
-        .filter(([key]) => key !== "name" && key !== "finalGrade")
-        .map(([key, value]) => ({ [key]: value }));
-        setAssignments(asigns);
-      } else console.log("Unable to get final grade data");
-      console.log(data);
-    } catch(err) {
-      console.log(err);
-    }
+    const classCode = window.location.href.split("/")[4];
+    const url = `${baseUrl}/submission/student-finalgrade/${classCode}`;
+    const data = await request(url, "GET", null);
+    if(data && data.success) {
+      const info = data.body;
+      setName(info["name"] || localStorage.getItem("username"));
+      setFinalGrade(info["finalGrade"] || 0);
+      const asigns = Object.entries(info)
+      .filter(([key]) => key !== "name" && key !== "finalGrade")
+      .map(([key, value]) => ({ [key]: value }));
+      setAssignments(asigns);
+    } else console.log("Unable to get final grade data");
+    console.log(data);
   }
 
   console.log(assignments);
@@ -56,15 +48,7 @@ const StudentGradebook = () => {
         </style>
       </Head>
       <StandardNav />
-      <div className="bg-neutral-800">
-        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-10 justify-between">
-            <div className="flex items-center">
-
-            </div>
-          </div>
-        </div>
-      </div>
+      <StudentNav classCode={classCode}/>
       <div className="mx-auto mt-10 max-w-6xl">
         <div className="flex">
           <h1 className="text-3xl font-semibold text-white">Student Gradebook</h1>

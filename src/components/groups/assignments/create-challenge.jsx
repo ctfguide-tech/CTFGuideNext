@@ -68,21 +68,6 @@ export default function Createchall(props) {
       }
     }
     setPenaltyErr('');
-    const nameExists = await getChallenge(newChallengeName);
-    if (nameExists) {
-      setErrMessage('Challenge name already exists, please change the name');
-      toast.warn('Challenge name already exists', {
-        position: 'bottom-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
-      return false;
-    }
     return true;
   };
 

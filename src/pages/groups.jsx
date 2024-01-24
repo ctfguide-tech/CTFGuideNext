@@ -37,14 +37,23 @@ export default function Groups() {
 
       }
   ]
-  
-
 
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [color, setColor] = useState('');
   const [teacherClassrooms, setTeacherClassrooms] = useState([]);
   const [studentClassrooms, setStudentClassrooms] = useState([]);
+  const [showTour, setShowTour] = useState(true);
+
+  useEffect(() => {
+    const d = localStorage.getItem('showTour');
+    if(!d) {
+      setShowTour(true);
+      localStorage.setItem('showTour', "true");
+    } else {
+      setShowTour(false);
+    }
+  },[]);
 
   useEffect(() => {
     const getAllClassrooms = async () => {
@@ -129,6 +138,8 @@ export default function Groups() {
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
+      {
+        showTour  && 
       <JoyRideNoSSR steps={steps} continuous={true}  disableBeacon={true} showProgress={true} showSkipButton={true} 
 
       styles={{
@@ -146,6 +157,7 @@ export default function Groups() {
       }}
   
       />
+      }
       <StandardNav />
       <div className=" min-h-screen">
         <div className="mx-auto mt-64 hidden max-w-6xl ">

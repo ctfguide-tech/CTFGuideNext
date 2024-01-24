@@ -13,7 +13,6 @@ const Gradebook = () => {
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
 
-  const classCode = window.location.href.split("/")[4];
 
   const [classroom, setClassroom] = useState({});
   const [progress, setProgress] = useState(0);
@@ -39,7 +38,7 @@ const Gradebook = () => {
   };
 
   const getAssignments = async () => {
-    const url = `${baseUrl}/classroom/classroom-by-classcode/${classCode}`
+    const url = `${baseUrl}/classroom/classroom-by-classcode/${group}`
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       setAssignments(data.body.assignments);
@@ -59,11 +58,13 @@ const Gradebook = () => {
         setLoadingAuth(false);
       }
     }
-    authenticate();
-  }, []);
+    if(group) {
+      authenticate();
+    }
+  }, [group]);
 
   const checkPermissions = async () => {
-    const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
+    const url = `${baseUrl}/classroom/check-if-teacher/${group}`;
     const res = await request(url, 'GET', null);
     if(!res) return false;
     return res.success;
@@ -120,7 +121,7 @@ const Gradebook = () => {
           <div className="ml-auto">
             <button
               onClick={() =>
-                (window.location.href = `/groups/${classCode}/home`)
+                router.push(`/groups/${group}/home`)
               }
               className=" rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
               style={{

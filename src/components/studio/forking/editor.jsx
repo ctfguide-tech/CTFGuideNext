@@ -6,10 +6,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
 
+import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
 const Editor = (props) => {
+  const router = useRouter();
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
   const [hints, setHints] = useState([
@@ -20,7 +22,7 @@ const Editor = (props) => {
   const [solution, setSolution] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [category, setCategory] = useState([]);
-  const [newChallengeName, setNewChallengeName] = useState(props.id);
+  const [newChallengeName, setNewChallengeName] = useState(props.title);
   const [errMessage, setErrMessage] = useState('');
   const [penaltyErr, setPenaltyErr] = useState('');
   const [username, setUsername] = useState('anonymous');
@@ -41,8 +43,6 @@ const Editor = (props) => {
     return true;
   };
 
-  // This will need to change a little because we may need to send the accociated fileId
-  // to this aswell for asking for a new one
   const sendToFileApi = async () => {
     const isValid = await validateNewChallege();
     if (isValid) {
@@ -125,7 +125,7 @@ const Editor = (props) => {
     const data = await request(url, 'POST', body);
 
     if (data && data.success) {
-      window.location.reload();
+      window.location.href = `/classroom/${classCode}/home`;
     }
   };
 
@@ -195,7 +195,7 @@ const Editor = (props) => {
 
         <div className="mt-4">
           <i className="fas fa-code-branch"></i> You are forking{' '}
-          <span className="mt-4 font-semibold text-blue-500">{props.id}</span>
+          <span className="mt-4 font-semibold text-blue-500">{props.title}</span>
         </div>
 
         <div id="error" className="mt-4 hidden rounded-md bg-red-500 px-4 py-1">
@@ -340,12 +340,12 @@ const Editor = (props) => {
                     className="my-auto my-auto mr-2 h-6   w-6  rounded-full bg-neutral-900"
                     src={
                       `https://robohash.org/` +
-                      username +
+                      props.creator +
                       `.png?set=set1&size=150x150`
                     }
                     alt=""
                   />
-                  <p className="my-auto text-sm">{username}</p>
+                  <p className="my-auto text-sm">{props.creator}</p>
                 </div>
               </div>
             </div>
