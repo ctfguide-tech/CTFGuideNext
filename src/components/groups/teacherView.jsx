@@ -105,7 +105,7 @@ export default function TeacherView({ group }) {
   return (
     <>
       <Head>
-        <title>Coming Soon - CTFGuide</title>
+        <title>Classroom - CTFGuide</title>
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');

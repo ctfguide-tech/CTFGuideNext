@@ -254,12 +254,6 @@ export function StandardNav() {
                   </div>
                 </div>
                 <div className="flex items-center">
-
-
-
-
-    q
-
                   <div
                     className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1"
                     style={{ backgroundColor: '#212121', borderWidth: '0px' }}

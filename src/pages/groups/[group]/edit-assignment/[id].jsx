@@ -104,7 +104,7 @@ export default function EditingAssignment() {
   return (
     <>
       <Head>
-        <title>Coming Soon - CTFGuide</title>
+        <title>Edit Assignment - CTFGuide</title>
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -201,7 +201,7 @@ export default function EditingAssignment() {
                       htmlFor="classroom-status"
                       className="block text-sm font-medium leading-6 text-white"
                     >
-                      Assignment status
+                      Assignment Status
                     </label>
                     <select
                       value={isOpen}

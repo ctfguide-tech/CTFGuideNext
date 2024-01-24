@@ -17,6 +17,7 @@ import request from '../utils/request';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import router from 'next/router';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -146,7 +147,7 @@ export default function Groups() {
   
       />
       <StandardNav />
-      <div className=" min-h-screen   ">
+      <div className=" min-h-screen">
         <div className="mx-auto mt-64 hidden max-w-6xl ">
           <div className="grid grid-cols-2 gap-x-24 ">
             <div>
@@ -230,7 +231,7 @@ export default function Groups() {
                   className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50"
                   onClick={() => {
                     classroom.isPayedFor
-                      ? (window.location.href = `/groups/${classroom.classCode}/home`)
+                      ? router.push(`/groups/${classroom.classCode}/home`)
                       : '';
                   }}
                 >
