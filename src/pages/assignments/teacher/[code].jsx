@@ -382,7 +382,7 @@ export default function id() {
                 )}</div>  
                 </div>
 
-      <div className=" min-h-screen">
+      <div className=" min-h-screen max-w-7xl mx-auto">
         <div className="mx-auto">
           <a
             href="/groups/122ctfguide"
@@ -391,34 +391,81 @@ export default function id() {
             <i className="fas fa-long-arrow-alt-left"></i> Return Home
           </a>
 
-          <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-10 py-4 ">
+          <div className="w-full  px-10 py-4 ">
             <div className="mx-auto ">
-              <h1 className="text-3xl font-semibold text-white">
-                {assignment && assignment.name}{' '}
-              </h1>
-
-              <h1 className="flex text-white">
+            <div className="flex items-center justify-center text-white">
+              <div>
+                <h1 className="text-3xl font-semibold text-white">
+                  {assignment && assignment.name}{' '}
+                </h1>
                 Due Date: {assignment && parseDate(assignment.dueDate)}{' '}
-                <div className="ml-auto cursor-pointer">
-                  <a onClick={ () => router.push(`/assignments/student/${assignment.id}?former=teacher`)} className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 font-semibold text-blue-600 ">
-                    View as Student
-                  </a>
-                  
-                </div>
-              </h1>
+              </div>
+              <div className="ml-auto cursor-pointer">
+                <a
+                  onClick={() =>
+                    router.push(`/assignments/student/${assignment.id}?former=teacher`)
+                  }
+                  className="cursor-pointer rounded-lg bg-white hover:bg-slate-100 px-4 py-1 font-semibold text-neutral-600"
+                >
+                 <i className="far fa-eye"></i> View as Student
+                </a>
+
+                <a
+                  onClick={() =>
+                    router.push(`/assignments/student/${assignment.id}?former=teacher`)
+                  }
+                  className="ml-2 cursor-pointer rounded-lg border border-white  hover:bg-neutral-800 px-4  py-1 font-semibold text-white"
+                >
+               <i className="far fa-edit"></i>   Edit Assignment
+                </a>
+              </div>
+            </div>
             </div>
           </div>
 
-          <div className="mx-auto mt-4  px-10">
-            <h1 className="text-xl font-semibold text-white">
-              Assignment Description
-            </h1>
-            <MarkdownViewer
-              className="text-white"
-              content={assignment && assignment.description}
-            />
+          <div className="mx-auto mt-4  px-10 ">
 
-            <div className="grid h-full grid-cols-6 gap-x-8">
+          <p className=" font-semibold text-white">
+                  STUDENT SUBMISSIONS
+                </p>
+                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
+                <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
+                  {submissions.length === 0 && (
+                    <div style={{ color: 'white' }}>
+                      No students have completed this assignment yet.
+                    </div>
+                  )}
+                  {submissions.map((submission, idx) => (
+                    <div
+                      key={idx}
+                      className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white hover:bg-neutral-800/40"
+                      onClick={() => routeToSubmission(submission.subId)}
+                    >
+                      <h1 className="flex">
+                        {submission.name}{' '}
+                        {submission.submitted ? (
+                          <div className="ml-auto">
+                            <i
+                              title="Completed!"
+                              className="fas fa-check  text-green-500"
+                            ></i>
+                          </div>
+                        ) : (
+                          <div className="ml-auto">
+                            <i
+                              title="Incomplete!"
+                              className=" fas fa-clock  text-red-400 "
+                            ></i>
+                          </div>
+                        )}
+                      </h1>
+                    </div>
+                  ))}
+                </div>
+
+       
+
+            <div className="grid h-full grid-cols-6 gap-x-8 mt-10">
               <div className="col-span-2">
                 <p className="mt-2 font-semibold text-white">FLAG SUBMISSION</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
@@ -530,15 +577,14 @@ export default function id() {
     </span>
 
     {minutesRemaining !== -1 && (
-      <div className="float-right ml-auto flex cursor-pointer">
+      <div className="float-right ml-auto flex cursor-pointer ">
         <span style={{ cursor: 'pointer' }} className="text-gray-300 hover:bg-black">
           Container will stop in: &nbsp;
           <span className={`font-semibold ${getColorForTime(minutesRemaining)}`}>
             {minutesRemaining} minutes
           </span>
         </span>
-            &nbsp;&nbsp;• 
-        <span className='ml-2 '><i className="fas fa-broadcast-tower text-red-500 fab-beat"></i> Streaming is active.</span>
+        
       </div>
     )}
 
@@ -589,52 +635,20 @@ export default function id() {
                     <p>Loading...</p>
                   )}
                 </div>
-       
-                <p className="mt-10 font-semibold text-white">
-                  STUDENT SUBMISSIONS
-                </p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
-                  {submissions.length === 0 && (
-                    <div style={{ color: 'white' }}>
-                      No students have completed this assignment yet.
-                    </div>
-                  )}
-                  {submissions.map((submission, idx) => (
-                    <div
-                      key={idx}
-                      className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white hover:bg-neutral-800/40"
-                      onClick={() => routeToSubmission(submission.subId)}
-                    >
-                      <h1 className="flex">
-                        {submission.name}{' '}
-                        {submission.submitted ? (
-                          <div className="ml-auto">
-                            <i
-                              title="Completed!"
-                              className="fas fa-check  text-green-500"
-                            ></i>
-                          </div>
-                        ) : (
-                          <div className="ml-auto">
-                            <i
-                              title="Incomplete!"
-                              className=" fas fa-clock  text-red-400 "
-                            ></i>
-                          </div>
-                        )}
-                      </h1>
-                    </div>
-                  ))}
-                </div>
+
+
+                <div>
+                <p className="mt-6 font-semibold text-white">ASSIGNMENT DESCRIPTION</p>
+                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
+            <MarkdownViewer
+              className="text-white"
+              content={assignment && assignment.description}
+            />
+            
+            </div>
+            
               </div>
-              <button
-                onClick={submitAssignment}
-                className="hidden mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                disabled={loading}
-              >
-                {submitted ? 'Resubmit' : 'Submit'}
-              </button>
+
             </div>
           </div>
         </div>

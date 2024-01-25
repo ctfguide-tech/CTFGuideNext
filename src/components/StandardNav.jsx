@@ -39,7 +39,7 @@ const DEFAULT_NOTIFICATION = {
 
 export function StandardNav() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [points, setPoints] = useState('');
+  const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
 
@@ -160,7 +160,7 @@ export function StandardNav() {
       <Disclosure as="nav" className=" shadow">
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto sm:max-w-7xl md:max-w-7xl lg:max-w px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 justify-between">
                 <div className="flex">
                   <div className="-ml-2 mr-2 flex items-center md:hidden">
