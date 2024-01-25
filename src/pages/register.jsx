@@ -17,7 +17,7 @@ export default function Register() {
       .then((result) => {
         // Fetch ID Token
         result.user.getIdToken().then((idToken) => {
-
+          //console.log("We are making a register");
           // Send token to backend via HTTPS
           var data = new FormData();
           var xhr = new XMLHttpRequest();
@@ -27,6 +27,7 @@ export default function Register() {
               try {
                 var parsed = JSON.parse(this.responseText);
 
+                document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
                 if (!parsed.email) {
                   // User hasn't finished onboarding.
                   window.location.replace('/onboarding');
@@ -85,13 +86,13 @@ export default function Register() {
           // Signed in
           const user = userCredential.user;
           userCredential.user.getIdToken().then((idToken) => {
+
+            document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
             var xhr = new XMLHttpRequest();
             xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
             xhr.addEventListener('readystatechange', function () {
               if (this.readyState === 4) {
                 var parsed = JSON.parse(this.responseText);
-
-                // Store Token in local storage.
                 document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
                 window.location.replace('/onboarding');
               }

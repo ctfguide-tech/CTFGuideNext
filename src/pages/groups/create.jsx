@@ -71,7 +71,7 @@ export default function CreateGroup() {
         credentials: 'include',
         body: JSON.stringify(
           selectedOption === 'student'
-            ? { userId, ...dataObj }
+            ? { ...dataObj }
             : {
                 subType: selectedOption,
                 quantity: seats,

@@ -133,8 +133,9 @@ export default function Createchall(props) {
         fileId: fileId,
       };
 
+      const classCode = window.location.pathname.split('/')[2];
       const assignmentInfo = props.assignmentInfo;
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-new-assignment`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-new-assignment/${classCode}`;
       const requestOptions = {
         method: 'POST',
         headers: {

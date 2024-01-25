@@ -375,14 +375,8 @@ export default function id() {
       </Head>
       <StandardNav />
 
-<<<<<<< HEAD
-
-   
-      <div className='w-full mx-auto bg-neutral-800 px-4'>
-=======
       {assignment && (
       <div className='w-full mx-auto bg-neutral-800 px-4  animate__animated animate__fadeIn'>
->>>>>>> f95a7fa7e558b59b52dd57495d56253ce019ea15
         <div className='max-w-7xl mx-auto p-1'>
        
                   <ClassroomNav classCode={assignment.classroom.classCode} />
