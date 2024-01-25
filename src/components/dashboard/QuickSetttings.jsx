@@ -179,13 +179,12 @@ export function QuickSettings() {
         >
           <h1 className="mt-2 text-xl font-semibold text-white">
             {' '}
-            CTFGuide V3 is out now!
+            Bruh, why is the website acting weird?
           </h1>
 
           <p> 
             {' '}
-            After months of development, we are excited to release the new
-            version of CTFGuide. There's a lot to unpack here!
+            Our team has been focusing on our EDU features. We've disabled certain features because we're currently testing some things on production.
           </p>
           <p
             id="feed1readmore"
@@ -200,44 +199,12 @@ export function QuickSettings() {
 
           <div id="feed1rest" className="mt-4 hidden">
             <p>
-              The first thing that you probably noticed, is the freshened UI.
-              You'll notice that pages are a lot more wider and have a more
-              friendly font.
+              You may also see some out of date content - but don't worry this will all be fixed soon.
+
+              Yell at us here: <a href="https://discord.gg/6Cf9A2ZK68" className="text-blue-500 cursor-pointer hover:underline">Discord server invite</a>
+              
             </p>
 
-            <img
-              src="./blog1.svg"
-              className="mx-auto mt-4 mb-5 rounded-lg bg-neutral-800 py-10 px-10"
-            />
-
-            <p className="mx-auto text-center text-sm text-neutral-300">
-              Old CTFGuide UI (Left) and New CTFGuide UI (Right)
-            </p>
-
-            <p className="mt-8">
-              A common problem we'd have was that we artificially limited the
-              amount of space we could design with. This limit is no longer
-              there, meaning you should feel like the UI is more spread out.
-              <br></br>
-              <br></br>
-              We've also introduced a lot of new features including badges,
-              likes, & learn. These features will aid everyone's unique learning
-              journey and we're super pumped.
-              <br></br> <br></br>
-              <b>Badges</b> - Badges are a way for you to show off your
-              achievements on CTFGuide. You can earn badges by completing
-              certain tasks on the site.
-              <br></br> <br></br>
-              <b>Likes</b> - Likes are a way for you to show appreciation for a
-              creator or a certain area of Cybersecurity.
-              <br></br> <br></br>
-              <b>Learn</b> - We're super excited about this feature. We'll be
-              adding a lot of content to this section in the coming weeks.
-              You'll find a lot of interesting content shared from our team
-              members, as well as content from other members in the Cyber
-              community!
-              <br></br> <br></br>
-            </p>
             <p
               id="feed1readless"
               className=" mt-4 cursor-pointer italic text-blue-500 hover:text-blue-500 hover:underline"
