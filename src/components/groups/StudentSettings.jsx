@@ -6,6 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import StudentNav from '@/components/groups/studentNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
+import Loader from '@/components/Loader';
 
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
@@ -91,6 +92,8 @@ export default function StudentSettings() {
       </Head>
       <StandardNav />
       <StudentNav classCode={classCode} />
+
+
       <div id="general" className="">
         <div className="mx-auto flex max-w-6xl">
           <div className="flex-1 xl:overflow-y-auto">

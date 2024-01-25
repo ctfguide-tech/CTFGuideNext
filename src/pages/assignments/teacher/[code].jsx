@@ -45,6 +45,8 @@ export default function id() {
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
 
+  const router = useRouter();
+
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1;
@@ -361,7 +363,6 @@ export default function id() {
 
   // console.log(submissions);
 
-  const router = useRouter();
 
   return (
     <>
@@ -373,6 +374,7 @@ export default function id() {
         </style>
       </Head>
       <StandardNav />
+
 
    
       <div className='w-full mx-auto bg-neutral-800 px-4'>

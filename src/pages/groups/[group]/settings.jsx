@@ -4,9 +4,12 @@ import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
+
 import ClassroomNav from '@/components/groups/classroomNav';
 import StudentSettings from "@/components/groups/StudentSettings";
+
 import { useRouter } from 'next/router';
+import Loader from '@/components/Loader';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -339,10 +342,6 @@ export default function teacherSettings() {
     });
   }
 
-  if(loadingAuth) {
-    return <></>
-  }
-
   if(isStudent) {
     return <StudentSettings />
   }
@@ -357,6 +356,7 @@ export default function teacherSettings() {
         </style>
       </Head>
       <StandardNav />
+
       <div className="bg-neutral-800">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
@@ -376,6 +376,10 @@ export default function teacherSettings() {
           </div>
         </div>
       </div>
+
+      <Loader isLoad={loadingAuth} />
+      {
+        !loadingAuth&&
       <div id="general" className="">
         <div className="mx-auto flex max-w-6xl">
           <div className="flex-1 xl:overflow-y-auto">
@@ -780,8 +784,9 @@ export default function teacherSettings() {
             </div>
           </div>
         </div>
+      <Footer />
       </div>
-
+      }
       <input type="hidden" id="copyBox" value={classCode || ''}></input>
       <input type="hidden" id="copyBox2" value={inviteLink || ''}></input>
 
@@ -798,7 +803,6 @@ export default function teacherSettings() {
         theme="dark"
       />
 
-      <Footer />
     </>
   );
 }

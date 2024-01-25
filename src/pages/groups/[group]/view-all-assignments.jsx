@@ -8,12 +8,15 @@ import StudentNav from '@/components/groups/studentNav';
 import { useRouter } from 'next/router';
 import ClassroomNav from '@/components/groups/classroomNav';
 import request from '@/utils/request';
+import Loader from '@/components/Loader';
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const ViewAllAssignments = () => {
   const [assignments, setAssignments] = useState({});
   const [isTeacher, setIsTeacher] = useState(false);
   const [grades, setGrades] = useState({});
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   const router = useRouter();
   const { group } = router.query;
@@ -33,6 +36,7 @@ const ViewAllAssignments = () => {
     const data = await request(url, 'GET', null);
     if (data && data.success) setGrades(data.body);
     else console.log('Error when getting grades');
+    setLoadingAuth(false);
   }
 
   const parseDate = (dateString) => {
@@ -60,6 +64,7 @@ const ViewAllAssignments = () => {
 
   useEffect(() => {
     if(group) {
+      setLoadingAuth(true);
       auth(group);
       getAssignments(group);
       getGrades(group)
@@ -99,7 +104,11 @@ const ViewAllAssignments = () => {
         </div>
       </div>
       }
+      <Loader isLoad={loadingAuth} />
 
+      {
+        !loadingAuth && 
+        <>
       <div className="mx-auto mt-6   max-w-6xl  justify-center ">
         <h1 className="mx-auto text-2xl font-semibold text-white">
           Assignments
@@ -116,6 +125,7 @@ const ViewAllAssignments = () => {
               <div
                 key={assignment.id}
                 className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white"
+                      onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
               >
                 {/* Make assignment box look pretty */}
                 <h2 className="text-md text-white"
@@ -169,10 +179,6 @@ const ViewAllAssignments = () => {
                   Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
                   {assignment.totalPoints} pts
                 </p>
-                {
-                  isTeacher && 
-                <button onClick={() => router.push(`/groups/${group}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
-                }
               </div>
             ))
         ) : (
@@ -262,6 +268,8 @@ const ViewAllAssignments = () => {
       </div>
 
       <Footer />
+          </>
+      }
     </>
   );
 };

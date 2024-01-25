@@ -7,12 +7,12 @@ import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import request from '@/utils/request';
+import Loader from '@/components/Loader';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const Gradebook = () => {
   const [students, setStudents] = useState([]);
   const [assignments, setAssignments] = useState([]);
-
 
   const [classroom, setClassroom] = useState({});
   const [progress, setProgress] = useState(0);
@@ -74,10 +74,6 @@ const Gradebook = () => {
     getAssignments();
   };
 
-  if(loadingAuth) {
-    return <></>
-  }
-
   if(viewCreateAssignment) {
    return <CreateAssignment />
   }
@@ -115,6 +111,11 @@ const Gradebook = () => {
           </div>
         </div>
       </div>
+
+      <Loader isLoad={loadingAuth} />
+      {
+        !loadingAuth &&
+          <>
       <div className="mx-auto mt-10 max-w-6xl">
         <div className="flex">
           <h1 className="text-3xl font-semibold text-white">Gradebook</h1>
@@ -193,8 +194,9 @@ const Gradebook = () => {
           </table>
         </div>
       </div>
-
       <Footer />
+          </>
+      }
     </>
   );
 };
