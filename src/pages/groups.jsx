@@ -18,7 +18,8 @@ import request from '../utils/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import router from 'next/router';
-
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -44,6 +45,7 @@ export default function Groups() {
   const [teacherClassrooms, setTeacherClassrooms] = useState([]);
   const [studentClassrooms, setStudentClassrooms] = useState([]);
   const [showTour, setShowTour] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const d = localStorage.getItem('showTour');
@@ -62,6 +64,7 @@ export default function Groups() {
       if (data && data.success) {
         setTeacherClassrooms(data.teacher);
         setStudentClassrooms(data.student);
+        setIsLoading(false);
       } else {
         console.log(data);
       }
@@ -230,17 +233,22 @@ export default function Groups() {
 
     
           </div>
-          <h1 className="mt-10 text-2xl text-white">
-            {teacherClassrooms.length === 0
-              ? 'You do not own any classrooms yet... '
-              : 'Classes you own'}
+          <h1 className="mt-10 text-2xl text-white animate__fadeIn animate__animated">
+            {isLoading ? null : teacherClassrooms.length === 0 ? 'You do not own any classrooms yet... ' : 'Classes you own'}
           </h1>
           <div className="mt-4 grid grid-cols-3 gap-x-4 gap-y-4">
-            {teacherClassrooms.map((classroom, idx) => {
+
+          {isLoading ? (
+            <div className='mx-auto text-center col-span-3'>
+            <i className='fas fa-spinner fa-spin text-white text-4xl'></i>
+  </div>
+
+) : (
+            teacherClassrooms.map((classroom, idx) => {
               return (
                 <div
                   key={idx}
-                  className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50"
+                  className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50 animate__fadeIn animate__animated"
                   onClick={() => {
                     classroom.isPayedFor
                       ? router.push(`/groups/${classroom.classCode}/home`)
@@ -297,32 +305,43 @@ export default function Groups() {
                   )}
                 </div>
               );
-            })}
+            }) 
+
+)}
           </div>
           <h1 className="mt-10 text-2xl text-white">
-            {studentClassrooms.length === 0
-              ? "You haven't joined any classes yet..."
-              : 'Joined Classes'}
+            {isLoading ? null : (
+              studentClassrooms.length === 0
+                ? "You haven't joined any classes yet..."
+                : 'Joined Classes'
+            )}
           </h1>
           <div className="mt-4 grid grid-cols-3 gap-x-4">
-            {studentClassrooms.map((classroom, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50"
-                  onClick={() => {
-                    window.location.href = `/groups/${classroom.classCode}/home`;
-                  }}
-                >
-                  <h1 className="text-3xl font-semibold text-neutral-300">
-                    {classroom.name}
-                  </h1>
-                  <p className="text-neutral-400">
-                    <i className="fas fa-users"></i> {classroom.numberOfSeats}
-                  </p>
-                </div>
-              );
-            })}
+
+     {isLoading ? (
+      <p></p>
+) : (
+
+  studentClassrooms.map((classroom, idx) => {
+    return (
+      <div
+        key={idx}
+        className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50 animate__fadeIn animate__animated"
+        onClick={() => {
+          window.location.href = `/groups/${classroom.classCode}/home`;
+        }}
+      >
+        <h1 className="text-3xl font-semibold text-neutral-300">
+          {classroom.name}
+        </h1>
+        <p className="text-neutral-400">
+          <i className="fas fa-users"></i> {classroom.numberOfSeats}
+        </p>
+      </div>
+    );
+  })
+)}
+
           </div>
           <Transition.Root show={open} as={Fragment}>
             <Dialog

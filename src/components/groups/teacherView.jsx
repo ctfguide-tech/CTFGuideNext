@@ -10,7 +10,8 @@ import Announcements from '@/components/groups/announcements';
 import ClassroomNav from '@/components/groups/classroomNav';
 import LoadingBar from 'react-top-loading-bar';
 import request from '@/utils/request';
-
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = `localhost:3000`;
 
@@ -119,7 +120,7 @@ export default function TeacherView({ group }) {
         onLoaderFinished={() => setProgress(0)}
       />
       {/* second nav bar */}
-      <div className="bg-neutral-800">
+      <div className="bg-neutral-800 animate__fadeIn animate__animated">
         <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 justify-between">
             {classroom && <ClassroomNav classCode={classroom.classCode} />}
@@ -146,16 +147,18 @@ export default function TeacherView({ group }) {
           </div>
         </div>
       </div>
-      <div className=" mx-auto grid min-h-screen max-w-6xl  ">
+      <div className=" mx-auto grid min-h-screen max-w-6xl animate__fadeIn animate__animated ">
         <div className="mt-10 ">
           <div className="flex">
             <h1 className="text-3xl font-semibold text-white">
-              {classroom.name}
+              {classroom.name || (
+                 <Skeleton baseColor="#262626" highlightColor="#262626" />              
+              )} 
             </h1>
           </div>
 
-          <hr className="mt-2 border-neutral-800 text-neutral-800 "></hr>
-          <div className="mt-4 grid grid-cols-6 gap-x-8">
+          <hr className="mt-2 border-neutral-800 text-neutral-800 animate__fadeIn animate__animated"></hr>
+          <div className="mt-4 grid grid-cols-6 gap-x-8 animate__fadeIn animate__animated" >
             <div className="col-span-4 rounded-lg    py-3 ">
               <h1 className="text-xl font-semibold text-white">
                 {' '}

@@ -375,16 +375,24 @@ export default function id() {
       </Head>
       <StandardNav />
 
+<<<<<<< HEAD
 
    
       <div className='w-full mx-auto bg-neutral-800 px-4'>
+=======
+      {assignment && (
+      <div className='w-full mx-auto bg-neutral-800 px-4  animate__animated animate__fadeIn'>
+>>>>>>> f95a7fa7e558b59b52dd57495d56253ce019ea15
         <div className='max-w-7xl mx-auto p-1'>
-        {assignment && (
+       
                   <ClassroomNav classCode={assignment.classroom.classCode} />
-                )}</div>  
+             
+                
+                </div>  
                 </div>
-
-      <div className=" min-h-screen max-w-7xl mx-auto">
+   )}
+                
+      <div className=" min-h-screen max-w-7xl mx-auto animate__animated animate__fadeIn ">
         <div className="mx-auto">
           <a
             href="/groups/122ctfguide"
@@ -640,7 +648,7 @@ export default function id() {
 
 
                 <div>
-                <p className="mt-6 font-semibold text-white">ASSIGNMENT DESCRIPTION</p>
+                <p className="mt-12 font-semibold text-white">ASSIGNMENT DESCRIPTION</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
             <MarkdownViewer
               className="text-white"
