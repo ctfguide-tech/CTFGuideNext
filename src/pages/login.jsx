@@ -42,7 +42,7 @@ export default function Login() {
           // Send token to backend via HTTPS
           var data = new FormData();
           var xhr = new XMLHttpRequest();
-
+          document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
           xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
           xhr.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
@@ -52,7 +52,6 @@ export default function Login() {
               localStorage.setItem('username', parsed.username);
 
               if (!parsed.email) {
-                // User hasn't finished onboarding.
                 window.location.replace('/onboarding');
                 return;
               }
@@ -63,12 +62,12 @@ export default function Login() {
                 'userChallengesUrl',
                 parsed.userChallengesUrl
               );
+
               localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
               localStorage.setItem('notificationsUrl', parsed.notificationsUrl);
               localStorage.setItem('role', parsed.role);
 
               localStorage.setItem('username', parsed.username);
-              document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
 
               router.push('/dashboard');
             }
@@ -94,6 +93,7 @@ export default function Login() {
         result.user.getIdToken().then((idToken) => {
           // Send token to backend via HTTPS
 
+          document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
           var data = new FormData();
           var xhr = new XMLHttpRequest();
 
@@ -105,7 +105,7 @@ export default function Login() {
 
                 if (!parsed.email) {
                   // User hasn't finished onboarding.
-                  //window.location.replace('/onboarding');
+                  window.location.replace('/onboarding');
                   return;
                 }
 
@@ -125,7 +125,6 @@ export default function Login() {
                 localStorage.setItem('username', parsed.username);
 
                 // addthing the token to cookies
-                document.cookie = `idToken=${idToken}; path=/; SameSite=None; Secure`;
 
                 router.push('/dashboard');
 
