@@ -41,6 +41,7 @@ export function StandardNav() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [points, setPoints] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [showBanner, setShowBanner] = useState(false);
 
   const router = useRouter();
 
@@ -59,6 +60,11 @@ export function StandardNav() {
   // if env is NEXT_PUBLIC_APP_AUTH_DOMAIN=ctfguide-dev.firebaseapp.com the logo should say CTFGuide Developer not CTFGuide Beta
 
   useEffect(() => {
+    if (!localStorage.getItem('dismissStatus')) {
+      setShowBanner(true);
+    }
+
+
     if (
       process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN === 'ctfguide-dev.firebaseapp.com'
     ) {
@@ -126,6 +132,10 @@ export function StandardNav() {
   }, []);
 
 
+  function dismissStatus() {
+    localStorage.setItem('dismissStatus', true);
+    setShowBanner(false);
+  }
   const fetchNotifications = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/notification`;
@@ -442,6 +452,12 @@ export function StandardNav() {
       {isAdmin && (
         <div className="bg-neutral-800 py-1 text-center text-sm text-white ">
           <h1>CTFGuide is running in development mode. </h1>
+        </div>
+      )}
+
+      {!['/groups', '/assignments', '/submissions'].some(path => router.pathname.includes(path) || !showBanner) && (
+        <div className="bg-neutral-800 py-1 text-center text-sm text-white  mx-auto ">
+          <h1 className='max-w-6xl mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
         </div>
       )}
     </>

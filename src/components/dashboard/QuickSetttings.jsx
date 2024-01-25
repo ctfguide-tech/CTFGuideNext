@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { RocketLaunchIcon } from '@heroicons/react/20/solid';
-import { MagnifyingGlassCircleIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
 export function QuickSettings() {
-  const [banner, bannerState] = useState(false);
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false); // AI banner
 
-  const router = useRouter();
+
 
   useEffect(() => {
+
+    // Markeitng CTFGuide AI
+    if (!localStorage.getItem('marketing_ctfguideai')) {
+      setOpen(true);
+      localStorage.setItem('marketing_ctfguideai', true);
+    }
+
+
     try {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
         method: 'GET',
