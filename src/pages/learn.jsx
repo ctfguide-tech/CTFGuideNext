@@ -160,7 +160,7 @@ export default function Dashboard() {
                 'Logging into a Server',
               ]}
               imgSrc={
-                'https://camo.githubusercontent.com/81045db2ee0ac7dc57a361737aec02c91af299e8122a4b92748b2acb0b0a89d0/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f6469616d6f6e64732e706e67'
+                'https://camo.githubusercontent.com/a965a210af93849289fa20576cdfccaf10c928842acb1ff888ee6faec89f423a/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f6f7665726c617070696e675f72696e67732e706e67'
               }
               link={'../learn/ch1/preview'}
               sectionHrefs={[
@@ -180,7 +180,7 @@ export default function Dashboard() {
                 'I spy with my little eyes...',
               ]}
               imgSrc={
-                'https://camo.githubusercontent.com/f38cb60cf74f6e673504cbde590a1481018dd3bcb83d4307b3f20bb2a4a992f7/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f636f6e63656e747269635f636972636c65732e706e67'
+                'https://camo.githubusercontent.com/5a2472dfa2d25f42fc0e5c4af0218a645eae6554885072ed271aec10e991da55/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f636f6e63656e747269635f636972636c65732e706e67'
               }
               link={'../learn/ch2/preview'}
               sectionHrefs={[
@@ -200,7 +200,7 @@ export default function Dashboard() {
                 'Password Dump',
               ]}
               imgSrc={
-                'https://camo.githubusercontent.com/2885763d225b252ff5409416061b0fd287b206fed23a6f96fb7bd5e315782579/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f63686576726f6e732e706e67'
+                'https://camo.githubusercontent.com/cc63a3ff9435f23f64e9d2cb2b9d09238c4634407968aaf1a652b301c4520ae6/687474703a2f2f6a61736f6e6c6f6e672e6769746875622e696f2f67656f5f7061747465726e2f6578616d706c65732f737175617265732e706e67'
               }
               link={'../learn/ch3/preview'}
               sectionHrefs={[
