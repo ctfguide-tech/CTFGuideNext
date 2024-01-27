@@ -125,7 +125,7 @@ const Editor = (props) => {
     const data = await request(url, 'POST', body);
 
     if (data && data.success) {
-      window.location.href = `/classroom/${classCode}/home`;
+      router.push(`/groups/${classCode}/home`);
     }
   };
 

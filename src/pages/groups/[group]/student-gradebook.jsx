@@ -3,21 +3,19 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import LoadingBar from 'react-top-loading-bar';
-import {useRouter} from 'next/router';
 import request from '@/utils/request';
 import StudentNav from '@/components/groups/studentNav';
-
+import { useRouter } from 'next/router';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const StudentGradebook = () => {
   const [assignments, setAssignments] = useState([]);
   const [name, setName] = useState("");
   const [finalGrade, setFinalGrade] = useState(0);
-  const classCode = window.location.href.split("/")[4];
   const router = useRouter();
+  const classCode = router.query.group;
 
   const fetchFinalGrade = async () => {
-    const classCode = window.location.href.split("/")[4];
     const url = `${baseUrl}/submission/student-finalgrade/${classCode}`;
     const data = await request(url, "GET", null);
     if(data && data.success) {
@@ -31,8 +29,6 @@ const StudentGradebook = () => {
     } else console.log("Unable to get final grade data");
     console.log(data);
   }
-
-  console.log(assignments);
 
   useEffect(() => {
     fetchFinalGrade()

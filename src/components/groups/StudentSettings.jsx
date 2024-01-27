@@ -6,28 +6,32 @@ import { Transition, Dialog } from '@headlessui/react';
 import StudentNav from '@/components/groups/studentNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
-import Loader from '@/components/Loader';
 
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
 
-const actions = ["Are you sure you want to leave this class?", "Are you suer you want to cancel your free trial?", "Are you sure you want to pay for free trial now?"];
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const actions = [
+  "Are you sure you want to leave this class?",
+  "Are you suer you want to cancel your free trial?",
+  "Are you sure you want to pay for free trial now?"
+];
 
 export default function StudentSettings() {
 
   const [showOverlay, setShowOverlay] = useState(false);
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const classCode = router.query.group;
-  const { id } = router.query;
 
   const cancelFreeTrial = async () => {
     try {
-      const classroomId = classroom.id;
       const url = `${baseUrl}/payments/stripe/cancel-payment-intent`;
-      const body = { classroomId, operation: "joinClass" };
+      const body = { classCode, operation: "joinClass" };
       const data = await request(url, 'POST', body);
       if (data && data.success) {
         toast.success("Free trial cancelled");
@@ -58,11 +62,11 @@ export default function StudentSettings() {
       console.log(err);
     }
   };
+
   const leaveClass = async () => {
     try {
-      const classroomId = classroom.id;
-      const url = `${baseUrl}/classroom/leave`;
-      const body = { classroomId, isTeacher: false };
+      const url = `${baseUrl}/classroom/leave/${classCode}`;
+      const body = { isTeacher: false };
       const data = await request(url, 'POST', body);
       if (data && data.success) {
         router.push('/groups');
@@ -73,12 +77,14 @@ export default function StudentSettings() {
       console.log(err);
     }
   };
+
   const handleConfirmClick = async () => {
     if(index === 0) {
-      handleDelete();
-    } else {
-      handleSave();
+      await leaveClass();
+    } else if(index === 1) {
+      await cancelFreeTrial();
     }
+    setShowOverlay(false);
   }
 
   return (
@@ -243,6 +249,39 @@ export default function StudentSettings() {
                   className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
                   Save
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowOverlay(true);
+                    setMessageOfConfirm(actions[1]);
+                    setIndex(1);
+                  }}
+                  className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                >
+                  Cancel Free Trial
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowOverlay(true);
+                    setMessageOfConfirm(actions[1]);
+                    setIndex(1);
+                  }}
+                  className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                >
+                  Pay For Free Trial Now
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowOverlay(true);
+                    setMessageOfConfirm(actions[1]);
+                    setIndex(1);
+                  }}
+                  className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                >
+                  Change Payment method
                 </button>
 
                 <button

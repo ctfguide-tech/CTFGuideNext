@@ -4,7 +4,6 @@ import { Footer } from '@/components/Footer';
 import { useEffect, Fragment, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
-
 import ClassroomNav from '@/components/groups/classroomNav';
 import StudentSettings from "@/components/groups/StudentSettings";
 

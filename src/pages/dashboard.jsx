@@ -24,19 +24,12 @@ export default function Dashboard() {
   const router = useRouter();
   const auth = getAuth();
 
-   
-
-
   const [likes, setLikes] = useState([]);
   const [badges, setbadges] = useState([]);
   const [challenges, setchallenges] = useState([]);
 
   useEffect(() => {
-    
     // verify id token if not logout
-    
-
-
     const fetchBadges = async () => {
       try {
         const response = await fetch(
@@ -49,7 +42,6 @@ export default function Dashboard() {
     };
     fetchBadges();
     setbadges([]);
-
     const fetchChallenges = async () => {
       try {
         const response = await fetch(
@@ -63,11 +55,6 @@ export default function Dashboard() {
     fetchChallenges();
     setchallenges([]);
 
-
-
- 
-      
-
     const fetchData = async () => {
       try {
         const response = await fetch(`${localStorage.getItem('userLikesUrl')}`);
@@ -80,8 +67,6 @@ export default function Dashboard() {
     fetchData();
     setLikes([]);
   }, []);
-
-
 
   return (
     <>

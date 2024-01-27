@@ -173,7 +173,9 @@ const ViewAllAssignments = () => {
                     ></i>
                   )}
 
-                  <span className="ml-0.5"> {assignment.name} </span>
+                  <span className="ml-0.5"> {assignment.name} 
+                              {!assignment.isOpen && 
+                              <span style={{color: "#C41E3A"}}>(closed)</span>} </span>
                 </h2>
                 <p className="text-white">
                   Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/

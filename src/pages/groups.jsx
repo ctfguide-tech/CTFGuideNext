@@ -4,8 +4,6 @@ const JoyRideNoSSR = dynamic(
   () => import('react-joyride'),
   { ssr: false }
 )
-
-
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -14,31 +12,26 @@ import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, Fragment, useState } from 'react';
 import request from '../utils/request';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import router from 'next/router';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
 export default function Groups() {
-
   const steps = [
-      {
-          target: '.first',
-          content: 'This is the main home for accessing all your classrooms.',
-          disableBeacon: true,
-      },
-      {
-        target: '.second',
-        content: 'Lets create a classroom by clicking this button here.',
-
-
-      }
+    {
+      target: '.first',
+      content: 'This is the main home for accessing all your classrooms.',
+      disableBeacon: true,
+    },
+    {
+      target: '.second',
+      content: 'Lets create a classroom by clicking this button here.',
+    }
   ]
-
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [color, setColor] = useState('');
@@ -78,17 +71,9 @@ export default function Groups() {
     let code = document.getElementById('joinCode').value;
     try {
       const url = `${baseUrl}/classroom/join`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          classCode: code,
-          isTeacher: false,
-        }),
-      });
-      const res = await response.json();
-      if (res.success) {
+      const body = { classCode: code, isTeacher: false };
+      const res = await request(url, 'POST', body);
+      if (res && res.success) {
         if (res.sessionId) {
           const stripe = await loadStripe(STRIPE_KEY);
           const result = await stripe.redirectToCheckout({

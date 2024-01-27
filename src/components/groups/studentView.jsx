@@ -181,11 +181,12 @@ export default function StudentView({ group }) {
                 {classroom &&
                   classroom.assignments &&
                   classroom.assignments.length > 0 ? (
-                  classroom.assignments.map((assignment) => (
+                  classroom.assignments.map((assignment) => {
+                      return (
                     <div
                       key={assignment.id}
                       onClick={() => {
-                        window.location.href = '/assignments/student/' + assignment.id;
+                            window.location.href = '/assignments/student/' + assignment.id;
                       }}
                       className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
                     >
@@ -228,13 +229,15 @@ export default function StudentView({ group }) {
                           ></i>
                         )}
 
-                        <span className="ml-0.5"> {assignment.name} </span>
+                        <span className="ml-0.5"> {assignment.name}
+                              {!assignment.isOpen && 
+                              <span style={{color: "#C41E3A"}}>(closed)</span>} </span>
                       </h2>
                       <p className="text-white">
                         Due: {parseDate(assignment.dueDate)}{' '}
                       </p>
                     </div>
-                  ))
+                  )})
                 ) : (
                   <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
                     <h1 className="pe-6 text-lg">No assignments here yet</h1>

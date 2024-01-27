@@ -13,6 +13,7 @@ const auth = getAuth();
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function id() {
+
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
@@ -415,8 +416,11 @@ export default function id() {
                 </a>
 
                 <a
-                  onClick={() =>
-                    router.push(`/assignments/student/${assignment.id}?former=teacher`)
+                  onClick={() => {
+                      if(assignment && assignment.classroom) {
+                        router.push(`/groups/${assignment.classroom.classCode}/edit-assignment/${assignment.id}`)
+                      }
+                    }
                   }
                   className="ml-2 cursor-pointer rounded-lg border border-white  hover:bg-neutral-800 px-4  py-1 font-semibold text-white"
                 >
@@ -426,6 +430,7 @@ export default function id() {
             </div>
             </div>
           </div>
+          
 
           <div className="mx-auto mt-4  px-10 ">
 

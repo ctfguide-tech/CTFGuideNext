@@ -6,6 +6,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
+import Loader from '@/components/Loader';
 
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
@@ -15,7 +16,7 @@ const actions = ["Are you sure you want to delete this assignment?", "Are you su
 export default function EditingAssignment() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [dueDate, setDueDate] = useState(new Date());
 
   const [aiObjectives, setAiObjectives] = useState('');
   const [aiPenalties, setAiPenalties] = useState('');
@@ -26,6 +27,7 @@ export default function EditingAssignment() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
   const classCode = router.query.group;
@@ -43,6 +45,7 @@ export default function EditingAssignment() {
       setTotalPoints(data.body.totalPoints);
       setLatePenalty(data.body.latePenalty);
       setIsOpen(data.body.isOpen);
+      setIsLoading(false);
     } else {
       if(data && data.status === 401) {
         router.push(`/groups/${classCode}/home`);
@@ -79,9 +82,11 @@ export default function EditingAssignment() {
     }
   }
 
+
   const handleSave = async () => {
     const classCode = router.query.group;
     const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}/${classCode}`;
+    console.log(dueDate);
     const body = {
       name,
       description,
@@ -99,6 +104,13 @@ export default function EditingAssignment() {
     } else {
       toast.error('Error updating assignment');
     }
+  }
+  console.log(isOpen);
+
+  const formatDate = () => {
+    const dueDateObj = new Date(dueDate);
+    const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
+    return formattedDueDate;    
   }
 
   return (
@@ -124,11 +136,13 @@ export default function EditingAssignment() {
               >
                 <i className="fas fa-plus-circle pe-2"></i> New Assignment
               </button>
-
             </div>
           </div>
         </div>
       </div>
+      {
+        isLoading ? <Loader isLoad={true} /> : 
+        <>
       <div id="general" className="">
         <div className="mx-auto flex max-w-6xl">
           <div className="flex-1 xl:overflow-y-auto">
@@ -204,13 +218,13 @@ export default function EditingAssignment() {
                       Assignment Status
                     </label>
                     <select
-                      value={isOpen}
-                      onChange={(e) => setIsOpen(e.target.value)}
+                      value={isOpen ? 'open' : 'close'}
+                      onChange={(e) => setIsOpen(e.target.value === 'open')}
                       id="classroom-status"
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                     >
                       <option value="open">Open</option>
-                      <option value="close">Close</option>
+                      <option value="close">Closed</option>
                     </select>
                   </div>
 
@@ -224,7 +238,7 @@ export default function EditingAssignment() {
                     <input
                       type="date"
                       autoComplete="off"
-                      value={dueDate}
+                      value={formatDate()}
                       onChange={(e) => setDueDate(e.target.value)}
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                     />
@@ -383,6 +397,8 @@ export default function EditingAssignment() {
       />
 
       <Footer />
+        </>
+      }
     </>
   );
 }
