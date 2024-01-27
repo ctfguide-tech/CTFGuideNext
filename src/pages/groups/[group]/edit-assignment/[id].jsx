@@ -45,7 +45,8 @@ export default function EditingAssignment() {
       const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
       setDueDate(formattedDueDate);
 
-      let time = dueDateObj.toLocaleString('en-US', {timeZone: 'America/New_York', hour12: false}).split(',')[1].trim().substring(0, 5);
+      let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      let time = dueDateObj.toLocaleString('en-US', {timeZone: timeZone, hour12: false}).split(',')[1].trim().substring(0, 5);
       setDueTime(time);
 
       setAiObjectives(data.body.aiObjectives);
