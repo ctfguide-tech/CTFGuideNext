@@ -17,6 +17,7 @@ export default function EditingAssignment() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
+  const [dueTime, setDueTime] = useState('');
 
   const [aiObjectives, setAiObjectives] = useState('');
   const [aiPenalties, setAiPenalties] = useState('');
@@ -39,7 +40,14 @@ export default function EditingAssignment() {
     if (data && data.success) {
       setName(data.body.name);
       setDescription(data.body.description);
-      setDueDate(data.body.dueDate);
+
+      const dueDateObj = new Date(data.body.dueDate);
+      const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
+      setDueDate(formattedDueDate);
+
+      let time = dueDateObj.toLocaleString('en-US', {timeZone: 'America/New_York', hour12: false}).split(',')[1].trim().substring(0, 5);
+      setDueTime(time);
+
       setAiObjectives(data.body.aiObjectives);
       setAiPenalties(data.body.aiPenalties);
       setTotalPoints(data.body.totalPoints);
@@ -86,11 +94,14 @@ export default function EditingAssignment() {
   const handleSave = async () => {
     const classCode = router.query.group;
     const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}/${classCode}`;
-    console.log(dueDate);
+
+    let datetimeString = `${dueDate}T${dueTime}:00`;
+    const date = new Date(datetimeString);
+
     const body = {
       name,
       description,
-      dueDate,
+      dueDate: date,
       aiObjectives,
       aiPenalties,
       totalPoints,
@@ -108,9 +119,6 @@ export default function EditingAssignment() {
   console.log(isOpen);
 
   const formatDate = () => {
-    const dueDateObj = new Date(dueDate);
-    const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
-    return formattedDueDate;    
   }
 
   return (
@@ -210,6 +218,39 @@ export default function EditingAssignment() {
                     />
                   </div>
 
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="number-of-seats"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Due Date
+                    </label>
+                    <input
+                      type="date"
+                      autoComplete="off"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="number-of-seats"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                            Time
+                    </label>
+                    <input
+                      type="time"
+                      autoComplete="off"
+                      value={dueTime}
+                      onChange={(e) => setDueTime(e.target.value)}
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    />
+                  </div>
+
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="classroom-status"
@@ -226,22 +267,6 @@ export default function EditingAssignment() {
                       <option value="open">Open</option>
                       <option value="close">Closed</option>
                     </select>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="number-of-seats"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      Due Date
-                    </label>
-                    <input
-                      type="date"
-                      autoComplete="off"
-                      value={formatDate()}
-                      onChange={(e) => setDueDate(e.target.value)}
-                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
-                    />
                   </div>
 
                   <div className="sm:col-span-6">
