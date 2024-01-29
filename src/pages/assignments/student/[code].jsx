@@ -231,6 +231,7 @@ export default function Slug() {
     }
   };
 
+
   const getTerminalStatus = async (id) => {
     try {
       console.log('Getting terminal status');
@@ -308,9 +309,14 @@ export default function Slug() {
     document.getElementById('spinny').classList.remove('hidden');
     document.getElementById('termDebug').innerHTML = info;
   }
-  console.log(assignment);
 
   const submitAssignment = async () => {
+
+    if(password === "...") {
+      toast.error('You cannot submit the assignment when you havent used the terminal.');
+      return;
+    }
+
     setLoading(true);
     const params = window.location.href.split('/');
     const url = `${baseUrl}/submission/create`;
@@ -323,9 +329,9 @@ export default function Slug() {
       challengeId: assignment.challengeId,
       totalPoints: assignment.totalPoints,
       hints: assignment.challenge.hints,
-
       latePenalty: assignment.latePenalty,
       dueDate: assignment.dueDate,
+      terminalIdentifier: password,
     };
 
     const data = await makePostRequest(url, body);

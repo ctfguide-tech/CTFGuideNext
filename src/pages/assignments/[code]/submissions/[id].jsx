@@ -88,6 +88,8 @@ export default function id() {
       if (data && data.success) {
         setAssignment(data.body.assignment);
         setUser(data.body.user);
+        let adjustedGrade = calculateAdjustedGrade(data.body);
+        data.body.grade = adjustedGrade;
         setSubmission(data.body);
         const date = new Date(data.body.createdAt);
         setFormattedDate(date.toLocaleString());
@@ -98,9 +100,23 @@ export default function id() {
     }
   };
 
+  const calculateAdjustedGrade = (dataBody) => {
+    if (dataBody.isLate) {
+      return dataBody.grade - (dataBody.grade * dataBody.assignment.latePenalty / 100);
+    }
+    return dataBody.grade;
+  }
+
   useEffect(() => {
     fetchSubmission();
   }, []);
+
+  // =============================================================================== //
+  // HELLO NAV, the terminal identifier can be accessed by submission.terminalIdentifier
+  // =============================================================================== //
+
+  // Check out what the submission object looks like
+  console.log(submission);
 
   return (
     <>

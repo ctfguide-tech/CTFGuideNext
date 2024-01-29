@@ -93,6 +93,11 @@ export default function EditingAssignment() {
 
 
   const handleSave = async () => {
+
+    if(latePenalty < 0 || latePenalty > 100) {
+      toast.error('Late penalty must be between 0 and 100');
+      return;
+    }
     const classCode = router.query.group;
     const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}/${classCode}`;
 
@@ -116,10 +121,6 @@ export default function EditingAssignment() {
     } else {
       toast.error('Error updating assignment');
     }
-  }
-  console.log(isOpen);
-
-  const formatDate = () => {
   }
 
   return (
@@ -289,6 +290,22 @@ export default function EditingAssignment() {
                     </select>
                   </div>
 
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="classroom-status"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Late Penalty (%)
+                    </label>
+
+                    <input
+                      type="number"
+                      autoComplete="off"
+                      value={latePenalty}
+                      onChange={(e) => setLatePenalty(e.target.value)}
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    />
+                  </div>
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="description"
