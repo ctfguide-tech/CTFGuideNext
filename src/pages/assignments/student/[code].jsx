@@ -308,6 +308,7 @@ export default function Slug() {
     document.getElementById('spinny').classList.remove('hidden');
     document.getElementById('termDebug').innerHTML = info;
   }
+  console.log(assignment);
 
   const submitAssignment = async () => {
     setLoading(true);
@@ -322,6 +323,9 @@ export default function Slug() {
       challengeId: assignment.challengeId,
       totalPoints: assignment.totalPoints,
       hints: assignment.challenge.hints,
+
+      latePenalty: assignment.latePenalty,
+      dueDate: assignment.dueDate,
     };
 
     const data = await makePostRequest(url, body);

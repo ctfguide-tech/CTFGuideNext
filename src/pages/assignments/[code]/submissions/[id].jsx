@@ -7,10 +7,13 @@ import { useEffect, useState } from 'react';
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/24/outline'
+import request from '@/utils/request';
+import { useRouter } from 'next/router';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function id() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
@@ -46,9 +49,7 @@ export default function id() {
       )
         .then(async (response) => {
           // set file variable to the response
-
           //    AsciinemaPlayer.create('', document.getElementById('demo'));
-
           player = AsciinemaPlayer.create(
             { data: response },
             document.getElementById('demo'),
@@ -82,15 +83,9 @@ export default function id() {
   const fetchSubmission = async () => {
     try {
       const id = window.location.href.split('/')[6];
-      console.log(id);
-      const token = localStorage.getItem('idToken');
       const url = `${baseUrl}/submission/submission/${id}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { Authorization: 'Bearer ' + token },
-      });
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
         setAssignment(data.body.assignment);
         setUser(data.body.user);
         setSubmission(data.body);
@@ -140,13 +135,13 @@ export default function id() {
                     {(assignment && assignment.name) || "Pranav's Submission"}{' '}
                   </h1>
 
-                  <h1 className="text-white">Submitted at 5:45PM EST on 1/11/24</h1>
+                  <h1 className="text-white">Submitted at {formattedDate}</h1>
                 </div>
 
                 <div className="ml-auto">
                   <div className="rounded-md bg-white px-3 py-1 text-center gap-y-0">
                     <h1 className="text-4xl font-bold text-blue-600 text-center mb-0 pb-0 ">
-               97%</h1>
+               { submission && assignment && (submission.grade / assignment.totalPoints * 100)}%</h1>
                     
                   </div>
                 </div>

@@ -281,8 +281,6 @@ export default function id() {
     }
   };
 
-  console.log(challenge);
-
   const showHint = async (i) => {
     const url = `${baseUrl}/challenges/hints-update`;
     const body = {
@@ -326,7 +324,7 @@ export default function id() {
   };
 
   const routeToSubmission = (id) => {
-    window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
+    router.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
 
   // const deleteTerminal = async (code) => {

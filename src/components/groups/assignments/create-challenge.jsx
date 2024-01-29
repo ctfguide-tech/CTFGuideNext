@@ -117,6 +117,8 @@ export default function Createchall(props) {
     }
   };
 
+  console.log(props.assignmentInfo);
+
   const uploadChallenge = async (fileId) => {
     try {
       const nConfig = newConfig.replace('\n', ' && ');

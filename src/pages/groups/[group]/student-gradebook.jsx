@@ -31,8 +31,9 @@ const StudentGradebook = () => {
   }
 
   useEffect(() => {
+    if(classCode)
     fetchFinalGrade()
-  }, []);
+  }, [classCode]);
 
   return (
     <>
@@ -104,8 +105,9 @@ const StudentGradebook = () => {
                   return (
                   <td
                     key={assignment.id}
-                    class={`whitespace-nowrap px-6 py-4 text-sm ${data.grade === null
-                    ? 'text-yellow-400'
+                    class={`whitespace-nowrap px-6 py-4 text-sm ${data.grade === null 
+                    ? 'text-white-400'
+                    : data.late? 'text-yellow-400'
                     : 'text-green-400'}`}>
                     {data.grade === null
                       ? 'N/A'

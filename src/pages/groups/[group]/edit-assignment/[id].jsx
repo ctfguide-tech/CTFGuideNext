@@ -252,23 +252,6 @@ export default function EditingAssignment() {
                     />
                   </div>
 
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="classroom-status"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      Assignment Status
-                    </label>
-                    <select
-                      value={isOpen ? 'open' : 'close'}
-                      onChange={(e) => setIsOpen(e.target.value === 'open')}
-                      id="classroom-status"
-                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
-                    >
-                      <option value="open">Open</option>
-                      <option value="close">Closed</option>
-                    </select>
-                  </div>
 
                   <div className="sm:col-span-6">
                     <label
@@ -287,6 +270,23 @@ export default function EditingAssignment() {
                         className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
                       />
                     </div>
+                  </div>
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="classroom-status"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Assignment Status
+                    </label>
+                    <select
+                      value={isOpen ? 'open' : 'close'}
+                      onChange={(e) => setIsOpen(e.target.value === 'open')}
+                      id="classroom-status"
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    >
+                      <option value="open">Open</option>
+                      <option value="close">Closed</option>
+                    </select>
                   </div>
 
                   <div className="sm:col-span-6">
