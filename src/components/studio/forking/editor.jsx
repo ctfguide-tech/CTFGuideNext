@@ -8,6 +8,8 @@ import request from '@/utils/request';
 
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
+import  fileApi  from '@/utils/file-api';
+
 const auth = getAuth();
 
 const Editor = (props) => {
@@ -47,43 +49,17 @@ const Editor = (props) => {
     const isValid = await validateNewChallege();
     if (isValid) {
       setIsCreating(true);
-      try {
-        if (!selectedFile) {
-          await uploadChallenge('');
-          return;
-        }
-        const token = auth.currentUser.accessToken;
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('jwtToken', token);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
-
-        const readableStream = response.body;
-        const textDecoder = new TextDecoder();
-        const reader = readableStream.getReader();
-
-        let result = await reader.read();
-
-        let fileId = '';
-        while (!result.done) {
-          fileId = textDecoder.decode(result.value);
-          result = await reader.read();
-        }
-
-        if (response.ok) {
-          console.log('File uploaded successfully!');
+      if (!selectedFile) {
+        await uploadChallenge('');
+        return;
+      } else {
+        const token = await auth.currentUser.accessToken;
+        const fileId = await fileApi(token, selectedFile);
+        if(fileId !== null) {
           await uploadChallenge(fileId);
         } else {
-          console.error('File upload failed.');
+          toast.error('Something went wrong with the file upload');
         }
-      } catch (error) {
-        console.error('Error during file upload:', error);
       }
     } else {
       console.warn('Either the file, toke, or challenge is invalid');
@@ -125,7 +101,7 @@ const Editor = (props) => {
     const data = await request(url, 'POST', body);
 
     if (data && data.success) {
-      router.push(`/groups/${classCode}/home`);
+      window.location.href = ``; 
     }
   };
 

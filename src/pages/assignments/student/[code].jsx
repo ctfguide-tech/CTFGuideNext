@@ -12,6 +12,7 @@ import request from '@/utils/request';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { getAuth } from 'firebase/auth';
+import api from '@/utils/terminal-api';
 const auth = getAuth();
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -153,121 +154,45 @@ export default function Slug() {
   };
 
   const createTerminal = async () => {
-    try {
-      termDebug('Creating your terminal...');
-      console.log('Creating a terminal');
-      let min = 1000;
-      let max = 9999;
-
-      const code = Math.floor(Math.random() * (max - min + 1)) + min;
-      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
-
-      const body = {
-        jwtToken: auth.currentUser.accessToken,
-        TerminalGroupName: 'schell-class-session',
-        TerminalID: code,
-        classID: 'psu101',
-        organizationName: 'PSU',
-        userID: localStorage.getItem('username').toLowerCase(),
-        challengeID: challenge.id,
-      };
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      };
-
-      const response = await fetch(url, requestOptions);
-      if (response.ok) {
-        console.log('The terminal was created successfully');
-        await fetchTerminal();
-      } else {
-        console.log('Failed to create the terminal');
-        toast.error("Unable to create the terminal, please refresh the page and try again");
-      }
-
-    } catch (err) {
-      console.log(err);
-      toast.error("Terminal failed to create, please refresh the page"); 
+    const token = auth.currentUser.accessToken;
+    const created = await api.buildTerminal(challenge, token);
+    if(created) {
+      await fetchTerminal();
+    } else {
+      toast.error("Unable to create the terminal, please refresh the page and try again");
+      setFetchingTerminal(false);
     }
   };
 
   const fetchTerminal = async () => {
     if(!challenge) return;
-    try {
-      termDebug('Fetching terminal...');
-      setFetchingTerminal(true);
-      console.log('Fetching a terminal');
-      const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${auth.currentUser.accessToken}`;
-      const requestOptions = {
-        method: 'GET',
-        redirect: 'follow',
-      };
-
-      const response = await fetch(reqUrl, requestOptions);
-      const data = await response.json();
-
-      if (data.length > 0) {
-        const { password, serviceName, url, userName, minutesRemaining, id } =
-          data[0];
-
-        setPassword(password);
-        setServiceName(serviceName);
-        setTerminalUrl(url);
-        setUserName(userName);
-        setMinutesRemaining(minutesRemaining);
-        console.log('Terminal data ID:', id);
-        console.log('Terminal url:', url);
-
-        await getTerminalStatus(id);
-      } else {
-        console.log('No termainl... creating a new one');
-        await createTerminal();
-      }
-    } catch (err) {
-      console.log(err);
-      setFetchingTerminal(false);
+    const token = auth.currentUser.accessToken;
+    setFetchingTerminal(true);
+    const data = await api.getTerminal(token);
+    if(data !== null) {
+      setPassword(data.password);
+      setServiceName(data.serviceName);
+      setTerminalUrl(data.url);
+      setUserName(data.userName);
+      setMinutesRemaining(data.minutesRemaining);
+      console.log('Terminal data ID:', data.id);
+      console.log('Terminal url:', data.url);
+      await getTerminalStatus(data.id);
+    } else {
+      await createTerminal();
     }
   };
 
-
   const getTerminalStatus = async (id) => {
-    try {
-      console.log('Getting terminal status');
-      if (!foundTerminal) {
-        const username = localStorage.getItem('username').toLowerCase();
-        const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
-        const response = await fetch(url, { method: 'GET' });
-
-        const readableStream = response.body;
-        const textDecoder = new TextDecoder();
-        const reader = readableStream.getReader();
-        let result = await reader.read();
-
-        while (!result.done) {
-          let stat = textDecoder.decode(result.value);
-          console.log('Response from getTerminalStatus: ', stat);
-          if (stat !== 'active') {
-            throw new Error('Not active');
-          }
-          result = await reader.read();
-        }
-
-        if (response.ok) {
-          termDebug('Container is ready. Almost there...');
-          console.log('Terminal status ok');
-          setTimeout(() => {
-            setFoundTerminal(true);
-          }, 1000);
-          console.log('Displaying terminal');
-        }
+    if(!foundTerminal) {
+      const isActive = await api.getStatus(id);
+      if(isActive) {
+        setFoundTerminal(true);
+      } else {
+        setTimeout(async () => {
+          await getTerminalStatus(id);
+        }, 3000);
       }
-    } catch (err) {
-      setTimeout(async () => {
-        console.log('Terminal status failed');
-        await getTerminalStatus(id);
-      }, 3000);
     }
   };
 
