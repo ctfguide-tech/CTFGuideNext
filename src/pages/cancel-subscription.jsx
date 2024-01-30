@@ -7,9 +7,6 @@ import { getAuth } from 'firebase/auth';
 import { loadStripe } from '@stripe/stripe-js';
 import { Menu } from '@headlessui/react';
 
-
-
-
 const auth = getAuth();
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;

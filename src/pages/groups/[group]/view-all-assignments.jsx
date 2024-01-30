@@ -71,6 +71,7 @@ const ViewAllAssignments = () => {
     }
   }, [group]);
 
+  console.log("Isteacher", isTeacher);
 
   return (
     <>
@@ -178,9 +179,12 @@ const ViewAllAssignments = () => {
                               <span style={{color: "#C41E3A"}}>(closed)</span>} </span>
                 </h2>
                 <p className="text-white">
-                  Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
-                  {assignment.totalPoints} pts
+                  Due: {parseDate(assignment.dueDate)}
                 </p>
+                      <p>
+                        {grades[assignment.name] && grades[assignment.name].grade || "NA"}/
+                        {assignment.totalPoints} pts
+                      </p>
               </div>
             ))
         ) : (
@@ -202,6 +206,7 @@ const ViewAllAssignments = () => {
               <div
                 key={assignment.id}
                 className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
+                onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
               >
                 {/* Make assignment look pretty*/}
                 <h2 className="text-md text-white"
@@ -252,14 +257,12 @@ const ViewAllAssignments = () => {
                   <span className="ml-0.5"> {assignment.name} </span>
                 </h2>
                 <p className="text-white">
-                  Due: {parseDate(assignment.dueDate)} | {grades[assignment.name] && grades[assignment.name].grade || 0}/
-                  {assignment.totalPoints} pts pts
+                  Due: {parseDate(assignment.dueDate)} 
                 </p>
-                {
-                  isTeacher && (
-                    <button onClick={() => router.push(`/groups/${group}/edit-assignment/${assignment.id}`)}>Edit Assignment</button>
-                  )
-                }
+                      <p className="text-white">
+                        {grades[assignment.name] && grades[assignment.name].grade || "NA"}/
+                        {assignment.totalPoints} pts
+                      </p>
               </div>
             ))
         ) : (

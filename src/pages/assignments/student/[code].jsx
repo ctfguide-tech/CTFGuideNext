@@ -168,7 +168,7 @@ export default function Slug() {
         TerminalID: code,
         classID: 'psu101',
         organizationName: 'PSU',
-        userID: localStorage.getItem('username'),
+        userID: localStorage.getItem('username').toLowerCase(),
         challengeID: challenge.id,
       };
 
@@ -236,7 +236,7 @@ export default function Slug() {
     try {
       console.log('Getting terminal status');
       if (!foundTerminal) {
-        const username = localStorage.getItem('username');
+        const username = localStorage.getItem('username').toLowerCase();
         const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getTerminalStatus?userID=${username}&terminalID=${id}`;
         const response = await fetch(url, { method: 'GET' });
 
