@@ -64,10 +64,10 @@ const Gradebook = () => {
   }, [group]);
 
   const checkPermissions = async () => {
-    const url = `${baseUrl}/classroom/check-if-teacher/${group}`;
+    const url = `${baseUrl}/classroom/auth/${group}`;
     const res = await request(url, 'GET', null);
     if(!res) return false;
-    return res.success;
+    return res.success && res.isTeacher;
   };
 
   const refresh = () => {

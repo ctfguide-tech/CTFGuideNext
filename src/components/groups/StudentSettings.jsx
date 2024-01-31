@@ -14,8 +14,8 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const actions = [
   "Are you sure you want to leave this class?",
-  "Are you suer you want to cancel your free trial?",
-  "Are you sure you want to pay for free trial now?"
+  "Are you sure you want to pay for free trial now?",
+  "Are you suer you want to cancel your free trial?"
 ];
 
 export default function StudentSettings() {
@@ -52,10 +52,8 @@ export default function StudentSettings() {
       const data = await request(url, 'PUT', body);
       if (data && data.success) {
         toast.success("Free trial successfully activated");
-        document.getElementById("trialMsg").classList.add("hidden");
       } else {
         console.log(data.message);
-        toast.error("Unable to activate free trial");
       }
       console.log(data);
     } catch (err) {

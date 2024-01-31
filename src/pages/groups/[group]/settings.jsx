@@ -121,7 +121,7 @@ export default function teacherSettings() {
   const checkPermissions = async () => {
     try {
       const classCode = window.location.href.split('/')[4];
-      const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
+      const url = `${baseUrl}/classroom/auth/${classCode}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -130,7 +130,7 @@ export default function teacherSettings() {
         credentials: 'include'
       });
       const res = await response.json();
-      if (res.success) {
+      if (res.success && res.isTeacher) {
         return true;
       } else {
         return false;
@@ -256,7 +256,6 @@ export default function teacherSettings() {
       console.log(err);
     }
   };
-  console.log(isStudent);
 
   const handleConfirmClick = async () => {
     if (index === 0) {

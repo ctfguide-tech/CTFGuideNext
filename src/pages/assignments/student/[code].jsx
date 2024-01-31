@@ -234,6 +234,7 @@ export default function Slug() {
     document.getElementById('spinny').classList.remove('hidden');
     document.getElementById('termDebug').innerHTML = info;
   }
+  console.log('Assignment:', assignment);
 
   const submitAssignment = async () => {
 
@@ -244,7 +245,7 @@ export default function Slug() {
 
     setLoading(true);
     const params = window.location.href.split('/');
-    const url = `${baseUrl}/submission/create`;
+    const url = `${baseUrl}/submission/create/${assignment.classroom.classCode}`;
 
     const body = {
       solved: flagInput === assignment.solution.keyword,
@@ -263,6 +264,8 @@ export default function Slug() {
     if (data && data.success) {
       toast.success('Assignment has been submitted');
       setSubmitted(true);
+    } else {
+      toast.error('Failed to submit the assignment');
     }
 
     setLoading(false);
@@ -271,6 +274,7 @@ export default function Slug() {
   const routeToSubmission = (id) => {
     window.location.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
+
   function getColorForTime(minutes) {
     if (minutes >= 40) return 'text-green-400';
     if (minutes >= 10) return 'text-yellow-400';

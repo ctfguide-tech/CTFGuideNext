@@ -20,19 +20,18 @@ export default function GroupDisplay() {
 
   const checkPermissions = async () => {
     try {
-      const url = `${baseUrl}/classroom/check-if-teacher/${group}`;
+      console.log('Checking permissions');
+      const url = `${baseUrl}/classroom/auth/${group}`;
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json', },
         credentials: 'include',
       });
       const res = await response.json();
-      if (res.success) {
-        setViewAsTeacher(true);
+      if(res.success){
+        setViewAsTeacher(res.isTeacher);
       } else {
-        setViewAsTeacher(false);
+        router.push('/groups');
       }
     } catch (err) {
       console.log(err);

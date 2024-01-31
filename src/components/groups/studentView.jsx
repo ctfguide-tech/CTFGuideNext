@@ -23,26 +23,6 @@ export default function StudentView({ group }) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
   const [classroom, setClassroom] = useState({});
 
-  const getFreeTrialStatus = async (classroomId) => {
-    try {
-      console.log('Getting free trial status');
-      const url = `${baseUrl}/classroom/getFreeTrialStatus/${classroomId}`;
-      const data = await request(url, 'GET', null);
-      if (data.success) {
-        if(data.body.daysLeft > 0) {
-          document.getElementById("trialMsg").classList.remove("hidden");
-          document.getElementById("trialStatus").innerHTML = `You have ${data.body.daysLeft} days until your free trial expires`;
-        } else {
-          toast.info("The free trial has expired");
-        }
-      } else {
-        console.log(data.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
     let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
@@ -66,9 +46,6 @@ export default function StudentView({ group }) {
       const data = await request(url, 'GET', null);
       if (data && data.success) {
         setClassroom(data.body);
-        if (data.body.pricingPlan === 'student') {
-          await getFreeTrialStatus(data.body.id);
-        }
       } else {
         console.log(data.message);
       }

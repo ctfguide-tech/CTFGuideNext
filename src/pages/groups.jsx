@@ -20,6 +20,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export default function Groups() {
   const steps = [
     {

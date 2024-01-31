@@ -56,10 +56,10 @@ const ViewAllAssignments = () => {
   };
 
   const auth = async (classCode) => {
-    const url = `${baseUrl}/classroom/check-if-teacher/${classCode}`;
+    const url = `${baseUrl}/classroom/auth/${classCode}`;
     const res = await request(url, 'GET', null);
     if(!res) setIsTeacher(false);
-    setIsTeacher(res.success);
+    setIsTeacher(res.success && res.isTeacher);
   };
 
   useEffect(() => {
@@ -70,8 +70,6 @@ const ViewAllAssignments = () => {
       getGrades(group)
     }
   }, [group]);
-
-  console.log("Isteacher", isTeacher);
 
   return (
     <>
