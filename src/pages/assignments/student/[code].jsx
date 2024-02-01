@@ -32,6 +32,7 @@ export default function Slug() {
     { message: '', penalty: '' },
   ]);
 
+
   const [challenge, setChallenge] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,10 @@ export default function Slug() {
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
 
+  const [code, setCode] = useState(0);
+
   const [open, setOpen] = useState(true);
+  const [terminalPopup, setTerminalPopup] = useState(false);
 
   function copy(tags) {
     var copyText = document.getElementById(tags);
@@ -126,7 +130,7 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
-        getChallenge(data.body);
+        setChallenge(data.body.challenge);
       } else {
         console.log('You are not apart of this class');
         //window.location.href = '/groups';
@@ -134,24 +138,16 @@ export default function Slug() {
     }
   };
 
+
+  console.log('Assignment:', assignment);
+  console.log('Challenge:', challenge);
+
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
     const data = await makeGetRequest(url);
     return data.success;
   };
 
-  const getChallenge = async (assignment) => {
-    try {
-      console.log('getting the challenge');
-      const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
-      const data = await request(url, "GET", null);
-      if (data && data.success) {
-        setChallenge(data.body);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const createTerminal = async () => {
     const token = auth.currentUser.accessToken;
@@ -216,14 +212,14 @@ export default function Slug() {
     const url = `${baseUrl}/challenges/hints-update`;
     const body = {
       hintsUsed: i,
-      challengeId: assignment.challenge.id,
+      challengeId: challenge.id,
     };
     const data = await makePostRequest(url, body);
     if (data && data.success) {
       let tmp = [...hints];
-      tmp[i].message = assignment.challenge.hints[i].message;
+      tmp[i].message = challenge.hints[i].message;
       tmp[i].penalty =
-        '(-' + assignment.challenge.hints[i].penalty + ') points';
+        '(-' + challenge.hints[i].penalty + ') points';
       setHints(tmp);
     } else {
       console.log('problem when feching hints');
@@ -280,41 +276,53 @@ export default function Slug() {
     if (minutes >= 10) return 'text-yellow-400';
     return 'text-red-400';
   }
-  
-  // const deleteTerminal = async (code) => {
-  //   try {
-  //     console.log('deleting terminal');
-  //
-  //     const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
-  //
-  //     const body = {
-  //       jwtToken: localStorage.getItem('idToken'),
-  //       TerminalGroupName: 'schell-class-session',
-  //       TerminalID: code,
-  //       classID: 'psu101',
-  //       organizationName: 'PSU',
-  //       userID: localStorage.getItem('username'),
-  //       slug: challenge.slug,
-  //     };
-  //
-  //     const requestOptions = {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(body),
-  //     };
-  //
-  //     const response = await fetch(url, requestOptions);
-  //     if (response.ok) {
-  //       console.log('The terminal was deleted successfully');
-  //     } else {
-  //       console.log('Failed to delete the terminal');
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
-  // console.log(submissions);
+  const deleteTerminal = async () => {
+    try {
+      console.log('deleting terminal');
+      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
+      const token = auth.currentUser.accessToken;
+      const body = {
+        jwtToken: token,
+        TerminalGroupName: 'schell-class-session',
+        TerminalID: code,
+        classID: 'psu101',
+        organizationName: 'PSU',
+        userID: localStorage.getItem('username').toLowerCase(),
+        slug: challenge.slug,
+      };
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      };
+
+      const response = await fetch(url, requestOptions);
+      if (response.ok) {
+        console.log('The terminal was deleted successfully');
+        setTimeout(async () => {
+          await fetchTerminal();
+        }, 5000);
+      } else {
+        console.log('Failed to delete the terminal');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const checkIfTerminalExists = async () => {
+    const token = auth.currentUser.accessToken;
+    const data = await api.getTerminal(token);
+    if (data !== null) {
+      setCode(data.id);
+      setTerminalPopup(true);
+    } else {
+      await fetchTerminal();
+    }
+  }
+
   return (
     <>
       <Head>
@@ -542,11 +550,15 @@ export default function Slug() {
                       <button
                         className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                         disabled={fetchingTerminal}
-                        onClick={fetchTerminal}
+                        onClick={checkIfTerminalExists}
                       >
                         Launch Terminal 
                       </button>
                   }
+                      { fetchingTerminal && <span><i className="fas fa-spinner fa-pulse"
+                        style={{color: "gray", fontSize: "25px"}}>
+                      </i></span>
+                      }
                   <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
                 </div>
               )}
@@ -645,6 +657,66 @@ export default function Slug() {
         </Dialog>
       </Transition.Root>
 
+      <Transition.Root show={terminalPopup} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setTerminalPopup}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0" >
+
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+
+                <Dialog.Panel className="border w-full max-w-6xl relative transform overflow-hidden rounded-lg shadow-lg shadow-neutral-800  bg-gradient-to-r from-neutral-900 to-black  px-4  text-left  transition-all ">
+                  <div>
+
+
+                    <div className="mt-3  sm:mt-5 w-full pb-14 px-10">
+                      <h1 className='text-2xl mb-2 text-white text-center mt-12'>Would you like to use your existing terminal or create a new one?</h1>
+
+
+                      <div className='mx-auto text-center mt-10'>
+                        <button onClick={() => {
+                          setTerminalPopup(false);
+                          fetchTerminal();
+                        }} style={{marginRight: "10px"}} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
+                          Use Existing Terminal</button>
+                        {" "}
+
+                        <button style={{marginLeft: "10px"}} onClick={() => {
+                          setTerminalPopup(false);
+                          deleteTerminal();
+                        }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
+                          Create new Terminal</button>
+                      </div>
+                    </div>
+
+
+                  </div>
+
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
 
 
       <ToastContainer

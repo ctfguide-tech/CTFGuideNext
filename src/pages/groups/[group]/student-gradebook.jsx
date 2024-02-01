@@ -21,13 +21,12 @@ const StudentGradebook = () => {
     if(data && data.success) {
       const info = data.body;
       setName(info["name"] || localStorage.getItem("username"));
-      setFinalGrade(info["finalGrade"] || 0);
+      setFinalGrade((info["finalGrade"] || 0).toFixed(2));
       const asigns = Object.entries(info)
       .filter(([key]) => key !== "name" && key !== "finalGrade")
       .map(([key, value]) => ({ [key]: value }));
       setAssignments(asigns);
     } else console.log("Unable to get final grade data");
-    console.log(data);
   }
 
   useEffect(() => {

@@ -3,12 +3,15 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
+import Loader from '@/components/Loader';
 import api from '@/utils/terminal-api';
 
 const auth = getAuth();
@@ -21,6 +24,8 @@ export default function id() {
   const [flagInput, setFlagInput] = useState('');
   const [submissions, setSubmissions] = useState([]);
   const [solved, setSolved] = useState(null);
+
+  const [terminalPopup, setTerminalPopup] = useState(false);
 
   // challenge stuff
   const [hints, setHints] = useState([
@@ -47,6 +52,7 @@ export default function id() {
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
+  const [code, setCode] = useState(0);
 
   const router = useRouter();
 
@@ -255,41 +261,52 @@ export default function id() {
     router.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
 
-  // const deleteTerminal = async (code) => {
-  //   try {
-  //     console.log('deleting terminal');
-  //
-  //     const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
-  //
-  //     const body = {
-  //       jwtToken: localStorage.getItem('idToken'),
-  //       TerminalGroupName: 'schell-class-session',
-  //       TerminalID: code,
-  //       classID: 'psu101',
-  //       organizationName: 'PSU',
-  //       userID: localStorage.getItem('username'),
-  //       slug: challenge.slug,
-  //     };
-  //
-  //     const requestOptions = {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(body),
-  //     };
-  //
-  //     const response = await fetch(url, requestOptions);
-  //     if (response.ok) {
-  //       console.log('The terminal was deleted successfully');
-  //     } else {
-  //       console.log('Failed to delete the terminal');
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+  const deleteTerminal = async () => {
+    try {
+      console.log('deleting terminal');
+      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
+      const token = auth.currentUser.accessToken;
+      const body = {
+        jwtToken: token,
+        TerminalGroupName: 'schell-class-session',
+        TerminalID: code,
+        classID: 'psu101',
+        organizationName: 'PSU',
+        userID: localStorage.getItem('username').toLowerCase(),
+        slug: challenge.slug,
+      };
 
-  // console.log(submissions);
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      };
 
+      const response = await fetch(url, requestOptions);
+      if (response.ok) {
+        console.log('The terminal was deleted successfully');
+        setFetchingTerminal(true);
+        setTimeout(async () => {
+          await fetchTerminal();
+        }, 3000);
+      } else {
+        console.log('Failed to delete the terminal');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const checkIfTerminalExists = async () => {
+    const token = auth.currentUser.accessToken;
+    const data = await api.getTerminal(token);
+    if (data !== null) {
+      setCode(data.id);
+      setTerminalPopup(true);
+    } else {
+      await fetchTerminal();
+    }
+  }
 
   return (
     <>
@@ -429,18 +446,18 @@ export default function id() {
                     aria-hidden="true"
                   ></i>
                 ) : (
-                  solved === false && (
-                    <i
-                      class="fa fa-times"
-                      style={{
-                        color: '#D8504D',
-                        position: 'relative',
-                        left: '5px',
-                      }}
-                      aria-hidden="true"
-                    ></i>
-                  )
-                )}
+                    solved === false && (
+                      <i
+                        class="fa fa-times"
+                        style={{
+                          color: '#D8504D',
+                          position: 'relative',
+                          left: '5px',
+                        }}
+                        aria-hidden="true"
+                      ></i>
+                    )
+                  )}
 
                 <p className="mt-6 font-semibold text-white">HINTS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
@@ -472,61 +489,62 @@ export default function id() {
               </div>
 
               <div className="col-span-4   ">
-                                
-<div className="mx-auto h-full bg-black px-4 pb-60 ">
-{userName && (
-  <div className="hint mb-2 text-gray-400 py-4">
-    <span className="font-semibold text-white">
-      Login as <span  id="uname"  onClick={() => {
-        navigator.clipboard.writeText(document.getElementById('uname').innerText)
-        toast.success('Copied to clipboard!', {
-            position: 'bottom-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'dark',
-          });
-        
-    
-    }
+
+                <div className="mx-auto h-full bg-black px-4 pb-60 ">
+                  {userName && (
+                    <div className="hint mb-2 text-gray-400 py-4">
+                      <span className="font-semibold text-white">
+                        Login as <span  id="uname"  onClick={() => {
+                          navigator.clipboard.writeText(document.getElementById('uname').innerText)
+                          toast.success('Copied to clipboard!', {
+                            position: 'bottom-right',
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: 'dark',
+                          });
 
 
-        } className="text-yellow-400 cursor-pointer">{userName}</span> using the password <span className="text-yellow-400 cursor-pointer" id="upass"  onClick={() => {
-            navigator.clipboard.writeText(document.getElementById('upass').innerText)
-            toast.success('Copied to clipboard!', {
-                position: 'bottom-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'dark',
-              });
-            }}
-            
-            >{password}</span>
-    </span>
+                        }
 
-    {minutesRemaining !== -1 && (
-      <div className="float-right ml-auto flex cursor-pointer ">
-        <span style={{ cursor: 'pointer' }} className="text-gray-300 hover:bg-black">
-          Container will stop in: &nbsp;
-          <span className={`font-semibold ${getColorForTime(minutesRemaining)}`}>
-            {minutesRemaining} minutes
-          </span>
-        </span>
-        
-      </div>
-    )}
 
-    
-  </div>
-)}
-                        
+                        } className="text-yellow-400 cursor-pointer">{userName}</span> using the password <span className="text-yellow-400 cursor-pointer" id="upass"  onClick={() => {
+                          navigator.clipboard.writeText(document.getElementById('upass').innerText)
+                          toast.success('Copied to clipboard!', {
+                            position: 'bottom-right',
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: 'dark',
+                          });
+                        }}
+
+                        >{password}</span>
+                      </span>
+
+                      {minutesRemaining !== -1 && (
+                        <div className="float-right ml-auto flex cursor-pointer ">
+                          <span style={{ cursor: 'pointer' }} className="text-gray-300 hover:bg-black">
+                            Container will stop in: &nbsp;
+                            <span className={`font-semibold ${getColorForTime(minutesRemaining)}`}>
+                              {minutesRemaining} minutes
+                            </span>
+                          </span>
+
+
+                        </div>
+                      )}
+
+
+                    </div>
+                  )}
+
 
 
 
@@ -550,11 +568,15 @@ export default function id() {
                       <button
                         className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                         disabled={fetchingTerminal}
-                        onClick={fetchTerminal}
+                        onClick={checkIfTerminalExists}
                       >
                         Launch Terminal 
                       </button>
                   }
+                      { fetchingTerminal && <span><i className="fas fa-spinner fa-pulse"
+                        style={{color: "gray", fontSize: "25px"}}>
+                      </i></span>
+                      }
                       <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
                     </div>
                   )}
@@ -588,6 +610,66 @@ export default function id() {
           </div>
         </div>
       </div>
+      <Transition.Root show={terminalPopup} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setTerminalPopup}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0" >
+
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+
+                <Dialog.Panel className="border w-full max-w-6xl relative transform overflow-hidden rounded-lg shadow-lg shadow-neutral-800  bg-gradient-to-r from-neutral-900 to-black  px-4  text-left  transition-all ">
+                  <div>
+
+
+                    <div className="mt-3  sm:mt-5 w-full pb-14 px-10">
+                      <h1 className='text-2xl mb-2 text-white text-center mt-12'>Would you like to use your existing terminal or create a new one?</h1>
+
+
+                      <div className='mx-auto text-center mt-10'>
+                        <button onClick={() => {
+                          setTerminalPopup(false);
+                          fetchTerminal();
+                        }} style={{marginRight: "10px"}} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
+                          Use Existing Terminal</button>
+                        {" "}
+
+                        <button style={{marginLeft: "10px"}} onClick={() => {
+                          setTerminalPopup(false);
+                          deleteTerminal();
+                        }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
+                          Create new Terminal</button>
+                      </div>
+                    </div>
+
+
+                  </div>
+
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

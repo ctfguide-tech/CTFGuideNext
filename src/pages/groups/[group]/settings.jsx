@@ -17,7 +17,7 @@ import request from '@/utils/request';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
-const frontend_baselink = `localhost:3000`;
+const frontend_baselink = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 const categoryToIdx = {
   test: 0,
@@ -410,7 +410,7 @@ export default function teacherSettings() {
                 <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
                   <div className="sm:col-span-6">
                     <h2 className="text-xl font-medium text-white">
-                      Payed by {pricingPlan}
+                          {/*Paid for my {pricingPlan}*/}
                     </h2>
                     <p className="mt-1 text-sm text-white">
                       All changes will be applied after clicking the save button

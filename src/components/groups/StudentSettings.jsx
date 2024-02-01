@@ -104,7 +104,7 @@ export default function StudentSettings() {
             <div className="max-w-4.5xl mx-auto px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
               <div className="flex">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
-                  Student Settings (Nothing works in here)
+                  Student Settings 
                 </h1>
 
                 <div className="ml-auto">
@@ -201,6 +201,8 @@ export default function StudentSettings() {
                     </div>
                   </Dialog>
                 </Transition.Root>
+
+                {/*
                 <button
                   onClick={() => {
                     setShowOverlay(true);
@@ -211,6 +213,7 @@ export default function StudentSettings() {
                 >
                   Manage Free Trial
                 </button>
+                */}
 
                 <button
                   onClick={() => {

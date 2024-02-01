@@ -187,7 +187,7 @@ const Gradebook = () => {
                   <td class="whitespace-nowrap px-6 py-4 text-sm text-white">
                     {student.finalGrade === null
                       ? 'N/A'
-                      : `${student.finalGrade}%`}
+                      : `${student.finalGrade.toFixed(2)}%`}
                   </td>
                 </tr>
               ))}

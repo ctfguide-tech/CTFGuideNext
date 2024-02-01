@@ -13,16 +13,22 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function CreateGroup() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // change this in deployment
 
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('student');
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [seats, setSeats] = useState(0);
   const [usingPaymentLink, setUsingPaymentLink] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const createClass = async () => {
+    setLoading(true);
     try {
+
+      // this is for now since we are not letting anyone pay 
+      setSelectedOption('student');
+
       if (seats <= 0) {
         toast.error('Invalid number of seats');
         return;
@@ -56,7 +62,6 @@ export default function CreateGroup() {
         if (resJson.success) {
           window.location.href = '/groups';
         } else console.log('There was an error when creating the class');
-
         return;
       }
 
@@ -83,7 +88,6 @@ export default function CreateGroup() {
 
       if (selectedOption === 'student') {
         window.location.href = '/groups';
-        console.log(await response.json());
       } else {
         const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
         const stripe = await loadStripe(STRIPE_KEY);
@@ -100,6 +104,7 @@ export default function CreateGroup() {
     } catch (err) {
       console.log(err);
     }
+    setLoading(false);
   };
 
   return (
@@ -238,6 +243,9 @@ export default function CreateGroup() {
                   </div>
                 </div>
 
+{
+/*
+
                 <h1 className="mt-4 text-sm text-white">Pricing Model</h1>
                 <div className="grid-row-1 mt-2 grid grid-cols-2 gap-4 gap-x-4 text-white ">
                   <div
@@ -276,7 +284,8 @@ export default function CreateGroup() {
                     <h1 className="text-sm">per student, per semester</h1>
                   </div>
                 </div>
-
+ * */
+}
                 <h1 className="mt-4 text-sm text-white">
                   Expected amount of students
                 </h1>
@@ -308,6 +317,7 @@ export default function CreateGroup() {
                 </div>
 
                 <button
+                  disabled={loading}
                   onClick={createClass}
                   id="submitButton"
                   className="mt-4  rounded-lg bg-blue-700 px-5 py-1 text-xl text-white hover:bg-blue-600/50"

@@ -153,68 +153,76 @@ export default function StudentView({ group }) {
               )}
             </div>
             <div className="col-span-2   px-4 py-3">
-              <h1 className="text-xl font-semibold text-white">Assignments</h1>
+              <h1 className="text-xl font-semibold text-white">Upcoming Assignments</h1>
               <div className="mt-1 ">
                 {classroom &&
                   classroom.assignments &&
                   classroom.assignments.length > 0 ? (
-                  classroom.assignments.map((assignment) => {
-                      return (
-                    <div
-                      key={assignment.id}
-                      onClick={() => {
-                            window.location.href = '/assignments/student/' + assignment.id;
-                      }}
-                      className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600  bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800"
-                    >
-                      <h2 className="text-md text-white">
-                        <Tooltip id="quiz-tooltip" place="left" />
-                        <Tooltip id="test-tooltip" place="left" />
-                        <Tooltip id="homework-tooltip" place="left" />
-                        <Tooltip id="assessment-tooltip" place="left" />
+                  classroom.assignments
+                    .filter(
+                      (assignment) => new Date(assignment.dueDate) > new Date()
+                    )
+                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                    .slice(0, 5)
+                    .map((assignment) => (
+                      <div
+                        key={assignment.id}
+                        onClick={() => {
+                          window.location.href =
+                            '/assignments/student/' + assignment.id + '';
+                        }}
+                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(assignment.dueDate) < new Date()
+                            ? 'border-red-600'
+                            : 'border-green-600'
+                          } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}
+                      >
+                        <h2 className="text-md text-white">
+                          <Tooltip id="quiz-tooltip" place="left" />
+                          <Tooltip id="test-tooltip" place="left" />
+                          <Tooltip id="homework-tooltip" place="left" />
+                          <Tooltip id="assessment-tooltip" place="left" />
 
-                        {assignment.category === 'quiz' && (
-                          <i
-                            title="quiz"
-                            className="fas fa-question-circle"
-                            data-tooltip-id="quiz-tooltip"
-                            data-tooltip-content="Quiz"
-                          ></i>
-                        )}
-                        {assignment.category === 'test' && (
-                          <i
-                            title="test"
-                            className="fas fa-clipboard-check"
-                            data-tooltip-id="test-tooltip"
-                            data-tooltip-content="Test"
-                          ></i>
-                        )}
-                        {assignment.category === 'homework' && (
-                          <i
-                            title="homework"
-                            className="fas fa-book"
-                            data-tooltip-id="homework-tooltip"
-                            data-tooltip-content="Homework"
-                          ></i>
-                        )}
-                        {assignment.category === 'assessment' && (
-                          <i
-                            title="assessment"
-                            className="fas fa-file-alt"
-                            data-tooltip-id="assessment-tooltip"
-                            data-tooltip-content="Assessment"
-                          ></i>
-                        )}
+                          {assignment.category === 'quiz' && (
+                            <i
+                              title="quiz"
+                              className="fas fa-question-circle"
+                              data-tooltip-id="quiz-tooltip"
+                              data-tooltip-content="Quiz"
+                            ></i>
+                          )}
+                          {assignment.category === 'test' && (
+                            <i
+                              title="test"
+                              className="fas fa-clipboard-check"
+                              data-tooltip-id="test-tooltip"
+                              data-tooltip-content="Test"
+                            ></i>
+                          )}
+                          {assignment.category === 'homework' && (
+                            <i
+                              title="homework"
+                              className="fas fa-book"
+                              data-tooltip-id="homework-tooltip"
+                              data-tooltip-content="Homework"
+                            ></i>
+                          )}
+                          {assignment.category === 'assessment' && (
+                            <i
+                              title="assessment"
+                              className="fas fa-file-alt"
+                              data-tooltip-id="assessment-tooltip"
+                              data-tooltip-content="Assessment"
+                            ></i>
+                          )}
 
-                        <span className="ml-0.5"> {assignment.name}
-                              {!assignment.isOpen && 
+                        <span className="ml-0.5"> {assignment.name} {!assignment.isOpen && 
                               <span style={{color: "#C41E3A"}}>(closed)</span>} </span>
-                      </h2>
-                      <p className="text-white">
-                        Due: {parseDate(assignment.dueDate)}{' '}
-                      </p>
-                    </div>
-                  )})
+                        </h2>
+                        <p className="text-white">
+                          Due: {parseDate(assignment.dueDate)}{' '}
+                        </p>
+                      </div>
+                    ))
                 ) : (
                   <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
                     <h1 className="pe-6 text-lg">No assignments here yet</h1>
