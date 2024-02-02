@@ -157,7 +157,7 @@ export default function id() {
                 <div className="ml-auto">
                   <div className="rounded-md bg-white px-3 py-1 text-center gap-y-0">
                     <h1 className="text-4xl font-bold text-blue-600 text-center mb-0 pb-0 ">
-               { submission && assignment && (submission.grade / assignment.totalPoints * 100)}%</h1>
+                      { submission && assignment && (submission.grade)}%</h1>
                     
                   </div>
                 </div>
