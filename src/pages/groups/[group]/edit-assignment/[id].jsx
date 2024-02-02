@@ -159,7 +159,7 @@ export default function EditingAssignment() {
             <div className="max-w-4.5xl mx-auto px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
               <div className="flex">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
-                  Edit Assignment
+                  Editing Assignment "{name}"
                 </h1>
 
                 <div className="ml-auto">

@@ -119,6 +119,23 @@ export default function Slug() {
     }
   };
 
+  const getChallenge = async (assignment) => {
+    try {
+      const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
+      const requestOptions = {
+        method: 'GET',
+        credentials: 'include'
+      };
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.success) {
+        setChallenge(data.body);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getAssignment = async () => {
     const params = window.location.href.split('/');
     if (params.length < 5) {
@@ -130,17 +147,13 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
-        setChallenge(data.body.challenge);
+        getChallenge(data.body);
       } else {
         console.log('You are not apart of this class');
         //window.location.href = '/groups';
       }
     }
   };
-
-
-  console.log('Assignment:', assignment);
-  console.log('Challenge:', challenge);
 
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;

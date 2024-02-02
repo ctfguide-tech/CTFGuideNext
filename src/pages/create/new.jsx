@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
-
+import  fileApi  from '@/utils/file-api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -63,42 +63,18 @@ export default function Createchall() {
   const sendToFileApi = async () => {
     const isValid = await validateNewChallege();
     if (isValid) {
-      try {
-        const token = auth.currentUser.accessToken;
-        if (!selectedFile) {
-          await uploadChallenge('');
-          return;
-        }
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('jwtToken', token);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
-
-        const readableStream = response.body;
-        const textDecoder = new TextDecoder();
-        const reader = readableStream.getReader();
-
-        let result = await reader.read();
-        let fileId = '';
-        while (!result.done) {
-          fileId = textDecoder.decode(result.value);
-          result = await reader.read();
-        }
-
-        if (response.ok) {
-          console.log('File uploaded successfully!');
+      setIsCreating(true);
+      if (!selectedFile) {
+        await uploadChallenge('');
+        return;
+      } else {
+        const token = await auth.currentUser.accessToken;
+        const fileId = await fileApi(token, selectedFile);
+        if(fileId !== null) {
           await uploadChallenge(fileId);
         } else {
-          console.error('File upload failed.');
+          toast.error('Something went wrong with the file upload');
         }
-      } catch (error) {
-        console.error('Error during file upload:', error);
       }
     } else {
       console.warn('Either the file, toke, or challenge is invalid');

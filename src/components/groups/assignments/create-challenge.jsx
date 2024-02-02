@@ -6,6 +6,7 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import  fileApi  from '@/utils/file-api';
 
 const styles = {
   h1: { fontSize: '2.4rem' },
@@ -75,49 +76,22 @@ export default function Createchall(props) {
     const isValid = await validateNewChallege();
     if (isValid) {
       setIsCreating(true);
-      try {
-        if (!selectedFile) {
-          await uploadChallenge('');
-          return;
-        }
-        const token = auth.currentUser.accessToken;
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('jwtToken', token);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_TERM_URL}/upload`,
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
-
-        const readableStream = response.body;
-        const textDecoder = new TextDecoder();
-        const reader = readableStream.getReader();
-
-        let result = await reader.read();
-        let fileId = '';
-        while (!result.done) {
-          fileId = textDecoder.decode(result.value);
-          result = await reader.read();
-        }
-
-        if (response.ok) {
-          console.log('File uploaded successfully!');
+      if (!selectedFile) {
+        await uploadChallenge('');
+        return;
+      } else {
+        const token = await auth.currentUser.accessToken;
+        const fileId = await fileApi(token, selectedFile);
+        if(fileId !== null) {
           await uploadChallenge(fileId);
         } else {
-          console.error('File upload failed.');
+          toast.error('Something went wrong with the file upload');
         }
-      } catch (error) {
-        console.error('Error during file upload:', error);
       }
     } else {
       console.warn('Either the file, toke, or challenge is invalid');
     }
   };
-
-  console.log(props.assignmentInfo);
 
   const uploadChallenge = async (fileId) => {
     try {
