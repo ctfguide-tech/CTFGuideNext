@@ -34,6 +34,7 @@ export default function Slug() {
 
 
   const [challenge, setChallenge] = useState(null);
+  const [challengeHints, setChallengeHints] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchingTerminal, setFetchingTerminal] = useState(false);
@@ -147,10 +148,10 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
+        setChallengeHints(data.body.challenge.hints);
         getChallenge(data.body);
       } else {
         console.log('You are not apart of this class');
-        //window.location.href = '/groups';
       }
     }
   };
@@ -228,11 +229,13 @@ export default function Slug() {
       challengeId: challenge.id,
     };
     const data = await makePostRequest(url, body);
+    console.log("This is I:", i);
+    console.log(data);
     if (data && data.success) {
       let tmp = [...hints];
-      tmp[i].message = challenge.hints[i].message;
+      tmp[i].message = challengeHints[i].message;
       tmp[i].penalty =
-        '(-' + challenge.hints[i].penalty + ') points';
+        '(-' + challengeHints[i].penalty + ') points';
       setHints(tmp);
     } else {
       console.log('problem when feching hints');

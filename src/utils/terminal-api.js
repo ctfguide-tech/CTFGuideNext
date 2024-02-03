@@ -18,6 +18,7 @@ const getTerminal = async (token) => {
     return null;
   }
 };
+
 const buildTerminal = async (challenge, token) => {
   try {
     // toast.info('Creating a terminal');
