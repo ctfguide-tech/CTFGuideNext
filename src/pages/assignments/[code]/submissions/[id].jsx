@@ -9,26 +9,13 @@ import { Dialog, Transition } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import request from '@/utils/request';
 import { useRouter } from 'next/router';
+import ClassroomNav from '@/components/groups/classroomNav';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function id() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-
   const [assignment, setAssignment] = useState(null);
-  const [flagInput, setFlagInput] = useState('');
-  const [submissions, setSubmissions] = useState([]);
-  const [solved, setSolved] = useState(null);
-  const [hints, setHints] = useState([
-    { message: '', penalty: '' },
-    { message: '', penalty: '' },
-    { message: '', penalty: '' },
-  ]);
-
-  const [challenge, setChallenge] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   const [submission, setSubmission] = useState(null);
   const [user, setUser] = useState(null);
   const [formattedDate, setFormattedDate] = useState(null);
@@ -90,11 +77,11 @@ export default function id() {
         setUser(data.body.user);
         let adjustedGrade = calculateAdjustedGrade(data.body);
         data.body.grade = adjustedGrade;
+        data.body.grade = Math.round(data.body.grade * 100) / 100;
         setSubmission(data.body);
         const date = new Date(data.body.createdAt);
         setFormattedDate(date.toLocaleString());
       }
-      console.log(data.body);
     } catch (err) {
       console.log(err);
     }
@@ -117,6 +104,7 @@ export default function id() {
 
   // Check out what the submission object looks like
   console.log(submission);
+  console.log(assignment);
 
   return (
     <>
@@ -148,7 +136,10 @@ export default function id() {
               <div className="flex">
                 <div>
                   <h1 className="text-3xl font-semibold text-white">
-                    {(assignment && assignment.name) || "Pranav's Submission"}{' '}
+                    {
+                      submission && assignment ? <span>{submission.user.username}'s Submission</span>
+                      : <span>... Submission</span>
+                    }
                   </h1>
 
                   <h1 className="text-white">Submitted at {formattedDate}</h1>
@@ -157,8 +148,8 @@ export default function id() {
                 <div className="ml-auto">
                   <div className="rounded-md bg-white px-3 py-1 text-center gap-y-0">
                     <h1 className="text-4xl font-bold text-blue-600 text-center mb-0 pb-0 ">
-                      { submission && assignment && (submission.grade)}%</h1>
-                    
+                      { submission ? submission.grade : '00' }%
+                    </h1>
                   </div>
                 </div>
               </div>

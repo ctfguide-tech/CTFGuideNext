@@ -8,6 +8,7 @@ import StudentNav from '@/components/groups/studentNav';
 import { useRouter } from 'next/router';
 import ClassroomNav from '@/components/groups/classroomNav';
 import request from '@/utils/request';
+import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import Loader from '@/components/Loader';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -17,6 +18,7 @@ const ViewAllAssignments = () => {
   const [isTeacher, setIsTeacher] = useState(false);
   const [grades, setGrades] = useState({});
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
 
   const router = useRouter();
   const { group } = router.query;
@@ -71,6 +73,10 @@ const ViewAllAssignments = () => {
     }
   }, [group]);
 
+  if (viewCreateAssignment) {
+    return <CreateAssignment classCode={group} />;
+  }
+
   return (
     <>
       <Head>
@@ -91,7 +97,7 @@ const ViewAllAssignments = () => {
               {isTeacher && 
               <button
                 onClick={() => {
-                  //setViewCreateAssignment(true);
+                  setViewCreateAssignment(true);
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
@@ -104,7 +110,6 @@ const ViewAllAssignments = () => {
       </div>
       }
       <Loader isLoad={loadingAuth} />
-
       {
         !loadingAuth && 
         <>

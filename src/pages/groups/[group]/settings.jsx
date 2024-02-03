@@ -6,25 +6,16 @@ import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
 import ClassroomNav from '@/components/groups/classroomNav';
 import StudentSettings from "@/components/groups/StudentSettings";
-
 import { useRouter } from 'next/router';
 import Loader from '@/components/Loader';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import request from '@/utils/request';
+import CreateAssignment from '@/components/groups/assignments/createAssignment';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
-const baseUrl = process.env.NEXT_PUBLIC_API_URL; // switch to deployment api url
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const frontend_baselink = process.env.NEXT_PUBLIC_FRONTEND_URL;
-
-const categoryToIdx = {
-  test: 0,
-  quiz: 1,
-  homework: 2,
-  assessment: 3,
-};
 
 const defaultImages = [
   'https://robohash.org/pranavramesh',
@@ -49,21 +40,22 @@ export default function teacherSettings() {
   const [nameOfClassroom, setNameOfClassroom] = useState('');
   const [emailDomain, setEmailDomain] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [blackListedStudents, setBlackListedStudents] = useState([]);
 
   const [showOverlay, setShowOverlay] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(-1);
   const [originalNumberOfSeats, setOriginalNumberOfSeats] = useState(0);
-  const [weightIdx, setWeightIdx] = useState(0);
   const [weights, setWeights] = useState([]);
   const [category, setCategory] = useState(0);
   const [classCode, setClassCode] = useState('');
   const [classroomId, setClassroomId] = useState(-1);
   const [pricingPlan, setPricingPlan] = useState('');
-  const [students, setStudents] = useState([]);
   const [filteredOptions, setFileredOptions] = useState([]);
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const { group } = router.query;
@@ -85,12 +77,12 @@ export default function teacherSettings() {
       setNumberOfSeats(classroom.numberOfSeats);
       setIsOpen(classroom.open ? 'open' : 'close');
       setNameOfClassroom(classroom.name);
+      setBlackListedStudents(classroom.blackList);
       setEmailDomain(classroom.org);
       setWeights(classroom.weights);
       setCategory(classroom.category.length > 0 ? classroom.category[0] : 0);
       setPricingPlan(classroom.pricingPlan);
       setClassroomId(classroom.id);
-      setStudents(classroom.sutdents);
       const filteredOptions = classroom.students.filter((option) =>
         option.username.toLowerCase().includes(searchInput.toLowerCase())
       );
@@ -202,10 +194,9 @@ export default function teacherSettings() {
       });
       const data = await response.json();
       if (data.success) {
-        window.location.href = `/groups/${classCode}/home`;
+        router.push('/groups');
       } else {
-        window.location.replace('/login');
-        console.log('Error when removing classroom');
+        toast.error(data.message);
       }
     } catch (err) {
       console.log(err);
@@ -226,7 +217,7 @@ export default function teacherSettings() {
       });
       const data = await response.json();
       if (data.success) {
-        window.location.href = `/groups/${classCode}/home`;
+        router.push('/groups');
       } else {
         console.log(data.message);
       }
@@ -237,20 +228,30 @@ export default function teacherSettings() {
 
   const removeStudent = async () => {
     try {
-      const userId = selectedStudent.uid;
-      const url = `${baseUrl}/classroom/blackListStudent`;
+      const username = selectedStudent.username;
+      const action = blackListedStudents.indexOf(username) > -1 ? 'unBlackListStudent' : 'blackListStudent';
+      const url = `${baseUrl}/classroom/${action}`;
+
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ userId, classroomId }),
+        body: JSON.stringify({ username, classroomId }),
       });
+
       const data = await response.json();
       if (data.success) {
-        console.log('The student has been blackListed');
-        window.location.href = `/groups/${classCode}/home`;
+        toast.success(`The student has been ${action === 'unBlackListStudent' ? 'unblackListed' : 'blackListed'}`);
+        if(action === 'unBlackListStudent') {
+          const newBlackList = blackListedStudents.filter(student => student !== username);
+          setBlackListedStudents(newBlackList);
+        } else {
+          setBlackListedStudents([...blackListedStudents, username]);
+          setFileredOptions(filteredOptions.filter(student => student.username !== username));
+        }
+        setSelectedStudent(null);
       } else {
-        console.log('Error when removing classroom');
+        console.log('Error has occurred when changing student status');
       }
     } catch (err) {
       console.log(err);
@@ -258,6 +259,7 @@ export default function teacherSettings() {
   };
 
   const handleConfirmClick = async () => {
+    setLoading(true);
     if (index === 0) {
       await handleDelete();
     } else if (index === 1) {
@@ -266,7 +268,9 @@ export default function teacherSettings() {
       await saveChanges();
     } else if (index === 3) {
       await removeStudent();
-    } else return;
+    } 
+    setShowOverlay(false);
+    setLoading(false);
   };
 
   const addSeatToClass = async (seatsToAdd) => {
@@ -315,7 +319,7 @@ export default function teacherSettings() {
         const seatsToAdd = newNumberOfSeats - originalNumberOfSeats;
         await addSeatToClass(seatsToAdd);
       } else {
-        window.location.href = `/groups/${classCode}/home`;
+        router.push(`/groups/${classCode}/home`);
       }
     }
   };
@@ -338,6 +342,10 @@ export default function teacherSettings() {
       progress: undefined,
       theme: 'dark',
     });
+  }
+
+  if(viewCreateAssignment && classroom) {
+    return <CreateAssignment group={classroom.classCode} />
   }
 
   if(isStudent) {
@@ -363,7 +371,6 @@ export default function teacherSettings() {
               <button
                 onClick={() => {
                   setViewCreateAssignment(true);
-                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >
@@ -506,7 +513,7 @@ export default function teacherSettings() {
                       htmlFor="username"
                       className="block text-sm font-medium leading-6 text-white"
                     >
-                      Invite a Teacher
+                      Invite a Teacher (Enter the email of the user you want to invite)
                     </label>
                     <div className="mt-2 flex rounded-md shadow-sm">
                       <input
@@ -569,7 +576,7 @@ export default function teacherSettings() {
 
                   <div style={{ width: '700px' }}>
                     <div>
-                      <h1 className="text-xl text-white"> Students: </h1>
+                      <h1 className="text-xl text-white"> </h1>
                       <div style={{ display: 'flex' }}>
                         <input
                           type="text"
@@ -610,6 +617,35 @@ export default function teacherSettings() {
                             </div>
                           );
                         })}
+                          {
+                            blackListedStudents.length > 0 &&
+                              blackListedStudents.map((name, idx) => {
+                                  const i = idx % defaultImages.length;
+                                return (
+                                    <div
+                                      key={idx}
+                                      style={{
+                                        width: '140px',
+                                        border:
+                                        selectedStudent &&
+                                          selectedStudent.username === name 
+                                          ? '2px solid lightblue'
+                                          : '',
+                                      }}
+                                      className="flex items-center rounded-lg bg-neutral-900"
+                                      onClick={() => setSelectedStudent({username: name})}
+                                    >
+                                      <i className="fas fa-user-slash text-red-600"></i>
+                                      <h3
+                                        className="ml-3 mt-2 pl-1 text-white"
+                                        style={{ marginLeft: '-2px', marginTop: '-2px' }}
+                                      >
+                                        {name}
+                                      </h3>
+                                    </div>
+                                )
+                              })
+                          }
                       </div>
                     </div>
                   </div>
@@ -662,11 +698,15 @@ export default function teacherSettings() {
                               <br></br>
                               <div className="mx-auto mt-4 w-full pb-5 text-center">
                                 <button
+                                  disabled={loading}
                                   onClick={handleConfirmClick}
                                   className="rounded-lg bg-neutral-800 px-4 py-2 text-white hover:bg-neutral-600/50"
                                 >
                                   {' '}
                                   Confirm{' '}
+                                  {
+                                    loading ? <i className="fas fa-spinner fa-spin"></i> : ''
+                                 }
                                 </button>
                                 <button
                                   onClick={() => {
@@ -699,8 +739,15 @@ export default function teacherSettings() {
                 <button
                   onClick={() => {
                     setShowOverlay(true);
-                    setMessageOfConfirm(actions[3]);
-                    setIndex(3);
+                    if(selectedStudent === null) {
+                      setMessageOfConfirm('Please select a student to blacklist');
+                      return;
+                    } else if(blackListedStudents.indexOf(selectedStudent.username) > -1) {
+                        setMessageOfConfirm(`Are you sure you want to unblacklist ${selectedStudent.username}?`);
+                    } else {
+                          setMessageOfConfirm(actions[3]);
+                        }
+                        setIndex(3);
                   }}
                   style={{
                     marginLeft: '25%',
@@ -709,7 +756,11 @@ export default function teacherSettings() {
                   disabled={selectedStudent === null}
                   className="ml-4 rounded-lg bg-pink-600 px-2 py-1 text-white hover:bg-pink-600/50"
                 >
-                  Blacklist{' '}
+                  {
+                      selectedStudent && 
+                      (blackListedStudents.find(user => user === selectedStudent.username)) ? 'unblacklist' : 'Blacklist'
+                  }
+                      {" "}
                   {selectedStudent ? selectedStudent.username : 'student'}
                 </button>
 

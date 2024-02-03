@@ -34,9 +34,9 @@ export default function Createchall() {
     const requestOptions = { method: "POST", credentials: 'include', body: data }
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges`;
     const response = await fetch(url, requestOptions);
-    const data = await response.json();
+    let respo = await response.json();
     window.location.href = "/create"
-    console.log(data);
+    console.log(respo);
   }
 
     return (<>

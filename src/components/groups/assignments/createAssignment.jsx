@@ -230,7 +230,7 @@ export default function CreateGroup(props) {
                                   value={title}
                                   onChange={(e) => setTitle(e.target.value)}
                                   className="block flex-1 border-0 bg-transparent px-4 py-1.5 pl-3 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                  placeholder="Make this descriptive but short."
+                                  placeholder="ex. Capture Flag 1"
                                 />
                               </div>
                             </div>

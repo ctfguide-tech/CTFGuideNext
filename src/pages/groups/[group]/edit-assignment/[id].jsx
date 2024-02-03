@@ -7,6 +7,7 @@ import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import Loader from '@/components/Loader';
+import CreateAssignment from '@/components/groups/assignments/createAssignment';
 
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
@@ -29,6 +30,7 @@ export default function EditingAssignment() {
   const [messageOfConfirm, setMessageOfConfirm] = useState('');
   const [index, setIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
 
   const router = useRouter();
   const classCode = router.query.group;
@@ -123,6 +125,10 @@ export default function EditingAssignment() {
     }
   }
 
+  if(viewCreateAssignment) {
+    return <CreateAssignment classCode={classCode} />;
+  }
+
   return (
     <>
       <Head>
@@ -140,7 +146,7 @@ export default function EditingAssignment() {
             <div className="flex items-center">
               <button
                 onClick={() => {
-
+                  setViewCreateAssignment(true);
                 }}
                 className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
               >

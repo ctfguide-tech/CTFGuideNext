@@ -12,8 +12,9 @@ import LoadingBar from 'react-top-loading-bar';
 import request from '@/utils/request';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-const baseClientUrl = `localhost:3000`;
+const baseClientUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 const defaultImages = [
   'https://robohash.org/pranavramesh',

@@ -18,6 +18,7 @@ const Announcement = ({
 
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
   const [makingNewPost, setMakingNewPost] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCloseModal = () => {
     setEditingAnnouncementIdx(-1);
@@ -25,8 +26,8 @@ const Announcement = ({
     setMakingNewPost(false);
   };
 
-  console.log(announcement);
   const updateAnnouncement = async (id, message) => {
+    setLoading(true);
     if (!id) {
       toast.error('Unable to make announcement, Please refresh the page.');
       return;
@@ -46,36 +47,35 @@ const Announcement = ({
     }
     setAnnouncement('');
     setEditingAnnouncementIdx(-1);
+    setLoading(false);
   };
 
   const createAnnouncement = async (message) => {
-    setAnnouncement('');
-    setIsModalOpen(false);
-    setEditingAnnouncementIdx(-1);
-    setMakingNewPost(false);
-
+    setLoading(true);
     const username = localStorage.getItem('username');
-
-    let tmp = announcements;
-    tmp.push({ author: username, createdAt: new Date(), message, type: "IMPORTANT" });
-    setAnnouncements(tmp);
     if (message.length < 1) return;
-
     const body = {
       classCode,
       message,
       type: 'IMPORTANT',
       username,
     };
-
     const url = `${baseUrl}/classroom/announcements/${classCode}`;
     const data = await request(url, 'POST', body);
     if(data && data.success) {
-      console.log(data.message);
+      let tmp = [...announcements];
+      tmp.push(data.body);
+      setAnnouncements(tmp);
+      setIsModalOpen(false);
     }
+    setLoading(false);
+    setAnnouncement('');
+    setEditingAnnouncementIdx(-1);
+    setMakingNewPost(false);
   };
 
   const deleteAnnouncement = async (id) => {
+    setLoading(true);
     if (!id) return;
     const url = `${baseUrl}/classroom/announcements/${id}/${classCode}`;
     const data = await request(url, 'DELETE', null);
@@ -87,6 +87,7 @@ const Announcement = ({
       console.log(data.message);
     }
     setAnnouncement('');
+    setLoading(false);
   };
 
   const styles = {
@@ -215,10 +216,18 @@ const Announcement = ({
             className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
           ></textarea>
           <button
+            disabled={loading}
             onClick={() => createAnnouncement(announcement)}
             className="mr-2 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
           >
-            Post
+            {loading ? 
+              <span>
+              Posting {" "}
+              <i className="fas fa-spinner fa-pulse"
+                style={{color: "white", fontSize: "15px"}}>
+              </i>
+              </span>
+              : 'Post'}
           </button>
           <button
             onClick={handleCloseModal}
@@ -245,12 +254,22 @@ const Announcement = ({
                   ></textarea>
                   <button
                     className="rounded-lg"
+                    disabled={loading}
                     onClick={() =>
                       updateAnnouncement(announcementObj.id, announcement)
                     }
                     style={styles.button}
                   >
-                    Update
+                    {
+                      loading ? 
+                      <span>
+                      Updating {" "}
+                      <i className="fas fa-spinner fa-pulse"
+                        style={{color: "white", fontSize: "15px"}}>
+                      </i>
+                      </span>
+                      : 'Update'
+                    }
                   </button>
                   <button
                     className="rounded-lg"
@@ -296,6 +315,7 @@ const Announcement = ({
                   </li>
                   <span
                     onClick={() => deleteAnnouncement(announcementObj.id)}
+                    disabled={loading}
                     className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
                   >
                     <i className="fa fa-trash mr-1 text-red-500"> </i>
