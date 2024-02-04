@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import request from '@/utils/request';
 
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
@@ -32,7 +31,7 @@ export default function Slug() {
     { message: '', penalty: '' },
   ]);
 
-
+  const [useDiffTerminal, setUseDiffTerminal] = useState(false);
   const [challenge, setChallenge] = useState(null);
   const [challengeHints, setChallengeHints] = useState([]);
   const [submitted, setSubmitted] = useState(false);
@@ -46,9 +45,7 @@ export default function Slug() {
   const [serviceName, setServiceName] = useState('');
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
-
   const [code, setCode] = useState(0);
-
   const [open, setOpen] = useState(true);
   const [terminalPopup, setTerminalPopup] = useState(false);
 
@@ -164,10 +161,17 @@ export default function Slug() {
 
 
   const createTerminal = async () => {
+    if(!challenge) return;
+    setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
-    const created = await api.buildTerminal(challenge, token);
-    if(created) {
-      await fetchTerminal();
+    const data = await api.buildTerminal(challenge, token);
+    if(data) {
+      setPassword(data.password);
+      setServiceName(data.serviceName);
+      setTerminalUrl(data.url);
+      setUserName(data.userName);
+      setMinutesRemaining(data.minutesRemaining);
+      await getTerminalStatus(data.id);
     } else {
       toast.error("Unable to create the terminal, please refresh the page and try again");
       setFetchingTerminal(false);
@@ -178,7 +182,7 @@ export default function Slug() {
     if(!challenge) return;
     const token = auth.currentUser.accessToken;
     setFetchingTerminal(true);
-    const data = await api.getTerminal(token);
+    const data = await api.checkUserTerminal(token, challenge.id);
     if(data !== null) {
       setPassword(data.password);
       setServiceName(data.serviceName);
@@ -194,10 +198,14 @@ export default function Slug() {
   };
 
   const getTerminalStatus = async (id) => {
+    setFetchingTerminal(true);
     if(!foundTerminal) {
       const isActive = await api.getStatus(id);
       if(isActive) {
+
         setFoundTerminal(true);
+        setFetchingTerminal(false);
+
       } else {
         setTimeout(async () => {
           await getTerminalStatus(id);
@@ -229,8 +237,6 @@ export default function Slug() {
       challengeId: challenge.id,
     };
     const data = await makePostRequest(url, body);
-    console.log("This is I:", i);
-    console.log(data);
     if (data && data.success) {
       let tmp = [...hints];
       tmp[i].message = challengeHints[i].message;
@@ -246,7 +252,6 @@ export default function Slug() {
     document.getElementById('spinny').classList.remove('hidden');
     document.getElementById('termDebug').innerHTML = info;
   }
-  console.log('Assignment:', assignment);
 
   const submitAssignment = async () => {
 
@@ -293,49 +298,25 @@ export default function Slug() {
     return 'text-red-400';
   }
 
-  const deleteTerminal = async () => {
-    try {
-      console.log('deleting terminal');
-      const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/deleteTerminal';
-      const token = auth.currentUser.accessToken;
-      const body = {
-        jwtToken: token,
-        TerminalGroupName: 'schell-class-session',
-        TerminalID: code,
-        classID: 'psu101',
-        organizationName: 'PSU',
-        userID: localStorage.getItem('username').toLowerCase(),
-        slug: challenge.slug,
-      };
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      };
-
-      const response = await fetch(url, requestOptions);
-      if (response.ok) {
-        console.log('The terminal was deleted successfully');
-        setTimeout(async () => {
-          await fetchTerminal();
-        }, 5000);
-      } else {
-        console.log('Failed to delete the terminal');
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const checkIfTerminalExists = async () => {
     const token = auth.currentUser.accessToken;
-    const data = await api.getTerminal(token);
+    if(!challenge || !token) return;
+    const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {
       setCode(data.id);
-      setTerminalPopup(true);
+      if(data.challengeID !== challenge.id) {
+        setUseDiffTerminal(true);
+        setTerminalPopup(true);
+      } else {
+        setPassword(data.password);
+        setTerminalUrl(data.url);
+        setServiceName(data.serviceName);
+        setUserName(data.userName);
+        setMinutesRemaining(data.minutesRemaining);
+        await getTerminalStatus(data.id);
+      }
     } else {
-      await fetchTerminal();
+      await createTerminal();
     }
   }
 
@@ -705,22 +686,31 @@ export default function Slug() {
 
 
                     <div className="mt-3  sm:mt-5 w-full pb-14 px-10">
-                      <h1 className='text-2xl mb-2 text-white text-center mt-12'>Would you like to use your existing terminal or create a new one?</h1>
-
+                      <h1 className='text-2xl mb-2 text-white text-center mt-12'>
+                        {
+                          useDiffTerminal ? "Continuing with this challenge will delete your previous terminal."
+                          :"Would you like to use your existing terminal or create a new one?"
+                        }
+                        </h1>
 
                       <div className='mx-auto text-center mt-10'>
+                      {
+                        !useDiffTerminal && 
                         <button onClick={() => {
                           setTerminalPopup(false);
                           fetchTerminal();
                         }} style={{marginRight: "10px"}} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
                           Use Existing Terminal</button>
-                        {" "}
+                      }
 
                         <button style={{marginLeft: "10px"}} onClick={() => {
                           setTerminalPopup(false);
-                          deleteTerminal();
+                          createTerminal();
                         }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
-                          Create new Terminal</button>
+                          {
+                            useDiffTerminal ? "Continue" : "Create New Terminal"
+                          }
+                        </button>
                       </div>
                     </div>
 

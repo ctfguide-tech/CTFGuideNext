@@ -1,27 +1,6 @@
-const getTerminal = async (token) => {
-  try {
-    console.log('Fetching a terminal');
-    const reqUrl = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/getAllUserTerminals?jwtToken=${token}`;
-    const requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
-    const response = await fetch(reqUrl, requestOptions);
-    const data = await response.json();
-    if (data.length > 0) {
-      return data[0];
-    } else {
-      return null;
-    }
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-};
 
 const buildTerminal = async (challenge, token) => {
   try {
-    // toast.info('Creating a terminal');
     console.log('Creating a terminal');
     let min = 1000;
     let max = 9999;
@@ -46,16 +25,33 @@ const buildTerminal = async (challenge, token) => {
     };
 
     const response = await fetch(url, requestOptions);
-    if (response.ok) {
+    if(!response.ok) {
+      return null;
+    }
+    const readableStream = response.body;
+    const textDecoder = new TextDecoder();
+    const reader = readableStream.getReader();
+    let result = await reader.read();
+
+    let data = null;
+
+    while (!result.done) {
+      let stat = textDecoder.decode(result.value);
+      data = JSON.parse(stat);
+      result = await reader.read();
+    }
+
+    if (response.ok && data && data.url) {
       console.log('The terminal was created successfully');
-      return true;
+      return data;
+
     } else {
       console.log('Failed to create the terminal');
-      return false;
+      return null;
     }
   } catch (err) {
     console.log(err);
-    return false;
+    return null;
   }
 };
 
@@ -79,6 +75,7 @@ const getStatus = async (id) => {
       }
       result = await reader.read();
     }
+
     if (response.ok) {
       console.log('Termainl status is OK');
       console.log('Displaying terminal');
@@ -88,5 +85,31 @@ const getStatus = async (id) => {
     return false;
   }
 };
-const api = { getTerminal, buildTerminal, getStatus };
+
+// Check if user has terminal
+async function checkUserTerminal(token, challengeId) {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/checkUserTerminal?jwtToken=${token}&challengeID=${challengeId}`;
+    const response = await fetch(url, { method: 'GET' });
+    const readableStream = response.body;
+    const textDecoder = new TextDecoder();
+    const reader = readableStream.getReader();
+    let result = await reader.read();
+    let data = null;
+    while (!result.done) {
+      let stat = textDecoder.decode(result.value);
+      data = JSON.parse(stat);
+      result = await reader.read();
+    }
+    if(data && data.url) {
+      return data;
+    }
+    return null;
+  } catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
+const api = { buildTerminal, getStatus, checkUserTerminal};
 export default api;
