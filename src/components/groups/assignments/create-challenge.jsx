@@ -491,11 +491,16 @@ export default function Createchall(props) {
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
                   </svg>
-                  <span className="font-medium text-gray-300">
-                    Drop files to Attach, or
-                    <span className="ml-1 text-blue-600 underline">browse</span>
-                  </span>
+                <span className="font-medium text-gray-300">
+                  Drop files to Attach, or
+                  <span className="ml-1 text-blue-600 underline">browse</span>
+                  <br></br>
+                  {
+                    selectedFile? <>Selected File: <span style={{color: "lightgreen"}}>
+                      {selectedFile.name}</span> </> : "No file selected"
+                  }
                 </span>
+              </span>
                 <input
                   style={{
                     position: 'absolute',

@@ -19,25 +19,29 @@ export default function id() {
   const [submission, setSubmission] = useState(null);
   const [user, setUser] = useState(null);
   const [formattedDate, setFormattedDate] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [player, setPlayer] = useState(null);
+
+  const [kanaLog, setKanaLog] = useState([]);
 
   // fetch kana log
-  useEffect(() => {
-    (async function () {
+  const fetchKanaLog = async (password, challengeId) => {
+    try {
       const AsciinemaPlayer = await import('asciinema-player');
-      let player;
+
       var requestOptions = {
         method: 'GET',
         redirect: 'follow',
       };
-      var password = 'bS<P5>vh';
       fetch(
-        `https://gist.githubusercontent.com/Laphatize/67b0d1ace949a8f64d05f187d6d26d35/raw/50e8d97cebf3f33e0ff73b4ec315f4d81263ad83/kana.cast`,
+        `${process.env.NEXT_PUBLIC_TERM_URL}/files/get/log?password=${password}&id=${challengeId}`,
         requestOptions
       )
         .then(async (response) => {
           // set file variable to the response
           //    AsciinemaPlayer.create('', document.getElementById('demo'));
-          player = AsciinemaPlayer.create(
+          let player = AsciinemaPlayer.create(
             { data: response },
             document.getElementById('demo'),
             {
@@ -45,12 +49,14 @@ export default function id() {
               terminalFontSize: 30,
             }
           );
+          setPlayer(player);
         })
         .then((result) => console.log(result))
         .catch((error) => console.log('error', error));
 
       function seekToTime(seconds) {
         player.seek(seconds).then(() => {
+          console.log(seconds);
           console.log(`Current time: ${player.getCurrentTime()}`);
         });
       }
@@ -62,10 +68,56 @@ export default function id() {
           seekToTime(time);
         });
       });
-    })();
 
-    //    AsciinemaPlayerLibrary.create(src, ref.current, asciinemaOptions)
-  }, []);
+      setLoading(false);
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  const seekToTime = (seconds) => {
+    player.seek(seconds).then(() => {
+      console.log(seconds);
+      console.log(`Current time: ${player.getCurrentTime()}`);
+    });
+  };
+
+  const convert = (timestamp) => {
+    const min = timestamp.split(':')[0];
+    const sec = timestamp.split(':')[1];
+    return parseInt(min) * 60 + parseInt(sec);
+  };
+
+  async function getJson(password) {
+    const requestOptions = { method: 'GET' };
+    const url = `https://${process.env.NEXT_PUBLIC_KANA_SERVER_URL}/analyze/pranav`;
+    const response = await fetch(url, requestOptions);
+    if(!response.ok) {
+      console.log('Error fetching kana log');
+      return;
+    }
+    const readableStream = response.body;
+    const textDecoder = new TextDecoder();
+    const reader = readableStream.getReader();
+    let result = await reader.read();
+    let data = null;
+    while (!result.done) {
+      let info = textDecoder.decode(result.value);
+      data = JSON.parse(info);
+      result = await reader.read();
+    }
+    let events = data.events;
+    for(let i = 0; i < events.length; i++) {
+      events[i].seconds = convert(events[i].timestamp);
+    }
+    setKanaLog(events); // []
+  }
+
+  useEffect(() => {
+    if(!loading) {
+      getJson(submission.terminalIdentifier);
+    }
+  }, [loading]);
 
   const fetchSubmission = async () => {
     try {
@@ -81,6 +133,7 @@ export default function id() {
         setSubmission(data.body);
         const date = new Date(data.body.createdAt);
         setFormattedDate(date.toLocaleString());
+        await fetchKanaLog(data.body.terminalIdentifier, data.body.assignment.challengeId);
       }
     } catch (err) {
       console.log(err);
@@ -166,101 +219,31 @@ export default function id() {
                 </div>
                 <div>
                   <ol className="relative border-s border-neutral-200 dark:border-neutral-700">
-                    <li
-                      id="seek0"
-                      onclick="seekToTime(0)"
-                      className="clickable cursor-pointer mb-10 ms-4 p-4 hover:bg-neutral-800"
-                    >
-                      <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
-                      <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
-                        00:00
-                      </time>
-                      <h3 className="text-md font-semibold text-neutral-900 dark:text-white">
-                        Initial Terminal Access
-                      </h3>
-                      <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
-                        The student accessed the terminal and executed a 'clear'
-                        command, resetting the terminal view.
-                      </p>
-                    </li>
 
-                    <li
-                      id="seek1"
-                      onclick="seekToTime(1)"
-                      className="clickable cursor-pointer mb-10 ms-4 p-4 hover:bg-neutral-800"
-                    >
-                      <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
-                      <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
-                        00:01
-                      </time>
-                      <h3 className="text-md font-semibold text-green-500 ">
-                        Executing 'ls' Command
-                      </h3>
-                      <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
-                        Student executed 'ls' to list files in the current
-                        directory.
-                      </p>
-                    </li>
+                    {
+                      kanaLog && kanaLog.map((item, index) => {
+                        return (
+                          <li
+                            id={`seek${item.seconds}`}
+                            key={index}
+                            onClick={() => seekToTime(item.seconds)}
+                            className="clickable cursor-pointer mb-10 ms-4 p-4 hover:bg-neutral-800"
+                          >
+                            <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
+                            <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
+                              {item.timestamp} 
+                            </time>
+                            <h3 className="text-md font-semibold text-neutral-900 dark:text-white">
+                              Initial Terminal Access
+                            </h3>
+                            <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
+                              {item.event}
+                            </p>
+                          </li>
+                        )
+                      })
+                    }
 
-                    <li
-                      id="seek9"
-                      onclick="seekToTime(9)"
-                      className="clickable cursor-pointer mb-10 ms-4 p-4 hover:bg-neutral-800"
-                    >
-                      <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
-                      <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
-                        00:09
-                      </time>
-                      <h3 className="text-md font-semibold text-yellow-500 ">
-                        Directory Navigation Error
-                      </h3>
-                      <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
-                        Attempted to navigate to a 'secret' directory, resulting
-                        in an error: 'No such file or directory'.
-                      </p>
-
-                      <button onClick={() => {
-                        setOpen(true)
-                      }} className='bg-blue-600 text-white rounded-lg px-2 mt-2'>Explain</button>  <button className='ml-2 bg-blue-600 text-white rounded-lg px-2 mt-2'>Disagree?</button>
-                      <hr className='mt-4 border-neutral-600 mb-2'></hr>
-                      <span className='text-red-500'>-5 points</span> 
-                    </li>
-
-                    <li
-                      id="seek47"
-                      onclick="seekToTime(47)"
-                      className="clickable cursor-pointer mb-10 ms-4 p-4 hover:bg-neutral-800"
-                    >
-                      <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
-                      <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
-                        00:47
-                      </time>
-                      <h3 className="text-md font-semibold text-green-500 ">
-                        Discovery of '.secret' folder
-                      </h3>
-                      <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
-                        Successfully navigated to the '.secret' directory.
-                      </p>
-                    </li>
-
-                    <li
-                      id="seek51"
-                      onclick="seekToTime(51)"
-                      className="cursor-pointer clickable mb-10 ms-4 p-4 hover:bg-neutral-800"
-                    >
-                      <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
-                      <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
-                        00:51
-                      </time>
-                      <h3 className="text-md font-semibold text-green-500">
-                        Opening 'flag.txt'
-                      </h3>
-                      <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
-                        Student opened 'flag.txt' in a text editor, revealing
-                        the message "Nice job! You found me!" along with the
-                        text "flag_waves".
-                      </p>
-                    </li>
                   </ol>
                 </div>
 
@@ -285,7 +268,7 @@ export default function id() {
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              enteredo="opacity-100 translate-y-0 sm:scale-100"
               leave="ease-in duration-200"
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"

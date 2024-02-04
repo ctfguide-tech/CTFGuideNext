@@ -30,8 +30,6 @@ const Editor = (props) => {
   const [penaltyErr, setPenaltyErr] = useState('');
   const [username, setUsername] = useState('anonymous');
 
-  const [fileUploaded, setFileUploaded] = useState("");
-
   const [existingConfig, setExistingConfig] = useState('');
   const [newConfig, setNewConfig] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
