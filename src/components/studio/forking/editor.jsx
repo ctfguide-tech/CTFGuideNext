@@ -13,6 +13,7 @@ import  fileApi  from '@/utils/file-api';
 const auth = getAuth();
 
 const Editor = (props) => {
+  console.log(props);
   const router = useRouter();
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
@@ -28,6 +29,8 @@ const Editor = (props) => {
   const [errMessage, setErrMessage] = useState('');
   const [penaltyErr, setPenaltyErr] = useState('');
   const [username, setUsername] = useState('anonymous');
+
+  const [fileUploaded, setFileUploaded] = useState("");
 
   const [existingConfig, setExistingConfig] = useState('');
   const [newConfig, setNewConfig] = useState('');
@@ -107,7 +110,7 @@ const Editor = (props) => {
 
   const getChallenge = async (isDefault, idName) => {
     try {
-      var requestOptions = {
+      let requestOptions = {
         method: 'GET',
         credentials: 'include'
       };
@@ -147,6 +150,7 @@ const Editor = (props) => {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+    toast.success('File uploaded successfully');
   };
 
   return (
@@ -408,6 +412,11 @@ const Editor = (props) => {
                 <span className="font-medium text-gray-300">
                   Drop files to Attach, or
                   <span className="ml-1 text-blue-600 underline">browse</span>
+                  <br></br>
+                  {
+                    selectedFile? <>Selected File: <span style={{color: "lightgreen"}}>
+                      {selectedFile.name}</span> </> : "No file selected"
+                  }
                 </span>
               </span>
               <input

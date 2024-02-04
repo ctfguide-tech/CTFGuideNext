@@ -73,7 +73,8 @@ const ViewAllAssignments = () => {
     }
   }, [group]);
 
-  if (viewCreateAssignment) {
+
+  if (viewCreateAssignment && group) {
     return <CreateAssignment classCode={group} />;
   }
 

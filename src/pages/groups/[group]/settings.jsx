@@ -345,7 +345,7 @@ export default function teacherSettings() {
   }
 
   if(viewCreateAssignment && classroom) {
-    return <CreateAssignment group={classroom.classCode} />
+    return <CreateAssignment classCode={classroom.classCode} />
   }
 
   if(isStudent) {

@@ -70,12 +70,8 @@ const Gradebook = () => {
     return res.success && res.isTeacher;
   };
 
-  const refresh = () => {
-    getAssignments();
-  };
-
-  if(viewCreateAssignment) {
-   return <CreateAssignment />
+  if(viewCreateAssignment && group) {
+   return <CreateAssignment classCode={group}/>
   }
 
   return (

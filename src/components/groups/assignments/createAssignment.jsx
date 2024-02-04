@@ -1,8 +1,6 @@
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
-import { motion } from 'framer-motion';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Transition, Dialog } from '@headlessui/react';
 import { useState, Fragment } from 'react';
 import { Menu } from '@headlessui/react';
@@ -131,7 +129,7 @@ export default function CreateGroup(props) {
     return (
       <ForkChallenge
         assignmentInfo={{
-          classroomId: props.classroomId,
+          classCode: props.classCode,
           title,
           description,
           time,
@@ -147,7 +145,7 @@ export default function CreateGroup(props) {
     return (
       <CreateChallenge
         assignmentInfo={{
-          classroomId: props.classroomId,
+          classCode: props.classCode,
           title,
           description,
           time,

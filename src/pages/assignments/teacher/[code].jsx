@@ -128,6 +128,7 @@ export default function id() {
     const data = await makeGetRequest(url);
     if (data && data.success) {
       setSubmissions(data.body);
+      console.log('Submissions:', data.body);
     } else {
       console.log('Unable to get submissions');
     }

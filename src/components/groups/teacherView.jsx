@@ -53,7 +53,6 @@ export default function TeacherView({ group }) {
 
     setProgress(progress + 100);
   }, []);
-  console.log(classroom);
 
   const handleInvite = async () => {
     setColor('gray');
@@ -100,8 +99,8 @@ export default function TeacherView({ group }) {
     return formattedDate;
   };
 
-  if (viewCreateAssignment) {
-    return <CreateAssignment classroomId={classroom.id} />;
+  if (viewCreateAssignment && classroom){
+    return <CreateAssignment classCode={classroom.classCode} />;
   }
 
   return (
