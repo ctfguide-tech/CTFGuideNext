@@ -16,15 +16,11 @@ export function DataAsk({ props }) {
 
   function submitData() {
     // Generate JSON to send
-
     var username = document.getElementById('username').value;
-
     var birthday = document.getElementById('birthday').value;
     var firstname = document.getElementById('firstname').value;
     var lastname = document.getElementById('lastname').value;
-
     var termsAgreement = document.getElementById('legal').checked;
-
 
     const parts = birthday.split('-');
     const newDateStr = `${parts[1]}-${parts[2]}-${parts[0]}`;
@@ -104,8 +100,11 @@ export function DataAsk({ props }) {
         if (this.readyState === 4 && this.readyState != 201) {
           var parsed = JSON.parse(this.responseText);
 
-          if (parsed.error == 'undefined' || parsed.error) {
-            window.location.replace('/login');
+          if (parsed.error === 'undefined' || parsed.error) {
+
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = parsed.error;
+
           } else {
             window.location.href = "./dashboard";
             //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
