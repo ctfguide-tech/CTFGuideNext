@@ -35,7 +35,7 @@ export default function teacherSettings() {
   const [inviteActivated, setInviteActivated] = useState(false);
   const [classroom, setClassroom] = useState({});
   const [description, setDescription] = useState('');
-  const [numberOfSeats, setNumberOfSeats] = useState(0);
+  const [numberOfSeats, setNumberOfSeats] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [nameOfClassroom, setNameOfClassroom] = useState('');
   const [emailDomain, setEmailDomain] = useState('');
@@ -74,7 +74,7 @@ export default function teacherSettings() {
     if (data.success) {
       let classroom = data.body;
       setDescription(classroom.description);
-      setNumberOfSeats(classroom.numberOfSeats);
+      setNumberOfSeats(classroom.numberOfSeats+"");
       setIsOpen(classroom.open ? 'open' : 'close');
       setNameOfClassroom(classroom.name);
       setBlackListedStudents(classroom.blackList);
@@ -142,17 +142,6 @@ export default function teacherSettings() {
       selectedStudent && selectedStudent.username
     } from the class?`,
   ];
-
-  const handleNumberOfSeats = (event) => {
-    const value = event.target.value;
-    if (
-      value !== '' &&
-      !isNaN(value) &&
-      parseInt(value) >= originalNumberOfSeats
-    ) {
-      setNumberOfSeats(value);
-    }
-  };
 
   const handleInviteLink = async () => {
     setInviteActivated(true);
@@ -274,6 +263,7 @@ export default function teacherSettings() {
   };
 
   const addSeatToClass = async (seatsToAdd) => {
+    console.log(seatsToAdd);
     try {
       const url = `${baseUrl}/classroom/add-seat`;
       const response = await fetch(url, {
@@ -289,7 +279,7 @@ export default function teacherSettings() {
           await stripe.redirectToCheckout({ sessionId: data.sessionId });
         } else {
           console.log('Seat has been updated');
-          window.location.href = `/groups/${classCode}/home`;
+          //window.location.href = `/groups/${classCode}/home`;
         }
       } else {
         console.log('Error when adding seat');
@@ -299,7 +289,14 @@ export default function teacherSettings() {
     }
   };
 
+    console.log(numberOfSeats);
   const saveChanges = async () => {
+    console.log(numberOfSeats);
+    if(parseInt(numberOfSeats) < originalNumberOfSeats) {
+      toast.error('You cannot reduce the number of seats');
+      return;
+    }
+
     const reqBody = {
       nameOfClassroom: nameOfClassroom,
       org: emailDomain,
@@ -312,11 +309,10 @@ export default function teacherSettings() {
     const data = await request(url, 'POST', reqBody);
 
     if (data && data.success) {
-      console.log('The class has been updated');
       const newNumberOfSeats = parseInt(numberOfSeats);
-      console.log(newNumberOfSeats);
       if (originalNumberOfSeats < newNumberOfSeats) {
         const seatsToAdd = newNumberOfSeats - originalNumberOfSeats;
+        console.log("adding ", seatsToAdd, " seats");
         await addSeatToClass(seatsToAdd);
       } else {
         router.push(`/groups/${classCode}/home`);
@@ -452,10 +448,14 @@ export default function teacherSettings() {
                       Number of seats
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       autoComplete="off"
                       value={numberOfSeats}
-                      onChange={handleNumberOfSeats}
+                      onChange={(e) => {
+                            if(e.target.value.match(/^[0-9]*$/)) {
+                              setNumberOfSeats(e.target.value)
+                            }
+                          }}
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                     />
                   </div>

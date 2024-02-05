@@ -90,7 +90,7 @@ export default function id() {
 
   async function getJson(password) {
     const requestOptions = { method: 'GET' };
-    const url = `https://${process.env.NEXT_PUBLIC_KANA_SERVER_URL}/analyze/pranav`;
+    const url = `https://${process.env.NEXT_PUBLIC_KANA_SERVER_URL}/analyze/${password}`;
     const response = await fetch(url, requestOptions);
     if(!response.ok) {
       console.log('Error fetching kana log');
@@ -106,10 +106,13 @@ export default function id() {
       data = JSON.parse(info);
       result = await reader.read();
     }
+
     let events = data.events;
+
     for(let i = 0; i < events.length; i++) {
       events[i].seconds = convert(events[i].timestamp);
     }
+
     setKanaLog(events); // []
   }
 
@@ -234,7 +237,7 @@ export default function id() {
                               {item.timestamp} 
                             </time>
                             <h3 className="text-md font-semibold text-neutral-900 dark:text-white">
-                              Initial Terminal Access
+                              {item.header}
                             </h3>
                             <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
                               {item.event}
