@@ -263,7 +263,6 @@ export default function teacherSettings() {
   };
 
   const addSeatToClass = async (seatsToAdd) => {
-    console.log(seatsToAdd);
     try {
       const url = `${baseUrl}/classroom/add-seat`;
       const response = await fetch(url, {
@@ -278,8 +277,7 @@ export default function teacherSettings() {
           const stripe = await loadStripe(STRIPE_KEY);
           await stripe.redirectToCheckout({ sessionId: data.sessionId });
         } else {
-          console.log('Seat has been updated');
-          //window.location.href = `/groups/${classCode}/home`;
+          console.log("added seats");
         }
       } else {
         console.log('Error when adding seat');
@@ -289,7 +287,6 @@ export default function teacherSettings() {
     }
   };
 
-    console.log(numberOfSeats);
   const saveChanges = async () => {
     console.log(numberOfSeats);
     if(parseInt(numberOfSeats) < originalNumberOfSeats) {
@@ -312,11 +309,9 @@ export default function teacherSettings() {
       const newNumberOfSeats = parseInt(numberOfSeats);
       if (originalNumberOfSeats < newNumberOfSeats) {
         const seatsToAdd = newNumberOfSeats - originalNumberOfSeats;
-        console.log("adding ", seatsToAdd, " seats");
         await addSeatToClass(seatsToAdd);
-      } else {
-        router.push(`/groups/${classCode}/home`);
       }
+      toast.success('Changes have been saved');
     }
   };
 
@@ -392,9 +387,8 @@ export default function teacherSettings() {
 
                 <div className="ml-auto">
                   <button
-                    onClick={() =>
-                      (window.location.href = `/groups/${classCode}/home`)
-                    }
+                    onClick={() => router.push(`/groups/${classCode}/home`)}
+
                     className=" rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
                     style={{
                       fontSize: '15px',

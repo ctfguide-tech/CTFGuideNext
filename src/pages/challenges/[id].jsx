@@ -22,6 +22,7 @@ import {
   FlagIcon,
 } from '@heroicons/react/20/solid';
 import request from '@/utils/request';
+
 import api from '@/utils/terminal-api';
 
 export default function Challenge() {
@@ -106,15 +107,20 @@ export default function Challenge() {
   });
 
   const getTerminalStatus = async (id) => {
+    setFetchingTerminal(true);
     if(!foundTerminal) {
       const isActive = await api.getStatus(id);
       if(isActive) {
+
         setFoundTerminal(true);
+        setFetchingTerminal(false);
+
         setTimeout(() => {
           document.getElementById('termurl').classList.remove('absolute');
           document.getElementById('termurl').classList.remove('opacity-0');
           document.getElementById('terminalLoader').classList.add('hidden');
         }, 3000);
+
       } else {
         setTimeout(async () => {
           await getTerminalStatus(id);
@@ -123,17 +129,18 @@ export default function Challenge() {
     }
   };
 
+
   const fetchTerminal = async () => {
     if(!challenge) return;
     loadBar();
     const token = auth.currentUser.accessToken;
     setFetchingTerminal(true);
-    const data = await api.getTerminal(token);
+    const data = await api.checkUserTerminal(token, challenge.id);
     if(data !== null) {
-      setTerminalPassword(data.password);
+      setPassword(data.password);
       setServiceName(data.serviceName);
       setTerminalUrl(data.url);
-      setTerminalUsername(data.userName);
+      setUserName(data.userName);
       setMinutesRemaining(data.minutesRemaining);
       console.log('Terminal data ID:', data.id);
       console.log('Terminal url:', data.url);
@@ -143,13 +150,18 @@ export default function Challenge() {
     }
   };
 
-  // console.log(terminalUrl);
-
   const createTerminal = async () => {
+    if(!challenge) return;
+    setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
-    const created = await api.buildTerminal(challenge, token);
-    if(created) {
-      await fetchTerminal();
+    const data = await api.buildTerminal(challenge, token);
+    if(data) {
+      setPassword(data.password);
+      setServiceName(data.serviceName);
+      setTerminalUrl(data.url);
+      setUserName(data.userName);
+      setMinutesRemaining(data.minutesRemaining);
+      await getTerminalStatus(data.id);
     } else {
       toast.error("Unable to create the terminal, please refresh the page and try again");
       setFetchingTerminal(false);
