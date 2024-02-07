@@ -178,9 +178,19 @@ export default function Practice() {
       <StandardNav />
       <main>
         <div className="">
+          
           <div className="w-full border-l border-neutral-800 px-8 ">
+
+
             <div className="mx-auto">
-              <div className=" mt-12 rounded-lg lg:min-w-0 lg:flex-1 ">
+            <div className='bg-neutral-800/50 mt-6 max-w-7xl  mx-auto border-l-4 border-yellow-400 px-6 py-2 text-white'> 
+            <h1 className='text-xl font-semibold'><i class="fas fa-exclamation-triangle"></i> Deprecation Notice</h1>
+            <p>
+             This page (the Hub) is being removed in the next update. You'll be able to find insights on your dashboard instead.
+            </p>
+          </div>
+
+              <div className=" mt-4 rounded-lg lg:min-w-0 lg:flex-1 ">
                 <div className="mx-auto max-w-7xl">
                   <div className="  relative isolate overflow-hidden  rounded-lg bg-black/10 bg-neutral-900 py-14 shadow-2xl ring-1 ring-white/10 sm:py-12">
                     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">

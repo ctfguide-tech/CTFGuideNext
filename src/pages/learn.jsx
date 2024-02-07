@@ -64,6 +64,15 @@ export default function Dashboard() {
         </div>
 
         <div className="mx-auto mt-10 max-w-6xl">
+
+          <div className='bg-neutral-800/50  border-l-4 border-yellow-400 px-6 py-2 text-white'> 
+            <h1 className='text-xl font-semibold'><i class="fas fa-exclamation-triangle"></i> Limited Functionality</h1>
+            <p>
+              A new way to learn on CTFGuide is coming soon. For now, you may experience issues with progress saving and may have to reload the page a few times to get your terminal to work. We apologize for the inconvenience and are working hard to bring you a better learning experience.
+            </p>
+          </div>
+
+
           <h1 className="mb-4 mt-6 text-3xl font-semibold text-white">
             Up next for you
           </h1>

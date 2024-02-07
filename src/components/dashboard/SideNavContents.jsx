@@ -22,7 +22,7 @@ export function SideNavContent({ username }) {
               <i class="fas fa-user-circle mr-2"></i>Profile
             </a>
           </li>
-          <li className="mb-4 py-1">
+          <li className="mb-4 py-1 hidden">
             <a
               href="../dashboard/friends"
               className="px-2 py-1 text-lg font-medium text-white hover:text-neutral-300"
@@ -38,7 +38,7 @@ export function SideNavContent({ username }) {
               <i class="fas fa-heart mr-2"></i>Likes
             </a>
           </li>
-          <li className="mb-4 py-1">
+          <li className="mb-4 py-1 hidden">
             <a
               href="../dashboard/badges"
               className="px-2 py-1 text-lg font-medium text-white hover:text-neutral-300"

@@ -10,7 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function CreateGroup() {
+export default function Createclass() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // change this in deployment
 
   const [selectedOption, setSelectedOption] = useState('student');
@@ -60,7 +60,7 @@ export default function CreateGroup() {
         });
         const resJson = await res.json();
         if (resJson.success) {
-          window.location.href = '/groups';
+          window.location.href = '/classs';
         } else console.log('There was an error when creating the class');
         return;
       }
@@ -87,7 +87,7 @@ export default function CreateGroup() {
       });
 
       if (selectedOption === 'student') {
-        window.location.href = '/groups';
+        window.location.href = '/classs';
       } else {
         const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
         const stripe = await loadStripe(STRIPE_KEY);
@@ -110,7 +110,7 @@ export default function CreateGroup() {
   return (
     <>
       <Head>
-        <title>Groups - CTFGuide</title>
+        <title>Classes - CTFGuide</title>
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
@@ -120,16 +120,16 @@ export default function CreateGroup() {
       <div className=" min-h-screen  ">
         <div className="mx-auto mt-10 max-w-6xl">
           <div className="flex">
-            <h1 className="text-3xl text-white">Create a Group</h1>
+            <h1 className="text-3xl text-white">Create a Classroom</h1>
             <div className="ml-auto hidden">
               <button className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white">
-                Create Group
+                Create Classroom
               </button>
               <button
                 onClick={() => setOpen(true)}
                 className="ml-4 rounded-lg bg-neutral-800/50  px-2 py-1 text-white hover:bg-neutral-700/50"
               >
-                Join a Group
+                Join a Classroom
               </button>
             </div>
           </div>
@@ -141,7 +141,7 @@ export default function CreateGroup() {
                   General Settings
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-white">
-                  CTFGuide needs some information in order to deploy your group.
+                  CTFGuide needs some information in order to deploy your class.
                 </p>
 
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -176,8 +176,8 @@ export default function CreateGroup() {
                         <div className="bg-neutral-850 mt-4 rounded-lg border border-neutral-500 px-4 py-2 text-white">
                           <b>✨ What is this?</b>
                           <h1>
-                            To invite students into your group, they must enter
-                            a group code. If the code is shared to another
+                            To invite students into your class, they must enter
+                            a class code. If the code is shared to another
                             student who isn't in your organization, CTFGuide
                             will prevent them for joining by verifying if their
                             email contains the domain.
@@ -379,7 +379,7 @@ export default function CreateGroup() {
                         <br></br>
                         <div className="mx-auto mt-4 w-full pb-5 text-center">
                           <button
-                            onClick={() => joinGroup()}
+                            onClick={() => joinclass()}
                             className="rounded-lg bg-neutral-800 px-4 py-2 text-white hover:bg-neutral-600/50"
                           >
                             {' '}

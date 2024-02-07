@@ -174,20 +174,20 @@ export default function Groups() {
         <div className="mx-auto mt-10 max-w-6xl first">
       
           <div className="flex">
-            <h1 className="text-3xl text-white">Groups</h1>
+            <h1 className="text-3xl text-white">Classrooms</h1>
             <div className="ml-auto">
               <a
                 href="./groups/create"
 
                 className="ml-4 rounded-lg bg-blue-600 second px-2 py-1 text-white"
               >
-                Create Group
+                Create Class
               </a>
               <button
                 onClick={() => setOpen(true)}
                 className="ml-4 rounded-lg bg-neutral-800/50  px-2 py-1 text-white hover:bg-neutral-700/50"
               >
-                Join a Group
+                Join a Class
               </button>
             </div>
           </div>

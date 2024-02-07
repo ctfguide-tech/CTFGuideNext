@@ -20,7 +20,7 @@ export function Hero() {
 
 
     return (
-      <div className="bg-neutral-900">
+      <div className="bg-neutral-900 animate__animated animate__fadeIn">
         <header className="absolute inset-x-0 top-0 z-50">
         <Banner />
 

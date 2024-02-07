@@ -203,7 +203,7 @@ export function StandardNav() {
                       href={`${baseUrl}/groups`}
                       className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
-                      Groups
+                      Classes
                     </Link>
                     <Link
                       href={`${baseUrl}/practice`}
@@ -220,7 +220,7 @@ export function StandardNav() {
 
                     <Link
                       href={`${baseUrl}/live`}
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                      className="hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
                     >
                       Live
                     </Link>
@@ -401,7 +401,7 @@ export function StandardNav() {
                   href="../groups"
                   className="block hidden border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
                 >
-                  Groups
+                  Classes
                 </Disclosure.Button>
                 <Disclosure.Button
                   as="a"
