@@ -103,8 +103,14 @@ export default function id() {
     let data = null;
     while (!result.done) {
       let info = textDecoder.decode(result.value);
+      console.log(info);
       data = JSON.parse(info);
       result = await reader.read();
+    }
+
+    if(!data) {
+      console.log('Error parsing kana log');
+      return;
     }
 
     let events = data.events;
