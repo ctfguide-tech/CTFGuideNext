@@ -25,6 +25,7 @@ const buildTerminal = async (challenge, token) => {
     };
 
     const response = await fetch(url, requestOptions);
+    console.log('Response from createTerminal: ', response);
     if(!response.ok) {
       return null;
     }
@@ -50,6 +51,7 @@ const buildTerminal = async (challenge, token) => {
       return null;
     }
   } catch (err) {
+    console.log('Failed to create the terminal');
     console.log(err);
     return null;
   }

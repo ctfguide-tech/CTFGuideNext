@@ -34,7 +34,7 @@ export default function Pratice() {
             publicChallenges.push(result[i]);
           }
         }
-
+        console.log(publicChallenges);
         setChallenges(publicChallenges);
       } catch (err) {
         console.log(err);

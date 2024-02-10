@@ -187,13 +187,12 @@ export function QuickSettings() {
         >
           <h1 className="mt-2 text-xl font-semibold text-white">
             {' '}
-            CTFGuide V3 is out now!
+            v.1.2 Patch Notes
           </h1>
 
           <p> 
             {' '}
-            After months of development, we are excited to release the new
-            version of CTFGuide. There's a lot to unpack here!
+           A lot of changes in this one!
           </p>
           <p
             id="feed1readmore"
@@ -206,44 +205,46 @@ export function QuickSettings() {
             Read More
           </p>
 
-          <div id="feed1rest" className="mt-4 hidden">
-            <p>
-              The first thing that you probably noticed, is the freshened UI.
-              You'll notice that pages are a lot more wider and have a more
-              friendly font.
-            </p>
+          <div id="feed1rest" className="mt-2 hidden">
+      
+            <p className="mt-1">
 
-            <img
-              src="./blog1.svg"
-              className="mx-auto mt-4 mb-5 rounded-lg bg-neutral-800 py-10 px-10"
-            />
+            <span className='font-semibold text-blue-500'>  CTFGuide Education</span><br></br>
+<div className='grid grid-cols-6 gap-x-4'>
+<div className='col-span-4'>
+              We're excited to introduce CTFGuide EDU, the world's first cybersecurity LMS powered by AI. We've been working on this for a while and we're super excited to finally release it. 
 
-            <p className="mx-auto text-center text-sm text-neutral-300">
-              Old CTFGuide UI (Left) and New CTFGuide UI (Right)
-            </p>
-
-            <p className="mt-8">
-              A common problem we'd have was that we artificially limited the
-              amount of space we could design with. This limit is no longer
-              there, meaning you should feel like the UI is more spread out.
               <br></br>
               <br></br>
-              We've also introduced a lot of new features including badges,
-              likes, & learn. These features will aid everyone's unique learning
-              journey and we're super pumped.
-              <br></br> <br></br>
-              <b>Badges</b> - Badges are a way for you to show off your
-              achievements on CTFGuide. You can earn badges by completing
-              certain tasks on the site.
-              <br></br> <br></br>
-              <b>Likes</b> - Likes are a way for you to show appreciation for a
-              creator or a certain area of Cybersecurity.
-              <br></br> <br></br>
-              <b>Learn</b> - We're super excited about this feature. We'll be
-              adding a lot of content to this section in the coming weeks.
-              You'll find a lot of interesting content shared from our team
-              members, as well as content from other members in the Cyber
-              community!
+
+              CTFGuide EDU allows for teachers to create custom lab environments for students. Student submissions can be played back in real-time, allowing for teachers to see exactly how a student solved a problem. Submissions are also automatically graded by our AI, allowing for teachers to focus on teaching, rather than grading.
+
+              </div>
+<div className='col-span-2'>
+<iframe height="200" src="https://www.youtube-nocookie.com/embed/m0I__kMTziU?si=fI-qPfCgP3LAPAZ0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; auto-play;" 
+                                className="mx-auto  w-full max-w-4xl rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10"
+                                allowfullscreen autoplay></iframe>
+</div>
+              </div>
+              <br></br>
+              <br></br>
+
+              This feature required us to rework a lot of our internal API's meaning we've temporarily disabled some features. We're working on getting these features back up and running as soon as possible.
+              <br></br>
+              <br></br>
+              <span className='text-yellow-500 font-semibold'>Temporarily Disabled Features:</span> <br></br>
+              • Hints <br></br>
+              • Terminals on challenges <br></br>
+              • Comments <br></br>
+              • Likes <br></br>
+              • Create <br></br>
+            <br></br>
+              <span className='text-yellow-500 font-semibold'>The following features are not working and will be fixed in the next patch:</span> <br></br>
+              • Saving Progress on Learn <br></br>
+              • Hub feature on Practice
+              <br></br><br></br>
+          <span className='font-semibold text-blue-500'>  A word about Learn...</span><br></br>
+            This entire feature is being replaced. We're partnering with The Pennsylvania State University to bring you a new and improved learning experience. We're excited to share more about this in the coming months.
               <br></br> <br></br>
             </p>
             <p
