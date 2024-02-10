@@ -57,7 +57,7 @@ export default function Home() {
           Create Account
         </a>
       </div>
-
+     <Footer />
     </>
   );
 }
