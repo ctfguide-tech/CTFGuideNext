@@ -178,6 +178,7 @@ export default function id() {
   };
 
   const fetchTerminal = async () => {
+    setFetchingTerminal(true);
     if(!challenge) return;
     const token = auth.currentUser.accessToken;
     setFetchingTerminal(true);
