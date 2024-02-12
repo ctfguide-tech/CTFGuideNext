@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -13,6 +13,8 @@ import { Fragment } from 'react';
 import { getAuth } from 'firebase/auth';
 import api from '@/utils/terminal-api';
 const auth = getAuth();
+// import socket client
+import io from 'socket.io-client';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -255,10 +257,14 @@ export default function Slug() {
 
   const submitAssignment = async () => {
 
+
     if(password === "...") {
       toast.error('You cannot submit the assignment when you havent used the terminal.');
       return;
     }
+
+    handleDataAsk();
+    
 
     setLoading(true);
     const params = window.location.href.split('/');
@@ -319,6 +325,29 @@ export default function Slug() {
       await createTerminal();
     }
   }
+
+const socketRef = useRef(null);
+
+useEffect(() => {
+  socketRef.current = io('https://kana-server.ctfguide.com');
+
+  socketRef.current.on('connect', () => {
+    console.log('Connected to server');
+  });
+
+  socketRef.current.on('disconnect', () => {
+    console.log('Disconnected from server');
+  });
+
+  // Clean up the socket connection when the component unmounts
+  return () => {
+    socketRef.current.disconnect();
+  };
+}, []);
+
+function handleDataAsk() {
+  socketRef.current.emit('data_ask', { whoami: password });
+}
 
   return (
     <>

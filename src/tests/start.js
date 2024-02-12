@@ -2,7 +2,7 @@ console.clear();
 // Import puppeteer module
 const puppeteer = require("puppeteer");
 
-let testAmount = 1;
+let testAmount = 2;
 let testsRun = 0;
 
 async function loadingAnimation(
@@ -37,11 +37,15 @@ loadingAnimation("Running tests...").then((intervalId) => {
             ///  console.log("\x1b[32m✔️ Home Page | home.jsx | Passed\x1b[0m");
 
 
-        }).then(() => {
+        })
+        login_page().then(() => {
+        })
+        
+        .then(() => {
 
             if (testsRun !== testAmount) {
                 console.log("────────────────── RESULTS ───────────────────")
-                console.log("\x1b[31m❌ Some tests failed. Please check the logs above.\x1b[0m");
+                console.log(`\x1b[31m❌ Some tests failed. (${testsRun}/${testAmount}) Please check the logs above.\x1b[0m`);
                 console.log("──────────────────────────────────────────────")
                 return process.exit();
             } else {
@@ -102,11 +106,15 @@ async function prereq() {
 
 }
 async function home_page() {
+    try {
+        console.log("testing home..")
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto('http://localhost:3000');
     // check if page has the word Copyright
     const content = await page.content();
+
+    console.log(content)
     if (content.includes("Copyright")) {
         console.log("\x1b[32m✔️ Home Page | index.jsx | Passed\x1b[0m");
         testsRun++;
@@ -116,6 +124,52 @@ async function home_page() {
         console.log("         \\__ Page does not contain the word 'Copyright'");
         return false;
     }
+    await browser.close();
+
+} catch(err) {
+    console.error(err);
+    return false;
+
+}
+
+
+}
+
+async function login_page() {
+    console.log("testing login..")
+    // with browser view
+
+    const browser = await puppeteer.launch();
+
+
+    const page = await browser.newPage();
+    await page.goto('http://localhost:3000/login');
+    // check if page has the word Login
+    const content = await page.content();
+
+    // do login flow
+    await page.type('input[name=email]', 'unit@ctfguide.com');
+    await page.type('input[name=password]', 'unit_testing');
+    await page.evaluate(() => {
+        const button = document.querySelector('button[type=submit]');
+        button.click();
+    });
+    await page.waitForNavigation();
+    
+    // check if it redirected to dashboard
+    const url = page.url();
+    if (url === "http://localhost:3000/dashboard") {
+        console.log("\x1b[32m✔️ Login Page | login.jsx | Passed\x1b[0m");
+        testsRun++;
+        return true;
+    } else {
+        console.log("\x1b[31m❌ Login Page | login.jsx | Failed\x1b[0m");
+        console.log("         \\__ Page did not redirect to dashboard after login");
+        return false;
+    }
+
+
+
 
     await browser.close();
 }
