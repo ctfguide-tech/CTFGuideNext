@@ -3,56 +3,50 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-
 import { getAuth } from 'firebase/auth';
-const auth = getAuth();
-  
+import request from '@/utils/request';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export default function invite() {
-    const router = useRouter();
-    const { invite, token } = router.query;
-    const [classroom, setClassroom] = useState({});
-    const [display, setDisplay] = useState(false);
+  const router = useRouter();
+  const { invite, token } = router.query;
+  const [classroom, setClassroom] = useState({});
+  const [display, setDisplay] = useState(false);
 
-    useEffect(() => {
-      
-        const fn = async () => {
-            if(invite && token) {
-                const a = await validateUser(invite, token);
-                if(!a) {
-                    window.location.href = "/dashboard";
-                } else {
-                    setDisplay(true);
-                    getClassroom(invite);
-                }
-            }
-        }
+  useEffect(() => {
 
-        fn();
-
-    }, [invite, token]);
-
-    const getClassroom = async classCode => {
-        const url = `http://localhost:3001/classroom/classroom-by-classcode/${classCode}`
-        const response = await fetch(url, {credentials: 'include'});
-        const data = await response.json();
-        if(data.success) {
-          setClassroom(data.body);
+    const fn = async () => {
+      if(invite && token) {
+        const a = await validateUser(invite, token);
+        if(!a) {
+          window.location.href = "/dashboard";
         } else {
-          console.log("Error when getting classroom info")
+          setDisplay(true);
+          getClassroom(invite);
         }
-    };
+      }
+    }
+
+    fn();
+
+  }, [invite, token]);
+
+  const getClassroom = async classCode => {
+    const url = `${baseUrl}/classroom/classroom-by-classcode/${classCode}`
+    const data = await request(url, 'GET', null);
+    if(data && data.success) {
+      setClassroom(data.body);
+    } else {
+      console.log("Error when getting classroom info")
+    }
+  };
 
   const validateUser = async (classCode, token) => {
     try {
-      const url = "http://localhost:3001/classroom/validate-invite-user";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ classCode: classCode, token: token })
-      });
-      const res = await response.json();
-      return res.success;
+      const url = baseUrl+"/classroom/validate-invite-user";
+      const res = await request(url, 'POST', { classCode, token });
+      return res && res.success;
     } catch(err) {
       console.log(err);
       return false;
@@ -61,15 +55,9 @@ export default function invite() {
 
   const handleAccept = async () => {
     try {
-      const url = "http://localhost:3001/classroom/join";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({classCode: invite, isTeacher: true})
-      });
-      const res = await response.json();
-      if(res.success) {
+      const url = baseUrl + "/classroom/join";
+      const res = await request(url, 'POST', { classCode: invite, isTeacher: true });
+      if(res && res.success) {
         await removeInvite();
       } else {
         console.log(res.message);
@@ -85,14 +73,8 @@ export default function invite() {
 
   const removeInvite = async () => {
     try {
-      const url = "http://localhost:3001/classroom/remove-invite";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({classCode: invite, token: token })
-      });
-      const res = await response.json();
+      const url = baseUrl + "/classroom/remove-invite";
+      const res = await request(url, 'POST', { classCode: invite, token });
       console.log(res);
     } catch(err) {
       console.log(err);

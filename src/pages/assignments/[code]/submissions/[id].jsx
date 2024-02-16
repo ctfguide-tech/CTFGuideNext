@@ -160,13 +160,6 @@ export default function id() {
     fetchSubmission();
   }, []);
 
-  // =============================================================================== //
-  // HELLO NAV, the terminal identifier can be accessed by submission.terminalIdentifier
-  // =============================================================================== //
-
-  // Check out what the submission object looks like
-  console.log(submission);
-  console.log(assignment);
 
   return (
     <>

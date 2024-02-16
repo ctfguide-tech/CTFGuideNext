@@ -3,14 +3,6 @@ import '@/config/firebaseConfig';
 import { getAuth } from 'firebase/auth';
 const auth = getAuth();
 
-let cookie;
-if(process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
-  cookie = ` SameSite=Lax; Domain=.localhost; Path=/`;
-} else {
-  let url = process.env.NEXT_PUBLIC_API_URL.replace('https://', '').replace('/','');
-  cookie = ` SameSite=None; Secure; Domain=.${url}; Path=/`;
-}
-
 const checkAuthToken = () => {
  const cookies = document.cookie.split(';').map(cookie => cookie.trim().split('=')[0]);
  return cookies.includes('idToken');
@@ -22,7 +14,7 @@ const updateAuthToken = async (auth) => {
     if(auth.currentUser && checkAuthToken()) {
       console.log("Generating new token");
       const idToken = await auth.currentUser.getIdToken(true);
-      document.cookie = `idToken=${idToken};` + cookie;
+      document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
     }
 
   } catch(err) {

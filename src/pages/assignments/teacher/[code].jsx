@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 import Loader from '@/components/Loader';
 import api from '@/utils/terminal-api';
+import request from '@/utils/request';
 
 const auth = getAuth();
 
@@ -111,7 +112,7 @@ export default function id() {
       return;
     }
     const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
-    const data = await makeGetRequest(url);
+    const data = await request(url, 'GET', null);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
@@ -127,7 +128,7 @@ export default function id() {
 
   const getSubmissions = async (assignment) => {
     const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
-    const data = await makeGetRequest(url);
+    const data = await request(url, 'GET', null);
     if (data && data.success) {
       setSubmissions(data.body);
       console.log('Submissions:', data.body);
@@ -138,19 +139,14 @@ export default function id() {
 
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
-    const data = await makeGetRequest(url);
+    const data = await request(url, 'GET', null);
     return data.success;
   };
 
   const getChallenge = async (assignment) => {
     try {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
-      const requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
+      const data = await request(url, 'GET', null);
       if (data.success) {
         setChallenge(data.body);
       }
@@ -234,7 +230,7 @@ export default function id() {
       hintsUsed: i,
       challengeId: assignment.challenge.id,
     };
-    const data = await makePostRequest(url, body);
+    const data = await request(url, "POST", body);
     if (data && data.success) {
       let tmp = [...hints];
       tmp[i].message = assignment.challenge.hints[i].message;
@@ -261,7 +257,7 @@ export default function id() {
       hints: assignment.challenge.hints,
     };
 
-    const data = await makePostRequest(url, body);
+    const data = await request(url, "POST", body);
     if (data && data.success) {
       toast.success('Assignment has been submitted');
       setSubmitted(true);

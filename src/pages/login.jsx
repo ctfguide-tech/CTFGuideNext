@@ -18,16 +18,6 @@ import {
 
 const provider = new GoogleAuthProvider();
 
-let cookie;
-if(process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
-  cookie = ` SameSite=Lax; Domain=.localhost; Path=/`;
-} else {
-  let url = process.env.NEXT_PUBLIC_API_URL.replace('https://', '').replace('/','');
-  cookie = ` SameSite=None; Secure; Domain=.${url}; Path=/`;
-}
-
-console.log(cookie);
-
 export default function Login() {
   const auth = getAuth();
   const [session, setSession] = useState();
@@ -53,7 +43,7 @@ export default function Login() {
           var data = new FormData();
           var xhr = new XMLHttpRequest();
 
-          document.cookie = `idToken=${idToken};` + cookie;
+          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
 
           xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
           xhr.addEventListener('readystatechange', function () {
@@ -105,7 +95,7 @@ export default function Login() {
         result.user.getIdToken().then((idToken) => {
 
           // Send token to backend via HTTPS
-          document.cookie = `idToken=${idToken};` + cookie;
+          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
 
           var data = new FormData();
           var xhr = new XMLHttpRequest();

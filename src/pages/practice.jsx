@@ -9,6 +9,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
+import request from '@/utils/request';
 
 export default function Pratice() {
   const [challenges, setChallenges] = useState([]);
@@ -20,14 +21,10 @@ export default function Pratice() {
         // const data = await response.json();
         // setChallenges([...data]);
 
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + '/challenges',
-          { credentials: 'include' }
-        );
+        let result = []
+        const res = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges`, 'GET', null);
+        if(res) result = res.result;
 
-        const { result } = await response.json();
-
-        // filtering for only public challenges
         let publicChallenges = [];
         for (let i = 0; i < result.length; i++) {
           if (!result[i].private) {

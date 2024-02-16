@@ -4,6 +4,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getCookie } from '@/utils/request';
 
 import {
   updatePassword,
@@ -127,6 +128,8 @@ export default function Dashboard() {
       });
 
       xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
+      let token = getCookie();
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
       xhr.withCredentials = true;
       xhr.send();
 
@@ -282,6 +285,8 @@ export default function Dashboard() {
 
               xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
               xhr.setRequestHeader('Content-Type', 'application/json');
+              let token = getCookie();
+              xhr.setRequestHeader('Authorization', 'Bearer ' + token);
               xhr.withCredentials = true;
 
               xhr.send(gooddata);
@@ -291,6 +296,8 @@ export default function Dashboard() {
       });
 
       xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
+      let token = getCookie();
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
       xhr.withCredentials = true;
       xhr.send();
     } else {
@@ -319,6 +326,8 @@ export default function Dashboard() {
 
       xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
       xhr.setRequestHeader('Content-Type', 'application/json');
+      let token = getCookie();
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
       xhr.withCredentials = true;
       xhr.send(data);
     }
@@ -341,8 +350,12 @@ export default function Dashboard() {
     });
 
     xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
+
     xhr.setRequestHeader('Content-Type', 'application/json');
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     xhr.withCredentials = true;
+
     xhr.send(data);
   }
 
@@ -370,6 +383,8 @@ export default function Dashboard() {
     });
 
     xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     xhr.withCredentials = true;
     xhr.send();
   }

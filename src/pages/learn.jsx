@@ -5,6 +5,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { LearningModule } from '@/components/learn/LearningModule';
+import request from '@/utils/request';
 
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
@@ -14,11 +15,8 @@ export default function Dashboard() {
   useEffect(() => {
     try {
       //fetch('api.ctfguide.com/dashboard')
-      const requestOptions = { credentials: 'include' }
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, requestOptions)
-
-        .then((res) => res.json())
-
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/dashboard`;
+      request(url, 'GET', null)
         .then((data) => {
           if (data.onboardingComplete == false) {
           }
@@ -30,9 +28,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     try {
-      const requestOptions = { credentials: 'include' }
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/ami`, requestOptions)
-        .then((response) => response.json())
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/ami`;
+      request(url, 'GET', null)
         .then((data) => setLoggedIn(data))
         .catch((error) => {
           console.log(error);

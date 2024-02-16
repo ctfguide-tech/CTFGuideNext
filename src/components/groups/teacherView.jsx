@@ -64,9 +64,8 @@ export default function TeacherView({ group }) {
       setColor('lightgreen');
       setMessage('Your invite link: ');
       const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
         setColor('lightgreen');
         setInviteLink(
           `${baseClientUrl}/groups/invites/${classroom.classCode}/${data.body}`

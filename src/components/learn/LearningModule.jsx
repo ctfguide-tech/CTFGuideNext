@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ProgressBar } from '@tremor/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import request from '@/utils/request';
+
 export function LearningModule({
   lessonId,
   title,
@@ -14,14 +16,8 @@ export function LearningModule({
   const router = useRouter();
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonId}/progress`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    })
-      .then((res) => res.json())
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonId}/progress`;
+    request(url, 'GET', null)
       .then((data) => {
         setLessonProgress(data);
       })

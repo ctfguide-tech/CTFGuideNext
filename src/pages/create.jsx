@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import request from "@/utils/request";
 
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
@@ -40,14 +41,7 @@ export default function Create() {
   ;
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      })
-        .then((res) => res.json())
+      request(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, "GET", null) 
         .then((data) => {
           setStats([
             {
@@ -87,14 +81,7 @@ export default function Create() {
 
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      })
-        .then((res) => res.json())
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
           setUsername(data.username);
           setDate(data.createdAt);
@@ -116,68 +103,28 @@ export default function Create() {
           setInfoText(
             'Please wait for admins to approve unverified challenges!'
           );
-          response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include'
-            }
-          );
+          response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, "GET", null);
           break;
         case 'pending':
           setTitle('Pending Changes');
           setInfoText('These challenges are awaiting changes!');
-          response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include'
-            }
-          );
+          response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, "GET", null);
           break;
         case 'published':
           setTitle('Published');
           setInfoText(
             'These challenges are live! Share them with your friends!'
           );
-          response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include'
-            }
-          );
+          response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=published`, "GET", null);
           break;
         default:
           setTitle('Unverified');
-          response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              credentials: 'include'
-            }
-          );
+          response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=verified`, "GET", null);
       }
     } catch (error) {}
 
-    let data = [];
-    try {
-      data = await response.json();
-    } catch {}
-    if (Array.isArray(data) && data.length > 0) {
-      setChallenges(data);
+    if (Array.isArray(response) && response.length > 0) {
+      setChallenges(response);
       setHasChallenges(true);
     } else {
       setChallenges([]);

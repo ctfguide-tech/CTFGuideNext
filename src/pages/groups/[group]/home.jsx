@@ -5,6 +5,7 @@ import StudentView from '@/components/groups/studentView';
 import Link from 'next/link';
 import Head from 'next/head';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+import request from "@/utils/request";
 
 export default function GroupDisplay() {
   const router = useRouter();
@@ -22,13 +23,9 @@ export default function GroupDisplay() {
     try {
       console.log('Checking permissions');
       const url = `${baseUrl}/classroom/auth/${group}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', },
-        credentials: 'include',
-      });
-      const res = await response.json();
-      if(res.success){
+      const res = await request(url, 'GET', null);
+
+      if(res && res.success){
         setViewAsTeacher(res.isTeacher);
       } else {
         router.push('/groups');

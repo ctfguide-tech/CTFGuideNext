@@ -4,18 +4,15 @@ import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { useState, useEffect } from 'react';
 import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
+import request from '@/utils/request';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Practice() {
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/dashboard`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      })
-        .then((res) => res.json())
+      const url = `${baseUrl}/stats/dashboard`;
+      request(url, 'GET', null)
         .then((data) => {
           setStats([
             {
@@ -45,8 +42,8 @@ export default function Practice() {
 
   function loadChallenges() {
     try {
-      fetch('https://api.ctfguide.com/challenges/type/all')
-        .then((response) => response.json())
+      const url = baseUrl + '/challenges/type/all';
+      request(url, 'GET', null)
         .then((data) => {
           for (var i = 0; i < data.length; i++) {
             var difficultyColor = 'border-green-500';

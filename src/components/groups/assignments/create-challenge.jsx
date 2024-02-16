@@ -7,6 +7,7 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import  fileApi  from '@/utils/file-api';
+import request from '@/utils/request';
 
 const styles = {
   h1: { fontSize: '2.4rem' },
@@ -112,23 +113,8 @@ export default function Createchall(props) {
       const classCode = window.location.pathname.split('/')[2];
       const assignmentInfo = props.assignmentInfo;
       const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-new-assignment/${classCode}`;
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          challengeInfo,
-          assignmentInfo,
-          username: localStorage.getItem('username'),
-        }),
-      };
-
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-
-      if (data.success) {
+      const data = await request(url, 'POST', { challengeInfo, assignmentInfo, username: localStorage.getItem('username') });
+      if (data && data.success) {
         toast.success('Assignment Created', {
           position: 'bottom-right',
           autoClose: 5000,
@@ -143,31 +129,6 @@ export default function Createchall(props) {
       }
     } catch (err) {
       console.log(err);
-    }
-  };
-
-  const getChallenge = async (id) => {
-    try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${slugName}`;
-
-      var requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-
-      console.log(data);
-
-      if (data.success) {
-        return data.body.exists;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-      return false;
     }
   };
 

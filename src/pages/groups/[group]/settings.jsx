@@ -65,12 +65,7 @@ export default function teacherSettings() {
     setClassCode(classCode);
     if (!classCode) return;
     const url = `${baseUrl}/classroom/classroom-by-classcode/${classCode}`;
-    const requestOptions = {
-      method: 'GET',
-      credentials: 'include'
-    };
-    const response = await fetch(url, requestOptions);
-    const data = await response.json();
+    const data = await request(url, 'GET', null);
     if (data.success) {
       let classroom = data.body;
       setDescription(classroom.description);
@@ -114,14 +109,7 @@ export default function teacherSettings() {
     try {
       const classCode = window.location.href.split('/')[4];
       const url = `${baseUrl}/classroom/auth/${classCode}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
-      const res = await response.json();
+      const res = await request(url, 'GET', null);
       if (res.success && res.isTeacher) {
         return true;
       } else {
@@ -150,13 +138,7 @@ export default function teacherSettings() {
     if (emailRegex.test(email)) {
       setInviteLink('generating...');
       const url = `${baseUrl}/classroom/getAccessToken?classCode=${classCode}&email=${email}`;
-      const requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      console.log(data);
+      const data = await request(url, 'GET', null);
       if (data.success) {
         setInviteLink(
           `${frontend_baselink}/groups/invites/${classCode}/${data.body}`
@@ -170,19 +152,12 @@ export default function teacherSettings() {
   const handleDelete = async () => {
     try {
       const url = `${baseUrl}/classroom/remove`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          classroomId: classroomId,
-          classCode: classCode,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
+      const body = {
+        classCode: classCode,
+        classroomId: classroomId,
+      };
+      const data = await request(url, 'POST', body);
+      if (data && data.success) {
         router.push('/groups');
       } else {
         toast.error(data.message);
@@ -195,17 +170,8 @@ export default function teacherSettings() {
   const leaveClass = async () => {
     try {
       const url = `${baseUrl}/classroom/leave`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          isTeacher: true,
-          classroomId,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'POST', { isTeacher: true, classroomId });
+      if (data && data.success) {
         router.push('/groups');
       } else {
         console.log(data.message);
@@ -220,15 +186,7 @@ export default function teacherSettings() {
       const username = selectedStudent.username;
       const action = blackListedStudents.indexOf(username) > -1 ? 'unBlackListStudent' : 'blackListStudent';
       const url = `${baseUrl}/classroom/${action}`;
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ username, classroomId }),
-      });
-
-      const data = await response.json();
+      const data = await request(url, 'POST', { username, classroomId });
       if (data.success) {
         toast.success(`The student has been ${action === 'unBlackListStudent' ? 'unblackListed' : 'blackListed'}`);
         if(action === 'unBlackListStudent') {
@@ -265,14 +223,8 @@ export default function teacherSettings() {
   const addSeatToClass = async (seatsToAdd) => {
     try {
       const url = `${baseUrl}/classroom/add-seat`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ pricingPlan, classroomId, seatsToAdd }),
-      });
-      const data = await response.json();
-      if (data.success) {
+      const data = await request(url, 'POST', { pricingPlan, classroomId, seatsToAdd });
+      if (data && data.success) {
         if (data.sessionId) {
           const stripe = await loadStripe(STRIPE_KEY);
           await stripe.redirectToCheckout({ sessionId: data.sessionId });

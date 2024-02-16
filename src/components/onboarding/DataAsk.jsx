@@ -1,6 +1,7 @@
 import { Container } from '@/components/Container';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { getCookie } from '@/utils/request';
 
 export function DataAsk({ props }) {
   const router = useRouter();
@@ -85,6 +86,10 @@ export function DataAsk({ props }) {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
       xhr.setRequestHeader('Content-Type', 'application/json');
+
+      let token = getCookie();
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
       xhr.withCredentials = true;
 
       xhr.addEventListener('readystatechange', function () {

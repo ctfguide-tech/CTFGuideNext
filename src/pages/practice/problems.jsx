@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { ProblemSetCards } from '@/components/practice/GoToCreate';
 import ProblemSetCard from '@/components/practice/ProblemSetCard';
+import request from '@/utils/request';
 
 export default function ProblemsPage() {
   //   const [components, setComponents] = useState([]);
@@ -64,11 +65,7 @@ export default function ProblemsPage() {
         // const response = await fetch('https://api.ctfguide.com/challenges/type/all');
         // const data = await response.json();
         // setChallenges([...data]);
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + '/challenges?category=cryptography'
-        );
-        const { result } = await response.json();
-
+        const { result } = await request(url, 'GET', null);
         setCryptoChallenges([...result]);
       } catch (err) {
         console.log(err);

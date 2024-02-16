@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { TextField } from '@/components/Fields';
 import { motion } from 'framer-motion';
+import request from '@/utils/request';
 
 export default function ReportForm() {
   const [text, setText] = useState('');
@@ -11,15 +12,8 @@ export default function ReportForm() {
   function handleSubmit(event) {
     try {
       event.preventDefault();
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/report?type=USER`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ message: text, itemid: '' }),
-      })
-        .then((response) => response.json())
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/report?type=USER`;
+      request(url, 'POST', { message: text, itemid: '' })
         .then((data) => {
           console.log('Report Sent', data);
           if (data?.error) {

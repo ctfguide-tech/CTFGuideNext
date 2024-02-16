@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import request from '@/utils/request';
 
 export function MarkDone({ sublesson, section, href }) {
   const [marked, setMarked] = useState(false);
@@ -17,17 +18,8 @@ export function MarkDone({ sublesson, section, href }) {
     }
 
     // Mark Progress
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${section}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
-      }
-    )
-      .then((res) => res.json())
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${section}`;
+    request(url, 'PUT', {})
       .then((data) => {
         setMarked(true);
         setShowPopup(true);

@@ -304,17 +304,7 @@ export default function Challenge() {
                 id +
                 '/' +
                 difficulty;
-              const requestOptions = {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                  keyword: flag,
-                }),
-              };
-              const response = await fetch(endPoint, requestOptions);
+              const response = await request(endPoint, "POST", {keyword: flag});
             } catch (err) {
               console.log(err);
             }
@@ -347,12 +337,8 @@ export default function Challenge() {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments',
-        {credentials: 'include'}
-      );
-      const { result } = await response.json();
-
+      const url = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments';
+      const { result } = await request(url, 'GET', null);
       if (result && result.length) {
         setComments([...result]);
       }
@@ -364,18 +350,8 @@ export default function Challenge() {
   // Kshitij
   async function fetchHints() {
     try {
-      const endPoint =
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/hint';
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-      const response = await fetch(endPoint, requestOptions);
-      const result = await response.json();
-
+      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/hint';
+      const result = await request(endPoint, 'GET', null);
       updateHintMessage(result.hintMessage, result.order);
     } catch (error) {
       console.log(error);
@@ -413,11 +389,8 @@ export default function Challenge() {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/leaderboard',
-        {credentials: 'include'}
-      );
-      const leaderboards = await response.json();
+      const url = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/leaderboard';
+      const leaderboards = await request(url, 'GET', null);
       const NO_PLACE = 'Not placed';
 
       if (!leaderboards.length) return;
@@ -443,20 +416,8 @@ export default function Challenge() {
   };
 
   const submitComment = async () => {
-    const endPoint =
-      process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments';
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        content: comment,
-      }),
-    };
-    const response = await fetch(endPoint, requestOptions);
-    const result = await response.json();
+    const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments';
+    const result = await request(endPoint, 'POST', {content: comment});
 
     setComments([result, ...comments]);
 
@@ -475,14 +436,7 @@ export default function Challenge() {
     if (!liked) {
       const endPoint =
         process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/like';
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-      const { error } = await fetch(endPoint, requestOptions);
+      const { error }= await request(endPoint, 'POST', {});
       if (error) {
         alert(error);
       } else {
@@ -490,16 +444,8 @@ export default function Challenge() {
         setLiked(true);
       }
     } else {
-      const endPoint =
-        process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/deletelike';
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-      const { error } = await fetch(endPoint, requestOptions);
+      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/deletelike';
+      const { error } = await request(endPoint, "POST", {});
       if (error) {
         alert(error);
       } else {

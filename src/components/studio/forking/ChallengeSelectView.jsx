@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Challenge from '@/components/studio/forking/ChallengeFork';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+import request from "@/utils/request";
 const ChallengeSelectView = ({ updateChallenge }) => {
   const [challenges, setChallenges] = useState([]);
 
   useEffect(() => {
-    var requestOptions = {
-      method: 'GET',
-      credentials: 'include'
-    };
-    fetch("http://localhost:3001/challenges", requestOptions)
-      .then(response => response.json()) // assuming the response is JSON
+    const url = `${baseUrl}/challenges`;
+    request(url, 'GET', null)
       .then(result => {
         setChallenges(result.result)
       })

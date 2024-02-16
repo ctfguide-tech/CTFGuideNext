@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import request from '@/utils/request';
 
 export function DashboardHeader() {
   const [username, setUsername] = useState('');
@@ -15,21 +16,11 @@ export function DashboardHeader() {
 
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      })
-        .then((res) => res.json())
+        request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
         .then((data) => {
           setUsername(data.username);
           setLocation(data.location);
           localStorage.setItem("username", data.username)
-
-          // set uid
-          
           
           setJoin(data.createdAt.substring(0, 10));
           if (data.githubUrl) {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useState, useEffect } from 'react';
+import request from '@/utils/request';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import request from '@/utils/request';
 
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
@@ -108,23 +108,12 @@ const Editor = (props) => {
 
   const getChallenge = async (isDefault, idName) => {
     try {
-      let requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${idName}`,
-        requestOptions
-      );
-
-      const data = await response.json();
-
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${idName}`;
+      const data = await request(url, 'GET', null);
       if (!isDefault) {
         return data.success;
       }
-
-      if (data.success) {
+      if (data && data.success) {
         setHints(data.body.hints);
         setContentPreview(data.body.content);
         setSolution(data.body.solution);

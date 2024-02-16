@@ -10,14 +10,6 @@ import { app } from '../config/firebaseConfig';
 
 const provider = new GoogleAuthProvider();
 
-let cookie;
-if(process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
-  cookie = ` SameSite=Lax; Domain=.localhost; Path=/`;
-} else {
-  let url = process.env.NEXT_PUBLIC_API_URL.replace('https://', '').replace('/','');
-  cookie = ` SameSite=None; Secure; Domain=.${url}; Path=/`;
-}
-
 export default function Register() {
   async function loginGoogle() {
     const auth = getAuth();
@@ -35,7 +27,7 @@ export default function Register() {
               try {
                 var parsed = JSON.parse(this.responseText);
 
-                document.cookie = `idToken=${idToken};` + cookie;
+                document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
                 if (!parsed.email) {
                   // User hasn't finished onboarding.
                   window.location.replace('/onboarding');
@@ -55,7 +47,7 @@ export default function Register() {
                 );
                 localStorage.setItem('role', parsed.role);
 
-                document.cookie = `idToken=${idToken};` + cookie;
+                document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
                 window.location.replace('/dashboard');
               } catch (error) {
                 console.log('Error parsing JSON data:', error);
@@ -95,13 +87,13 @@ export default function Register() {
           const user = userCredential.user;
           userCredential.user.getIdToken().then((idToken) => {
 
-            document.cookie = `idToken=${idToken};` + cookie;
+            document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
             var xhr = new XMLHttpRequest();
             xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
             xhr.addEventListener('readystatechange', function () {
               if (this.readyState === 4) {
                 var parsed = JSON.parse(this.responseText);
-                document.cookie = `idToken=${idToken};` + cookie;
+                document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
                 window.location.replace('/onboarding');
               }
             });

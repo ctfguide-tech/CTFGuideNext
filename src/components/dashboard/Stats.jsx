@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import request from '@/utils/request';
 
 const valueFormatter = (number) =>
   `$ ${Intl.NumberFormat('us').format(number).toString()}`;
@@ -9,14 +10,7 @@ export function Stats() {
   const [points, setPoints] = useState('');
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
-    })
-      .then((res) => res.json())
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
       .then((data) => {
         setStreak(data.streak);
         setRank(data.leaderboardNum);

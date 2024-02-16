@@ -8,19 +8,19 @@ export function middleware(req) {
     pathname.startsWith("/static") || // exclude static files
     pathname.includes(".") // exclude all files in the public folder
   )
-    return NextResponse.next();
+  return NextResponse.next();
 
- const idToken = req.cookies.get('idToken');
+  const idToken = req.cookies.get('idToken');
 
- if (!idToken) {
+  if (!idToken) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
- }
+  }
 
- return NextResponse.next();
+  return NextResponse.next();
 }
 
 export const config = {
- matcher: ['/((?!_next/static|favicon.ico|login|careers|register|onboarding|$).*)'],
+  matcher: ['/((?!_next/static|favicon.ico|login|careers|register|onboarding|$).*)'],
 }

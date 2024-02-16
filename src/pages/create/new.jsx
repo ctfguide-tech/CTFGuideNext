@@ -6,6 +6,7 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 import  fileApi  from '@/utils/file-api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import request from '@/utils/request';
 
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
@@ -100,22 +101,13 @@ export default function Createchall() {
       };
 
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/create`;
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          challengeInfo,
-          username: localStorage.getItem('username'),
-        }),
+      const body = {
+        challengeInfo,
+        username: localStorage.getItem('username'),
       };
+      const data = await request(url, "POST", body);
 
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-
-      if (data.success) {
+      if (data && data.success) {
         toast.success(data.message);
         window.location.href = '/create';
       } else {
@@ -125,30 +117,6 @@ export default function Createchall() {
       console.log(err);
     }
     setSending(false);
-  };
-
-  const getChallenge = async (idName) => {
-    try {
-      const token = localStorage.getItem('idToken');
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/valid/${idName}`;
-
-      var requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-
-      if (data.success) {
-        return data.body.exists;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
   };
 
   useEffect(() => {

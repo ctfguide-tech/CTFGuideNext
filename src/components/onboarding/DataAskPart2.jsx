@@ -17,6 +17,10 @@ export function DataAskPart2() {
     xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.withCredentials = true;
+
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
     xhr.addEventListener('readystatechange', function () {
       if (this.readyState === 4 && this.readyState === 201) {
         var parsed = JSON.parse(this.responseText);

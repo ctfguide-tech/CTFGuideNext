@@ -9,6 +9,7 @@ import { loadStripe } from '@stripe/stripe-js';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import request from '@/utils/request';
 
 export default function Createclass() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL; // change this in deployment
@@ -52,15 +53,10 @@ export default function Createclass() {
 
       if (usingPaymentLink && selectedOption === 'institution') {
         dataObj['isPayedFor'] = false;
-        const res = await fetch(`${baseUrl}/classroom/create`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ ...dataObj }),
-        });
-        const resJson = await res.json();
-        if (resJson.success) {
-          window.location.href = '/classs';
+        let url = baseUrl + "/classroom/create";
+        const res = await request(url, 'POST', dataObj);
+        if (res && res.success) {
+          window.location.href = '/groups';
         } else console.log('There was an error when creating the class');
         return;
       }
@@ -70,24 +66,12 @@ export default function Createclass() {
           ? `${baseUrl}/classroom/create`
           : `${baseUrl}/payments/stripe/create-checkout-session`;
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(
-          selectedOption === 'student'
-            ? { ...dataObj }
-            : {
-                subType: selectedOption,
-                quantity: seats,
-                data: { ...dataObj },
-                operation: 'createClass',
-              }
-        ),
-      });
+      const response= await request(url, 'POST', 
+        selectedOption === 'student' ? { ...dataObj } 
+        : { subType: selectedOption, quantity: seats, data: { ...dataObj }, operation: 'createClass' });
 
       if (selectedOption === 'student') {
-        window.location.href = '/classs';
+        window.location.href = '/groups';
       } else {
         const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
         const stripe = await loadStripe(STRIPE_KEY);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import request from '@/utils/request';
 
 export function Quiz({ page, sublesson, quizData }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -20,17 +21,8 @@ export function Quiz({ page, sublesson, quizData }) {
       setShowPopup(true);
       setTimeout(() => setShowPopup(false), 4000);
 
-      fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${page}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-          },
-        }
-      )
-        .then((res) => res.json())
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress/${page}`;
+      request(url, 'PUT', {})
         .catch((err) => {
           // Trigger Unauthenticated Popup
         });

@@ -15,6 +15,7 @@ import api from '@/utils/terminal-api';
 const auth = getAuth();
 // import socket client
 import io from 'socket.io-client';
+import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -122,12 +123,7 @@ export default function Slug() {
   const getChallenge = async (assignment) => {
     try {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
-      const requestOptions = {
-        method: 'GET',
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
+      const data = await request(url, "GET", null);
       if (data.success) {
         setChallenge(data.body);
       }
@@ -142,7 +138,7 @@ export default function Slug() {
       return;
     }
     const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
-    const data = await makeGetRequest(url);
+    const data = await request(url, "GET", null);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
@@ -157,8 +153,8 @@ export default function Slug() {
 
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
-    const data = await makeGetRequest(url);
-    return data.success;
+    const data = await request(url, "GET", null);
+    return data && data.success;
   };
 
 
@@ -238,7 +234,7 @@ export default function Slug() {
       hintsUsed: i,
       challengeId: challenge.id,
     };
-    const data = await makePostRequest(url, body);
+    const data = await request(url, "POST", body);
     if (data && data.success) {
       let tmp = [...hints];
       tmp[i].message = challengeHints[i].message;
@@ -283,7 +279,7 @@ export default function Slug() {
       terminalIdentifier: password,
     };
 
-    const data = await makePostRequest(url, body);
+    const data = await request(url, "POST", body);
     if (data && data.success) {
       toast.success('Assignment has been submitted');
       setSubmitted(true);
@@ -359,8 +355,6 @@ function handleDataAsk() {
         </style>
       </Head>
       <StandardNav />
-
-
 
       <div style={{}} className="mx-auto h-full overflow-hidden border-b border-neutral-600">
         {router.query.former === 'teacher' && (

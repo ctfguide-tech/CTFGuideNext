@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
+import request from "@/utils/request";
 
 // Do not remove, even if detected as unused by vscode!
 import { app } from '../config/firebaseConfig';
@@ -80,53 +81,42 @@ export function StandardNav() {
 
     useEffect(() => {
     const fetchNotification = async () => {
-      const endPoint =
-        process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-      try {
-        const response = await fetch(endPoint, requestOptions);
-        const result = await response.json();
-        if (!result || !result.length) return;
+      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
+      const result = await request(endPoint, 'GET', null);
+      if (!result || !result.length) return;
 
-        console.log(result);
+      console.log(result);
 
-        setNotificationData(
-          result.map((notification) => {
-            const currentDate = new Date();
-            const createdAt = new Date(notification.createdAt);
-            const timedelta = currentDate - createdAt;
-            console.log(notification);
-            let noti = '';
+      setNotificationData(
+        result.map((notification) => {
+          const currentDate = new Date();
+          const createdAt = new Date(notification.createdAt);
+          const timedelta = currentDate - createdAt;
+          console.log(notification);
+          let noti = '';
 
-            let seconds = Math.floor(timedelta / 1000);
-            let minutes = Math.floor(seconds / 60);
-            seconds = seconds % 60;
-            let hours = Math.floor(minutes / 60);
-            minutes = minutes % 60;
-            let days = Math.floor(hours / 24);
-            hours = hours % 24;
+          let seconds = Math.floor(timedelta / 1000);
+          let minutes = Math.floor(seconds / 60);
+          seconds = seconds % 60;
+          let hours = Math.floor(minutes / 60);
+          minutes = minutes % 60;
+          let days = Math.floor(hours / 24);
+          hours = hours % 24;
 
-            if (days) noti = days + ' days';
-            else if (hours) noti = hours + ' hours';
-            else if (minutes) noti = minutes + ' minutes';
-            else noti = seconds = ' seconds';
+          if (days) noti = days + ' days';
+          else if (hours) noti = hours + ' hours';
+          else if (minutes) noti = minutes + ' minutes';
+          else noti = seconds = ' seconds';
 
-            return {
-              message: notification.message,
-              receivedTime: noti + ' ago',
-              detailPage: '/events',
-              image:
-              'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
-            };
-          })
-        );
-      } catch (error) {}
+          return {
+            message: notification.message,
+            receivedTime: noti + ' ago',
+            detailPage: '/events',
+            image:
+            'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
+          };
+        })
+      );
     };
     fetchNotification();
   }, []);
@@ -139,10 +129,7 @@ export function StandardNav() {
   const fetchNotifications = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/notification`;
-      const requestOptions = { method: "GET", credentials: 'include' }; 
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-
+      const data = await request(url, 'GET', null);
       console.log(data);
       if(data.success) {
         setNotifications(data.body);
