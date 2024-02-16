@@ -26,6 +26,8 @@ if(process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
   cookie = ` SameSite=None; Secure; Domain=.${url}; Path=/`;
 }
 
+console.log(cookie);
+
 export default function Login() {
   const auth = getAuth();
   const [session, setSession] = useState();
