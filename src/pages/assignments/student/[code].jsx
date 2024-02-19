@@ -88,38 +88,6 @@ export default function Slug() {
     return formattedDate;
   };
 
-  const makePostRequest = async (url, body) => {
-    try {
-      let requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      return data;
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-  };
-
-  const makeGetRequest = async (url) => {
-    try {
-      let requestOptions = { method: 'GET', credentials: 'include' };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      return data;
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-  };
-
   const getChallenge = async (assignment) => {
     try {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
@@ -158,25 +126,29 @@ export default function Slug() {
   };
 
 
-  const createTerminal = async () => {
+  const createTerminal = async (skipToCheckStatus) => {
     if(!challenge) return;
     setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
-    const data = await api.buildTerminal(challenge, token);
-    if(data) {
-      setPassword(data.password);
-      setServiceName(data.serviceName);
-      setTerminalUrl(data.url);
-      setUserName(data.userName);
-      setMinutesRemaining(data.minutesRemaining);
-      await getTerminalStatus(data.id);
+    const [created, termId] = await api.buildTerminal(challenge, token);
+    console.log('Pengiouns here:', created, termId);
+    if(created) {
+      if(skipToCheckStatus) {
+        console.log('Skipping to check status', termId);
+        await getTerminalStatus(termId, token);
+        return;
+      } else {
+        await fetchTerminal();
+      }
     } else {
-      toast.error("Unable to create the terminal, please refresh the page and try again");
+      toast.error("Unable to create the terminal, please try again");
       setFetchingTerminal(false);
     }
+    return;
   };
 
   const fetchTerminal = async () => {
+    setFetchingTerminal(true);
     if(!challenge) return;
     const token = auth.currentUser.accessToken;
     setFetchingTerminal(true);
@@ -189,25 +161,35 @@ export default function Slug() {
       setMinutesRemaining(data.minutesRemaining);
       console.log('Terminal data ID:', data.id);
       console.log('Terminal url:', data.url);
-      await getTerminalStatus(data.id);
+      await getTerminalStatus(data.id, token);
     } else {
-      await createTerminal();
+      await createTerminal(false);
     }
   };
 
-  const getTerminalStatus = async (id) => {
+  // when you have an existing terinal and you fetch to create a new one...
+  // it gives a dead link
+
+  const getTerminalStatus = async (id, token) => {
     setFetchingTerminal(true);
     if(!foundTerminal) {
-      const isActive = await api.getStatus(id);
+      const isActive = await api.getStatus(id, token);
       if(isActive) {
+
+        setPassword(isActive.password);
+        setServiceName(isActive.serviceName);
+        setTerminalUrl(isActive.url);
+        setUserName(isActive.userName);
+        setMinutesRemaining(isActive.minutesRemaining);
+        console.log('Terminal data ID:', isActive.id);
+        console.log('Terminal url:', isActive.url);
 
         setFoundTerminal(true);
         setFetchingTerminal(false);
-
       } else {
         setTimeout(async () => {
-          await getTerminalStatus(id);
-        }, 3000);
+          await getTerminalStatus(id, token);
+        }, 5000);
       }
     }
   };
@@ -305,45 +287,51 @@ export default function Slug() {
     if(!challenge || !token) return;
     const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {
-      setCode(data.id);
+      console.log('Found a terminal for the user');
       if(data.challengeID !== challenge.id) {
+        console.log('User has a terminal but it is not for this challenge');
         setUseDiffTerminal(true);
         setTerminalPopup(true);
       } else {
+        console.log('User has a terminal for this challenge');
         setPassword(data.password);
         setTerminalUrl(data.url);
         setServiceName(data.serviceName);
         setUserName(data.userName);
         setMinutesRemaining(data.minutesRemaining);
-        await getTerminalStatus(data.id);
+        await getTerminalStatus(data.id, token);
       }
     } else {
-      await createTerminal();
+      console.log("Didnt find a terminal for the user");
+      await createTerminal(false);
     }
   }
+/*
+  const socketRef = useRef(null);
 
-const socketRef = useRef(null);
+  useEffect(() => {
+    socketRef.current = io('https://kana-server.ctfguide.com');
 
-useEffect(() => {
-  socketRef.current = io('https://kana-server.ctfguide.com');
+    socketRef.current.on('connect', () => {
+      console.log('Connected to server');
+    });
 
-  socketRef.current.on('connect', () => {
-    console.log('Connected to server');
-  });
+    socketRef.current.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
 
-  socketRef.current.on('disconnect', () => {
-    console.log('Disconnected from server');
-  });
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, []);
+  */
 
-  // Clean up the socket connection when the component unmounts
-  return () => {
-    socketRef.current.disconnect();
-  };
-}, []);
-
-function handleDataAsk() {
-  socketRef.current.emit('data_ask', { whoami: password });
-}
+  function handleDataAsk() {
+    socketRef.current.emit('data_ask', { whoami: password });
+  }
+  
+  console.log(terminalUrl);
 
   return (
     <>
@@ -728,7 +716,7 @@ function handleDataAsk() {
 
                         <button style={{marginLeft: "10px"}} onClick={() => {
                           setTerminalPopup(false);
-                          createTerminal();
+                          createTerminal(true);
                         }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
                           {
                             useDiffTerminal ? "Continue" : "Create New Terminal"

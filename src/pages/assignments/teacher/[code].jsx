@@ -75,37 +75,6 @@ export default function id() {
     return formattedDate;
   };
 
-  const makePostRequest = async (url, body) => {
-    try {
-      let requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      return data;
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-  };
-
-  const makeGetRequest = async (url,) => {
-    try {
-      let requestOptions = { method: 'GET', credentials: 'include' };
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
-      return data;
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-  };
-
   const getAssignment = async () => {
     const params = window.location.href.split('/');
     if (params.length < 5) {
@@ -155,22 +124,25 @@ export default function id() {
     }
   };
 
-  const createTerminal = async () => {
+  const createTerminal = async (skipToCheckStatus) => {
     if(!challenge) return;
     setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
-    const data = await api.buildTerminal(challenge, token);
-    if(data) {
-      setPassword(data.password);
-      setServiceName(data.serviceName);
-      setTerminalUrl(data.url);
-      setUserName(data.userName);
-      setMinutesRemaining(data.minutesRemaining);
-      await getTerminalStatus(data.id);
+    const [created, termId] = await api.buildTerminal(challenge, token);
+    console.log('Pengiouns here:', created, termId);
+    if(created) {
+      if(skipToCheckStatus) {
+        console.log('Skipping to check status', termId);
+        await getTerminalStatus(termId, token);
+        return;
+      } else {
+        await fetchTerminal();
+      }
     } else {
       toast.error("Unable to create the terminal, please try again");
       setFetchingTerminal(false);
     }
+    return;
   };
 
   const fetchTerminal = async () => {
@@ -187,23 +159,32 @@ export default function id() {
       setMinutesRemaining(data.minutesRemaining);
       console.log('Terminal data ID:', data.id);
       console.log('Terminal url:', data.url);
-      await getTerminalStatus(data.id);
+      await getTerminalStatus(data.id, token);
     } else {
-      await createTerminal();
+      await createTerminal(false);
     }
   };
 
-  const getTerminalStatus = async (id) => {
+  const getTerminalStatus = async (id, token) => {
     setFetchingTerminal(true);
     if(!foundTerminal) {
-      const isActive = await api.getStatus(id);
+      const isActive = await api.getStatus(id, token);
       if(isActive) {
+
+        setPassword(isActive.password);
+        setServiceName(isActive.serviceName);
+        setTerminalUrl(isActive.url);
+        setUserName(isActive.userName);
+        setMinutesRemaining(isActive.minutesRemaining);
+        console.log('Terminal data ID:', isActive.id);
+        console.log('Terminal url:', isActive.url);
+
         setFoundTerminal(true);
         setFetchingTerminal(false);
       } else {
         setTimeout(async () => {
-          await getTerminalStatus(id);
-        }, 3000);
+          await getTerminalStatus(id, token);
+        }, 5000);
       }
     }
   };
@@ -242,30 +223,6 @@ export default function id() {
     }
   };
 
-  const submitAssignment = async () => {
-    setLoading(true);
-    const params = window.location.href.split('/');
-    const url = `${baseUrl}/submission/create`;
-
-    const body = {
-      solved: flagInput === assignment.solution.keyword,
-      classroomId: assignment.classroomId,
-      assignmentId: parseInt(params[5]),
-      keyword: flagInput,
-      challengeId: assignment.challengeId,
-      totalPoints: assignment.totalPoints,
-      hints: assignment.challenge.hints,
-    };
-
-    const data = await request(url, "POST", body);
-    if (data && data.success) {
-      toast.success('Assignment has been submitted');
-      setSubmitted(true);
-    }
-
-    setLoading(false);
-  };
-
   const routeToSubmission = (id) => {
     router.replace(`/assignments/${assignment.id}/submissions/${id}`);
   };
@@ -275,20 +232,24 @@ export default function id() {
     if(!challenge || !token) return;
     const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {
-      setCode(data.id);
+      console.log("This was the old url for the terminal", data.url);
+      console.log('Found a terminal for the user');
       if(data.challengeID !== challenge.id) {
+        console.log('User has a terminal but it is not for this challenge');
         setUseDiffTerminal(true);
         setTerminalPopup(true);
       } else {
+        console.log('User has a terminal for this challenge');
         setPassword(data.password);
         setTerminalUrl(data.url);
         setServiceName(data.serviceName);
         setUserName(data.userName);
         setMinutesRemaining(data.minutesRemaining);
-        await getTerminalStatus(data.id);
+        await getTerminalStatus(data.id, token);
       }
     } else {
-      await createTerminal();
+      console.log("Didnt find a terminal for the user");
+      await createTerminal(false);
     }
   }
 
@@ -645,7 +606,7 @@ export default function id() {
 
                         <button style={{marginLeft: "10px"}} onClick={() => {
                           setTerminalPopup(false);
-                          createTerminal();
+                          createTerminal(true);
                         }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
                           {
                             useDiffTerminal ? "Continue" : "Create New Terminal"
