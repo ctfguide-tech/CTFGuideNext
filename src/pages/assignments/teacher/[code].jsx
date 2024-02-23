@@ -56,23 +56,22 @@ export default function id() {
   const [minutesRemaining, setMinutesRemaining] = useState(-1);
   const [foundTerminal, setFoundTerminal] = useState(false);
   const [code, setCode] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('');
 
   const router = useRouter();
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
-    let month = dateObject.getMonth() + 1;
-    let day = dateObject.getDate();
-    let year = dateObject.getFullYear();
+    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let time = dateObject.toLocaleString('en-US', {timeZone: timeZone, hour12: false}).split(',')[1].trim().substring(0, 5);
     let hours = dateObject.getHours();
     let minutes = dateObject.getMinutes();
-    let ampm = hours >= 12 ? ' PM' : ' AM';
+    let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    let strTime = hours + ':' + minutes + ampm;
-    let formattedDate = `${month}/${day}/${year} ${strTime}`;
-    return formattedDate;
+    hours = hours ? hours : 12;
+    let minutesString = minutes < 10 ? '0' + minutes : minutes;
+    time = hours + ':' + minutesString + ' ' + ampm;
+    return dateObject.toLocaleDateString('en-US', {timeZone: timeZone}) + ' ' + time;
   };
 
   const getAssignment = async () => {
@@ -125,6 +124,7 @@ export default function id() {
   };
 
   const createTerminal = async (skipToCheckStatus) => {
+    setLoadingMessage('Creating terminal ');
     if(!challenge) return;
     setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
@@ -146,6 +146,7 @@ export default function id() {
   };
 
   const fetchTerminal = async () => {
+    setLoadingMessage('Fetching terminal ');
     setFetchingTerminal(true);
     if(!challenge) return;
     const token = auth.currentUser.accessToken;
@@ -166,6 +167,7 @@ export default function id() {
   };
 
   const getTerminalStatus = async (id, token) => {
+    setLoadingMessage('Terminal is pending ');
     setFetchingTerminal(true);
     if(!foundTerminal) {
       const isActive = await api.getStatus(id, token);
@@ -518,8 +520,8 @@ export default function id() {
                         Launch Terminal 
                       </button>
                   }
-                      { fetchingTerminal && <span><i className="fas fa-spinner fa-pulse"
-                        style={{color: "gray", fontSize: "25px"}}>
+                      { fetchingTerminal && <span style={{color: "gray", fontSize: "25px"}}>{loadingMessage}<i className="fas fa-spinner fa-pulse"
+                        >
                       </i></span>
                       }
                       <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>

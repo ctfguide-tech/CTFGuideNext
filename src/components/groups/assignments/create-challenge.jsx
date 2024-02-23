@@ -288,7 +288,8 @@ export default function Createchall(props) {
                   placeholder="You can use Markdown here! "
                   className="mt-2 h-40 w-full rounded-lg border-neutral-800 bg-neutral-900 px-5 py-4 text-white shadow-lg"
                   onChange={(event) => {
-                    setContentPreview(event.target.value);
+                    let str = event.target.value;
+                    setContentPreview(str);
                   }}
                 ></textarea>
 

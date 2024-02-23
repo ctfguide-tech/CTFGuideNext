@@ -216,6 +216,7 @@ export default function teacherSettings() {
     } else if (index === 3) {
       await removeStudent();
     } 
+
     setShowOverlay(false);
     setLoading(false);
   };
@@ -264,6 +265,9 @@ export default function teacherSettings() {
         await addSeatToClass(seatsToAdd);
       }
       toast.success('Changes have been saved');
+      setTimeout(() => {
+        router.push(`/groups/${group}/home`);
+      }, 1000);
     }
   };
 

@@ -25,18 +25,16 @@ export default function StudentView({ group }) {
 
   const parseDate = (dateString) => {
     let dateObject = new Date(dateString);
-    let month = dateObject.getMonth() + 1; // getMonth() returns a zero-based value (where zero indicates the first month of the year)
-    let day = dateObject.getDate();
-    let year = dateObject.getFullYear();
+    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let time = dateObject.toLocaleString('en-US', {timeZone: timeZone, hour12: false}).split(',')[1].trim().substring(0, 5);
     let hours = dateObject.getHours();
     let minutes = dateObject.getMinutes();
-    let ampm = hours >= 12 ? ' PM' : ' AM';
+    let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    let strTime = hours + ':' + minutes + ampm;
-    let formattedDate = `${month}/${day}/${year} ${strTime}`;
-    return formattedDate;
+    hours = hours ? hours : 12;
+    let minutesString = minutes < 10 ? '0' + minutes : minutes;
+    time = hours + ':' + minutesString + ' ' + ampm;
+    return dateObject.toLocaleDateString('en-US', {timeZone: timeZone}) + ' ' + time;
   };
 
   useEffect(() => {

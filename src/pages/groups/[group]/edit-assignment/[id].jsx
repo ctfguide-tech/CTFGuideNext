@@ -43,6 +43,7 @@ export default function EditingAssignment() {
       setName(data.body.name);
       setDescription(data.body.description);
 
+
       const dueDateObj = new Date(data.body.dueDate);
       const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
       setDueDate(formattedDueDate);

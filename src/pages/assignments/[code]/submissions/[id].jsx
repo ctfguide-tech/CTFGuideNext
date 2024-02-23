@@ -89,37 +89,41 @@ export default function id() {
   };
 
   async function getJson(password) {
-    const requestOptions = { method: 'GET' };
-    const url = `https://${process.env.NEXT_PUBLIC_KANA_SERVER_URL}/analyze/${password}`;
-    const response = await fetch(url, requestOptions);
-    if(!response.ok) {
-      console.log('Error fetching kana log');
-      return;
-    }
-    const readableStream = response.body;
-    const textDecoder = new TextDecoder();
-    const reader = readableStream.getReader();
-    let result = await reader.read();
-    let data = null;
-    while (!result.done) {
-      let info = textDecoder.decode(result.value);
-      console.log(info);
-      data = JSON.parse(info);
-      result = await reader.read();
-    }
+    try {
+      const requestOptions = { method: 'GET' };
+      const url = `https://${process.env.NEXT_PUBLIC_KANA_SERVER_URL}/analyze/${password}`;
+      const response = await fetch(url, requestOptions);
+      if(!response.ok) {
+        console.log('Error fetching kana log');
+        return;
+      }
+      const readableStream = response.body;
+      const textDecoder = new TextDecoder();
+      const reader = readableStream.getReader();
+      let result = await reader.read();
+      let data = null;
+      while (!result.done) {
+        let info = textDecoder.decode(result.value);
+        console.log(info);
+        data = JSON.parse(info);
+        result = await reader.read();
+      }
 
-    if(!data) {
-      console.log('Error parsing kana log');
-      return;
+      if(!data) {
+        console.log('Error parsing kana log');
+        return;
+      }
+
+      let events = data.events;
+
+      for(let i = 0; i < events.length; i++) {
+        events[i].seconds = convert(events[i].timestamp);
+      }
+
+      setKanaLog(events); // []
+    } catch (err) {
+      console.log(err);
     }
-
-    let events = data.events;
-
-    for(let i = 0; i < events.length; i++) {
-      events[i].seconds = convert(events[i].timestamp);
-    }
-
-    setKanaLog(events); // []
   }
 
   useEffect(() => {
