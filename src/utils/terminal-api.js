@@ -61,28 +61,30 @@ const getStatus = async (id, jwt) => {
     const response = await fetch(url, { method: 'GET' });
 
     if (!response.ok) {
-      return null; 
+      return [null, false];
     }
     const readableStream = response.body;
     const textDecoder = new TextDecoder();
     const reader = readableStream.getReader();
     let result = await reader.read();
 
+    let data = null;
+
     while (!result.done) {
       let stat = textDecoder.decode(result.value);
-      let data = JSON.parse(stat);
+      data = JSON.parse(stat);
       console.log('Response from getTerminalStatus: ', data.status);
       if (data.status !== 'pending') {
         console.log('Termainl status is OK');
         console.log('Displaying terminal');
-        return data;
+        return [data, true];
       }
       result = await reader.read();
     }
-    return null;
+    return [data, null];
   } catch (err) {
     console.log(err);
-    return null;
+    return [null, false];
   }
 };
  

@@ -52,6 +52,8 @@ export default function Slug() {
   const [open, setOpen] = useState(true);
   const [terminalPopup, setTerminalPopup] = useState(false);
 
+  const [loadingMessage, setLoadingMessage] = useState('');
+
   function copy(tags) {
     var copyText = document.getElementById(tags);
     copyText.type = 'text';
@@ -128,6 +130,7 @@ export default function Slug() {
 
   const createTerminal = async (skipToCheckStatus) => {
     if(!challenge) return;
+    setLoadingMessage('Creating terminal ');
     setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
     const [created, termId] = await api.buildTerminal(challenge, token);
@@ -150,6 +153,7 @@ export default function Slug() {
   const fetchTerminal = async () => {
     setFetchingTerminal(true);
     if(!challenge) return;
+    setLoadingMessage('Fetching terminal ');
     const token = auth.currentUser.accessToken;
     setFetchingTerminal(true);
     const data = await api.checkUserTerminal(token, challenge.id);
@@ -167,26 +171,29 @@ export default function Slug() {
     }
   };
 
-  // when you have an existing terinal and you fetch to create a new one...
-  // it gives a dead link
-
   const getTerminalStatus = async (id, token) => {
+    setLoadingMessage('Terminal is pending ');
     setFetchingTerminal(true);
     if(!foundTerminal) {
-      const isActive = await api.getStatus(id, token);
+      const [data, isActive] = await api.getStatus(id, token);
       if(isActive) {
-
-        setPassword(isActive.password);
-        setServiceName(isActive.serviceName);
-        setTerminalUrl(isActive.url);
-        setUserName(isActive.userName);
-        setMinutesRemaining(isActive.minutesRemaining);
-        console.log('Terminal data ID:', isActive.id);
-        console.log('Terminal url:', isActive.url);
+        setPassword(data.password);
+        setServiceName(data.serviceName);
+        setTerminalUrl(data.url);
+        setUserName(data.userName);
+        setMinutesRemaining(data.minutesRemaining);
+        console.log('Terminal data ID:', data.id);
+        console.log('Terminal url:', data.url);
 
         setFoundTerminal(true);
         setFetchingTerminal(false);
       } else {
+        if(data) {
+          setPassword(data.password);
+          setServiceName(data.serviceName);
+          setMinutesRemaining(data.minutesRemaining);
+          setUserName(data.userName);
+        }
         setTimeout(async () => {
           await getTerminalStatus(id, token);
         }, 5000);
@@ -560,7 +567,7 @@ export default function Slug() {
                         Launch Terminal 
                       </button>
                   }
-                      { fetchingTerminal && <span><i className="fas fa-spinner fa-pulse"
+                      { fetchingTerminal && <span style={{color: "white", fontSize: "25px"}}>{loadingMessage}<i className="fas fa-spinner fa-pulse"
                         style={{color: "gray", fontSize: "25px"}}>
                       </i></span>
                       }
