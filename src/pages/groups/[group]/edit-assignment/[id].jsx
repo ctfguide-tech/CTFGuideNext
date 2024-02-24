@@ -99,23 +99,17 @@ export default function EditingAssignment() {
 
 
   const handleSave = async () => {
-
     if(latePenalty < 0 || latePenalty > 100) {
       toast.error('Late penalty must be between 0 and 100');
       return;
     }
     const classCode = router.query.group;
     const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/update-assignment/${id}/${classCode}`;
-
     let datetimeString = `${dueDate}T${dueTime}:00`;
-    const date = new Date(datetimeString);
-    
-    console.log("sending date to backend", date);
-
     const body = {
       name,
       description,
-      dueDate: date,
+      dueDate: datetimeString,
       category,
       aiObjectives,
       aiPenalties,
