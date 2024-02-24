@@ -25,23 +25,21 @@ export default function StudentView({ group }) {
 
   const parseDate = (dateString) => {
     const date = new Date(dateString);
-
     const offsetInMinutes = date.getTimezoneOffset();
     date.setMinutes(date.getMinutes() + offsetInMinutes);
-    
-    function to12HourFormat(hour) {
+    function to12HourFormat(hour, minute) {
       let period = hour >=  12 ? "PM" : "AM";
       hour = hour %  12;
       hour = hour ? hour :  12; // the hour '0' should be '12'
-      return hour + ":00" + period;
+      return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
     }
-    
     const day = date.getDate();
     const month = date.getMonth() +  1; // Months are  0-based in JavaScript
     const year = date.getFullYear().toString().slice(-2);
-    const time = to12HourFormat(date.getHours());
-    
-    const formattedDate = `${day}/${month}/${year} ${time}`;
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const time = to12HourFormat(hour, minute);
+    const formattedDate = `${month}/${day}/${year} ${time}`;
     return formattedDate;
   };
 

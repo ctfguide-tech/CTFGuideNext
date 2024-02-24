@@ -75,12 +75,9 @@ export default function Slug() {
   }
 
   const parseDate = (dateString) => {
-    console.log("1", dateString);
     const date = new Date(dateString);
-    console.log("2", date);
     const offsetInMinutes = date.getTimezoneOffset();
     date.setMinutes(date.getMinutes() + offsetInMinutes);
-    console.log("2.5", date);
     function to12HourFormat(hour, minute) {
       let period = hour >=  12 ? "PM" : "AM";
       hour = hour %  12;

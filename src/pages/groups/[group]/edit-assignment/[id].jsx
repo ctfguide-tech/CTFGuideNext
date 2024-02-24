@@ -44,15 +44,12 @@ export default function EditingAssignment() {
       setName(data.body.name);
       setDescription(data.body.description);
 
-      console.log(data.body.dueDate);
-
       const dueDateObj = new Date(data.body.dueDate);
       const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
       setDueDate(formattedDueDate);
 
       let time = dueDateObj.toISOString().slice(11, 16);
       setDueTime(time);
-      console.log(data.body);
 
       setCategory(data.body.category);
       setAiObjectives(data.body.aiObjectives);
