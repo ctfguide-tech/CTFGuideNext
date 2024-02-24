@@ -98,6 +98,8 @@ const Editor = (props) => {
       username: localStorage.getItem('username'),
     };
 
+    console.log(body.assignmentInfo);
+
     const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment/${classCode}`;
     const data = await request(url, 'POST', body);
 

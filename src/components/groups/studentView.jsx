@@ -24,17 +24,25 @@ export default function StudentView({ group }) {
   const [classroom, setClassroom] = useState({});
 
   const parseDate = (dateString) => {
-    let dateObject = new Date(dateString);
-    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let time = dateObject.toLocaleString('en-US', {timeZone: timeZone, hour12: false}).split(',')[1].trim().substring(0, 5);
-    let hours = dateObject.getHours();
-    let minutes = dateObject.getMinutes();
-    let ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    let minutesString = minutes < 10 ? '0' + minutes : minutes;
-    time = hours + ':' + minutesString + ' ' + ampm;
-    return dateObject.toLocaleDateString('en-US', {timeZone: timeZone}) + ' ' + time;
+    const date = new Date(dateString);
+
+    const offsetInMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() + offsetInMinutes);
+    
+    function to12HourFormat(hour) {
+      let period = hour >=  12 ? "PM" : "AM";
+      hour = hour %  12;
+      hour = hour ? hour :  12; // the hour '0' should be '12'
+      return hour + ":00" + period;
+    }
+    
+    const day = date.getDate();
+    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
+    const year = date.getFullYear().toString().slice(-2);
+    const time = to12HourFormat(date.getHours());
+    
+    const formattedDate = `${day}/${month}/${year} ${time}`;
+    return formattedDate;
   };
 
   useEffect(() => {

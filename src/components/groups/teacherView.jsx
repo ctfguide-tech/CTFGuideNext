@@ -83,17 +83,30 @@ export default function TeacherView({ group }) {
   };
 
   const parseDate = (dateString) => {
-    let dateObject = new Date(dateString);
-    let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let time = dateObject.toLocaleString('en-US', {timeZone: timeZone, hour12: false}).split(',')[1].trim().substring(0, 5);
-    let hours = dateObject.getHours();
-    let minutes = dateObject.getMinutes();
-    let ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    let minutesString = minutes < 10 ? '0' + minutes : minutes;
-    time = hours + ':' + minutesString + ' ' + ampm;
-    return dateObject.toLocaleDateString('en-US', {timeZone: timeZone}) + ' ' + time;
+    console.log("1",dateString);
+    const date = new Date(dateString);
+    console.log("2",date);
+
+    const offsetInMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() + offsetInMinutes);
+    console.log("2.5",date);
+    
+    function to12HourFormat(hour) {
+      let period = hour >=  12 ? "PM" : "AM";
+      hour = hour %  12;
+      hour = hour ? hour :  12; // the hour '0' should be '12'
+      return hour + ":00" + period;
+    }
+    
+    const day = date.getDate();
+    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
+    const year = date.getFullYear().toString().slice(-2);
+    const time = to12HourFormat(date.getHours());
+    
+    const formattedDate = `${day}/${month}/${year} ${time}`;
+    console.log("3",formattedDate);
+
+    return formattedDate;
   };
 
   if (viewCreateAssignment && classroom){

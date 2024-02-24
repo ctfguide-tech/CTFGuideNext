@@ -290,6 +290,7 @@ export default function Slug() {
   }
 
   const checkIfTerminalExists = async () => {
+    setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
     if(!challenge || !token) return;
     const data = await api.checkUserTerminal(token, challenge.id);

@@ -23,6 +23,7 @@ export default function EditingAssignment() {
   const [aiObjectives, setAiObjectives] = useState('');
   const [aiPenalties, setAiPenalties] = useState('');
   const [totalPoints, setTotalPoints] = useState('');
+  const [category, setCategory] = useState('');
 
   const [latePenalty, setLatePenalty] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -43,15 +44,17 @@ export default function EditingAssignment() {
       setName(data.body.name);
       setDescription(data.body.description);
 
+      console.log(data.body.dueDate);
 
       const dueDateObj = new Date(data.body.dueDate);
       const formattedDueDate = dueDateObj.toISOString().slice(0, 10);
       setDueDate(formattedDueDate);
 
-      let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      let time = dueDateObj.toLocaleString('en-US', {timeZone: timeZone, hour12: false}).split(',')[1].trim().substring(0, 5);
+      let time = dueDateObj.toISOString().slice(11, 16);
       setDueTime(time);
+      console.log(data.body);
 
+      setCategory(data.body.category);
       setAiObjectives(data.body.aiObjectives);
       setAiPenalties(data.body.aiPenalties);
       setTotalPoints(data.body.totalPoints);
@@ -106,17 +109,21 @@ export default function EditingAssignment() {
 
     let datetimeString = `${dueDate}T${dueTime}:00`;
     const date = new Date(datetimeString);
+    
+    console.log("sending date to backend", date);
 
     const body = {
       name,
       description,
       dueDate: date,
+      category,
       aiObjectives,
       aiPenalties,
       totalPoints,
       latePenalty,
       isOpen
     }
+
     const data = await request(url, 'PUT', body);
     if (data && data.success) {
       toast.success('Assignment updated successfully');
@@ -296,23 +303,26 @@ export default function EditingAssignment() {
                       <option value="close">Closed</option>
                     </select>
                   </div>
-
                   <div className="sm:col-span-3">
                     <label
                       htmlFor="classroom-status"
                       className="block text-sm font-medium leading-6 text-white"
                     >
-                      Late Penalty (%)
+                      Assignment Category
                     </label>
-
-                    <input
-                      type="number"
-                      autoComplete="off"
-                      value={latePenalty}
-                      onChange={(e) => setLatePenalty(e.target.value)}
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      id="classroom-status"
                       className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
-                    />
+                    >
+                      <option value="test">Test</option>
+                      <option value="quiz">Quiz</option>
+                      <option value="homework">Homework</option>
+                      <option value="assessment">Assessment</option>
+                    </select>
                   </div>
+
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="description"
@@ -330,9 +340,22 @@ export default function EditingAssignment() {
                         className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
                       />
                     </div>
-                    <p className="mt-3 text-sm text-white">
-                      Brief description for your assignment. 
-                    </p>
+                  <div className="sm:col-span-3 p-1">
+                    <label
+                      htmlFor="classroom-status"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Late Penalty (%)
+                    </label>
+
+                    <input
+                      type="number"
+                      autoComplete="off"
+                      value={latePenalty}
+                      onChange={(e) => setLatePenalty(e.target.value)}
+                      className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
+                    />
+                  </div>
                   </div>
                 </div>
                 <Transition.Root show={showOverlay} as={Fragment}>
