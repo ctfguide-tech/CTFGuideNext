@@ -229,7 +229,7 @@ const Announcement = ({
             onChange={(e) => {
               setAnnouncement(e.target.value);
             }}
-              rows={Math.max(announcement.length/50, 6)}
+              rows={Math.max(announcement.length/70, 6)}
             cols="50"
             className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
           ></textarea>
@@ -266,7 +266,7 @@ const Announcement = ({
                   <textarea
                     value={announcement}
                     onChange={(e) => setAnnouncement(e.target.value)}
-                    rows={Math.max(announcement.length/50, 6)}
+                      rows={Math.max(announcement.length/70, 6)}
                     cols="50"
                     style={styles.textarea}
                   ></textarea>
@@ -323,7 +323,7 @@ const Announcement = ({
                         value={announcementObj.message}
                         id="bio"
                         name="bio"
-                        rows={Math.max(announcement.length/50, 6)}
+                        rows={Math.max(announcementObj.message.length/70, 3)}
                         className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-0 sm:text-sm sm:leading-6 p-0"
                         readOnly
                       />
@@ -349,7 +349,11 @@ const Announcement = ({
                             className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
                           >
                             <button  
-                              onClick={() => deleteAnnouncement(announcementObj.id)}  
+                              onClick={() => {
+                                deleteAnnouncement(announcementObj.id) 
+                                setDisplayConfirm(-1)
+                              }
+                              }
                               className="text-red-500"  
                               style={{
                                 color: "white",
