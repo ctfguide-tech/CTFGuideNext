@@ -87,6 +87,8 @@ export default function Createchall() {
     try {
       const nConfig = newConfig.replace('\n', ' && ');
 
+      console.log([category])
+
       const challengeInfo = {
         name: newChallengeName,
         category: [category],

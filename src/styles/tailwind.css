@@ -268,29 +268,3 @@ ul {
   --rt-transition-closing-delay: 0.10s;
 }
 
-.tooltip {
-  padding: 8px 16px;
-  border-radius: 3px;
-  font-size: 50%;
-  width: max-content;
-}
-
-
-.rainbow_text_animated {
-  background: linear-gradient(to right, #1d48bf, #0099ff , #0357ff, #3742d1, #1087f6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: rainbow_animation 6s ease-in-out infinite;
-  background-size: 400% 100%;
-}
-
-@keyframes rainbow_animation {
-  0%,100% {
-      background-position: 0 0;
-  }
-
-  50% {
-      background-position: 100% 0;
-  }
-}
