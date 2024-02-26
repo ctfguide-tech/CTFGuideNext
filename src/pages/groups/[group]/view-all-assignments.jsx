@@ -213,7 +213,7 @@ const ViewAllAssignments = () => {
             .map((assignment) => (
               <div
                 key={assignment.id}
-                className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
+                className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
                 onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
               >
                 {/* Make assignment look pretty*/}

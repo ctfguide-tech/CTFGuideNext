@@ -276,7 +276,7 @@ export function StandardNav() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="/dashboard"
+                                href={`../users/${username}`}
                                 className={classNames(
                                   active ? '-100' : '',
                                   'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'

@@ -66,9 +66,9 @@ export default function Createclass() {
           ? `${baseUrl}/classroom/create`
           : `${baseUrl}/payments/stripe/create-checkout-session`;
 
-      const response= await request(url, 'POST', 
-        selectedOption === 'student' ? { ...dataObj } 
-        : { subType: selectedOption, quantity: seats, data: { ...dataObj }, operation: 'createClass' });
+      const response = await request(url, 'POST',
+        selectedOption === 'student' ? { ...dataObj }
+          : { subType: selectedOption, quantity: seats, data: { ...dataObj }, operation: 'createClass' });
 
       if (selectedOption === 'student') {
         window.location.href = '/groups';
@@ -179,7 +179,27 @@ export default function Createclass() {
                       </div>
                     </div>
                   </div>
-
+                  <div className="sm:col-span-4">
+                    <label
+                      for="username"
+                      className="block text-sm font-medium leading-6 text-white"
+                    >
+                      Course Name
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
+                        <input
+                          type="text"
+                          name="Course Name"
+                          id="course_name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
+                          placeholder="Silly Hacking 101"
+                        />
+                      </div>
+                    </div>
+                  </div>
                   <div className="col-span-full">
                     <label
                       for="about"
@@ -204,72 +224,52 @@ export default function Createclass() {
                     </p>
                   </div>
 
-                  <div className="sm:col-span-4">
-                    <label
-                      for="username"
-                      className="block text-sm font-medium leading-6 text-white"
-                    >
-                      Course Name
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-neutral-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
-                        <input
-                          type="text"
-                          name="Course Name"
-                          id="course_name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-neutral-400 focus:ring-0 sm:text-sm sm:leading-6"
-                          placeholder="Silly Hacking 101"
-                        />
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
 
-{
-/*
-
-                <h1 className="mt-4 text-sm text-white">Pricing Model</h1>
-                <div className="grid-row-1 mt-2 grid grid-cols-2 gap-4 gap-x-4 text-white ">
-                  <div
-                    className={`hover:bg-neutral-750 bg-neutral-800 px-2 py-2 text-center ${
-                      selectedOption === 'student' && !usingPaymentLink
-                        ? 'border-2 border-blue-600'
-                        : 'border-2 border-neutral-800'
-                    }`}
-                    onClick={() => {
-                      setSelectedOption('student');
-                      setUsingPaymentLink(false);
-                    }}
-                  >
-                    <h1>
-                      Paid for by Student{' '}
-                      <b className="text-sm italic text-yellow-500">
-                        Most Popular!
-                      </b>
-                    </h1>
-                    <h1 className="text-2xl font-semibold">$58</h1>
-                    <h1 className="text-sm">per semester</h1>
-                  </div>
-                  <div
-                    className={`hover:bg-neutral-750 bg-neutral-800 px-2 py-2 text-center ${
-                      selectedOption === 'institution'
-                        ? 'border-2 border-blue-600'
-                        : 'border-2 border-neutral-800'
-                    }`}
-                    onClick={() => {
-                      setSelectedOption('institution');
-                      setUsingPaymentLink(true);
-                    }}
-                  >
-                    <h1>Paid for by Institution</h1>
-                    <h1 className="text-2xl font-semibold">$40</h1>
-                    <h1 className="text-sm">per student, per semester</h1>
-                  </div>
-                </div>
- * */
-}
+                {
+                  /*
+                  
+                                  <h1 className="mt-4 text-sm text-white">Pricing Model</h1>
+                                  <div className="grid-row-1 mt-2 grid grid-cols-2 gap-4 gap-x-4 text-white ">
+                                    <div
+                                      className={`hover:bg-neutral-750 bg-neutral-800 px-2 py-2 text-center ${
+                                        selectedOption === 'student' && !usingPaymentLink
+                                          ? 'border-2 border-blue-600'
+                                          : 'border-2 border-neutral-800'
+                                      }`}
+                                      onClick={() => {
+                                        setSelectedOption('student');
+                                        setUsingPaymentLink(false);
+                                      }}
+                                    >
+                                      <h1>
+                                        Paid for by Student{' '}
+                                        <b className="text-sm italic text-yellow-500">
+                                          Most Popular!
+                                        </b>
+                                      </h1>
+                                      <h1 className="text-2xl font-semibold">$58</h1>
+                                      <h1 className="text-sm">per semester</h1>
+                                    </div>
+                                    <div
+                                      className={`hover:bg-neutral-750 bg-neutral-800 px-2 py-2 text-center ${
+                                        selectedOption === 'institution'
+                                          ? 'border-2 border-blue-600'
+                                          : 'border-2 border-neutral-800'
+                                      }`}
+                                      onClick={() => {
+                                        setSelectedOption('institution');
+                                        setUsingPaymentLink(true);
+                                      }}
+                                    >
+                                      <h1>Paid for by Institution</h1>
+                                      <h1 className="text-2xl font-semibold">$40</h1>
+                                      <h1 className="text-sm">per student, per semester</h1>
+                                    </div>
+                                  </div>
+                   * */
+                }
                 <h1 className="mt-4 text-sm text-white">
                   Expected amount of students
                 </h1>
