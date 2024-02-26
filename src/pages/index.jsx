@@ -1,11 +1,11 @@
 import Head from 'next/head';
 import { Header } from '@/components/Header';
-import { Hero } from '@/components/learn/home/Hero';
+import { Hero } from '@/components/home/Hero';
 import { Footer } from '@/components/Footer';
-import { FeaturesPanel } from '@/components/learn/home/FeaturePanel';
-import { Stats } from '@/components/learn/home/Stats';
-import { LearningPanel } from '@/components/learn/home/LearningPanel';
-import { Enterprise } from '@/components/learn/home/Enterprise';
+import { FeaturesPanel } from '@/components/home/FeaturePanel';
+import { Stats } from '@/components/home/Stats';
+import { LearningPanel } from '@/components/home/LearningPanel';
+import { Enterprise } from '@/components/home/Enterprise';
 
 export default function Home() {
   return (
