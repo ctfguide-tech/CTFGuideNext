@@ -262,7 +262,7 @@ export default function Slug() {
     const body = {
       solved: flagInput === assignment.solution.keyword,
       classroomId: assignment.classroomId,
-      assignmentId: params[4],
+      assignmentId: params[5],
       keyword: flagInput,
       challengeId: assignment.challengeId,
       totalPoints: assignment.totalPoints,

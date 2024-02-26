@@ -10,7 +10,6 @@ import { CheckIcon } from '@heroicons/react/24/outline'
 import request from '@/utils/request';
 import { useRouter } from 'next/router';
 import ClassroomNav from '@/components/groups/classroomNav';
-import { getCookie } from '@/utils/request';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function id() {
@@ -18,16 +17,16 @@ export default function id() {
   const router = useRouter();
   const [assignment, setAssignment] = useState(null);
   const [submission, setSubmission] = useState(null);
-
   const [user, setUser] = useState(null);
-
   const [formattedDate, setFormattedDate] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [player, setPlayer] = useState(null);
+
   const [kanaLog, setKanaLog] = useState([]);
 
   // fetch kana log
-  const fetchKanaLog = async (password, challengeId) => {
+  const fetchKanaLog = async (password, assignmentId) => {
     try {
       const AsciinemaPlayer = await import('asciinema-player');
 
@@ -89,24 +88,15 @@ export default function id() {
     return parseInt(min) * 60 + parseInt(sec);
   };
 
-
-  async function getJson() {
+  async function getJson(password) {
     try {
-      let jwt = getCookie();
-      if(!jwt) {
-        console.log("User is not authenticated");
-        return;
-      }
-      const assignmentId = window.location.href.split('/')[6];
-      const uid = user.uid;
-      let url = `${process.env.NEXT_PUBLIC_TERM_URL}get/json?jwtToken=${jwt}&assignmentID=${assignmentId}&uid=${uid}`;
-      let requestOptions = { method: 'GET' };
-      let response = await fetch(url, requestOptions);
+      const requestOptions = { method: 'GET' };
+      const url = `https://${process.env.NEXT_PUBLIC_KANA_SERVER_URL}/analyze/${password}`;
+      const response = await fetch(url, requestOptions);
       if(!response.ok) {
         console.log('Error fetching kana log');
         return;
       }
-      console.log(response);
       const readableStream = response.body;
       const textDecoder = new TextDecoder();
       const reader = readableStream.getReader();
@@ -131,7 +121,7 @@ export default function id() {
       }
 
       setKanaLog(events); // []
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
@@ -147,7 +137,6 @@ export default function id() {
       const id = window.location.href.split('/')[6];
       const url = `${baseUrl}/submission/submission/${id}`;
       const data = await request(url, 'GET', null);
-      console.log(data);
       if (data && data.success) {
         setAssignment(data.body.assignment);
         setUser(data.body.user);
@@ -157,7 +146,7 @@ export default function id() {
         setSubmission(data.body);
         const date = new Date(data.body.createdAt);
         setFormattedDate(date.toLocaleString());
-        await fetchKanaLog(data.body.terminalIdentifier, data.body.assignment.challengeId);
+        await fetchKanaLog(data.body.terminalIdentifier, data.body.assignment.id);
       }
     } catch (err) {
       console.log(err);
