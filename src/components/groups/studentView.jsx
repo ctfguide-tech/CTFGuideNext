@@ -164,7 +164,7 @@ export default function StudentView({ group }) {
                   classroom.assignments.length > 0 ? (
                   classroom.assignments
                     .filter(
-                      (assignment) => new Date(assignment.dueDate) > new Date()
+                      (assignment) => new Date(parseDate(assignment.dueDate)) > new Date()
                     )
                     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
                     .slice(0, 5)
@@ -175,7 +175,7 @@ export default function StudentView({ group }) {
                           window.location.href =
                             '/assignments/student/' + assignment.id + '';
                         }}
-                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(assignment.dueDate) < new Date()
+                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(parseDate(assignment.dueDate)) < new Date()
                             ? 'border-red-600'
                             : 'border-green-600'
                           } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}

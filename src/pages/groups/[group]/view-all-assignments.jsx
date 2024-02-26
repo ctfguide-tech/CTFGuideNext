@@ -129,7 +129,7 @@ const ViewAllAssignments = () => {
         {
         assignments.length > 0 ? (
           assignments
-            .filter((assignment) => new Date(assignment.dueDate) > new Date())
+            .filter((assignment) => new Date(parseDate(assignment.dueDate)) > new Date())
             .map((assignment) => (
               <div
                 key={assignment.id}
@@ -209,7 +209,7 @@ const ViewAllAssignments = () => {
         
         assignments.length > 0 ? (
           assignments
-            .filter((assignment) => new Date(assignment.dueDate) < new Date())
+            .filter((assignment) => new Date(parseDate(assignment.dueDate)) < new Date())
             .map((assignment) => (
               <div
                 key={assignment.id}
