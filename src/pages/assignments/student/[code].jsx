@@ -322,7 +322,7 @@ export default function Slug() {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io('https://cyberjags-8b081.uc.r.appspot.com');
+    socketRef.current = io('https://kana-server.ctfguide.com');
 
     socketRef.current.on('connect', () => {
       console.log('Connected to server');
