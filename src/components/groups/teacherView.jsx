@@ -82,25 +82,25 @@ export default function TeacherView({ group }) {
     }
   };
 
-const parseDate = (dateString) => {
-  const date = new Date(dateString);
-  const offsetInMinutes = date.getTimezoneOffset();
-  date.setMinutes(date.getMinutes() + offsetInMinutes);
-  function to12HourFormat(hour, minute) {
-    let period = hour >=  12 ? "PM" : "AM";
-    hour = hour %  12;
-    hour = hour ? hour :  12; // the hour '0' should be '12'
-    return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
-  }
-  const day = date.getDate();
-  const month = date.getMonth() +  1; // Months are  0-based in JavaScript
-  const year = date.getFullYear().toString().slice(-2);
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const time = to12HourFormat(hour, minute);
-  const formattedDate = `${month}/${day}/${year} ${time}`;
-  return formattedDate;
-};
+  const parseDate = (dateString) => {
+    const date = new Date(dateString);
+    const offsetInMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() + offsetInMinutes);
+    function to12HourFormat(hour, minute) {
+      let period = hour >=  12 ? "PM" : "AM";
+      hour = hour %  12;
+      hour = hour ? hour :  12; // the hour '0' should be '12'
+      return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
+    }
+    const day = date.getDate();
+    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
+    const year = date.getFullYear().toString().slice(-2);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const time = to12HourFormat(hour, minute);
+    const formattedDate = `${month}/${day}/${year} ${time}`;
+    return formattedDate;
+  };
 
   if (viewCreateAssignment && classroom){
     return <CreateAssignment classCode={classroom.classCode} />;
@@ -252,7 +252,7 @@ const parseDate = (dateString) => {
                   classroom.assignments.length > 0 ? (
                   classroom.assignments
                     .filter(
-                      (assignment) => new Date(assignment.dueDate) > new Date()
+                      (assignment) => new Date(parseDate(assignment.dueDate)) > new Date()
                     )
                     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
                     .slice(0, 5)
@@ -263,7 +263,7 @@ const parseDate = (dateString) => {
                           window.location.href =
                             '/assignments/teacher/' + assignment.id + '';
                         }}
-                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(assignment.dueDate) < new Date()
+                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(parseDate(assignment.dueDate)) < new Date()
                             ? 'border-red-600'
                             : 'border-green-600'
                           } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}

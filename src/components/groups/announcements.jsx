@@ -19,6 +19,7 @@ const Announcement = ({
   const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
   const [makingNewPost, setMakingNewPost] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [displayConfirm, setDisplayConfirm] = useState(-1);
 
   const handleCloseModal = () => {
     setEditingAnnouncementIdx(-1);
@@ -53,7 +54,14 @@ const Announcement = ({
   const createAnnouncement = async (message) => {
     setLoading(true);
     const username = localStorage.getItem('username');
-    if (message.length < 1) return;
+    if (message.length < 1) {
+      toast.error('Announcement cannot be empty.');
+      setLoading(false);
+      setAnnouncement('');
+      setEditingAnnouncementIdx(-1);
+      setMakingNewPost(false);
+      return;
+    }
     const body = {
       classCode,
       message,
@@ -116,6 +124,7 @@ const Announcement = ({
       cursor: 'pointer',
     },
   };
+
   if (!isTeacher) {
     return (
       <div className="col-span-6 rounded-lg border-l border-neutral-800 bg-neutral-800/50 px-4 py-3">
@@ -127,7 +136,7 @@ const Announcement = ({
             color: 'white',
             padding: '0',
             margin: '0',
-            height: '300px',
+            height: '350px',
             overflowY: 'auto',
           }}
         >
@@ -161,7 +170,7 @@ const Announcement = ({
                         >
                           {`${announcementObj.type}`}
                         </span>
-                        <br></br> {announcementObj.message}
+                        <br></br> <span style={{whiteSpace: 'pre-wrap'}}> {announcementObj.message}</span>
                       </span>{' '}
                     </li>
                     <span
@@ -203,7 +212,16 @@ const Announcement = ({
           </button>
         </div>
       </div>
-      <ul></ul>
+      <ul
+        style={{
+          color: 'white',
+          padding: '0',
+          margin: '0',
+          height: '500px',
+          overflowY: 'auto',
+        }}
+      >
+
       {isModalOpen && (
         <div style={{ paddingBottom: '15px' }}>
           <textarea
@@ -211,7 +229,7 @@ const Announcement = ({
             onChange={(e) => {
               setAnnouncement(e.target.value);
             }}
-            rows="7"
+            rows={announcement.length/50}
             cols="50"
             className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
           ></textarea>
@@ -248,7 +266,7 @@ const Announcement = ({
                   <textarea
                     value={announcement}
                     onChange={(e) => setAnnouncement(e.target.value)}
-                    rows="6"
+                    rows={Math.max(announcement.length/50, 6)}
                     cols="50"
                     style={styles.textarea}
                   ></textarea>
@@ -305,7 +323,7 @@ const Announcement = ({
                         value={announcementObj.message}
                         id="bio"
                         name="bio"
-                        rows={6}
+                        rows={announcementObj.message.length/50}
                         className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-0 sm:text-sm sm:leading-6 p-0"
                         readOnly
                       />
@@ -313,18 +331,63 @@ const Announcement = ({
                     </span>{' '}
                     <br></br>{' '}
                   </li>
+
+                    {
+                      displayConfirm !== idx ? (
+
                   <span
-                    onClick={() => deleteAnnouncement(announcementObj.id)}
+                    onClick={() => setDisplayConfirm(idx)}
                     disabled={loading}
                     className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
                   >
                     <i className="fa fa-trash mr-1 text-red-500"> </i>
                     Delete
+
                   </span>
-                </div>
-              );
-            }
+                      ) : (
+                          <span
+                            className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
+                          >
+                            <button  
+                              onClick={() => deleteAnnouncement(announcementObj.id)}  
+                              className="text-red-500"  
+                              style={{
+                                color: "white",
+                                marginRight: "10px",
+                                backgroundColor: "#dc3545", // Example of a darker red for deletion
+                                padding: "5px  10px", // Increase padding
+                                fontSize: "10px", // Increase font size
+                                borderRadius: "5px", // Add border radius
+                                cursor: "pointer" // Change cursor to pointer
+                              }}
+                            >
+                              {
+                                loading ? <i className="fas fa-spinner fa-pulse" style={{color: "white", fontSize: "15px"}}></i> : "Confirm"
+                              }
+                            </button>
+                            <button  
+                              onClick={() => setDisplayConfirm(-1)}  
+                              className="text-green-500"  
+                              style={{
+                                color: "white",
+                                backgroundColor: "#28a745", // Example of a lighter green for cancellation
+                                padding: "5px  10px", // Increase padding
+                                fontSize: "10px", // Increase font size
+                                borderRadius: "5px", // Add border radius
+                                cursor: "pointer" // Change cursor to pointer
+                              }}
+                            >
+                              Cancel
+                            </button>
+
+                          </span>
+                        )
+                    }
+                  </div>
+                );
+              }
           })}
+      </ul>
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
