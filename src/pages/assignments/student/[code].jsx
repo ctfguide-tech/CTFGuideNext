@@ -79,13 +79,13 @@ export default function Slug() {
     const offsetInMinutes = date.getTimezoneOffset();
     date.setMinutes(date.getMinutes() + offsetInMinutes);
     function to12HourFormat(hour, minute) {
-      let period = hour >=  12 ? "PM" : "AM";
-      hour = hour %  12;
-      hour = hour ? hour :  12; // the hour '0' should be '12'
+      let period = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12;
+      hour = hour ? hour : 12; // the hour '0' should be '12'
       return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
     }
     const day = date.getDate();
-    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
+    const month = date.getMonth() + 1; // Months are  0-based in JavaScript
     const year = date.getFullYear().toString().slice(-2);
     const hour = date.getHours();
     const minute = date.getMinutes();
@@ -133,14 +133,14 @@ export default function Slug() {
 
 
   const createTerminal = async (skipToCheckStatus) => {
-    if(!challenge) return;
+    if (!challenge) return;
     setLoadingMessage('Creating terminal ');
     setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
     const [created, termId] = await api.buildTerminal(challenge, token);
     console.log('Pengiouns here:', created, termId);
-    if(created) {
-      if(skipToCheckStatus) {
+    if (created) {
+      if (skipToCheckStatus) {
         console.log('Skipping to check status', termId);
         await getTerminalStatus(termId, token);
         return;
@@ -156,12 +156,12 @@ export default function Slug() {
 
   const fetchTerminal = async () => {
     setFetchingTerminal(true);
-    if(!challenge) return;
+    if (!challenge) return;
     setLoadingMessage('Fetching terminal ');
     const token = auth.currentUser.accessToken;
     setFetchingTerminal(true);
     const data = await api.checkUserTerminal(token, challenge.id);
-    if(data !== null) {
+    if (data !== null) {
       setPassword(data.password);
       setServiceName(data.serviceName);
       setTerminalUrl(data.url);
@@ -178,9 +178,9 @@ export default function Slug() {
   const getTerminalStatus = async (id, token) => {
     setLoadingMessage('Terminal is pending ');
     setFetchingTerminal(true);
-    if(!foundTerminal) {
+    if (!foundTerminal) {
       const [data, isActive] = await api.getStatus(id, token);
-      if(isActive) {
+      if (isActive) {
         setPassword(data.password);
         setServiceName(data.serviceName);
         setTerminalUrl(data.url);
@@ -192,7 +192,7 @@ export default function Slug() {
         setFoundTerminal(true);
         setFetchingTerminal(false);
       } else {
-        if(data) {
+        if (data) {
           setPassword(data.password);
           setServiceName(data.serviceName);
           setMinutesRemaining(data.minutesRemaining);
@@ -247,13 +247,13 @@ export default function Slug() {
   const submitAssignment = async () => {
 
 
-    if(password === "...") {
+    if (password === "...") {
       toast.error('You cannot submit the assignment when you havent used the terminal.');
       return;
     }
 
     handleDataAsk();
-    
+
 
     setLoading(true);
     const params = window.location.href.split('/');
@@ -296,11 +296,11 @@ export default function Slug() {
   const checkIfTerminalExists = async () => {
     setFetchingTerminal(true);
     const token = auth.currentUser.accessToken;
-    if(!challenge || !token) return;
+    if (!challenge || !token) return;
     const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {
       console.log('Found a terminal for the user');
-      if(data.challengeID !== challenge.id) {
+      if (data.challengeID !== challenge.id) {
         console.log('User has a terminal but it is not for this challenge');
         setUseDiffTerminal(true);
         setTerminalPopup(true);
@@ -341,7 +341,7 @@ export default function Slug() {
   function handleDataAsk() {
     socketRef.current.emit('data_ask', { whoami: password });
   }
-  
+
   return (
     <>
       <Head>
@@ -386,13 +386,13 @@ export default function Slug() {
                 </span>
                 {
                   assignment && assignment.isOpen && (
-                <button
-                  onClick={submitAssignment}
-                  className="mt-3 rounded-lg   bg-blue-700 text-white px-3 py-2 hover:bg-blue-800"
-                  disabled={loading}
-                >
-                  {submitted ? 'Resubmit' : 'Submit Assignment'}
-                </button>
+                    <button
+                      onClick={submitAssignment}
+                      className="mt-3 rounded-lg   bg-blue-700 text-white px-3 py-2 hover:bg-blue-800"
+                      disabled={loading}
+                    >
+                      {submitted ? 'Resubmit' : 'Submit Assignment'}
+                    </button>
                   )
                 }
               </div>
@@ -405,6 +405,15 @@ export default function Slug() {
             <MarkdownViewer
               className="text-white"
               content={assignment && assignment.description}
+            />
+
+            <h1 className="mt-4 text-xl font-semibold text-white">
+              Challenge Description
+
+            </h1>
+            <MarkdownViewer
+              className="text-white"
+              content={challenge && challenge.content}
             />
 
 
@@ -440,18 +449,18 @@ export default function Slug() {
                   aria-hidden="true"
                 ></i>
               ) : (
-                  solved === false && (
-                    <i
-                      class="fa fa-times"
-                      style={{
-                        color: '#D8504D',
-                        position: 'relative',
-                        left: '5px',
-                      }}
-                      aria-hidden="true"
-                    ></i>
-                  )
-                )}
+                solved === false && (
+                  <i
+                    class="fa fa-times"
+                    style={{
+                      color: '#D8504D',
+                      position: 'relative',
+                      left: '5px',
+                    }}
+                    aria-hidden="true"
+                  ></i>
+                )
+              )}
 
               <p className="mt-6 font-semibold text-white">HINTS</p>
               <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
@@ -493,7 +502,7 @@ export default function Slug() {
               {userName && (
                 <div className="hint mb-2 text-gray-400 py-4">
                   <span className="font-semibold text-white">
-                    Login as <span  id="uname"  onClick={() => {
+                    Login as <span id="uname" onClick={() => {
                       navigator.clipboard.writeText(document.getElementById('uname').innerText)
                       toast.success('Copied to clipboard!', {
                         position: 'bottom-right',
@@ -510,7 +519,7 @@ export default function Slug() {
                     }
 
 
-                    } className="text-yellow-400 cursor-pointer">{userName}</span> using the password <span className="text-yellow-400 cursor-pointer" id="upass"  onClick={() => {
+                    } className="text-yellow-400 cursor-pointer">{userName}</span> using the password <span className="text-yellow-400 cursor-pointer" id="upass" onClick={() => {
                       navigator.clipboard.writeText(document.getElementById('upass').innerText)
                       toast.success('Copied to clipboard!', {
                         position: 'bottom-right',
@@ -535,7 +544,7 @@ export default function Slug() {
                           {minutesRemaining} minutes
                         </span>
                       </span>
-                      &nbsp;&nbsp;• 
+                      &nbsp;&nbsp;•
                       <span className='ml-2 '><i className="fas fa-broadcast-tower text-red-500 fab-beat"></i> Streaming is active.</span>
                     </div>
                   )}
@@ -564,18 +573,18 @@ export default function Slug() {
                 <div className=" mx-auto text-center ">
                   {
                     challenge && !fetchingTerminal && !foundTerminal &&
-                      <button
-                        className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
-                        disabled={fetchingTerminal}
-                        onClick={checkIfTerminalExists}
-                      >
-                        Launch Terminal 
-                      </button>
+                    <button
+                      className="cursor-pointer rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
+                      disabled={fetchingTerminal}
+                      onClick={checkIfTerminalExists}
+                    >
+                      Launch Terminal
+                    </button>
                   }
-                      { fetchingTerminal && <span style={{color: "white", fontSize: "25px"}}>{loadingMessage}<i className="fas fa-spinner fa-pulse"
-                        style={{color: "gray", fontSize: "25px"}}>
-                      </i></span>
-                      }
+                  {fetchingTerminal && <span style={{ color: "white", fontSize: "25px" }}>{loadingMessage}<i className="fas fa-spinner fa-pulse"
+                    style={{ color: "gray", fontSize: "25px" }}>
+                  </i></span>
+                  }
                   <p className='mt-4 text-white hidden' id="spinny"><i class="fas fa-spinner fa-spin"></i> <span id="termDebug"></span></p>
                 </div>
               )}
@@ -588,8 +597,8 @@ export default function Slug() {
                   src={terminalUrl}
                 ></embed>
               ) : (
-                  <p>Loading...</p>
-                )}
+                <p>Loading...</p>
+              )}
             </div>
 
           </div>
@@ -660,7 +669,7 @@ export default function Slug() {
 
 
                       <div className='mx-auto text-center mt-10'>
-                        <button onClick={() => {setOpen(false)}} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>Start Hacking!</button>
+                        <button onClick={() => { setOpen(false) }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>Start Hacking!</button>
                       </div>
                     </div>
 
@@ -709,21 +718,21 @@ export default function Slug() {
                       <h1 className='text-2xl mb-2 text-white text-center mt-12'>
                         {
                           useDiffTerminal ? "Continuing with this challenge will delete your previous terminal."
-                          :"Would you like to use your existing terminal or create a new one?"
+                            : "Would you like to use your existing terminal or create a new one?"
                         }
-                        </h1>
+                      </h1>
 
                       <div className='mx-auto text-center mt-10'>
-                      {
-                        !useDiffTerminal && 
-                        <button onClick={() => {
-                          setTerminalPopup(false);
-                          fetchTerminal();
-                        }} style={{marginRight: "10px"}} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
-                          Use Existing Terminal</button>
-                      }
+                        {
+                          !useDiffTerminal &&
+                          <button onClick={() => {
+                            setTerminalPopup(false);
+                            fetchTerminal();
+                          }} style={{ marginRight: "10px" }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
+                            Use Existing Terminal</button>
+                        }
 
-                        <button style={{marginLeft: "10px"}} onClick={() => {
+                        <button style={{ marginLeft: "10px" }} onClick={() => {
                           setTerminalPopup(false);
                           createTerminal(true);
                         }} className='bg-blue-600 text-xl text-white px-2 py-1 rounded-lg text-center mx-auto'>
