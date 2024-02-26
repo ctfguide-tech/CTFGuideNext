@@ -206,7 +206,7 @@ const Announcement = ({
               setIsModalOpen(true);
               setAnnouncement('');
             }}
-            className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+            className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white"
           >
             <i className="fas fa-bullhorn pe-2"></i> New Post
           </button>
