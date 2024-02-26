@@ -562,6 +562,15 @@ export default function id() {
             />
             
             </div>
+            <div>
+                <p className="mt-12 font-semibold text-white">CHALLENGE DESCRIPTION</p>
+                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
+            <MarkdownViewer
+              className="text-white"
+              content={challenge && challenge.content}
+            />
+            
+            </div>
             
               </div>
 

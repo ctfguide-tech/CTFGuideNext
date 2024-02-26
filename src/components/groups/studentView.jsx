@@ -254,7 +254,7 @@ export default function StudentView({ group }) {
               </div>
               <div className="rounded-b-lg bg-neutral-700/50 px-4 py-2 text-sm text-white">
                 <p>
-                 Thanks for signing up for CTFGuide Groups. We are excited to get your feedback on our platform. Give us a follow on our Twitter/X <a className="text-blue-500" href="https://twitter.com/@ctfguideapp">@ctfguideapp </a>for updates on our platform. <br></br> <br></br>
+                 Thank you for signing up for CTFGuide Groups! We are excited to get your feedback on our platform. Give us a follow on our Twitter/X <a className="text-blue-500" href="https://twitter.com/@ctfguideapp">@ctfguideapp </a>for updates on our platform. <br></br> <br></br>
                   <br></br> <br></br>
                 
                 </p>
