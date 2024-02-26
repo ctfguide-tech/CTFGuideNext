@@ -27,7 +27,7 @@ export default function id() {
   const [kanaLog, setKanaLog] = useState([]);
 
   // fetch kana log
-  const fetchKanaLog = async (password, challengeId) => {
+  const fetchKanaLog = async (password, challengeId, uid, assignmentID) => {
     try {
       const AsciinemaPlayer = await import('asciinema-player');
 
@@ -35,10 +35,10 @@ export default function id() {
         method: 'GET',
         redirect: 'follow',
       };
-      fetch(
-        `${process.env.NEXT_PUBLIC_TERM_URL}/files/get/log?password=${password}&id=${challengeId}`,
-        requestOptions
-      )
+
+      let url = `${process.env.NEXT_PUBLIC_TERM_URL}/files/get/log?jwtToken=&uid=${uid}&assignmentID=${assignmentID}`;
+
+      fetch(url, requestOptions)
         .then(async (response) => {
           // set file variable to the response
           //    AsciinemaPlayer.create('', document.getElementById('demo'));
@@ -137,7 +137,7 @@ export default function id() {
 
   useEffect(() => {
     if(!loading) {
-      getJson(submission.terminalIdentifier);
+      getJson();
     }
   }, [loading]);
 
@@ -156,7 +156,7 @@ export default function id() {
         setSubmission(data.body);
         const date = new Date(data.body.createdAt);
         setFormattedDate(date.toLocaleString());
-        await fetchKanaLog(data.body.terminalIdentifier, data.body.assignment.challengeId);
+        await fetchKanaLog(data.body.terminalIdentifier, data.body.assignment.challengeId, data.body.user.uid, data.body.assignment.id);
       }
     } catch (err) {
       console.log(err);
