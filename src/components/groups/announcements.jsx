@@ -229,7 +229,7 @@ const Announcement = ({
             onChange={(e) => {
               setAnnouncement(e.target.value);
             }}
-            rows={announcement.length/50}
+              rows={Math.max(announcement.length/50, 6)}
             cols="50"
             className=" my-4 w-full rounded-lg border border-neutral-800/50 bg-neutral-800 p-2 text-white"
           ></textarea>
@@ -323,7 +323,7 @@ const Announcement = ({
                         value={announcementObj.message}
                         id="bio"
                         name="bio"
-                        rows={announcementObj.message.length/50}
+                        rows={Math.max(announcement.length/50, 6)}
                         className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-0 sm:text-sm sm:leading-6 p-0"
                         readOnly
                       />
