@@ -320,8 +320,6 @@ export default function Slug() {
       await createTerminal(false);
     }
   }
-
-  /*
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -344,7 +342,6 @@ export default function Slug() {
   function handleDataAsk() {
     socketRef.current.emit('data_ask', { whoami: password });
   }
-  */
 
   return (
     <>
