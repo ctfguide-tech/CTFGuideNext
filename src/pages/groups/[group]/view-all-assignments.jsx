@@ -268,7 +268,8 @@ const ViewAllAssignments = () => {
                   Due: {parseDate(assignment.dueDate)} 
                 </p>
                       <p className="text-white">
-                        {grades[assignment.name] && grades[assignment.name].grade || "NA"}/
+                        {grades[assignment.name] && grades[assignment.name].grade && grades[assignment.name] !== -1 || "NA"}
+                        {grades[assignment.name] && grades[assignment.name].grade === -1 && "Not Submitted"}/
                         {assignment.totalPoints} pts
                       </p>
               </div>

@@ -104,12 +104,14 @@ const StudentGradebook = () => {
                   return (
                   <td
                     key={assignment.id}
-                    class={`whitespace-nowrap px-6 py-4 text-sm ${data.grade === null 
+                    class={`whitespace-nowrap px-4 py-4 text-sm ${data.grade === null 
                     ? 'text-white-400'
+:data.grade === -1 ? 'text-red-400'
                     : data.late? 'text-yellow-400'
                     : 'text-green-400'}`}>
                     {data.grade === null
                       ? 'N/A'
+                      : data.grade === -1 ? "Not Submitted"
                       : `${data.grade}/${data.total}`}
                   </td>
                 )})}

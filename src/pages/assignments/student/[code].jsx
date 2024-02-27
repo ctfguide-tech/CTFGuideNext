@@ -51,8 +51,9 @@ export default function Slug() {
   const [code, setCode] = useState(0);
   const [open, setOpen] = useState(true);
   const [terminalPopup, setTerminalPopup] = useState(false);
-
   const [loadingMessage, setLoadingMessage] = useState('');
+
+  const [submissionId, setSubmissionId] = useState(null);
 
   function copy(tags) {
     var copyText = document.getElementById(tags);
@@ -73,6 +74,8 @@ export default function Slug() {
       theme: 'dark',
     });
   }
+
+  console.log(assignment);
 
   const parseDate = (dateString) => {
     const date = new Date(dateString);
@@ -117,6 +120,7 @@ export default function Slug() {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
+        setSubmissionId(data.submissionId);
         setChallengeHints(data.body.challenge.hints);
         getChallenge(data.body);
       } else {
@@ -246,14 +250,12 @@ export default function Slug() {
 
   const submitAssignment = async () => {
 
-
     if (password === "...") {
       toast.error('You cannot submit the assignment when you havent used the terminal.');
       return;
     }
 
     handleDataAsk();
-
 
     setLoading(true);
     const params = window.location.href.split('/');
@@ -319,6 +321,7 @@ export default function Slug() {
     }
   }
 
+  /*
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -341,6 +344,7 @@ export default function Slug() {
   function handleDataAsk() {
     socketRef.current.emit('data_ask', { whoami: password });
   }
+  */
 
   return (
     <>
@@ -391,16 +395,15 @@ export default function Slug() {
                       className="mt-3 rounded-lg   bg-blue-700 text-white px-3 py-2 hover:bg-blue-800"
                       disabled={loading}
                     >
-                      {submitted ? 'Resubmit' : 'Submit Assignment'}
+                      {submitted || submissionId !== null ? 'Resubmit' : 'Submit Assignment'}
                     </button>
                   )
                 }
-              </div>
 
+              </div>
             </div>
             <h1 className="mt-4 text-xl font-semibold text-white">
               Assignment Description
-
             </h1>
             <MarkdownViewer
               className="text-white"
@@ -490,14 +493,13 @@ export default function Slug() {
                 );
               })}
             </div>
-
+              {
+                submissionId && <button style={{color: "white"}} onClick={() => routeToSubmission(submissionId)}>View My Submission</button>
+              }
           </div>
 
 
-
-
           <div className="max-h-screen resize-x overflow-hidden bg-black">
-
             <div className="mx-auto h-full bg-black px-4 pb-60 ">
               {userName && (
                 <div className="hint mb-2 text-gray-400 py-4">

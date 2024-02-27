@@ -26,6 +26,8 @@ export default function id() {
   const [player, setPlayer] = useState(null);
   const [kanaLog, setKanaLog] = useState([]);
 
+  console.log(submission);
+
   // fetch kana log
   const fetchKanaLog = async (password, challengeId, uid, assignmentID) => {
     try {
@@ -37,7 +39,6 @@ export default function id() {
       };
 
       let url = `${process.env.NEXT_PUBLIC_TERM_URL}/files/get/log?jwtToken=&uid=${uid}&assignmentID=${assignmentID}`;
-
       fetch(url, requestOptions)
         .then(async (response) => {
           // set file variable to the response
@@ -165,7 +166,7 @@ export default function id() {
 
   const calculateAdjustedGrade = (dataBody) => {
     if (dataBody.isLate) {
-      return dataBody.grade - (dataBody.grade * dataBody.assignment.latePenalty / 100);
+      return dataBody.grade - dataBody.assignment.latePenalty;// (dataBody.grade * dataBody.assignment.latePenalty / 100);
     }
     return dataBody.grade;
   }

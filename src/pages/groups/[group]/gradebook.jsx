@@ -18,6 +18,9 @@ const Gradebook = () => {
   const [progress, setProgress] = useState(0);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [isEditingGrade, setIsEditingGrade] = useState({});
+  const [newGrade, setNewGrade] = useState("");
+  const [classroomId, setClassroomId] = useState(-1);
 
   const router = useRouter();
   const { group } = router.query;
@@ -42,6 +45,7 @@ const Gradebook = () => {
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       setAssignments(data.body.assignments);
+      setClassroomId(data.body.id);
       await getStudentsSubmissionsFinalGrades(data.body.id);
     } else {
       console.log(data);
@@ -69,6 +73,20 @@ const Gradebook = () => {
     if(!res) return false;
     return res.success && res.isTeacher;
   };
+
+  async function saveGrade() {
+    const url = `${baseUrl}/submission/update-student-grade`;
+
+    let nGrade = newGrade / isEditingGrade.total * 100;
+    if(isEditingGrade.isLate) {
+      //nGrade += isEditingGrade.latePen
+    }
+
+    const body = { newGrade: nGrade, uid: isEditingGrade.uid, assignmentId: isEditingGrade.assignmentId };
+    const response = await request(url, "PUT", body);
+    if(response.success) await getStudentsSubmissionsFinalGrades(classroomId);
+    setNewGrade("");
+  }
 
   if(viewCreateAssignment && group) {
    return <CreateAssignment classCode={group}/>
@@ -166,28 +184,51 @@ const Gradebook = () => {
                   {assignments.map((assignment) => (
                     <td
                       key={assignment.id}
-                      class={`whitespace-nowrap px-6 py-4 text-sm ${
+                      className={`whitespace-nowrap px-6 py-4 text-sm ${
                         student[assignment.name].grade === null
                           ? 'text-white-400'
+: student[assignment.name].late && student[assignment.name].grade === -1 ? 'text-red-400'
 : student[assignment.name].late ? 'text-yellow-400'
                           : 'text-green-400'
                       }`}
                     >
                       {student[assignment.name].grade === null
                         ? 'N/A'
-                        : `${student[assignment.name].grade}/${
-                            student[assignment.name].total
-                          }`}
+                      : student[assignment.name].grade === -1 ? "Not Submitted" 
+                        : <span onClick={() => setIsEditingGrade({
+                                isLate: student[assignment.name].late, latePen: assignment.latePenalty, total: assignment.totalPoints, assignmentId: assignment.id, uid: student[assignment.name].uid})}>
+
+                  {
+                    isEditingGrade.assignmentId === assignment.id && student[assignment.name].uid === isEditingGrade.uid ? 
+                                    <input  
+    className="w-14 h-6 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 p-1"   
+                                      type="number"  
+                                      value={newGrade}  
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                          setIsEditingGrade({});
+                                          saveGrade();
+                                        }
+                                      }}
+                                      onChange={(e) => setNewGrade(e.target.value)}
+                                      onBlur={() => setIsEditingGrade({})}
+                                    />
+                                    : `${student[assignment.name].grade}`
+                                }
+
+                                /{student[assignment.name].total}
+                          </span>}
                     </td>
                   ))}
-                  <td class="whitespace-nowrap px-6 py-4 text-sm text-white">
-                    {student.finalGrade === null
-                      ? 'N/A'
-                      : `${student.finalGrade.toFixed(2)}%`}
-                  </td>
+                        <td class="whitespace-nowrap px-6 py-4 text-sm text-white">
+                          {student.finalGrade === null
+                            ? 'N/A'
+                            : `${student.finalGrade.toFixed(2)}%`}
+                        </td>
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </div>
