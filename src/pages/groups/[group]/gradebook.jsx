@@ -213,10 +213,10 @@ const Gradebook = () => {
                                       onChange={(e) => setNewGrade(e.target.value)}
                                       onBlur={() => setIsEditingGrade({})}
                                     />
-                                    : `${student[assignment.name].grade}`
+                                    : `${student[assignment.name].grade.toFixed(1)}`
                                 }
 
-                                /{student[assignment.name].total}
+                                /{student[assignment.name].total.toFixed(1)}
                           </span>}
                     </td>
                   ))}
