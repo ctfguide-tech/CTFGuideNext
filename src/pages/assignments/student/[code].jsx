@@ -402,6 +402,7 @@ export default function Slug() {
             <h1 className="mt-4 text-xl font-semibold text-white">
               Assignment Description
             </h1>
+            <hr className="rounded-lg border border-blue-600 bg-neutral-900 mb-3" />
             <MarkdownViewer
               className="text-white"
               content={assignment && assignment.description}
@@ -411,6 +412,8 @@ export default function Slug() {
               Challenge Description
 
             </h1>
+            <hr className="rounded-lg border border-blue-600 bg-neutral-900 mb-3" />
+
             <MarkdownViewer
               className="text-white"
               content={challenge && challenge.content}
