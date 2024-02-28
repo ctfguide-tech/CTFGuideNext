@@ -151,6 +151,7 @@ export default function id() {
       if (data && data.success) {
         setAssignment(data.body.assignment);
         setUser(data.body.user);
+        console.log("Name is: ", data.body.user.firstName + " " + data.body.user.lastName);
         let adjustedGrade = calculateAdjustedGrade(data.body);
         data.body.grade = adjustedGrade;
         data.body.grade = Math.round(data.body.grade * 100) / 100;
@@ -207,7 +208,7 @@ export default function id() {
                 <div>
                   <h1 className="text-3xl font-semibold text-white">
                     {
-                      submission && assignment ? <span>{submission.user.username}'s Submission</span>
+                      submission && assignment ? <span>{submission.user.firstName} {submission.user.lastName}'s Submission</span>
                       : <span>... Submission</span>
                     }
                   </h1>
