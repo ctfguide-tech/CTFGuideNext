@@ -494,7 +494,7 @@ export default function Slug() {
               })}
             </div>
               {
-                submissionId && <button style={{color: "white"}} onClick={() => routeToSubmission(submissionId)}>View My Submission</button>
+                submissionId && <button className="mt-3 rounded-lg bg-blue-700 text-white px-3 py-2 hover:bg-blue-800" onClick={() => routeToSubmission(submissionId)}>View My Submission</button>
               }
           </div>
 

@@ -78,6 +78,7 @@ export function StandardNav() {
     DEFAULT_NOTIFICATION,
   ]);
   const [username, setUsername] = useState(null);
+  console.log("username: " + username);
 
     useEffect(() => {
     const fetchNotification = async () => {
