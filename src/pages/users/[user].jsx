@@ -136,13 +136,16 @@ export default function Users() {
           const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
           console.log(imageUrl)
           const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/updatePfp';
-          const response = await request(endPoint, "POST", imageUrl);
+          const body = { imageUrl }
+          const response = await request(endPoint, "POST", body);
           console.log("Here is the result: ", response)
           if (response.success) {
             console.log("profile picture uploaded successfully");
           } else {
             console.log("Failed to upload profile picture");
           }
+          window.location.reload();
+
         }
       );
       setIsPopupOpen(false);
