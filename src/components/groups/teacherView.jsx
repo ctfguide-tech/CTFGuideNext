@@ -207,7 +207,7 @@ export default function TeacherView({ group }) {
                         />
                         <h1 className="truncate text-white">
                           <i className="fas fa-user-shield"></i>{' '}
-                          {teacher.username}
+                          {teacher.firstName} {teacher.lastName}
                         </h1>
                       </div>
                     );
@@ -226,7 +226,7 @@ export default function TeacherView({ group }) {
                           className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
                           alt={`Student ${student.username}`}
                         />
-                        <h1 className="text-white">{student.username}</h1>
+                        <h1 className="text-white">{student.firstName} {student.lastName}</h1>
                       </div>
                     );
                   })}
