@@ -339,7 +339,8 @@ export default function Users() {
       try {
         const challengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/challenges';
         const challengeResult = await request(challengeEndPoint, "GET", null);
-        challengeResult.length !== 0 ? setCreatedChallenges(challengeResult) : setCreatedChallenges(null);
+        const publicChallenges = challengeResult.filter(challenge => challenge.private === false);
+        challengeResult.length !== 0 ? setCreatedChallenges(publicChallenges) : setCreatedChallenges(null);
       } catch (err) {
         console.log(err);
       }
