@@ -17,12 +17,12 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 const defaultImages = [
-  'https://robohash.org/pranavramesh',
-  'https://robohash.org/laphatize',
-  'https://robohash.org/stevewilkers',
-  'https://robohash.org/rickast',
-  'https://robohash.org/picoarc',
-  'https://robohash.org/jasoncalcanis',
+  '/DefaultKana.png',
+  '/CuteKana.png',
+  '/FancyKana.png',
+  '/ConfusedKana.png',
+  '/TophatKana.png',
+  
 ];
 
 export default function TeacherView({ group }) {
