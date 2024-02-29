@@ -37,7 +37,7 @@ const NotFound = () => {
           <div className='grid-cols-1 grid'>
             <div>
 
-              <h1 className='text-6xl font-bold'>4<span className="text-blue">0</span>4</h1>
+            <img width="200" src="ctfguide404WithLogo.png" className='mx-auto text-center mt-10'></img>
               <h1 className='text-white text-xl mt-4'>Uh, oh. We looked everywhere and couldn't find that page.</h1>
 
               <div className='bg-black  text-white text-left   px-4 py-4 mt-4'>
