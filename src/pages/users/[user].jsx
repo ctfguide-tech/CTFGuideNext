@@ -31,6 +31,18 @@ import useRef from 'react';
 import { Transition, Fragment, Dialog } from '@headlessui/react';
 import request from "@/utils/request";
 
+const shades = [
+    'ml-1 h-5 w-5 bg-green-000',
+    'ml-1 h-5 w-5 bg-green-100',
+    'ml-1 h-5 w-5 bg-green-200',
+    'ml-1 h-5 w-5 bg-green-300',
+    'ml-1 h-5 w-5 bg-green-400',
+    'ml-1 h-5 w-5 bg-green-500',
+    'ml-1 h-5 w-5 bg-green-600',
+    'ml-1 h-5 w-5 bg-green-700',
+    'ml-1 h-5 w-5 bg-green-800',
+    'ml-1 h-5 w-5 bg-green-900',
+  ];
 
 export default function Users() {
     const router = useRouter();
@@ -51,6 +63,7 @@ export default function Users() {
     const [followerList, setFollowerList] = useState(null);
     const [userData, setUserData] = useState(null);
 
+    const [activity, setActivity] = useState([]);
 
     const [friendedUser, setFriendedUser] = useState(null);
     const [pendingRequest, setPendingRequest] = useState(null);
@@ -367,6 +380,7 @@ export default function Users() {
         setCreateDate(result.createdAt);
         setRank(result.leaderboardNum);
         setEmail(result.email);
+        setUserData(result);
         result.username == localStorage.getItem('username') ? setOwnUser(true) : setOwnUser(false);
         result.location === '????' ? setLocation(null) : setLocation(result.location);
         result.bio ? setBio(result.bio) : setBio(null);
@@ -516,6 +530,29 @@ export default function Users() {
   const handleClick = () => {
 
   }
+
+  const getActivity = async () => {
+    try {
+        console.log("ACTIVITY FLAG : ")
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/activity/${userData.username}`;
+      const response = await request(url, 'GET');
+      const data = await response;
+      if (data.success) {
+        let arr = data.body;
+        setActivity(arr);
+      }
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (userData) {
+      getActivity();
+    }
+  }, [userData]);
 
 
   return (
@@ -928,56 +965,30 @@ export default function Users() {
                     Streak Chart
                   </h1>
                 </div>
+
+
                 {/* STREAK CHART */}
                 <div>
-                  <div className=" grid grid-rows-10">
-                    <div className="flex items-center justify-center">
-                      <div class="bg-green-300 w-5 h-5"></div>
-                      <div class="bg-neutral-800 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-600 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-200 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                    </div>
-                    <div className="flex items-center justify-center mt-1">
-                      <div class="bg-green-500 w-5 h-5"></div>
-                      <div class="bg-green-400 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-600 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-neutral-800 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                    </div>
-                    <div className="flex items-center justify-center mt-1">
-                      <div class="bg-green-300 w-5 h-5"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-neutral-800 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-100 w-5 h-5 ml-1"></div>
-                      <div class="bg--neutral-800 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                    </div>
-                    <div className="flex items-center justify-center mt-1">
-                      <div class="bg-green-200 w-5 h-5"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-300 w-5 h-5 ml-1"></div>
-                      <div class="bg-neutral-800 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-400 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                    </div>
-                    <div className="flex items-center justify-center mt-1">
-                      <div class="bg-neutral-800 w-5 h-5"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-400 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-600 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                      <div class="bg-green-500 w-5 h-5 ml-1"></div>
-                    </div>
+                  <div className=" grid-rows-10 grid">
+                    {['', '', '', '', ''].map((e, idx) => {
+                      idx = idx * 7;
+                      return (
+                        <div className="flex items-center justify-center">
+                          {['', '', '', '', '', '', ''].map((e, j) => (
+                            <div
+                              style={{
+                                marginBottom: '2px',
+                              }}
+                              className={`${shades[activity[idx + j]]}`}
+                            ></div>
+                          ))}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
+                  
+                
               </div>
             </div>
 
