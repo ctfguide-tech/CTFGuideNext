@@ -24,20 +24,17 @@
 }
 
 .markdown h4 {
-  @apply text-xl font-bold mb-4;
+  @apply text-xl font-bold ;
 }
 
 .markdown h5 {
-  @apply text-lg font-bold mb-4;
+  @apply text-lg font-bold ;
 }
 
 .markdown h6 {
-  @apply text-base font-bold mb-4;
+  @apply text-base font-bold ;
 }
 
-.markdown p {
-  @apply mb-4;
-}
 
 .markdown a {
   @apply text-blue-500 underline;
@@ -48,16 +45,15 @@
 }
 
 .markdown ul {
-  @apply list-disc pl-8 mb-4;
+  @apply list-disc pl-4;
 }
 
 
 .markdown ol {
-  @apply list-decimal pl-8 mb-4;
+  @apply list-decimal pl-4;
 }
 
 .markdown li {
-  @apply mb-2;
 }
 
 .markdown blockquote {
@@ -189,6 +185,29 @@ body {
   height: "100%";
 
 
+}
+
+.typewriter  {
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid blue; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+
+  animation: 
+    typing 3.5s steps(40, end),
+    blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: blue; }
 }
 
 

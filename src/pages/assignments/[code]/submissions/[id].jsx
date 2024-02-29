@@ -236,7 +236,7 @@ export default function id() {
                   ></div>
                 </div>
                 <div>
-                  <ol className="relative border-s border-neutral-200 dark:border-neutral-700">
+                  <ol className="relative border-s border-neutral-200 ">
 
                     {
                       kanaLog && kanaLog.map((item, index) => {
@@ -251,10 +251,10 @@ export default function id() {
                             <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
                               {item.timestamp} 
                             </time>
-                            <h3 className="text-md font-semibold text-neutral-900 dark:text-white">
+                            <h3 className="text-md font-semibold text-blue-400 ">
                               {item.header}
                             </h3>
-                            <p className="text-base font-normal text-neutral-500 dark:text-neutral-400">
+                            <p className="text-base font-normal text-slate-100 ">
                               {item.event}
                             </p>
                           </li>

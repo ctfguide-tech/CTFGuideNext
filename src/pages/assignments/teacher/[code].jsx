@@ -336,6 +336,29 @@ export default function id() {
 
           <div className="mx-auto mt-4  px-10 ">
 
+          <div>
+                <p className="mt-12 font-semibold text-white">ASSIGNMENT DESCRIPTION</p>
+                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
+            <MarkdownViewer
+              className="text-white"
+              content={assignment && assignment.description}
+            />
+            
+            </div>
+
+            <div>
+                <p className="mt-12 font-semibold text-white">CHALLENGE DESCRIPTION</p>
+                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
+            <MarkdownViewer
+              className="text-white"
+              content={challenge && challenge.content}
+            />
+            
+            </div>
+         
+         
+
+
           <p className=" font-semibold text-white">
                   STUDENT SUBMISSIONS
                 </p>
@@ -446,6 +469,7 @@ export default function id() {
                   );
                 })}
               </div>
+              
 
               <div className="col-span-4   ">
 
@@ -553,24 +577,7 @@ export default function id() {
                 </div>
 
 
-                <div>
-                <p className="mt-12 font-semibold text-white">ASSIGNMENT DESCRIPTION</p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
-            <MarkdownViewer
-              className="text-white"
-              content={assignment && assignment.description}
-            />
-            
-            </div>
-            <div>
-                <p className="mt-12 font-semibold text-white">CHALLENGE DESCRIPTION</p>
-                <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
-            <MarkdownViewer
-              className="text-white"
-              content={challenge && challenge.content}
-            />
-            
-            </div>
+
             
               </div>
 
