@@ -116,6 +116,9 @@ export default function Groups() {
       theme: 'dark',
     });
   }
+  console.log(" Teacher Classroom: " + teacherClassrooms);
+  console.log(" Student Classroom: " + studentClassrooms);
+
   return (
     
     <>
