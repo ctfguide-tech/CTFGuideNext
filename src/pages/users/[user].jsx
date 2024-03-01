@@ -1120,7 +1120,7 @@ export default function Users() {
                                                     <Tooltip id="badge-tooltip" />
                                                 }
                                                 <img
-                                                    src={'https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png'}
+                                                    src={'/CuteKana.png'}
                                                     width="100"
                                                     className="mx-auto mt-2 px-1"
                                                 />
@@ -1163,7 +1163,7 @@ export default function Users() {
                                             <Tooltip id="cChal-tooltip" />
                                         }
                                         <img
-                                            src={'https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png'}
+                                            src={'/CuteKana.png'}
                                             width="100"
                                             className="mx-auto mt-2 px-1"
                                         />
@@ -1208,7 +1208,7 @@ export default function Users() {
                                             <Tooltip id="cChal-tooltip" />
                                         }
                                         <img
-                                            src={'https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png'}
+                                            src={'/CuteKana.png'}
                                             width="100"
                                             className="mx-auto mt-2 px-1"
                                         />

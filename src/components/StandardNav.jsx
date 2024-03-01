@@ -60,6 +60,8 @@ export function StandardNav() {
 
   // if env is NEXT_PUBLIC_APP_AUTH_DOMAIN=ctfguide-dev.firebaseapp.com the logo should say CTFGuide Developer not CTFGuide Beta
 
+  
+  
   useEffect(() => {
     if (!localStorage.getItem('dismissStatus')) {
       setShowBanner(true);
@@ -79,6 +81,30 @@ export function StandardNav() {
   ]);
 
   const [username, setUsername] = useState(null);
+  const [pfp, setPfp] = useState('');
+
+  // get user's profile picture
+  useEffect(() => {
+    if (!username) {
+      return;
+    }
+      const fetchData = async () => {
+          try {
+              const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
+              const result = await request(endPoint, "GET", null);
+              console.log(result)
+              if (result) {
+                  setPfp(result)
+              } else {
+                  setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+              }
+
+          } catch (err) {
+              console.log('failed to get profile picture')
+          }
+      };
+      fetchData();
+  }, [username]);
 
     useEffect(() => {
     const fetchNotification = async () => {
@@ -257,11 +283,7 @@ export function StandardNav() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full border bg-neutral-900 "
-                            src={
-                              `https://robohash.org/` +
-                              username +
-                              `.png?set=set1&size=150x150`
-                            }
+                            src={pfp}
                             loading="lazy"
                             alt=""
                           />
