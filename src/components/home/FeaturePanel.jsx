@@ -38,43 +38,42 @@ export function FeaturesPanel() {
       className="overflow-hidden  py-24 sm:py-32"
       style={{ backgroundColor: '#212121' }}
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-y-16 gap-x-8 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          <div className="lg:pr-8 lg:pt-4">
-            <div className="lg:max-w-lg">
-              <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                A different take on ethical hacking
-              </p>
-              <p className="mt-6 text-lg leading-8 text-white">
-                Our approach puts a strong emphasis on hands-on learning and
-                community engagement, providing a dynamic and supportive
-                environment for you to hone your skills.{' '}
-              </p>
-              <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-white lg:max-w-none">
-                {features.map((feature) => (
-                  <div key={feature.name} className="relative pl-9">
-                    <dt className="inline font-semibold text-white">
-                      <feature.icon
-                        className="absolute top-1 left-1 h-5 w-5 text-blue-600"
-                        aria-hidden="true"
-                      />
-                      {feature.name}
-                    </dt>{' '}
-                    <dd className="inline">{feature.description}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
+      <div className="mx-auto px-6 lg:px-8">
+        <div className="flex justify-center items-center flex-col lg:flex-row gap-y-16 gap-x-10 sm:gap-y-20 lg:mx-0 w-full">
+          <div className="lg:pr-8 lg:pt-4 max-w-2xl shrink grow-0">
+            <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              A different take on ethical hacking
+            </p>
+            <p className="mt-6 text-lg leading-8 text-white">
+              Our approach puts a strong emphasis on hands-on learning and
+              community engagement, providing a dynamic and supportive
+              environment for you to hone your skills.{' '}
+            </p>
+            <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-white lg:max-w-full">
+              {features.map((feature) => (
+                <div key={feature.name} className="relative pl-9">
+                  <dt className="inline font-semibold text-white">
+                    <feature.icon
+                      className="absolute top-1 left-1 h-5 w-5 text-blue-600"
+                      aria-hidden="true"
+                    />
+                    {feature.name}
+                  </dt>{' '}
+                  <dd className="inline">{feature.description}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
+          <div className='flex h-auto flex-1 lg:min-w-[475px] max-w-3xl'>
             <img
               ref={imageRef}
               src="./mock2.png"
               alt="Product screenshot"
-              className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+              className="object-contain rounded-xl shadow-xl h-auto m-auto ring-1 ring-gray-400/10 w-full"
               width={2432}
               height={1442}
-       
             />
+          </div>
         </div>
       </div>
     </div>
