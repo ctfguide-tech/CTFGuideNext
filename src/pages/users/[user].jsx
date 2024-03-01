@@ -478,7 +478,10 @@ export default function Users() {
       bio: document.getElementById('bio').value
     }
     const data = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "PUT", body);
-    window.location.reload();
+    if(!data) {
+      console.log("Failed to save the bio");
+    }
+    setBio(body.bio);
   }
 
 
