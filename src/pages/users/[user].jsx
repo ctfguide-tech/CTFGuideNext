@@ -81,6 +81,8 @@ export default function Users() {
 
     const [openBio, setOpenBio] = useState(false);
     const [bioBanner, bannerState] = useState(false);
+    const [tempBio, setTempBio] = useState("");
+
     const [badges, setbadges] = useState(null);
 
     const [selectedBanner, setSelectedBanner] = useState(null);
@@ -390,6 +392,8 @@ export default function Users() {
                 result.username == localStorage.getItem('username') ? setOwnUser(true) : setOwnUser(false);
                 result.location === '????' ? setLocation(null) : setLocation(result.location);
                 result.bio ? setBio(result.bio) : setBio(null);
+                result.bio ? setTempBio(result.bio) : setTempBio("");
+
 
 
                 // Fetch Badges
@@ -467,9 +471,10 @@ export default function Users() {
     }
 
 
-    function openBanner() {
+    const openBanner = (event) => {
         bannerState(true);
-    }
+        setTempBio(event.target.value);
+    };
 
 
   async function saveBio() {
@@ -1053,7 +1058,7 @@ export default function Users() {
                                                     style={{ backgroundColor: '#212121', resize: "none" }}
                                                     readOnly={false}
                                                     onChange={openBanner}
-                                                    placeholder="Tell us about yourself!"
+                                                    value={tempBio}
                                                     className="w-full rounded-lg border-white/10 bg-neutral-900/50 px-6 pt-3 pb-12 text-lg text-white"
                                                 ></textarea>
                                             </div>
