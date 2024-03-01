@@ -566,7 +566,7 @@ export default function Users() {
   return (
     <>
       <Head>
-        <title>Dashboard - CTFGuide</title>
+        <title>{username}'s Profile - CTFGuide</title>
         <meta
           name="description"
           content="Cybersecurity made easy for everyone"
