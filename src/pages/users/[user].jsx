@@ -1153,11 +1153,26 @@ export default function Users() {
                                             likes={challenge.upvotes}
                                         />
                                     ))) || (
-                                            <div className="col-span-3 flex justify-center rounded-md my-2">
-                                                <div className=" text-lg leading-8 text-gray-300">
-                                                    <h1 className="my-10 flex items-center text-3xl text-white"> No Challenges Created Yet</h1>
-                                                </div>
-                                            </div>
+                                        <div
+                                        className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                        data-tooltip-content="Create some challenges and they'll appear here!"
+                                        data-tooltip-id="cChal-tooltip"
+                                        data-tooltip-place="top"
+                                    >
+                                        {ownUser &&
+                                            <Tooltip id="cChal-tooltip" />
+                                        }
+                                        <img
+                                            src={'https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png'}
+                                            width="100"
+                                            className="mx-auto mt-2 px-1"
+                                        />
+
+                                        <h1 className="mx-auto mt-2 text-center text-xl text-white">
+                                            No Challenges Created Yet...
+                                        </h1>
+
+                                    </div>
                                         )}
                                 </div>
                             </div>
@@ -1183,11 +1198,26 @@ export default function Users() {
                                             likes={challenge.challenge.upvotes}
                                         />
                                     ))) || (
-                                            <div className="col-span-3 flex justify-center rounded-md my-2">
-                                                <div className=" text-lg leading-8 text-gray-300">
-                                                    <h1 className="my-10 flex items-center text-3xl text-white"> No Challenges Liked Yet</h1>
-                                                </div>
-                                            </div>
+                                        <div
+                                        className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                        data-tooltip-content="Like some challenges and they'll appear here!"
+                                        data-tooltip-id="lChal-tooltip"
+                                        data-tooltip-place="top"
+                                    >
+                                        {ownUser &&
+                                            <Tooltip id="cChal-tooltip" />
+                                        }
+                                        <img
+                                            src={'https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png'}
+                                            width="100"
+                                            className="mx-auto mt-2 px-1"
+                                        />
+
+                                        <h1 className="mx-auto mt-2 text-center text-xl text-white">
+                                            No Challenges Liked Yet...
+                                        </h1>
+
+                                    </div>
                                         )}
                                 </div>
                             </div>
