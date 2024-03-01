@@ -56,8 +56,10 @@ export default function Groups() {
       const url = `${baseUrl}/classroom/all-classrooms`;
       const data = await request(url, 'GET', null);
       if (data && data.success) {
+
         setTeacherClassrooms(data.teacher);
         setStudentClassrooms(data.student);
+
         setIsLoading(false);
       } else {
         console.log(data);
@@ -116,8 +118,6 @@ export default function Groups() {
       theme: 'dark',
     });
   }
-  console.log(" Teacher Classroom: " + teacherClassrooms);
-  console.log(" Student Classroom: " + studentClassrooms);
 
   return (
     
@@ -138,8 +138,6 @@ export default function Groups() {
         options: {
           arrowColor: '#074bf5',
           backgroundColor: '#1c1c1c',
-     
-
           overlayColor: '#1c1c1c',
           primaryColor: '#224ed4',
           textColor: 'white',
@@ -256,7 +254,7 @@ export default function Groups() {
                       Class Not Paid{' '}
                       <span className="text-neutral-400">
                         <i className="fas fa-users"></i>{' '}
-                        {classroom.numberOfSeats}{' '}
+                        {classroom.students.length+classroom.teachers.length}{' '}
                       </span>
                       <span
                         style={{
@@ -289,7 +287,8 @@ export default function Groups() {
                     </p>
                   ) : (
                     <p className="text-neutral-400">
-                      <i className="fas fa-users"></i> {classroom.numberOfSeats}{' '}
+<i className="fas fa-user-shield"></i> {classroom.teachers.length} {" "}
+                      <i className="fas fa-users"></i> {classroom.students.length}
                     </p>
                   )}
                 </div>
