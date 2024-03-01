@@ -17,12 +17,12 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseClientUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 const defaultImages = [
-  'https://robohash.org/pranavramesh',
-  'https://robohash.org/laphatize',
-  'https://robohash.org/stevewilkers',
-  'https://robohash.org/rickast',
-  'https://robohash.org/picoarc',
-  'https://robohash.org/jasoncalcanis',
+  '/DefaultKana.png',
+  '/CuteKana.png',
+  '/FancyKana.png',
+  '/ConfusedKana.png',
+  '/TophatKana.png',
+  
 ];
 
 export default function TeacherView({ group }) {
@@ -207,7 +207,7 @@ export default function TeacherView({ group }) {
                         />
                         <h1 className="truncate text-white">
                           <i className="fas fa-user-shield"></i>{' '}
-                          {teacher.username}
+                          {teacher.firstName} {teacher.lastName}
                         </h1>
                       </div>
                     );
@@ -226,7 +226,7 @@ export default function TeacherView({ group }) {
                           className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
                           alt={`Student ${student.username}`}
                         />
-                        <h1 className="text-white">{student.username}</h1>
+                        <h1 className="text-white">{student.firstName} {student.lastName}</h1>
                       </div>
                     );
                   })}

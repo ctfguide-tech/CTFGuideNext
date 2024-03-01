@@ -335,17 +335,22 @@ export default function Users() {
             return;
         }
 
-        const fetchData = async () => {
-            try {
-                const challengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/challenges';
-                const challengeResult = await request(challengeEndPoint, "GET", null);
-                challengeResult.length !== 0 ? setCreatedChallenges(challengeResult) : setCreatedChallenges(null);
-            } catch (err) {
-                console.log(err);
-            }
+    const fetchData = async () => {
+      try {
+        const challengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/challenges';
+        const challengeResult = await request(challengeEndPoint, "GET", null);
+        if (!challengeResult) {
+          setCreatedChallenges(null);
+          return;
         }
-        fetchData();
-    }, [user]);
+        const publicChallenges = challengeResult.filter(challenge => challenge.private === false);
+        publicChallenges.length !== 0 ? setCreatedChallenges(publicChallenges) : setCreatedChallenges(null);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  }, [user]);
 
 
     // Pinned Challenge useEffect
@@ -467,15 +472,19 @@ export default function Users() {
     }
 
 
-    async function saveBio() {
-        setBio(document.getElementById('bio').value);
-        closeBannerAndBio();
-        const body = {
-            bio: document.getElementById('bio').value
-        }
-        const data = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "PUT", body);
-        window.location.reload();
+  async function saveBio() {
+    setBio(document.getElementById('bio').value);
+    closeBannerAndBio();
+    const body = {
+      bio: document.getElementById('bio').value
     }
+    const data = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "PUT", body);
+    if(!data) {
+      console.log("Failed to save the bio");
+    }
+    setBio(body.bio);
+    window.location.reload();
+  }
 
 
     const followUser = async () => {
@@ -556,25 +565,25 @@ export default function Users() {
     }, [userData]);
 
 
-    return (
-        <>
-            <Head>
-                <title>Dashboard - CTFGuide</title>
-                <meta
-                    name="description"
-                    content="Cybersecurity made easy for everyone"
-                />
-                <style>
-                    @import
-                    url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-                </style>
-            </Head>
-            <StandardNav />
-            <main>
-                {/* PROFILE PICTURE POP-UP */}
-                {ownUser &&
-                    <Transition.Root show={isPopupOpen} as={Fragment}>
-                        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
+  return (
+    <>
+      <Head>
+        <title>{username}'s Profile - CTFGuide</title>
+        <meta
+          name="description"
+          content="Cybersecurity made easy for everyone"
+        />
+        <style>
+          @import
+          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+        </style>
+      </Head>
+      <StandardNav />
+      <main>
+        {/* PROFILE PICTURE POP-UP */}
+        {ownUser &&
+          <Transition.Root show={isPopupOpen} as={Fragment}>
+            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
 
 
                             <Transition.Child

@@ -348,22 +348,19 @@ const Announcement = ({
                           <span
                             className="absolute bottom-0 right-0  mb-1 mr-2 cursor-pointer rounded-lg bg-neutral-800 px-2 text-sm text-white hover:bg-neutral-800/50"
                           >
-                            <button  
+                            <button 
+                              className = "rounded-lg bg-blue-700 text-white hover:bg-blue-800"
+                              style={{
+                                padding: "5px  10px", // Increase padding
+                                margin: "0px 5px", // Increase padding
+                                fontSize: "10px", // Increase font size
+                                borderRadius: "5px", // Add border radius
+                              }}
                               onClick={() => {
                                 deleteAnnouncement(announcementObj.id) 
                                 setDisplayConfirm(-1)
                               }
-                              }
-                              className="text-red-500"  
-                              style={{
-                                color: "white",
-                                marginRight: "10px",
-                                backgroundColor: "#dc3545", // Example of a darker red for deletion
-                                padding: "5px  10px", // Increase padding
-                                fontSize: "10px", // Increase font size
-                                borderRadius: "5px", // Add border radius
-                                cursor: "pointer" // Change cursor to pointer
-                              }}
+                              }  
                             >
                               {
                                 loading ? <i className="fas fa-spinner fa-pulse" style={{color: "white", fontSize: "15px"}}></i> : "Confirm"
@@ -371,14 +368,11 @@ const Announcement = ({
                             </button>
                             <button  
                               onClick={() => setDisplayConfirm(-1)}  
-                              className="text-green-500"  
+                              className= "rounded-lg bg-red-700 text-white hover:bg-red-800"  
                               style={{
-                                color: "white",
-                                backgroundColor: "#28a745", // Example of a lighter green for cancellation
                                 padding: "5px  10px", // Increase padding
                                 fontSize: "10px", // Increase font size
                                 borderRadius: "5px", // Add border radius
-                                cursor: "pointer" // Change cursor to pointer
                               }}
                             >
                               Cancel

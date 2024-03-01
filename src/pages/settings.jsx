@@ -1182,7 +1182,7 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="hiden">
+                <div className="hidden">
                   <hr className="mt-4 border-neutral-500"></hr>
                   <h1 className="mt-4 text-white"> Dev Testing</h1>
 

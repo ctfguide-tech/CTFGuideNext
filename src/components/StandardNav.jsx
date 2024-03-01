@@ -77,8 +77,8 @@ export function StandardNav() {
   const [notificationData, setNotificationData] = useState([
     DEFAULT_NOTIFICATION,
   ]);
+
   const [username, setUsername] = useState(null);
-  console.log("username: " + username);
 
     useEffect(() => {
     const fetchNotification = async () => {
@@ -119,6 +119,7 @@ export function StandardNav() {
         })
       );
     };
+    setUsername(localStorage.getItem("username") || null);
     fetchNotification();
   }, []);
 
@@ -127,6 +128,7 @@ export function StandardNav() {
     localStorage.setItem('dismissStatus', true);
     setShowBanner(false);
   }
+
   const fetchNotifications = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/notification`;
@@ -134,6 +136,7 @@ export function StandardNav() {
       console.log(data);
       if(data.success) {
         setNotifications(data.body);
+        console.log(data);
       } else {
         setNotifications(["Unable to get notification, try again"]);
       }
@@ -277,7 +280,7 @@ export function StandardNav() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href={`../users/${username}`}
+                                href={`../../users/${username}`}
                                 className={classNames(
                                   active ? '-100' : '',
                                   'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
