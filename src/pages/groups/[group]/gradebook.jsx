@@ -31,7 +31,7 @@ const Gradebook = () => {
         baseUrl +
         '/submission/getStudentsSubmissionsFinalGrades/' +
         classroomId;
-      const data = await request(url, 'GET', null);
+      const data = await request(url, 'POST', {timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone});
       if (data && data.success) {
         setStudents(data.body);
       }

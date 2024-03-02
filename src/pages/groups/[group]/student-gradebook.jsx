@@ -17,7 +17,7 @@ const StudentGradebook = () => {
 
   const fetchFinalGrade = async () => {
     const url = `${baseUrl}/submission/student-finalgrade/${classCode}`;
-    const data = await request(url, "GET", null);
+      const data = await request(url, 'POST', {timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone});
     if(data && data.success) {
       const info = data.body;
       setName(info["name"] || localStorage.getItem("username"));

@@ -272,6 +272,7 @@ export default function Slug() {
       latePenalty: assignment.latePenalty,
       dueDate: assignment.dueDate,
       terminalIdentifier: password,
+      timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone
     };
 
     const data = await request(url, "POST", body);
