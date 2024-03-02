@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import Loader from '@/components/Loader';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
+import EditChallenge from "@/components/groups/assignments/updateChallengeInfo";
 
 import 'react-toastify/dist/ReactToastify.css';
 import request from '@/utils/request';
@@ -33,6 +34,9 @@ export default function EditingAssignment() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
 
+  const [isEditingChallenge, setIsEditingChallenge] = useState(false);
+  const [challenge, setChallenge] = useState(null);
+
   const router = useRouter();
   const classCode = router.query.group;
   const { id } = router.query;
@@ -41,6 +45,9 @@ export default function EditingAssignment() {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
+      console.log(data);
+
+      setChallenge(data.body.challenge);
       setName(data.body.name);
       setDescription(data.body.description);
 
@@ -127,6 +134,12 @@ export default function EditingAssignment() {
   if(viewCreateAssignment) {
     return <CreateAssignment classCode={classCode} />;
   }
+
+  if(isEditingChallenge) {
+    if(!challenge) return;
+    return <EditChallenge assignmentName={name} classCode={classCode} challenge={challenge} />
+  }
+
 
   return (
     <>
@@ -441,6 +454,7 @@ export default function EditingAssignment() {
                 >
                   Delete Assignment
                 </button>
+                <button onClick={() => setIsEditingChallenge(true)}>Edit Challenge</button>
               </div>
             </div>
           </div>
