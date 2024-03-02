@@ -15,6 +15,9 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function id() {
   const [open, setOpen] = useState(false);
+
+
+  
   const router = useRouter();
   const [assignment, setAssignment] = useState(null);
   const [submission, setSubmission] = useState(null);
@@ -23,8 +26,17 @@ export default function id() {
 
   const [formattedDate, setFormattedDate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [player, setPlayer] = useState(null);
   const [kanaLog, setKanaLog] = useState([]);
+
+  const [role, setRole] = useState(null);
+
+  const [kanaError, setKanaError] = useState(false);
+
+
+  const [submissions, setSubmissions] = useState([]);
+
 
   console.log(submission);
 
@@ -130,6 +142,8 @@ export default function id() {
         events[i].seconds = convert(events[i].timestamp);
       }
 
+      setKanaError(true);
+
       setKanaLog(events); // []
     } catch(err) {
       console.log(err);
@@ -139,6 +153,12 @@ export default function id() {
   useEffect(() => {
     if(!loading) {
       getJson();
+      console.log("penguins")
+      console.log(router.query.key)
+      if (router.query.key == "t") {
+        setRole("t");
+      }
+    
     }
   }, [loading]);
 
@@ -176,6 +196,93 @@ export default function id() {
     fetchSubmission();
   }, []);
 
+  useEffect(() => {
+    if (assignment === null) {
+      getAssignment();
+    }
+  }, []);
+
+
+  // NEW SUBMISSION LOGIC
+
+  const parseDate = (dateString) => {
+    const date = new Date(dateString);
+    const offsetInMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() + offsetInMinutes);
+    function to12HourFormat(hour, minute) {
+      let period = hour >=  12 ? "PM" : "AM";
+      hour = hour %  12;
+      hour = hour ? hour :  12; // the hour '0' should be '12'
+      return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
+    }
+    const day = date.getDate();
+    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
+    const year = date.getFullYear().toString().slice(-2);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const time = to12HourFormat(hour, minute);
+    const formattedDate = `${month}/${day}/${year} ${time}`;
+    return formattedDate;
+  };
+
+  const getAssignment = async () => {
+    const params = window.location.href.split('/');
+    if (params.length < 5) {
+      return;
+    }
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[4]}`;
+    const data = await request(url, 'GET', null);
+    if (data && data.success) {
+      const isAuth = await authenticate(data.body);
+      if (isAuth) {
+        setAssignment(data.body);
+        getChallenge(data.body);
+        await getSubmissions(data.body);
+      } else {
+        console.log('You are not apart of this class');
+        window.location.href = '/groups';
+      }
+    }
+  };
+
+  const routeToSubmission = (id) => {
+    console.log("going to submission" + id);
+    window.location.href = `/assignments/${assignment.id}/submissions/${id}?key=t`;
+  };
+
+
+
+  const getSubmissions = async (assignment) => {
+    const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
+    const data = await request(url, 'GET', null);
+    if (data && data.success) {
+      setSubmissions(data.body);
+      setIsLoading(false);
+      console.log('Submissions:', data.body);
+    } else {
+      console.log('Unable to get submissions');
+    }
+  };
+
+  const authenticate = async (assignment) => {
+    const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
+    const data = await request(url, 'GET', null);
+    return data.success;
+  };
+
+  const getChallenge = async (assignment) => {
+    try {
+      const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
+      const data = await request(url, 'GET', null);
+      if (data.success) {
+        setChallenge(data.body);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
 
   return (
     <>
@@ -203,7 +310,7 @@ export default function id() {
           </a>
 
           <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-4 py-4 ">
-            <div className="mx-auto max-w-6xl">
+            <div className="mx-auto px-2">
               <div className="flex">
                 <div>
                   <h1 className="text-3xl font-semibold text-white">
@@ -213,7 +320,18 @@ export default function id() {
                     }
                   </h1>
 
-                  <h1 className="text-white">Submitted at {formattedDate}</h1>
+                  <h1 className="text-white mb-4">Submitted at {formattedDate}</h1>
+
+                  {/* go back */}
+                  {assignment && (
+                    <a
+                      href={`/assignments/teacher/${assignment.id}`}
+                      className="text-blue-600 mt-4 px-3  font-semibold bg-white  text-center rounded-lg hover:text-blue-600 hover:bg-gray-100 cursor-pointer"
+                    >
+                      Back to Assignment View
+                    </a>
+                  )}
+
                 </div>
 
                 <div className="ml-auto">
@@ -226,10 +344,53 @@ export default function id() {
               </div>
             </div>
           </div>
-          <div className="mx-auto mt-4 max-w-6xl">
+          <div className="mx-auto mt-4  px-4">
             <div className="">
-              <div className="grid grid-cols-4 gap-x-8">
-                <div className="col-span-3">
+              <div className="grid  grid-cols-4 gap-x-8">
+       
+                {role === 't' && (
+                  <div className='col-span-1 mx-auto w-full'>
+                    {isLoading ? (
+<div>
+<i class="fas fa-spinner fa-spin text-white text-3xl mx-auto text-center w-full mt-20"></i>
+                   <p className='text-white text-lg text-center mx-auto'>Fetching submissions...</p>
+                   </div>
+                    ) : (
+                      submissions.length === 0 && (
+                        <div style={{ color: 'white' }}>
+                          No students have completed this assignment yet.
+                        </div>
+                      )
+                    )}
+                    {submissions.map((submission, idx) => (
+                      <div
+                        key={idx}
+                        className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 mb-2 text-white hover:bg-neutral-800/40"
+                        onClick={() => routeToSubmission(submission.subId)}
+                      >
+                        <h1 className="flex">
+                          {submission.name}{' '}
+                          {submission.submitted ? (
+                            <div className="ml-auto">
+                              <i
+                                title="Completed!"
+                                className="fas fa-check  text-green-500"
+                              ></i>
+                            </div>
+                          ) : (
+                            <div className="ml-auto">
+                              <i
+                                title="Incomplete!"
+                                className=" fas fa-clock  text-red-400 "
+                              ></i>
+                            </div>
+                          )}
+                        </h1>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className={role !== 't' ? "col-span-3" : "col-span-2"}>
                   <div
                     className="h-1/2 w-full border  border-neutral-800"
                     id="demo"
@@ -247,8 +408,8 @@ export default function id() {
                             onClick={() => seekToTime(item.seconds)}
                             className="clickable cursor-pointer mb-10 ms-4 p-4 hover:bg-neutral-800"
                           >
-                            <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-700"></div>
-                            <time className="mb-1 text-sm font-normal leading-none text-neutral-400 dark:text-neutral-500">
+                            <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-neutral-800 bg-blue-500 "></div>
+                            <time className="mb-1 text-sm font-normal leading-none text-neutral-400 ">
                               {item.timestamp} 
                             </time>
                             <h3 className="text-md font-semibold text-blue-400 ">
@@ -263,6 +424,20 @@ export default function id() {
                     }
 
                   </ol>
+
+
+
+                  {
+                    (kanaLog && kanaLog.length === 0) && (
+                      <div className='text-white text-lg text-center mx-auto bg-neutral-800 rounded-lg px-2 py-4'>
+                      <i class="fas fa-spinner text-2xl fa-spin"></i>
+                        <h1>We're still processing this session.</h1>
+                        <p className='text-sm'>You can still view the session recording.</p>
+                      </div>
+                    )
+                  }
+
+                  
                 </div>
 
 

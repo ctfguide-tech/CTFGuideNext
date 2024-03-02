@@ -28,7 +28,8 @@ import Skeleton from 'react-loading-skeleton';
 import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import useRef from 'react';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
+import { Transition, Dialog } from '@headlessui/react';
+import { Fragment } from 'react';
 import request from "@/utils/request";
 
 const shades = [

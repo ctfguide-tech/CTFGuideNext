@@ -20,6 +20,21 @@ const auth = getAuth();
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function id() {
 
+  // challenge desc minmize 
+  const [isCodeVisible, setIsCodeVisible] = useState(true);
+
+  const toggleCodeVisibility = () => {
+    setIsCodeVisible(!isCodeVisible);
+  };
+
+  // student submission
+  const [isMinimized, setIsMinimized] = useState(false);
+
+  const toggleMinimized = () => {
+    setIsMinimized(!isMinimized);
+  };
+
+
   // assignment stuff
   const [assignment, setAssignment] = useState(null);
   const [flagInput, setFlagInput] = useState('');
@@ -237,7 +252,7 @@ export default function id() {
   };
 
   const routeToSubmission = (id) => {
-    router.replace(`/assignments/${assignment.id}/submissions/${id}`);
+    router.replace(`/assignments/${assignment.id}/submissions/${id}?key=t`);
   };
 
   const checkIfTerminalExists = async () => {
@@ -347,55 +362,90 @@ export default function id() {
             </div>
 
             <div>
-                <p className="mt-12 font-semibold text-white">CHALLENGE DESCRIPTION</p>
+            <div>
+              <div className='flex mt-12' >
+              <p className=" font-semibold text-white">CHALLENGE DESCRIPTION</p>
+                  <div className='ml-auto'>
+                  <button className="text-white text-sm" onClick={toggleCodeVisibility}>
+                  {isCodeVisible ? 'Hide Description' : 'Show Description'}
+                </button>
+                  </div>
+              </div>
+            </div>
+
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
-            <MarkdownViewer
-              className="text-white"
-              content={challenge && challenge.content}
-            />
-            
+     
+
+              <div>
+          
+                {isCodeVisible && (
+                  <MarkdownViewer
+                    className="text-white"
+                    content={challenge && challenge.content}
+                  />
+                )}
+              </div>
+       
             </div>
          
          
 
 
-          <p className=" font-semibold text-white">
-                  STUDENT SUBMISSIONS
-                </p>
+            <div>
+              <div className='flex mt-12' >
+              <p className=" font-semibold text-white">STUDENT SUBMISSIONS</p>
+                  <div className='ml-auto'>
+                  <button className="text-white text-sm" onClick={toggleMinimized}>
+                  {isMinimized ? 'Show Submissions' : 'Hide Submissions'}
+                </button>
+                  </div>
+              </div>
+            </div>
+
+
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
-                <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
-                  {submissions.length === 0 && (
-                    <div style={{ color: 'white' }}>
-                      No students have completed this assignment yet.
+          
+                    <div className="mt-4 grid w-full grid-cols-1  gap-x-2">
+             
+                      {!isMinimized && (
+                        <>
+                          {submissions.length === 0 && (
+                            <div style={{ color: 'white' }}>
+                              No students have completed this assignment yet.
+                            </div>
+                          )}
+                          {submissions.map((submission, idx) => (
+                            <div
+                              key={idx}
+                              className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 mb-2 text-white hover:bg-neutral-800/40"
+                              onClick={() => routeToSubmission(submission.subId)}
+                            >
+                              <h1 className="flex">
+                                {submission.name}{' '}
+                                {submission.submitted ? (
+                                  <div className="ml-auto">
+                                    <i
+                                      title="Completed!"
+                                      className="fas fa-check  text-green-500"
+                                    ></i>
+                                  </div>
+                                ) : (
+                                  <div className="ml-auto">
+                                    <i
+                                      title="Incomplete!"
+                                      className=" fas fa-clock  text-red-400 "
+                                    ></i>
+                                  </div>
+                                )}
+                              </h1>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
-                  )}
-                  {submissions.map((submission, idx) => (
-                    <div
-                      key={idx}
-                      className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-3 text-white hover:bg-neutral-800/40"
-                      onClick={() => routeToSubmission(submission.subId)}
-                    >
-                      <h1 className="flex">
-                        {submission.name}{' '}
-                        {submission.submitted ? (
-                          <div className="ml-auto">
-                            <i
-                              title="Completed!"
-                              className="fas fa-check  text-green-500"
-                            ></i>
-                          </div>
-                        ) : (
-                          <div className="ml-auto">
-                            <i
-                              title="Incomplete!"
-                              className=" fas fa-clock  text-red-400 "
-                            ></i>
-                          </div>
-                        )}
-                      </h1>
-                    </div>
-                  ))}
-                </div>
+          
+
+         
 
        
 
