@@ -562,7 +562,7 @@ export default function teacherSettings() {
                                 className="ml-3 mt-2 pl-1 text-white"
                                 style={{ marginLeft: '-5px' }}
                               >
-                                {student.username}
+                                {student.firstName} {student.lastName}
                               </h3>
                             </div>
                           );
@@ -711,7 +711,7 @@ export default function teacherSettings() {
                       (blackListedStudents.find(user => user === selectedStudent.username)) ? 'unblacklist' : 'Blacklist'
                   }
                       {" "}
-                  {selectedStudent ? selectedStudent.username : 'student'}
+                  {selectedStudent ? selectedStudent.username  : 'student'}
                 </button>
 
                 <button

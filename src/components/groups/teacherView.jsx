@@ -249,13 +249,13 @@ export default function TeacherView({ group }) {
               <div className="mt-1 ">
                 {classroom &&
                   classroom.assignments &&
-                  classroom.assignments.length > 0 ? (
+                  classroom.assignments.length > 0 && classroom.assignments.filter((assignment) => new Date(parseDate(assignment.dueDate)) > new Date()).length > 0 ? (
                   classroom.assignments
                     .filter(
                       (assignment) => new Date(parseDate(assignment.dueDate)) > new Date()
                     )
                     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-                    .slice(0, 5)
+                    .slice(0, 5) 
                     .map((assignment) => (
                       <div
                         key={assignment.id}
