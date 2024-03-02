@@ -322,9 +322,10 @@ export default function Groups() {
         <h1 className="text-3xl font-semibold text-neutral-300">
           {classroom.name}
         </h1>
-        <p className="text-neutral-400">
-          <i className="fas fa-users"></i> {classroom.numberOfSeats}
-        </p>
+                      <p className="text-neutral-400">
+                        <i className="fas fa-user-shield"></i> {classroom.teachers.length} {" "}
+                        <i className="fas fa-users"></i> {classroom.students.length}
+                      </p>
       </div>
     );
   })
