@@ -52,6 +52,7 @@ const Editor = (props) => {
   const sendToFileApi = async () => {
     console.log("Not finished yet");
     toast.info("This is incomplete");
+    await uploadChallenge('');
     return;
     const isValid = await validateNewChallege();
     if (isValid) {
@@ -97,41 +98,38 @@ const Editor = (props) => {
       fileId: fileId,
     };
 
-    const body = {
-      id: props.id,
-      challengeInfo,
-      assignmentInfo: props.assignmentInfo.assignmentInfo,
-      username: localStorage.getItem('username'),
-    };
+    console.log(challengeInfo);
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment/${classCode}`;
-    const data = await request(url, 'POST', body);
+    /*
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/update-assignment-challenge`;
+    const data = await request(url, 'PUT', challengeInfo);
 
     if (data && data.success) {
       window.location.href = ``; 
     }
+    */
   };
 
-function loadProps() {
-  setClassCode(props.classCode);
-  setHints(props.challenge.hints);
-  setContentPreview(props.challenge.content);
-  setSolution(props.challenge.solution);
-  setDifficulty(props.challenge.difficulty);
-  setCategory(props.challenge.category);
-  setExistingConfig(props.challenge.commands);
-  setNewChallengeName(props.challenge.title);
-  setAssignmentName(props.assignmentName);
-  let hintPoints = [];
-  let hintMessage = [];
-  let h = props.challenge.hints;
-  for(let i = 0; i < h.length; i++) {
-    hintMessage.push(h[i].message);
-    hintPoints.push(h[i].penalty);
+  function loadProps() {
+    setClassCode(props.classCode);
+    setHints(props.challenge.hints);
+    setContentPreview(props.challenge.content);
+    setSolution(props.challenge.solution);
+    setDifficulty(props.challenge.difficulty);
+    setCategory(props.challenge.category);
+    setExistingConfig(props.challenge.commands);
+    setNewChallengeName(props.challenge.title);
+    setAssignmentName(props.assignmentName);
+    let hintPoints = [];
+    let hintMessage = [];
+    let h = props.challenge.hints;
+    for(let i = 0; i < h.length; i++) {
+      hintMessage.push(h[i].message);
+      hintPoints.push(h[i].penalty);
+    }
+    setPenalty(hintPoints);
+    setHints(hintMessage);
   }
-  setPenalty(hintPoints);
-  setHints(hintMessage);
-}
 
 
   useEffect(() => {
@@ -467,7 +465,7 @@ function loadProps() {
           disabled={isCreating}
           className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
         >
-          <i class="fas fa-send"></i> { isCreating? "Creating..." : "Create Challenge" }
+          <i class="fas fa-send"></i> { isCreating? "Updating..." : "Update Challenge" }
         </button>
 
         <button className="mr-2 mt-6 hidden rounded-sm border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white shadow-lg hover:bg-blue-800">

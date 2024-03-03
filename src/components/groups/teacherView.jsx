@@ -22,7 +22,6 @@ const defaultImages = [
   '/FancyKana.png',
   '/ConfusedKana.png',
   '/TophatKana.png',
-  
 ];
 
 export default function TeacherView({ group }) {
@@ -317,7 +316,7 @@ export default function TeacherView({ group }) {
                     ))
                 ) : (
                   <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
-                    <h1 className="pe-6 text-lg">No assignments here yet</h1>
+                    <h1 className="pe-6 text-lg">No upcoming assignments</h1>
                     <h2 className="pe-6 text-sm">
                       Create an assignment with the button above!
                     </h2>
