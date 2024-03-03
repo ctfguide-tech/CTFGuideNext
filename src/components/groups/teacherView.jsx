@@ -1,397 +1,455 @@
 import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
-import { useEffect, useState } from 'react';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
-import StudentProfile from '@/components/groups/studentProfile';
-import TeacherSettings from '@/components/groups/teacherSettings';
+import { useEffect, Fragment, useState } from 'react';
+import { Transition, Dialog } from '@headlessui/react';
+import CreateAssignment from '@/components/groups/assignments/createAssignment';
+import { Tooltip } from 'react-tooltip';
 
-const baseUrl = "http://localhost:3001"; // switch to deployment api url
+import Announcements from '@/components/groups/announcements';
+import ClassroomNav from '@/components/groups/classroomNav';
+import LoadingBar from 'react-top-loading-bar';
+import request from '@/utils/request';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseClientUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
 const defaultImages = [
-    "https://robohash.org/pranavramesh",
-    "https://robohash.org/laphatize",
-    "https://robohash.org/stevewilkers",
-    "https://robohash.org/rickast",
-    "https://robohash.org/picoarc",
-    "https://robohash.org/jasoncalcanis",
+  '/DefaultKana.png',
+  '/CuteKana.png',
+  '/FancyKana.png',
+  '/ConfusedKana.png',
+  '/TophatKana.png',
 ];
 
-const demoAssignments = [
-    {
-        id: 1,
-        title: 'Assignment 1',
-        description: 'Introduction to Cyber Security Basics',
-        dueDate: '2023-12-01',
-    },
-    {
-        id: 2,
-        title: 'Assignment 2',
-        description: 'Understanding Cryptography',
-        dueDate: '2024-01-15',
-    },
-    // Add more assignments as needed
-];
+export default function TeacherView({ group }) {
+  const [classroom, setClassroom] = useState({});
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [color, setColor] = useState('gray');
+  const [inviteLink, setInviteLink] = useState('');
 
-export default function TeacherView({ uid, group }) {
-    const [classroom, setClassroom] = useState({});
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState('');
-    const [color, setColor] = useState('gray');
-    const [inviteLink, setInviteLink] = useState('');
-    const [selectedStudent, setSelectedStudent] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [announcement, setAnnouncement] = useState("");
-    const [viewSettings, setViewSettings] = useState(false);
-    const [editingAnnouncementIdx, setEditingAnnouncementIdx] = useState(-1);
+  const [viewCreateAssignment, setViewCreateAssignment] = useState(false);
+  const [progress, setProgress] = useState(0); // for the loader
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
+  useEffect(() => {
+    const getClassroom = async () => {
+      const classroomCode = group;
+      const url = `${baseUrl}/classroom/classroom-by-classcode/${classroomCode}`;
+      const data = await request(url, 'GET');
+      if (data && data.success) {
+        setClassroom(data.body);
+      } else {
+        console.log('Error when getting classroom info');
+      }
     };
-    
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-    
-    useEffect(() => {
-        const getClassroom = async () => {
-            const classroomCode = group;
-            const url = `${baseUrl}/classroom/classroom-by-classcode?classCode=${classroomCode}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            if(data.success) {
-              setClassroom(data.body);
-            } else {
-              console.log("Error when getting classroom info");
-            }
-        };
-        getClassroom();
-    }, []);
+    getClassroom();
 
+    setProgress(progress + 100);
+  }, []);
 
-    const handleInvite = async () => {
-        setColor('gray');
-        setMessage("Invite link: ");
-        setInviteLink('generating...');
-        const email = inviteEmail;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(email)) {
-            setColor("lightgreen");
-            setMessage("Your invite link: ");
-            const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            if(data.success) {
-                setColor("lightgreen");
-                setInviteLink(`localhost:3000/groups/invites/${classroom.classCode}/${data.body}`);
-            } else {
-              setMessage(data.message);
-              setColor("red");
-              setInviteLink('');
-            }
-        } else {
-            setColor("red");
-            setMessage("Invalid email");
-            setInviteLink('');
-        }
-    };
-
-
-    const updateAnnouncement = async (id, message) => {
-        try {
-            if(!id) return;
-            const url = `${baseUrl}/classroom/announcements/${id}`;
-            const response = await fetch(url, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({message})
-            });
-            const data = await response.json();
-            let classroomAnnouncements = classroom.announcements;
-            setClassroom(prevClassroom => ({
-                ...prevClassroom,
-                announcements: classroomAnnouncements.map(announcement => 
-                    announcement.id === id ? data.body : announcement
-                )
-            }));
-            console.log(data.message);
-        } catch(err) {
-            console.log(err);
-        }
-        setAnnouncement("");
-        setEditingAnnouncementIdx(-1);
+  const handleInvite = async () => {
+    setColor('gray');
+    setMessage('Invite link: ');
+    setInviteLink('generating...');
+    const email = inviteEmail;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(email)) {
+      setColor('lightgreen');
+      setMessage('Your invite link: ');
+      const url = `${baseUrl}/classroom/getAccessToken?classCode=${classroom.classCode}&email=${email}`;
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
+        setColor('lightgreen');
+        setInviteLink(
+          `${baseClientUrl}/groups/invites/${classroom.classCode}/${data.body}`
+        );
+      } else {
+        setMessage(data.message);
+        setColor('red');
+        setInviteLink('');
+      }
+    } else {
+      setColor('red');
+      setMessage('Invalid email');
+      setInviteLink('');
     }
+  };
 
-    const createAnnouncement = async message => {
-        setAnnouncement("");
-        try {
-            if(message.length < 1) return;
-            const classCode = classroom.classCode;
-            const url = `${baseUrl}/classroom/announcements`;
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ classCode, message })
-            });
-            const data = await response.json();
-            classroom.announcements.push(data.body);
-            console.log(data.message);
-        } catch(err) {
-            console.log(err);
-        }
-        setAnnouncement("");
-        setIsModalOpen(false);
-    };
-
-    const deleteAnnouncement = async id => {
-        try {
-            if(!id) return;
-            const url = `${baseUrl}/classroom/announcements/${id}`;
-            const response = await fetch(url, {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await response.json();
-            setClassroom(prevClassroom => ({
-                ...prevClassroom,
-                announcements: prevClassroom.announcements.filter(announcement => announcement.id !== id),
-              }));
-            console.log(data.message);
-        } catch(err) {
-            console.log(err);
-        }
-        setAnnouncement("");
+  const parseDate = (dateString) => {
+    const date = new Date(dateString);
+    const offsetInMinutes = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() + offsetInMinutes);
+    function to12HourFormat(hour, minute) {
+      let period = hour >=  12 ? "PM" : "AM";
+      hour = hour %  12;
+      hour = hour ? hour :  12; // the hour '0' should be '12'
+      return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
     }
+    const day = date.getDate();
+    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
+    const year = date.getFullYear().toString().slice(-2);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const time = to12HourFormat(hour, minute);
+    const formattedDate = `${month}/${day}/${year} ${time}`;
+    return formattedDate;
+  };
 
-    if(selectedStudent) {
-        return <StudentProfile uidOfTeacher={uid} student={selectedStudent} classroom={classroom}>
-            <button onClick={() => setSelectedStudent(null)} style={{margin: "0px"}} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Back to classroom</button>
-        </StudentProfile>
-    }
+  if (viewCreateAssignment && classroom){
+    return <CreateAssignment classCode={classroom.classCode} />;
+  }
 
-    
-    if(viewSettings) {
-        return <TeacherSettings classroom={classroom} />
-    }
+  return (
+    <>
+      <Head>
+        <title>Classroom - CTFGuide</title>
+        <style>
+          @import
+          url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+        /* bold */
+        </style>
+      </Head>
+      <StandardNav />
+      <LoadingBar
+        color="#0062ff"
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
+      {/* second nav bar */}
+      <div className="bg-neutral-800 animate__fadeIn animate__animated">
+        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-10 justify-between">
+            {classroom && <ClassroomNav classCode={classroom.classCode} />}
+            <div className="flex items-center">
+              <button
+                onClick={() => {
+                  setViewCreateAssignment(true);
+                  // (window.location.href = `/groups/${classroom.classCode}/${uid}/create-assignment`)
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-plus-circle pe-2"></i> New Assignment
+              </button>
 
-    const styles = {
-        textarea: {
-          width: '100%', 
-          padding: '10px', 
-          margin: '10px 0', 
-          border: "1px solid white", 
-          borderRadius: '5px', 
-          backgroundColor: '#333', 
-          color: '#fff', 
-          resize: 'none', 
-          fontSize: '16px'
-        },
-        button: {
-          backgroundColor: '#333', 
-          color: '#fff', 
-          border: 'none', 
-          padding: '10px 20px', 
-          textAlign: 'center', 
-          textDecoration: 'none', 
-          display: 'inline-block', 
-          fontSize: '16px', 
-          margin: '4px 2px', 
-          cursor: 'pointer'
-        }
-    };
+              <button
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
+              >
+                <i className="fas fa-bullhorn pe-2"></i> New Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className=" mx-auto grid min-h-screen max-w-6xl animate__fadeIn animate__animated ">
+        <div className="mt-10 ">
+          <div className="flex">
+            <h1 className="text-3xl font-semibold text-white">
+              {classroom.name || (
+                 <Skeleton baseColor="#262626" highlightColor="#262626" />              
+              )} 
+            </h1>
+          </div>
 
-    function copy() {
-        var copyText = document.getElementById("copyBox");
-        copyText.type = "text"
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
-        copyText.type = "hidden"
-    }
-    return (
-        <>
-            <Head>
-                <title>Coming Soon - CTFGuide</title>
-                <style>
-                    @import
-                    url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-                </style>
-            </Head>
-            <StandardNav />
-            <div className=" min-h-screen  ">
-                <div className="mx-auto mt-10 max-w-6xl">
-                    <div className='flex'>
-                        <h1 className='text-white text-3xl font-semibold'>{classroom.name}</h1>
-                        <div className='ml-auto'>
-                        <button className='bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Assignment</button>
-                        <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'>Create Lab</button>
-                        <button onClick={() => setViewSettings(true)} className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1'><i className="fa fa-cog"></i> Settings</button>
-                   </div>
-                </div>
-                <div className='grid grid-cols-6 mt-4 gap-x-4'>
-                    <div className='border-t-8 border-blue-600 col-span-4 bg-neutral-800/50 px-4 py-3 rounded-lg '>
-                    {/* LOOPING THROUGH MEMBERS */}
-                    <h1 className='text-xl text-white font-semibold'> Members</h1>
-                        <div className='grid grid-cols-3 gap-x-2 gap-y-2'>
-                        {
-                            classroom.teachers && classroom.teachers.length === 0
-                            ? <div style={{color: "white"}}>No teachers yet...</div>
-                            : classroom.teachers &&
-                            classroom.teachers.map((teacher, idx) => {
-                                const i = defaultImages.length-1 - idx % defaultImages.length;
-                                return (
-                                    <div key={idx}  className='flex bg-neutral-900 rounded-lg items-center'>
-                                    <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'> <i className="fas fa-user-shield"></i> {teacher.username}</h1>
-                                    </div>
-                                );
-                            })
-                        }
-                        {
-                            classroom.students &&
-                            classroom.students.map((student, idx) => {
-                                const i = idx % defaultImages.length;
-                                return (
-                                    <div key={idx} className='flex bg-neutral-900 rounded-lg items-center' style={{cursor: "pointer"}} onClick={() => setSelectedStudent(student)}>
-                                    <img src={defaultImages[i]} className='ml-1 w-10 h-10 '></img>{" "}
-                                    <h1 className='text-white ml-6 mt-2 pl-1'>{student.username}</h1>
-                                    </div>
-                                );
-                            })
-                        }
-                        </div>
+          <hr className="mt-2 border-neutral-800 text-neutral-800 animate__fadeIn animate__animated"></hr>
+          <div className="mt-4 grid grid-cols-6 gap-x-8 animate__fadeIn animate__animated" >
+            <div className="col-span-4 rounded-lg    py-3 ">
+              <h1 className="text-xl font-semibold text-white">
+                {' '}
+                Course Description{' '}
+              </h1>
+              <div
+                style={{ color: 'white', cursor: 'default' }}
+                className="mb-4 cursor-pointer rounded-sm"
+              >
+                <textarea
+                  value={classroom.description}
+                  id="bio"
+                  name="bio"
+                  rows={8}
+                  className="resize-none block w-full rounded-md border-0 border-none bg-transparent text-white shadow-none placeholder:text-slate-400 focus:ring-0 sm:py-1.5 sm:text-base sm:leading-6 p-0" // Remove padding
+                  readOnly
+                />
+              </div>
 
-                        <br></br>
-                        <p className='text-white mt-10'>Invite students to your group by sharing the join code.</p>
-                                <div className='bg-black rounded-lg p-2 mt-2 flex'>
-                                    <p className='text-white' style={{fontSize: "20px"}}>{classroom.classCode}</p>
-                                <div className='ml-auto'>
-                                <i onClick={copy} class="far fa-copy text-white hover:text-neutral-400 cursor-pointer"></i></div>
-                                </div>
+              {/* LOOPING THROUGH MEMBERS */}
 
-                                <br></br>
-                    <h1 className='text-xl text-white font-semibold'> Course Description </h1>
-                    <div style={{color: "white", cursor: "default"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-sm mb-4'>{classroom.description}</div>
+              <h1 className="mb-2 text-xl font-semibold text-white">
+                {' '}
+                Members
+              </h1>
+              <div className="grid grid-cols-4 gap-x-4 gap-y-2">
+                {classroom.teachers && classroom.teachers.length === 0 ? (
+                  <div style={{ color: 'white' }}>No teachers yet...</div>
+                ) : (
+                  classroom.teachers &&
+                  classroom.teachers.map((teacher, idx) => {
+                    const i =
+                      defaultImages.length - 1 - (idx % defaultImages.length);
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center space-x-2 rounded-lg "
+                      >
+                        <img
+                          src={defaultImages[i]}
+                          className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
+                          alt={`Teacher ${teacher.username}`}
+                        />
+                        <h1 className="truncate text-white">
+                          <i className="fas fa-user-shield"></i>{' '}
+                          {teacher.firstName} {teacher.lastName}
+                        </h1>
+                      </div>
+                    );
+                  })
+                )}
+                {classroom.students &&
+                  classroom.students.map((student, idx) => {
+                    const i = idx % defaultImages.length;
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center space-x-2 rounded-lg  "
+                      >
+                        <img
+                          src={defaultImages[i]}
+                          className="h-10 w-10 rounded-full border border-neutral-800 bg-neutral-700" // Make image circular
+                          alt={`Student ${student.username}`}
+                        />
+                        <h1 className="text-white">{student.firstName} {student.lastName}</h1>
+                      </div>
+                    );
+                  })}
+              </div>
 
-                    </div>
-                    <div className='border-blue-600 border-t-8  col-span-2  bg-neutral-800/50 px-4 py-3 rounded-lg'>
-                    <h1 className='text-xl text-white font-semibold'>Assignments</h1>
-                <div className='mt-1 '>
-                        {demoAssignments.map(assignment => (
-                            <div key={assignment.id} onClick={() => {window.location.href = "/assignments/testingfun"}} className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer  p-3 rounded-sm  mb-4'>
-                                <h2 className='text-lg text-white'>{assignment.title}</h2>
-                                <p className='text-white'>{assignment.description}</p>
-                                <p className='text-white'>Due Date: {assignment.dueDate}</p>
-                            </div>
-                        ))}
+              {classroom && classroom.announcements && (
+                <Announcements
+                  isTeacher={true}
+                  classCode={classroom.classCode}
+                  announcementsProp={classroom.announcements}
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                />
+              )}
+            </div>
+            <div className="col-span-2   px-4 py-3">
+              <h1 className="text-xl font-semibold text-white">
+                Upcoming Assignments
+              </h1>
+              <div className="mt-1 ">
+                {classroom &&
+                  classroom.assignments &&
+                  classroom.assignments.length > 0 && classroom.assignments.filter((assignment) => new Date(parseDate(assignment.dueDate)) > new Date()).length > 0 ? (
+                  classroom.assignments
+                    .filter(
+                      (assignment) => new Date(parseDate(assignment.dueDate)) > new Date()
+                    )
+                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                    .slice(0, 5) 
+                    .map((assignment) => (
+                      <div
+                        key={assignment.id}
+                        onClick={() => {
+                          window.location.href =
+                            '/assignments/teacher/' + assignment.id + '';
+                        }}
+                        className={`mb-2 cursor-pointer rounded-sm border-l-4 ${new Date(parseDate(assignment.dueDate)) < new Date()
+                            ? 'border-red-600'
+                            : 'border-green-600'
+                          } bg-neutral-800/50 px-3 py-3  hover:bg-neutral-800`}
+                      >
+                        <h2 className="text-md text-white">
+                          <Tooltip id="quiz-tooltip" place="left" />
+                          <Tooltip id="test-tooltip" place="left" />
+                          <Tooltip id="homework-tooltip" place="left" />
+                          <Tooltip id="assessment-tooltip" place="left" />
 
-                        <button className='bg-neutral-900 text-white rounded-sm w-full px-2 py-1'>View All</button>
-                    </div>
-                    </div>
-                    <br></br>
-                    <div className='col-span-6 border-l border-neutral-800 bg-neutral-800/50 px-4 py-3 rounded-lg'>
-                        <div className='flex items-center'>
-                            <h1 className='text-xl text-white'>Announcements</h1>
-                            <button className='ml-4 bg-blue-600 rounded-lg hover:bg-blue-600/50 text-white px-2 py-1' style={{marginLeft: "66%"}} onClick={handleOpenModal}>Make Announcement</button>
-                        </div>
-                        <ul style={{color: "white", padding: "0", margin: "0", height: "300px", overflowY: "auto"}}>
-                            {
-                                isModalOpen && <div><textarea
-                                value={announcement}
-                                onChange={(e) => setAnnouncement(e.target.value)}
-                                    rows="4" 
-                                    cols="50"
-                                    style={styles.textarea}></textarea>
-                                    <button onClick={() => createAnnouncement(announcement)} style={styles.button}>Post</button>
-                                    <button onClick={handleCloseModal} style={styles.button}>Cancel</button>
-                                    </div>
-                            }
-                            {
-                                classroom.announcements && classroom.announcements.slice().reverse().map((announcementObj, idx) => {
-                                    if(idx === editingAnnouncementIdx) {
-                                        return (
-                                            <div key={idx}><textarea
-                                            value={announcement}
-                                            onChange={(e) => setAnnouncement(e.target.value)}
-                                                rows="4" 
-                                                cols="50"
-                                                style={styles.textarea}></textarea>
-                                                <button onClick={() => updateAnnouncement(announcementObj.id, announcement)} style={styles.button}>Update</button>
-                                                <button onClick={() => setEditingAnnouncementIdx(-1)} style={styles.button}>Cancel</button>
-                                                </div>
-                                        )
-                                    } else {
-                                        return (
-                                            <div style={{position: 'relative'}} key={idx}>
-                                            <li onClick={() => {setEditingAnnouncementIdx(idx);setAnnouncement(announcementObj.message);}}className='bg-neutral-900 hover:bg-neutral-900/50 cursor-pointer p-3 rounded-lg mb-4' style={{marginLeft: '10px', marginTop: "10px", cursor: "default"}}>
-                                                <span style={{fontSize: "13px"}}>{new Date(announcementObj.createdAt).toLocaleDateString()}</span> <br></br> <span style={{fontSize: "17px"}}>{announcementObj.message}</span>
-                                            </li>
-                                            <span onClick={() => deleteAnnouncement(announcementObj.id)} style={{fontSize: "15px", position: 'absolute', right: '0', paddingRight: "10px", bottom: '0', cursor: "pointer"}}>
-                                                <i className="fa fa-trash" style={{color: "rgb(255,99,71)"}}> remove</i>
-                                            </span>
-                                            </div>
-                                        )
-                                    }
-                                })
-                            }
-                        </ul>
-                    </div>
-                </div>
-                </div>
-                </div>
+                          {assignment.category === 'quiz' && (
+                            <i
+                              title="quiz"
+                              className="fas fa-question-circle"
+                              data-tooltip-id="quiz-tooltip"
+                              data-tooltip-content="Quiz"
+                            ></i>
+                          )}
+                          {assignment.category === 'test' && (
+                            <i
+                              title="test"
+                              className="fas fa-clipboard-check"
+                              data-tooltip-id="test-tooltip"
+                              data-tooltip-content="Test"
+                            ></i>
+                          )}
+                          {assignment.category === 'homework' && (
+                            <i
+                              title="homework"
+                              className="fas fa-book"
+                              data-tooltip-id="homework-tooltip"
+                              data-tooltip-content="Homework"
+                            ></i>
+                          )}
+                          {assignment.category === 'assessment' && (
+                            <i
+                              title="assessment"
+                              className="fas fa-file-alt"
+                              data-tooltip-id="assessment-tooltip"
+                              data-tooltip-content="Assessment"
+                            ></i>
+                          )}
 
-                <input type="hidden" id="copyBox" value={classroom.classCode || ""}></input>
-
-
-            <Transition.Root show={open} as={Fragment}>
-
-        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
-
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
+                        <span className="ml-0.5"> {assignment.name} {!assignment.isOpen && 
+                              <span style={{color: "#C41E3A"}}>(closed)</span>} </span>
+                        </h2>
+                        <p className="text-white">
+                          Due: {parseDate(assignment.dueDate)}{' '}
+                        </p>
+                      </div>
+                    ))
+                ) : (
+                  <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
+                    <h1 className="pe-6 text-lg">No upcoming assignments</h1>
+                    <h2 className="pe-6 text-sm">
+                      Create an assignment with the button above!
+                    </h2>
+                  </div>
+                )}
+                <button
+                  className="float-right rounded-sm bg-neutral-900 py-1  text-sm text-white"
+                  onClick={() => {
+                    window.location.href = `../${classroom.classCode}/view-all-assignments`;
+                  }}
                 >
-                    <div  
-                    onClick={() => setOpen(false)}
-                    className="fixed inset-0 bg-black bg-opacity-75 transition-opacity z-2" />
-            
-                </Transition.Child>
-                <div className="flex items-center justify-center min-h-screen">
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enterTo="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                        leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="  bg-neutral-700  rounded-lg px-40 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
-                            <div className='w-full'>
-                                <div className="mt-3 sm:mt-5 text-center mx-auto">
-                                    <h1 className="text-white text-xl text-center"> Invite by Email</h1>
-                                    <input id="email" style={{width: '250px'}} value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  ' placeholder='example@ctfguide.com'></input>
-                                <br></br>
-                                <div className='w-full mx-auto text-center mt-4 pb-5' >
-                                    <button onClick={handleInvite} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> invite </button><button onClick={() => {setOpen(false)}} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
-                                     <div style={{color: color, marginTop: "10px"}}>{message}</div>
-                                     <div style={{color: 'white', marginTop: "10px"}}>{inviteLink}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </Transition.Child>
-                </div>
-            </Dialog>
-            </Transition.Root>
+                  <i className="fas fa-external-link-alt"></i> View All
+                </button>
+              </div>
 
-            <Footer />
-        </>
-    );
+              <h1 className="mt-10 text-xl font-semibold text-white">
+                Platform Updates
+              </h1>
+              <div className="text-md mt-2 rounded-t-lg bg-neutral-800 px-4 py-2 text-white">
+                <b>Expected Downtime </b>{' '}
+                <span className="rounded-lg bg-yellow-800 px-4 text-sm ">
+                  alerts
+                </span>
+              </div>
+              <div className="rounded-b-lg bg-neutral-700/50 px-4 py-2 text-sm text-white">
+                <p>
+                  Our terminal platform will be recieving some updates meaning
+                  that students will not be able to complete any virtual labs
+                  during this time.
+                  <br></br> <br></br>
+                  <i>
+                    Affected services: EDU, Terminals, Create a VM, and Virtual
+                    Labs
+                  </i>
+                </p>
+              </div>
+            </div>
+
+            <br></br>
+          </div>
+        </div>
+      </div>
+
+      <input
+        type="hidden"
+        id="copyBox"
+        value={classroom.classCode || ''}
+      ></input>
+
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={setOpen}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div
+              onClick={() => setOpen(false)}
+              className="z-2 fixed inset-0 bg-black bg-opacity-75 transition-opacity"
+            />
+          </Transition.Child>
+          <div className="flex min-h-screen items-center justify-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <div
+                style={{
+                  fontFamily: 'Poppins, sans-serif',
+                  backgroundColor: '#161716',
+                }}
+                className="  transform  overflow-hidden rounded-lg bg-neutral-700 px-40 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:align-middle "
+              >
+                <div className="w-full">
+                  <div className="mx-auto mt-3 text-center sm:mt-5">
+                    <h1 className="text-center text-xl text-white">
+                      {' '}
+                      Invite by Email
+                    </h1>
+                    <input
+                      id="email"
+                      style={{ width: '250px' }}
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                      className="cursor-outline-none mt-2 rounded-lg  border-transparent bg-neutral-800 py-0.5  text-sm  text-white outline-none focus:border-transparent  focus:outline-none  focus:ring-0  "
+                      placeholder="example@ctfguide.com"
+                    ></input>
+                    <br></br>
+                    <div className="mx-auto mt-4 w-full pb-5 text-center">
+                      <button
+                        onClick={handleInvite}
+                        className="rounded-lg bg-neutral-800 px-4 py-2 text-white hover:bg-neutral-600/50"
+                      >
+                        {' '}
+                        invite{' '}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setOpen(false);
+                        }}
+                        className="ml-4 rounded-lg bg-neutral-800 px-4 py-2 text-white hover:bg-neutral-600/50"
+                      >
+                        Cancel
+                      </button>
+                      <div style={{ color: color, marginTop: '10px' }}>
+                        {message}
+                      </div>
+                      <div style={{ color: 'white', marginTop: '10px' }}>
+                        {inviteLink}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      <Footer />
+    </>
+  );
 }

@@ -11,8 +11,8 @@ export function LearningPanel() {
       style={{ backgroundColor: '#161716' }}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-y-40 gap-x-8 sm:gap-y-40 lg:visible sm:visible md:visible  lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          <div className="col-span-1 mx-auto mr-24 text-4xl font-semibold text-white">
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-20  gap-y-24 sm:gap-y-24 md:gap-y-24 lg:gap-y-24 lg:visible sm:visible md:visible lg:mx-0 lg:max-w-none lg:grid-cols-2">
+          <div className="col-span-1 mx-auto w-full sm:mr-0 md:mr-24 lg:mr-24 xl:mr-24 2xl:mr-24 text-4xl font-semibold text-white">
             <video
               muted
               autoPlay
@@ -26,7 +26,7 @@ export function LearningPanel() {
               </video>
           </div>
           <div className="mx-auto my-auto">
-            <h1 className="mb-5 text-4xl font-semibold tracking-tight text-white">
+            <h1 className="mt-2 mb-5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
               {' '}
               Get AI driven feedback during your sessions
             </h1>
@@ -75,7 +75,7 @@ export function LearningPanel() {
           </div>
           <div className=" mx-auto my-auto mt-10">
             <div className="">
-              <h1 className="mb-5 text-4xl font-semibold text-white">
+              <h1 className="mt-2 mb-5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
                 {' '}
                 Dynamic Roadmaps
               </h1>
@@ -86,7 +86,7 @@ export function LearningPanel() {
               learning goals.
             </p>
           </div>
-          <div className=" mx-auto text-center ml-16 w-full text-4xl font-semibold text-white">
+          <div className=" mx-auto text-center  w-full text-4xl font-semibold text-white">
             <img  src="./group24.png"></img>
           </div>
         </div>

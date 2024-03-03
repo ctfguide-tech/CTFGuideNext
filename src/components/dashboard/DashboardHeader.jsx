@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import request from '@/utils/request';
 
 export function DashboardHeader() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(null);
   const [location, setLocation] = useState('');
   const [join, setJoin] = useState('');
   const [github, setGithub] = useState('');
+  const [pfp, setPfp] = useState('');
   const [githubUsername, setGithubUsername] = useState('.');
 
   const [points, setPoints] = useState('');
@@ -15,21 +17,11 @@ export function DashboardHeader() {
 
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
-      })
-        .then((res) => res.json())
+        request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
         .then((data) => {
           setUsername(data.username);
           setLocation(data.location);
           localStorage.setItem("username", data.username)
-
-          // set uid
-          
           
           setJoin(data.createdAt.substring(0, 10));
           if (data.githubUrl) {
@@ -45,6 +37,29 @@ export function DashboardHeader() {
         });
     } catch { }
   }, []);
+
+  // get user's profile picture
+    useEffect(() => {
+      if (!username) {
+        return;
+      }
+        const fetchData = async () => {
+            try {
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
+                const result = await request(endPoint, "GET", null);
+                console.log(result)
+                if (result) {
+                    setPfp(result)
+                } else {
+                    setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+                }
+
+            } catch (err) {
+                console.log('failed to get profile picture')
+            }
+        };
+        fetchData();
+    }, [username]);
 
   function createPopupWin(pageURL, pageTitle,
     popupWinWidth, popupWinHeight) {
@@ -70,15 +85,11 @@ export function DashboardHeader() {
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
           <div className="flex">
             <a href="./settings">
-              {(username && (
+              {(pfp && (
                 <img
                   style={{ borderColor: '#ffbf00' }}
                   className="h-24 w-24 rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
-                  src={
-                    `https://robohash.org/` +
-                    username +
-                    `.png?set=set1&size=150x150`
-                  }
+                  src={pfp}
                   alt=""
                 />
               )) || (

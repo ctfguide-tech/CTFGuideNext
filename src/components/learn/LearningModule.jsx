@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ProgressBar } from '@tremor/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import request from '@/utils/request';
+
 export function LearningModule({
   lessonId,
   title,
@@ -14,14 +16,8 @@ export function LearningModule({
   const router = useRouter();
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonId}/progress`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-      },
-    })
-      .then((res) => res.json())
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonId}/progress`;
+    request(url, 'GET', null)
       .then((data) => {
         setLessonProgress(data);
       })
@@ -32,9 +28,7 @@ export function LearningModule({
 
   return (
     <>
-      <div
-        className="mt-1 mt-4 rounded-lg bg-[#212121] pb-10 "
-      >
+      <div className="mt-1 mt-4 rounded-lg bg-[#212121] pb-10 ">
         <img
           className="h-5 w-full  rounded-t-lg object-cover "
           src={imgSrc}
@@ -55,25 +49,45 @@ export function LearningModule({
           <div className="mt-4">
             <h1 className="text-md flex w-full text-white">
               {sections[0]}
-              <span onClick={() => {router.push(sectionHrefs[0])}} className="cursor-pointer ml-auto text-blue-500 hover:text-blue-600">
+              <span
+                onClick={() => {
+                  router.push(sectionHrefs[0]);
+                }}
+                className="ml-auto cursor-pointer text-blue-500 hover:text-blue-600"
+              >
                 View Content →
               </span>
             </h1>
             <h1 className="text-md flex text-white">
               {sections[1]}
-              <span onClick={() => {router.push(sectionHrefs[1])}} className="cursor-pointer ml-auto text-blue-500 hover:text-blue-600">
+              <span
+                onClick={() => {
+                  router.push(sectionHrefs[1]);
+                }}
+                className="ml-auto cursor-pointer text-blue-500 hover:text-blue-600"
+              >
                 View Content →
               </span>
             </h1>
             <h1 className="text-md flex text-white">
               {sections[2]}
-              <span onClick={() => {router.push(sectionHrefs[2])}} className="cursor-pointer ml-auto text-blue-500 hover:text-blue-600">
+              <span
+                onClick={() => {
+                  router.push(sectionHrefs[2]);
+                }}
+                className="ml-auto cursor-pointer text-blue-500 hover:text-blue-600"
+              >
                 Start Task →
               </span>
             </h1>
             <h1 className="text-md flex text-white">
               {sections[3]}
-              <span onClick={() => {router.push(sectionHrefs[3])}} className="cursor-pointer ml-auto text-blue-500 hover:text-blue-600">
+              <span
+                onClick={() => {
+                  router.push(sectionHrefs[3]);
+                }}
+                className="ml-auto cursor-pointer text-blue-500 hover:text-blue-600"
+              >
                 Start Task →
               </span>
             </h1>

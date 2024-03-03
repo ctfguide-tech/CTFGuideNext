@@ -1,6 +1,7 @@
 import { Container } from '@/components/Container';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { getCookie } from '@/utils/request';
 
 export function DataAsk({ props }) {
   const router = useRouter();
@@ -16,24 +17,11 @@ export function DataAsk({ props }) {
 
   function submitData() {
     // Generate JSON to send
-
-
-
-    
     var username = document.getElementById('username').value;
-
-   
-
-
     var birthday = document.getElementById('birthday').value;
     var firstname = document.getElementById('firstname').value;
     var lastname = document.getElementById('lastname').value;
-
     var termsAgreement = document.getElementById('legal').checked;
-
-
-
-
 
     const parts = birthday.split('-');
     const newDateStr = `${parts[1]}-${parts[2]}-${parts[0]}`;
@@ -98,17 +86,17 @@ export function DataAsk({ props }) {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader(
-        'Authorization',
-        'Bearer ' + localStorage.getItem('idToken')
-      );
+
+      let token = getCookie();
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
+      xhr.withCredentials = true;
+
       xhr.addEventListener('readystatechange', function () {
         if (this.readyState === 4 && this.readyState === 201) {
           var parsed = JSON.parse(this.responseText);
           if (parsed.username) {
             // Sign out
-            localStorage.removeItem('idToken');
-
             // Redirect to login
             window.location.href = '/dashboard';
           }
@@ -117,8 +105,11 @@ export function DataAsk({ props }) {
         if (this.readyState === 4 && this.readyState != 201) {
           var parsed = JSON.parse(this.responseText);
 
-          if (parsed.error == 'undefined' || parsed.error) {
-            window.location.replace('/login');
+          if (parsed.error === 'undefined' || parsed.error) {
+
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = parsed.error;
+
           } else {
             window.location.href = "./dashboard";
             //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
@@ -141,11 +132,6 @@ export function DataAsk({ props }) {
     
   } 
   
- 
-
-
-
-
 
   return (
     <div className="h-screen my-auto">

@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { Container } from '@/components/Container';
 import { NavLink } from '@/components/NavLink';
+const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 export function Footer() {
   return (
     <footer style={{ backgroundColor: '#161716' }}>
       <Container>
         <div className="py-16">
-          <img src="../../darkLogo.png" className="mx-auto w-14 text-center" />
+          <img src= {`${baseUrl}/darkLogo.png`} className="mx-auto w-14 text-center" />
           <nav className="mt-4 text-sm" aria-label="quick links">
             <div className="-my-1 flex place-content-center gap-x-6">
               <NavLink href="../terms-of-service">Terms of Service</NavLink>

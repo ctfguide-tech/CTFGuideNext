@@ -31,7 +31,7 @@ const Challenge = ({ data, inCarousel }) => {
   return (
     <Link
       href={{
-        pathname: `/challenges/${data.slug}`
+        pathname: `/challenges/${data.id}`
       }}
       className={
         classStyle +

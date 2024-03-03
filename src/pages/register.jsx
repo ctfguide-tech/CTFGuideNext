@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,6 +7,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { app } from '../config/firebaseConfig';
+
 const provider = new GoogleAuthProvider();
 
 export default function Register() {
@@ -17,19 +17,17 @@ export default function Register() {
       .then((result) => {
         // Fetch ID Token
         result.user.getIdToken().then((idToken) => {
+          //console.log("We are making a register");
           // Send token to backend via HTTPS
-          console.log(idToken);
-          localStorage.setItem('idToken', idToken);
-
           var data = new FormData();
           var xhr = new XMLHttpRequest();
-
           xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
           xhr.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
               try {
                 var parsed = JSON.parse(this.responseText);
 
+                document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
                 if (!parsed.email) {
                   // User hasn't finished onboarding.
                   window.location.replace('/onboarding');
@@ -47,9 +45,9 @@ export default function Register() {
                   'notificationsUrl',
                   parsed.notificationsUrl
                 );
-                localStorage.setItem('email', parsed.email);
                 localStorage.setItem('role', parsed.role);
 
+                document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
                 window.location.replace('/dashboard');
               } catch (error) {
                 console.log('Error parsing JSON data:', error);
@@ -87,17 +85,15 @@ export default function Register() {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          localStorage.setItem('idToken', user.uid);
           userCredential.user.getIdToken().then((idToken) => {
+
+            document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
             var xhr = new XMLHttpRequest();
             xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
             xhr.addEventListener('readystatechange', function () {
               if (this.readyState === 4) {
                 var parsed = JSON.parse(this.responseText);
-
-                // Store Token in local storage.
-                localStorage.setItem('idToken', idToken);
-
+                document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
                 window.location.replace('/onboarding');
               }
             });

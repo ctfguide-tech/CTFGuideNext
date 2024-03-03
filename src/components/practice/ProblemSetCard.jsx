@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import request from '@/utils/request';
 
 export default function ProblemSetCard({ categoryName }) {
   const [components, setComponents] = useState([]);
@@ -6,10 +7,8 @@ export default function ProblemSetCard({ categoryName }) {
 
   useEffect(() => {
     try {
-      fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/challenges?category=${categoryName}`
-      )
-        .then((response) => response.json())
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges?category=${categoryName}`;
+      request(url, 'GET', null)
         .then((data) => {
           console.log(data);
           if (result) {
@@ -26,11 +25,9 @@ export default function ProblemSetCard({ categoryName }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL +
-            `/challenges?category=${categoryName}`
-        );
-        const { result } = await response.json();
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges?category=${categoryName}`;
+        const data = await request(url, 'GET', null);
+        result = data.result;
         setCryptoChallenges(result);
         console.log(cryptoChallenges);
       } catch (err) {
@@ -67,7 +64,7 @@ export default function ProblemSetCard({ categoryName }) {
           {' '}
           {cryptoChallenges &&
             cryptoChallenges.map((data) => (
-              <a href={`/challenge?slug=${data.slug}`} className="">
+              <a href={`/challenge?id=${data.id}`} className="">
                 <div
                   className={
                     'ml-4 min-h-[190px] w-full min-w-[200px] flex-shrink-0 cursor-pointer rounded-lg border-t-8 bg-neutral-800 px-3 py-2 py-4 font-semibold  text-white backdrop-blur-lg hover:bg-neutral-800 ' +

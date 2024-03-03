@@ -26,7 +26,7 @@ export default function Dashboard() {
     fetchData();
     setbadges([
       {
-        slug: 'scrambled_eggs',
+        id: 'scrambled_eggs',
         title: 'Content',
       },
     ]);

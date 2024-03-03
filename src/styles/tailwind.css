@@ -24,20 +24,17 @@
 }
 
 .markdown h4 {
-  @apply text-xl font-bold mb-4;
+  @apply text-xl font-bold ;
 }
 
 .markdown h5 {
-  @apply text-lg font-bold mb-4;
+  @apply text-lg font-bold ;
 }
 
 .markdown h6 {
-  @apply text-base font-bold mb-4;
+  @apply text-base font-bold ;
 }
 
-.markdown p {
-  @apply mb-4;
-}
 
 .markdown a {
   @apply text-blue-500 underline;
@@ -48,16 +45,15 @@
 }
 
 .markdown ul {
-  @apply list-disc pl-8 mb-4;
+  @apply list-disc pl-4;
 }
 
 
 .markdown ol {
-  @apply list-decimal pl-8 mb-4;
+  @apply list-decimal pl-4;
 }
 
 .markdown li {
-  @apply mb-2;
 }
 
 .markdown blockquote {
@@ -191,6 +187,29 @@ body {
 
 }
 
+.typewriter  {
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid blue; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+
+  animation: 
+    typing 3.5s steps(40, end),
+    blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: blue; }
+}
+
 
 
 .floating { 
@@ -255,3 +274,16 @@ ul {
 .animate-slide-in-right3 {
   animation: slideInRight 3s;
 }
+
+.root {
+  --rt-color-white: #fff;
+  --rt-color-dark: #222;
+  --rt-color-success: #8dc572;
+  --rt-color-error: #be6464;
+  --rt-color-warning: #f0ad4e;
+  --rt-color-info: #337ab7;
+  --rt-opacity: 0.9;
+  --rt-transition-show-delay: 0.10s;
+  --rt-transition-closing-delay: 0.10s;
+}
+

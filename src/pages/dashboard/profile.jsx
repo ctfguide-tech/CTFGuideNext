@@ -121,14 +121,14 @@ export default function Dashboard() {
                                 <div className="ml-auto">
                                     {(!openBio &&
                                         <button 
-                                            className="px-2 text-lg mt-5 font-medium text-white bg-neutral-800 hover:text-neutral-500"
+                                            className="px-2 text-lg mt-5 font-medium text-white bg-neutral-800 hover:bg-neutral-700"
                                             onClick={openTheBio}
                                             hidden={openBio}>
                                             Edit
                                         </button>
                                     ) || ( 
                                         <button 
-                                            className="px-2 text-lg mt-5 font-medium text-white bg-red-600 hover:text-neutral-500"
+                                            className="px-2 text-lg mt-5 font-medium text-white bg-red-700 hover:bg-red-600"
                                             onClick={closeBannerAndBio}
                                             hidden={!openBio}>
                                             Cancel
@@ -170,7 +170,7 @@ export default function Dashboard() {
                                 Challenge content here.
                             </h1>
                         </div>
-                        <div>
+                        <div className='hidden'>
                         {/* Pinned Challenges Content */}
                             <h1 className="mt-5 text-xl text-gray-300">Statistics</h1>
                             <h1 className="mt-3 rounded-sm border border-none rounded-lg bg-neutral-800/50 px-6 py-3 text-lg text-white">

@@ -2,19 +2,14 @@ import { DonutChart } from '@tremor/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
+import request from '@/utils/request';
 
 export function LearnNav({ navElements, lessonNum }) {
   const [lessonProgress, setLessonProgress] = useState(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonNum}/progress`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-      },
-    })
-      .then((res) => res.json())
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonNum}/progress`;
+    request(url, 'GET', null)
       .then((data) => {
         console.log(data);
         setLessonProgress(data);

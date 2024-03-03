@@ -1,21 +1,13 @@
 import { useEffect, useState } from 'react';
 import { ProgressBar } from '@tremor/react';
+import request from '@/utils/request';
 
 export function SectionsNav({ currentPage, cpv, colors, sublesson }) {
   const [lessonProgress, setLessonProgress] = useState(null);
 
   useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
-      }
-    )
-      .then((res) => res.json())
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/lessons/sublesson/${sublesson}/progress`;
+    request(url, 'GET', null)
       .then((data) => {
         console.log(data);
         setLessonProgress(data);

@@ -6,6 +6,7 @@ import { Logo } from '@/components/Logo';
 import { Alert } from '@/components/Alert';
 import { useState, useEffect } from 'react';
 import { app } from '../config/firebaseConfig';
+import router from 'next/router';
 
 import {
   getAuth,
@@ -24,10 +25,8 @@ export default function Login() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const uid = user.uid;
-        localStorage.setItem("uid", uid);
-      }
+      // removing the cookie
+      document.cookie = "idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     });
   }, []);
 
@@ -39,24 +38,22 @@ export default function Login() {
       .then((userCredential) => {
         // Fetch ID Token
         userCredential.user.getIdToken().then((idToken) => {
+
           // Send token to backend via HTTPS
           var data = new FormData();
           var xhr = new XMLHttpRequest();
+
+          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
 
           xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
           xhr.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
               var parsed = JSON.parse(this.responseText);
 
-              // Store Token in local storage.
-              localStorage.setItem('idToken', idToken);
-
               // Sotre username
-
               localStorage.setItem('username', parsed.username);
 
               if (!parsed.email) {
-                // User hasn't finished onboarding.
                 window.location.replace('/onboarding');
                 return;
               }
@@ -67,13 +64,14 @@ export default function Login() {
                 'userChallengesUrl',
                 parsed.userChallengesUrl
               );
+
               localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
               localStorage.setItem('notificationsUrl', parsed.notificationsUrl);
-              localStorage.setItem('email', parsed.email);
               localStorage.setItem('role', parsed.role);
 
-              // Redirect to dashboard
-              window.location.replace('/dashboard');
+              localStorage.setItem('username', parsed.username);
+
+              router.push('/dashboard');
             }
           });
           xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
@@ -95,9 +93,9 @@ export default function Login() {
       .then((result) => {
         // Fetch ID Token
         result.user.getIdToken().then((idToken) => {
+
           // Send token to backend via HTTPS
-          console.log(idToken);
-          localStorage.setItem('idToken', idToken);
+          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
 
           var data = new FormData();
           var xhr = new XMLHttpRequest();
@@ -113,7 +111,6 @@ export default function Login() {
                   window.location.replace('/onboarding');
                   return;
                 }
-                localStorage.setItem('username', parsed.username);
 
                 // Store related API endpoints in local storage.
                 localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
@@ -126,10 +123,14 @@ export default function Login() {
                   'notificationsUrl',
                   parsed.notificationsUrl
                 );
-                localStorage.setItem('email', parsed.email);
-                localStorage.setItem('role', parsed.role);
 
-                window.location.replace('/dashboard');
+                localStorage.setItem('role', parsed.role);
+                localStorage.setItem('username', parsed.username);
+
+                // addthing the token to cookies
+
+                router.push('/dashboard');
+
               } catch (error) {
                 console.log('Error parsing JSON data:', error);
               }
@@ -150,6 +151,7 @@ export default function Login() {
         document.getElementById('errorMessage').innerHTML = errorMessage;
       });
   }
+
 
   return (
     <>

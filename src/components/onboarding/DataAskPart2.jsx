@@ -16,17 +16,16 @@ export function DataAskPart2() {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('idToken')
-    );
+    xhr.withCredentials = true;
+
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
     xhr.addEventListener('readystatechange', function () {
       if (this.readyState === 4 && this.readyState === 201) {
         var parsed = JSON.parse(this.responseText);
         if (parsed.username) {
           // Sign out
-          localStorage.removeItem('idToken');
-
           // Redirect to login
           window.location.href = '/login';
         }

@@ -3,7 +3,7 @@ import React from 'react';
 export function LogoAdmin(props) {
     return (
         <div className="mx-auto my-auto flex rainbow-logo">
-            <img className="mx-auto w-12 text-center" src="../../darkLogo.png" alt="Logo" />
+            <img className="mx-auto w-12 text-center" src="../../../../darkLogo" alt="Logo" />
             <h1
                 className="my-auto text-xl font-semibold text-white"
                 style={{ fontFamily: 'Poppins, sans-serif' }}

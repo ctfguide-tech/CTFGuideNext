@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-function MessagesMenu({ slug }) {
+function MessagesMenu({ id }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [messages, setMessages] = useState([]);
 
   const handleClick = async () => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${slug}/messages`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${id}/messages`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

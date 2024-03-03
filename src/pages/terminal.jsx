@@ -12,7 +12,7 @@ import {CheckCircleIcon, CheckIcon, FlagIcon} from '@heroicons/react/20/solid';
 
 export default function Challenge() {
     const router = useRouter()
-    const {slug} = router.query
+    const {id} = router.query
 
     const NO_PLACE = 'Not placed';
 

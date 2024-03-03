@@ -1,81 +1,128 @@
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
+const JoyRideNoSSR = dynamic(
+  () => import('react-joyride'),
+  { ssr: false }
+)
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
+import { Transition, Dialog } from '@headlessui/react';
 import { loadStripe } from '@stripe/stripe-js';
-import { useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth';
-const auth = getAuth();
+import { useEffect, Fragment, useState } from 'react';
+import request from '../utils/request';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import router from 'next/router';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-const STRIPE_KEY = "pk_test_51NyMUrJJ9Dbjmm7hji7JsdifB3sWmgPKQhfRsG7pEPjvwyYe0huU1vLeOwbUe5j5dmPWkS0EqB6euANw2yJ2yQn000lHnTXis7";
-const baseUrl = "http://localhost:3001";
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Groups() {
+  const steps = [
+    {
+      target: '.first',
+      content: 'This is the main home for accessing all your classrooms.',
+      disableBeacon: true,
+    },
+    {
+      target: '.second',
+      content: 'Lets create a classroom by clicking this button here.',
+    }
+  ]
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [color, setColor] = useState("");
+  const [message, setMessage] = useState('');
+  const [color, setColor] = useState('');
   const [teacherClassrooms, setTeacherClassrooms] = useState([]);
   const [studentClassrooms, setStudentClassrooms] = useState([]);
-  const [userId, setUserId] = useState("");
+  const [showTour, setShowTour] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const d = localStorage.getItem('showTour');
+    if(!d) {
+      setShowTour(true);
+      localStorage.setItem('showTour', "true");
+    } else {
+      setShowTour(false);
+    }
+  },[]);
 
   useEffect(() => {
     const getAllClassrooms = async () => {
-      const uid = localStorage.getItem('uid');
-      if(!uid) return;
-      setUserId(uid);
-      const url = `${baseUrl}/classroom/all-classrooms?uid=${uid}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      if(data.success) {
+      const url = `${baseUrl}/classroom/all-classrooms`;
+      const data = await request(url, 'GET', null);
+      if (data && data.success) {
+
         setTeacherClassrooms(data.teacher);
         setStudentClassrooms(data.student);
+
+        setIsLoading(false);
       } else {
-        console.log(data.message);
+        console.log(data);
       }
-    }
+    };
     getAllClassrooms();
   }, []);
 
-
   const joinClass = async () => {
-    setMessage("loading...");
-    setColor("gray")
-    let code = document.getElementById("joinCode").value;
+    setMessage('loading...');
+    setColor('gray');
+    let code = document.getElementById('joinCode').value;
     try {
-      const userId = localStorage.getItem('uid');
       const url = `${baseUrl}/classroom/join`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({classCode: code, userId: userId, isTeacher: false, email: auth.currentUser.email}) // need to get the role of user from local storage
-      });
-      const res = await response.json();
-      if(res.success) {
-        if(res.sessionId) {
-          // do the stripe stuff
+      const body = { classCode: code, isTeacher: false };
+      const res = await request(url, 'POST', body);
+      if (res && res.success) {
+        if (res.sessionId) {
           const stripe = await loadStripe(STRIPE_KEY);
-          const result = await stripe.redirectToCheckout({ sessionId: res.sessionId });
+          const result = await stripe.redirectToCheckout({
+            sessionId: res.sessionId,
+          });
           console.log(result);
         } else {
-          setColor("green");
-          setMessage("successfuly joined the class");
-          console.log("successfuly joined the class");
+          setColor('green');
+          setMessage('successfuly joined the class');
+          console.log('successfuly joined the class');
         }
-        window.location.href = ""
+        window.location.href = '';
       } else {
-        setColor("#FF7276");
+        setColor('#FF7276');
         setMessage(res.message);
         console.log(res.message);
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
 
+  function copy(idx) {
+    var copyText = document.getElementById('copyBox' + idx);
+    copyText.type = 'text';
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    copyText.type = 'hidden';
+
+    toast.success('Copied to clipboard!', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
+  }
+
   return (
+    
     <>
+    
       <Head>
         <title>Groups - CTFGuide</title>
         <style>
@@ -83,135 +130,230 @@ export default function Groups() {
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
+      {
+        showTour  && 
+      <JoyRideNoSSR steps={steps} continuous={true}  disableBeacon={true} showProgress={true} showSkipButton={true} 
+
+      styles={{
+        options: {
+          arrowColor: '#074bf5',
+          backgroundColor: '#1c1c1c',
+          overlayColor: '#1c1c1c',
+          primaryColor: '#224ed4',
+          textColor: 'white',
+          width: 500,
+          zIndex: 1000,
+        }
+      }}
+  
+      />
+      }
       <StandardNav />
-      <div className=" min-h-screen  ">
-
-      <div className="mx-auto mt-64 max-w-6xl ">
-        <div className='grid grid-cols-2 gap-x-24'>
-        <div>
-          <img src='./groups.png'></img>
-        </div>
-        <div>
-
-          <h1 className='mt-10 text-white text-6xl font-semibold '>CTFGuide Groups</h1>
-          <h1 className='text-white text-2xl mt-1'>A powerful solution for institutions teaching IT and cybersecurity.</h1>
-         
-          <h1 className=' text-2xl mt-4 text-neutral-400'>Launching on</h1>
-
-          <h1 className=' text-6xl text-neutral-400'>1.12.2024</h1>
-        </div>
-        </div>
-     
-        </div>
-
-        <div className="mx-auto mt-10 max-w-6xl hidden">
-
-          <div className='flex'>
-            <h1 className='text-white text-3xl'>Groups</h1>
-            <div className='ml-auto'>
-              <a href="./groups/create" className='px-2 py-1 rounded-lg bg-blue-600 text-white ml-4'>Create Group</a>
-              <button onClick={() => setOpen(true)} className='px-2 py-1 rounded-lg  bg-neutral-800/50 hover:bg-neutral-700/50 text-white ml-4'>Join a Group</button>
-
+      <div className=" min-h-screen">
+        <div className="mx-auto mt-64 hidden max-w-6xl ">
+          <div className="grid grid-cols-2 gap-x-24 ">
+            <div>
+              <img src="./groups.png"></img>
             </div>
+            <div className=''>
+              <h1 className="mt-10 text-6xl font-semibold text-white ">
+                CTFGuide Groups
+              </h1>
+              <h1 className="mt-1 text-2xl text-white">
+                A powerful solution for institutions teaching IT and
+                cybersecurity.
+              </h1>
 
+              <h1 className=" mt-4 text-2xl text-neutral-400">Launching on</h1>
+
+              <h1 className=" text-6xl text-neutral-400">1.12.2024</h1>
+            </div>
+          </div>
+        </div>
+      
+
+        <div className="mx-auto mt-10 max-w-6xl first">
+      
+          <div className="flex">
+            <h1 className="text-3xl text-white">Classrooms</h1>
+            <div className="ml-auto">
+              <a
+                href="./groups/create"
+
+                className="ml-4 rounded-lg bg-blue-600 second px-2 py-1 text-white"
+              >
+                Create Class
+              </a>
+              <button
+                onClick={() => setOpen(true)}
+                className="ml-4 rounded-lg bg-neutral-800/50  px-2 py-1 text-white hover:bg-neutral-700/50"
+              >
+                Join a Class
+              </button>
+            </div>
           </div>
 
-          <div className=' mt-  rounded-lg hidden '>
+          <div className=" mt-  hidden rounded-lg ">
             <motion.div
               className="mx-auto w-full rounded-md"
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="mx-auto mt-6 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
-                <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
-                  <i className="text-4xl fas fa-users-slash mx-auto text-center text-neutral-700/80"></i>
+              <div className="mx-auto mt-6 flex w-full rounded-sm bg-neutral-800/40 py-2.5 ">
+                <div className="mx-auto my-auto pb-4 pt-4 text-center text-xl text-white">
+                  <i className="fas fa-users-slash mx-auto text-center text-4xl text-neutral-700/80"></i>
                   <p>Looks like you have are not enrolled in any groups.</p>
-                  <a  className='mx-auto cursor-pointer'>
-                    <p className='mx-auto text-center text-lg text-blue-600 hover:text-blue-500 ' onClick={() => setOpen(true)}> Do you have a join code?<ArrowRightIcon className='ml-1 mt-0.5 h-5 hidden' /></p>
+                  <a className="mx-auto cursor-pointer">
+                    <p
+                      className="mx-auto text-center text-lg text-blue-600 hover:text-blue-500 "
+                      onClick={() => setOpen(true)}
+                    >
+                      {' '}
+                      Do you have a join code?
+                      <ArrowRightIcon className="ml-1 mt-0.5 hidden h-5" />
+                    </p>
                   </a>
                 </div>
               </div>
             </motion.div>
 
-            <div id="group-grid" className='grid grid-cols-2 gap-4 mt-4 hidden'>
-
-              <div className='bg-neutral-800/50 border border-neutral-800 rounded-lg p-4 hover:bg-[#2c2c2c]'>
-                <h1 className='text-white text-xl'>CSE 597A</h1>
-                <p className='text-white'>Introduction to Computer Security</p>
-
-
-              </div>
-
-              <div className='bg-neutral-800/50 border border-neutral-800 rounded-lg p-4 grid-cols-3 hover:bg-[#2c2c2c]'>
-                <div className='col-span-2'>
-                  <h1 className='text-white text-xl'>CSE 527A</h1>
-                  <p className='text-white'>Cybersecurity: a surface level understanding</p>
-
-
-                </div>
-              </div>
-
-
-              <div className='bg-neutral-800/50 border border-neutral-800 rounded-lg p-4 hover:bg-[#2c2c2c]'>
-                <h1 className='text-white text-xl'>CSE 597WC</h1>
-                <p className='text-white'>Introduction to Computer Security</p>
-
-
-              </div>
-            </div>
+    
           </div>
-        <h1 className='text-white text-2xl mt-10'>{teacherClassrooms.length === 0 ? "You do not own any classrooms yet... " : "Classes you own"}</h1>
-          <div className='mt-4 grid grid-cols-3 gap-x-4 gap-y-4'>
-          {
+          <h1 className="mt-10 text-2xl text-white animate__fadeIn animate__animated">
+            {isLoading ? null : teacherClassrooms.length === 0 ? 'You do not own any classrooms yet... ' : 'Classes you own'}
+          </h1>
+          <div className="mt-4 grid grid-cols-3 gap-x-4 gap-y-4">
+
+          {isLoading ? (
+            <div className='mx-auto text-center col-span-3'>
+            <i className='fas fa-spinner fa-spin text-white text-4xl'></i>
+  </div>
+
+) : (
             teacherClassrooms.map((classroom, idx) => {
               return (
-                <div key={idx} className=' bg-neutral-800 rounded-lg px-4 py-2 hover:bg-neutral-800/50 cursor-pointer' 
-                onClick={() => {classroom.isPayedFor ? window.location.href = `/groups/${classroom.classCode}/${userId}` : ""}}>
-                <h1 className='text-3xl text-neutral-300 font-semibold'>{classroom.name}</h1>
-                {
-                  !classroom.isPayedFor ? <p className='text-neutral-400'><i className="fas fa-times"></i> Class Not Paied <span style={{fontSize: "12px"}}>{classroom.paymentLink}</span></p> : 
-                  <p className='text-neutral-400'><i className="fas fa-users"></i> {classroom.numberOfSeats} </p>
-                }
-                
+                <div
+                  key={idx}
+                  className=" cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50 animate__fadeIn animate__animated"
+                  onClick={() => {
+                    classroom.isPayedFor
+                      ? router.push(`/groups/${classroom.classCode}/home`)
+                      : '';
+                  }}
+                >
+                  <h1 className="text-3xl truncate font-semibold text-neutral-300">
+                    {classroom.name}
+                  </h1>
+                  {!classroom.isPayedFor ? (
+                    <p className="text-neutral-400">
+                      <i
+                        className="fas fa-times"
+                        style={{ color: '#D8504D' }}
+                      ></i>{' '}
+                      Class Not Paid{' '}
+                      <span className="text-neutral-400">
+                        <i className="fas fa-users"></i>{' '}
+                        {classroom.students.length+classroom.teachers.length}{' '}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          color: 'lightblue',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        <br></br>
+                        <button
+                          style={{ marginTop: '10px' }}
+                          className="rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-600/50"
+                          onClick={() => {
+                            window.location.href = classroom.paymentLink;
+                          }}
+                        >
+                          Pay Now
+                        </button>
+                        <i
+                          style={{ fontSize: '15px', padding: '10px' }}
+                          onClick={() => copy(idx)}
+                          className="far fa-copy cursor-pointer text-white hover:text-neutral-400"
+                        ></i>
+                      </span>
+                      <input
+                        type="hidden"
+                        id={'copyBox' + idx}
+                        value={classroom.paymentLink || ''}
+                      ></input>
+                    </p>
+                  ) : (
+                    <p className="text-neutral-400">
+<i className="fas fa-user-shield"></i> {classroom.teachers.length} {" "}
+                      <i className="fas fa-users"></i> {classroom.students.length}
+                    </p>
+                  )}
                 </div>
-              )
-            })
-          }
+              );
+            }) 
+
+)}
           </div>
-          <h1 className='text-white text-2xl mt-10'>{studentClassrooms.length === 0 ? "You haven't joined any classes yet..." : "Joined Classes"}</h1>
-          <div className='mt-4 grid grid-cols-3 gap-x-4'>
-          {
-            studentClassrooms.map((classroom, idx) => {
-              return (
-                <div key={idx} className=' bg-neutral-800 rounded-lg px-4 py-2 hover:bg-neutral-800/50 cursor-pointer' 
-                onClick={() => {window.location.href = `/groups/${classroom.classCode}/${userId}`}}>
-                <h1 className='text-3xl text-neutral-300 font-semibold'>{classroom.name}</h1>
-                <p className='text-neutral-400'><i className="fas fa-users"></i> {classroom.numberOfSeats}</p>
-                </div>
-              )
-            })
-          }
+          <h1 className="mt-10 text-2xl text-white">
+            {isLoading ? null : (
+              studentClassrooms.length === 0
+                ? "You haven't joined any classes yet..."
+                : 'Joined Classes'
+            )}
+          </h1>
+          <div className="mt-4 grid grid-cols-3 gap-x-4">
+
+     {isLoading ? (
+      <p></p>
+) : (
+
+  studentClassrooms.map((classroom, idx) => {
+    return (
+      <div
+        key={idx}
+        className="cursor-pointer rounded-lg bg-neutral-800 px-4 py-2 hover:bg-neutral-800/50 animate__fadeIn animate__animated"
+        onClick={() => {
+          window.location.href = `/groups/${classroom.classCode}/home`;
+        }}
+      >
+        <h1 className="text-3xl font-semibold text-neutral-300">
+          {classroom.name}
+        </h1>
+                      <p className="text-neutral-400">
+                        <i className="fas fa-user-shield"></i> {classroom.teachers.length} {" "}
+                        <i className="fas fa-users"></i> {classroom.students.length}
+                      </p>
+      </div>
+    );
+  })
+)}
+
           </div>
           <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
-
-          <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-          >
-              <div  
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-black bg-opacity-75 transition-opacity z-2" />
-        
-          </Transition.Child>
-          <div className="flex items-center justify-center min-h-screen">
+            <Dialog
+              as="div"
+              className="fixed inset-0 z-10 overflow-y-auto"
+              onClose={setOpen}
+            >
               <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div
+                  onClick={() => setOpen(false)}
+                  className="z-2 fixed inset-0 bg-black bg-opacity-75 transition-opacity"
+                />
+              </Transition.Child>
+              <div className="flex min-h-screen items-center justify-center">
+                <Transition.Child
                   as={Fragment}
                   enter="ease-out duration-300"
                   enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -219,27 +361,61 @@ export default function Groups() {
                   leave="ease-in duration-200"
                   leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                   leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
-                  <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="  bg-neutral-700  rounded-lg px-40 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
-                      <div className='w-full'>
-                          <div className="mt-3 sm:mt-5 text-center mx-auto">
-                              <h1 className="text-white text-xl text-center"> Enter a join code</h1>
-                              <input id="joinCode" className='mt-2 py-0.5 bg-neutral-800  rounded-lg outline-none focus:outline-none  focus:ring-0  focus:border-transparent text-sm border-transparent  cursor-outline-none  text-white  '></input>
-                            <br></br>
-                            <div className='w-full mx-auto text-center mt-4 pb-5' >
-                              <button onClick={() => joinClass()} className='hover:bg-neutral-600/50 bg-neutral-800 text-white rounded-lg px-4 py-2'> Join </button><button onClick={() => {setOpen(false); setMessage("")}} className='px-4 py-2 ml-4 rounded-lg bg-neutral-800 hover:bg-neutral-600/50 text-white'>Cancel</button>
-                              <div style={{color: color, marginTop: "10px"}}>{message}</div>
-                              </div>
+                >
+                  <div
+                    style={{
+                      fontFamily: 'Poppins, sans-serif',
+                      backgroundColor: '#161716',
+                    }}
+                    className="  transform  overflow-hidden rounded-lg bg-neutral-700 px-40 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:align-middle "
+                  >
+                    <div className="w-full">
+                      <div className="mx-auto mt-3 text-center sm:mt-5">
+                        <h1 className="text-center text-xl text-white">
+                          {' '}
+                          Enter a join code
+                        </h1>
+                        <input
+                          id="joinCode"
+                          className="cursor-outline-none mt-2 rounded-lg  border-transparent bg-neutral-800 py-0.5  text-sm  text-white outline-none focus:border-transparent  focus:outline-none  focus:ring-0  "
+                        ></input>
+                        <br></br>
+                        <div className="mx-auto mt-4 w-full pb-5 text-center">
+                          <button
+                            onClick={() => joinClass()}
+                            className="rounded-lg bg-neutral-800 px-4 py-2 text-white hover:bg-neutral-600/50"
+                          >
+                            {' '}
+                            Join{' '}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setOpen(false);
+                              setMessage('');
+                            }}
+                            className="ml-4 rounded-lg bg-neutral-800 px-4 py-2 text-white hover:bg-neutral-600/50"
+                          >
+                            Cancel
+                          </button>
+                          <div style={{ color: color, marginTop: '10px' }}>
+                            {message}
                           </div>
+                        </div>
                       </div>
+                    </div>
                   </div>
-              </Transition.Child>
-          </div>
-      </Dialog>
-      </Transition.Root>
+                </Transition.Child>
+              </div>
+            </Dialog>
+          </Transition.Root>
         </div>
       </div>
+   
+
+          
+      <ToastContainer />
       <Footer />
+  
     </>
   );
 }

@@ -4,18 +4,15 @@ import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { useState, useEffect } from 'react';
 import { MagnifyingGlassCircleIcon, RocketLaunchIcon, ArrowRightIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
+import request from '@/utils/request';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Practice() {
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/stats/dashboard`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
-      })
-        .then((res) => res.json())
+      const url = `${baseUrl}/stats/dashboard`;
+      request(url, 'GET', null)
         .then((data) => {
           setStats([
             {
@@ -45,8 +42,8 @@ export default function Practice() {
 
   function loadChallenges() {
     try {
-      fetch('https://api.ctfguide.com/challenges/type/all')
-        .then((response) => response.json())
+      const url = baseUrl + '/challenges/type/all';
+      request(url, 'GET', null)
         .then((data) => {
           for (var i = 0; i < data.length; i++) {
             var difficultyColor = 'border-green-500';
@@ -178,9 +175,19 @@ export default function Practice() {
       <StandardNav />
       <main>
         <div className="">
+          
           <div className="w-full border-l border-neutral-800 px-8 ">
+
+
             <div className="mx-auto">
-              <div className=" mt-12 rounded-lg lg:min-w-0 lg:flex-1 ">
+            <div className='bg-neutral-800/50 mt-6 max-w-7xl  mx-auto border-l-4 border-yellow-400 px-6 py-2 text-white'> 
+            <h1 className='text-xl font-semibold'><i class="fas fa-exclamation-triangle"></i> Deprecation Notice</h1>
+            <p>
+             This page (the Hub) is being removed in the next update. You'll be able to find insights on your dashboard instead.
+            </p>
+          </div>
+
+              <div className=" mt-4 rounded-lg lg:min-w-0 lg:flex-1 ">
                 <div className="mx-auto max-w-7xl">
                   <div className="  relative isolate overflow-hidden  rounded-lg bg-black/10 bg-neutral-900 py-14 shadow-2xl ring-1 ring-white/10 sm:py-12">
                     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">

@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
+import request from '@/utils/request';
 import PersonCard from '@/components/PersonCard';
 // lazy load
 import dynamic from 'next/dynamic';
@@ -36,12 +37,8 @@ export default function Careers() {
 
   useEffect(() => {
     try {
-     // fetch('api.ctfguide.com/dashboard')
-      
-     fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
-
-     .then((res) => res.json())
-
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/dashboard`;
+      request(url, 'GET', null)
         .then((data) => {
           if (data.onboardingComplete == false) {
           }
