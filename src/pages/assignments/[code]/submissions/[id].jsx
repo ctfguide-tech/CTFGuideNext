@@ -84,7 +84,7 @@ export default function id() {
       });
 
       setLoading(false);
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
@@ -106,7 +106,7 @@ export default function id() {
   async function getJson() {
     try {
       let jwt = getCookie();
-      if(!jwt) {
+      if (!jwt) {
         console.log("User is not authenticated");
         return;
       }
@@ -114,7 +114,7 @@ export default function id() {
       let url = `${process.env.NEXT_PUBLIC_TERM_URL}get/json?jwtToken=${jwt}&assignmentID=${assignment.id}&uid=${uid}`;
       let requestOptions = { method: 'GET' };
       let response = await fetch(url, requestOptions);
-      if(!response.ok) {
+      if (!response.ok) {
         console.log('Error fetching kana log');
         return;
       }
@@ -131,27 +131,27 @@ export default function id() {
         result = await reader.read();
       }
 
-      if(!data) {
+      if (!data) {
         console.log('Error parsing kana log');
         return;
       }
 
       let events = data.events;
 
-      for(let i = 0; i < events.length; i++) {
+      for (let i = 0; i < events.length; i++) {
         events[i].seconds = convert(events[i].timestamp);
       }
 
       setKanaError(true);
 
       setKanaLog(events); // []
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
 
   useEffect(() => {
-    if(!loading) {
+    if (!loading) {
       getJson();
       console.log("penguins")
       console.log(router.query.key)
@@ -302,13 +302,6 @@ export default function id() {
       <StandardNav />
       <div className=" min-h-screen  ">
         <div className="mx-auto mt-4">
-          <a
-            href="/groups/122ctfguide"
-            className="hidden text-neutral-200 hover:text-neutral-500"
-          >
-            <i className="fas fa-long-arrow-alt-left"></i> Return Home
-          </a>
-
           <div className="w-full bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 px-4 py-4 ">
             <div className="mx-auto px-2">
               <div className="flex">
@@ -316,7 +309,7 @@ export default function id() {
                   <h1 className="text-3xl font-semibold text-white">
                     {
                       submission && assignment ? <span>{submission.user.firstName} {submission.user.lastName}'s Submission</span>
-                      : <span>... Submission</span>
+                        : <span>... Submission</span>
                     }
                   </h1>
 
@@ -333,11 +326,16 @@ export default function id() {
                   )}
 
                 </div>
-
+                <a
+                    href="/groups/{classroom.id}/home"
+                    className=" text-neutral-200 hover:text-neutral-500 ml-auto " 
+                  >
+                    <i className="fas fa-long-arrow-alt-left text-white"></i> <span className='text-white'>Return Home</span>
+                  </a>
                 <div className="ml-auto">
                   <div className="rounded-md bg-white px-3 py-1 text-center gap-y-0">
                     <h1 className="text-4xl font-bold text-blue-600 text-center mb-0 pb-0 ">
-                      { submission ? submission.grade : '00' }%
+                      {submission ? submission.grade : '00'}%
                     </h1>
                   </div>
                 </div>
@@ -410,7 +408,7 @@ export default function id() {
                           >
                             <div className="absolute -start-1.5 mt-1.5 h-3 w-3 rounded-full border border-neutral-800 bg-blue-500 "></div>
                             <time className="mb-1 text-sm font-normal leading-none text-neutral-400 ">
-                              {item.timestamp} 
+                              {item.timestamp}
                             </time>
                             <h3 className="text-md font-semibold text-blue-400 ">
                               {item.header}
@@ -442,61 +440,61 @@ export default function id() {
 
 
                 <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
-        </Transition.Child>
+                  <Dialog as="div" className="relative z-10" onClose={setOpen}>
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-out duration-300"
+                      enterFrom="opacity-0"
+                      enterTo="opacity-100"
+                      leave="ease-in duration-200"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+                    </Transition.Child>
 
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enteredo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="max-w-6xl relative transform overflow-hidden rounded-lg bg-neutral-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:p-6">
-                <div>
-                  <div className="mt-3  sm:mt-5">
-                    <Dialog.Title as="h3" className=" font-semibold leading-6 text-xl text-white">
-                      Penalty Explanation
-                    </Dialog.Title>
-                    <div className="mt-2 mb-5">
-                      <p className="text-md text-white">
-                        When configuring this assignment, you requested that attempting to guess locations was prohibited. 
-                        Typically, the student wouldn't have been penalized for changing to a directory that doesn't exist. But, because they attempted to cd into a folder that they knew wasn't there after running <span className='bg-black px-4'>ls</span>, it can be assumed that they were attempting to guess the location. As a result I gave a 5 point penalty.
-                      </p>
+                    <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                        <Transition.Child
+                          as={Fragment}
+                          enter="ease-out duration-300"
+                          enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                          enteredo="opacity-100 translate-y-0 sm:scale-100"
+                          leave="ease-in duration-200"
+                          leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                          leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        >
+                          <Dialog.Panel className="max-w-6xl relative transform overflow-hidden rounded-lg bg-neutral-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:p-6">
+                            <div>
+                              <div className="mt-3  sm:mt-5">
+                                <Dialog.Title as="h3" className=" font-semibold leading-6 text-xl text-white">
+                                  Penalty Explanation
+                                </Dialog.Title>
+                                <div className="mt-2 mb-5">
+                                  <p className="text-md text-white">
+                                    When configuring this assignment, you requested that attempting to guess locations was prohibited.
+                                    Typically, the student wouldn't have been penalized for changing to a directory that doesn't exist. But, because they attempted to cd into a folder that they knew wasn't there after running <span className='bg-black px-4'>ls</span>, it can be assumed that they were attempting to guess the location. As a result I gave a 5 point penalty.
+                                  </p>
 
 
-                      <h1 className='text-md font-semibold text-white mt-4'>Was my penalty appropriate?</h1>
-                      <button className='mt-3 text-white bg-green-700 px-4 py-1 rounded-lg'>Yes</button>
-                      <button className='ml-2 text-white bg-red-700 px-4 py-1 rounded-lg'>No</button>
+                                  <h1 className='text-md font-semibold text-white mt-4'>Was my penalty appropriate?</h1>
+                                  <button className='mt-3 text-white bg-green-700 px-4 py-1 rounded-lg'>Yes</button>
+                                  <button className='ml-2 text-white bg-red-700 px-4 py-1 rounded-lg'>No</button>
 
-                      <h1 className='text-md font-semibold text-white mt-4'>Do you have any feedback? The AI will try to improve its grading strategy.</h1>
-                      <textarea className='bg-neutral-800 text-white w-full rounded-lg px-4 py-2 mt-2 border-none' placeholder='Enter feedback here...'></textarea>
-                      <button className='mt-3 text-white bg-blue-700 px-4 py-1 rounded-lg'>Submit Feedback</button>
+                                  <h1 className='text-md font-semibold text-white mt-4'>Do you have any feedback? The AI will try to improve its grading strategy.</h1>
+                                  <textarea className='bg-neutral-800 text-white w-full rounded-lg px-4 py-2 mt-2 border-none' placeholder='Enter feedback here...'></textarea>
+                                  <button className='mt-3 text-white bg-blue-700 px-4 py-1 rounded-lg'>Submit Feedback</button>
 
+                                </div>
+                              </div>
+                            </div>
+
+                          </Dialog.Panel>
+                        </Transition.Child>
+                      </div>
                     </div>
-                  </div>
-                </div>
-             
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+                  </Dialog>
+                </Transition.Root>
               </div>
             </div>
           </div>
