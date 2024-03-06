@@ -507,7 +507,7 @@ export default function Challenge() {
         <div className="mx-auto mt-6 max-w-6xl text-left">
           <div className="mb-2 flex place-items-center justify-between">
             <div>
-              <h1 className="inline-block text-3xl font-semibold text-white">
+              <h1 className="inline-block text-2xl font-semibold text-white">
                 {' '}
                 Challenge Description{' '}
               </h1>
@@ -518,7 +518,7 @@ export default function Challenge() {
                 onClick={likeChallenge}
                 className="card-body m-1 flex rounded-md bg-neutral-800 px-10 py-2 hover:bg-neutral-700"
               >
-                <h1 className=" mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-2xl font-semibold text-transparent">
+                <h1 className=" mr-4 bg-gradient-to-br from-orange-400 to-yellow-400 bg-clip-text text-xl font-semibold text-transparent">
                   <HeartIcon className="h-8 w-8 text-red-500" />
                 </h1>
                 <p className=" text-2xl text-white">{likeCount}</p>
@@ -555,8 +555,8 @@ export default function Challenge() {
 
           <div
             id="challengeDetails"
-            style={{ color: '#8c8c8c' }}
-            className="w-full whitespace-pre-wrap border-l-4 border-blue-700 bg-neutral-800/50 px-4 py-2 text-lg text-white"
+            
+            className="w-full text-white whitespace-pre-wrap  border-blue-700 bg-neutral-800/50 px-4 py-2 text-lg text-white"
           >
             <div>
               <MarkdownViewer content={challenge.content} />
@@ -581,15 +581,19 @@ export default function Challenge() {
                     Submit Flag
                   </button>
                   <button
-                    hidden={!hintMessages}
+                    //hidden={!hintMessages}
                     onClick={() => setHintOpen(true)}
-                    className="ml-2  mt-4  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-white text-yellow-300 hover:bg-yellow-900"
+                    className="hidden ml-2  mt-4  rounded-lg  bg-black bg-yellow-700 px-4 py-1 text-white text-yellow-300 hover:bg-yellow-900"
                   >
                     Stuck?
                   </button>
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className='bg-neutral-800 px-2 py-4 mt-10 mb-10'>
+                  <h1 className='text-white text-center'>Public terminals are temporarily unavaliable. Some challenges that require pre-configured enviroments may not be solvable.</h1>
           </div>
           <div className="mt-6 grid hidden gap-10 sm:grid-cols-1 lg:grid-cols-3">
             <div
@@ -628,7 +632,7 @@ export default function Challenge() {
               </div>
             </div>
           </div>
-          <div id="terminal" className=" mx-auto mt-6 max-w-6xl">
+          <div id="terminal" className="hidden mx-auto mt-6 max-w-6xl">
             <div className="hint mb-2 text-gray-400">
               <span className="font-semibold text-white   ">
                 {' '}
@@ -713,8 +717,8 @@ export default function Challenge() {
               </div>
             }
           </div>
-          <div className="mt-10  rounded-lg px-5 pb-20">
-            <h1 className="text-3xl font-semibold text-white">Comments</h1>
+          <div className="mt-10  rounded-lg  pb-20">
+            <h1 className="text-2xl font-semibold text-white">Comments</h1>
             <textarea
               id="comment"
               onChange={commentChange}
@@ -986,7 +990,7 @@ export default function Challenge() {
           </div>
         </Dialog>
       </Transition.Root>
-      <p className="mx-auto mt-1.5 w-3/5 rounded-lg bg-neutral-800 px-4 py-0.5 text-sm text-gray-200">
+      <p className="hidden mx-auto mt-1.5 w-3/5 rounded-lg bg-neutral-800 px-4 py-0.5 text-sm text-gray-200">
         ℹ We provide accessible environments for everyone to run cybersecurity
         tools. Abuse and unnecessary computation is prohibited.
       </p>
