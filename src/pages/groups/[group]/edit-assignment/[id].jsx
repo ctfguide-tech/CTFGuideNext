@@ -443,12 +443,7 @@ export default function EditingAssignment() {
                 >
                   Save
                 </button>
-                      {
-                        /*
-
                 <button  className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-700" onClick={() => setIsEditingChallenge(true)}>Edit Challenge</button>
-                         * */
-                      }
 
                 <button
                   onClick={() => {

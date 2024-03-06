@@ -50,9 +50,7 @@ const Editor = (props) => {
   };
 
   const sendToFileApi = async () => {
-    console.log("Not finished yet");
-    toast.info("This is incomplete");
-    await uploadChallenge('');
+    await uploadChallenge([]);
     return;
     const isValid = await validateNewChallege();
     if (isValid) {
@@ -74,9 +72,7 @@ const Editor = (props) => {
     }
   };
 
-  const uploadChallenge = async (fileId) => {
-    const classCode = window.location.href.split('/')[4];
-
+  const uploadChallenge = async (fileIds) => {
     const exConfig = existingConfig.replace('\n', ' && ');
     const nConfig = newConfig.replace('\n', ' && ');
     let finalConfig = '';
@@ -87,6 +83,7 @@ const Editor = (props) => {
     }
 
     const challengeInfo = {
+      id: props.challenge.id,
       name: newChallengeName,
       hints,
       penalty,
@@ -95,20 +92,27 @@ const Editor = (props) => {
       difficulty,
       category,
       commands: finalConfig,
-      fileId: fileId,
+      fileIds: fileIds,
     };
 
-    console.log(challengeInfo);
-
-    /*
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/update-assignment-challenge`;
-    const data = await request(url, 'PUT', challengeInfo);
+    const data = await request(url, 'POST', challengeInfo);
+    //console.log(data);
 
     if (data && data.success) {
       window.location.href = ``; 
     }
-    */
+
   };
+
+  async function loadSolution() {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/solution/${props.challenge.id}/${props.classCode}`;
+    const data = await request(url, 'GET', null);
+    console.log(data);
+    if (data && data.success) {
+      setSolution(data.body.keyword);
+    }
+  }
 
   function loadProps() {
     setClassCode(props.classCode);
@@ -117,7 +121,9 @@ const Editor = (props) => {
     setSolution(props.challenge.solution);
     setDifficulty(props.challenge.difficulty);
     setCategory(props.challenge.category);
-    setExistingConfig(props.challenge.commands);
+    // remove all spaces and replace && with new line
+    let commands = props.challenge.commands.replace(/ && /g, '\n');
+    setExistingConfig(commands);
     setNewChallengeName(props.challenge.title);
     setAssignmentName(props.assignmentName);
     let hintPoints = [];
@@ -129,8 +135,10 @@ const Editor = (props) => {
     }
     setPenalty(hintPoints);
     setHints(hintMessage);
+    loadSolution();
   }
 
+  console.log(hints);
 
   useEffect(() => {
     setUsername(localStorage.getItem('username'));
@@ -529,9 +537,3 @@ const Editor = (props) => {
 };
 
 export default Editor;
-
-
-
-
-
-

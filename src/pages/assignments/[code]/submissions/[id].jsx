@@ -202,8 +202,8 @@ export default function id() {
     setRole('');
     return data.body.isStudent;
   };
-  // NEW SUBMISSION LOGIC
 
+  // NEW SUBMISSION LOGIC
   const getAssignment = async () => {
     const params = window.location.href.split('/');
     if (params.length < 5) {
