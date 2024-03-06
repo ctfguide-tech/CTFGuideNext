@@ -494,30 +494,31 @@ export default function id() {
                 <p className="mt-6 font-semibold text-white">HINTS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
                 {hints.map((hint, idx) => {
-                  return (
-                    <div
-                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
-                      onClick={() => showHint(idx)}
-                      style={{
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <div>
-                        <p className="text-white">
-                          <span className="text-sm">
-                            Hint {idx + 1}: {hint.message}
-                          </span>
-                        </p>
-                      </div>
-                      <span className="mt-1 text-sm text-white">
-                        {assignment && assignment.challenge.hints[idx].penalty}{' '}
-                        points
-                      </span>
+                return (
+                  <div
+                    className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                    onClick={() => showHint(idx)}
+                    style={{
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      wordWrap: 'break-word',
+                    }}
+                  >
+                    <div style={{ maxWidth: '90%' }}>
+                      <p className="text-white">
+                        <span className="text-sm ">
+                          Hint {idx + 1}: {hint.message}
+                        </span>
+                      </p>
                     </div>
-                  );
-                })}
+                    <span className="mt-1 text-sm text-white">
+                      {assignment && assignment.challenge.hints[idx].penalty} points
+                    </span>
+                  </div>
+                );
+              })}
               </div>
               
 

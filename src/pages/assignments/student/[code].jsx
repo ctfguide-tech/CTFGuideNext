@@ -477,18 +477,19 @@ export default function Slug() {
                       cursor: 'pointer',
                       display: 'flex',
                       justifyContent: 'space-between',
+                      width: '100%',
+                      wordWrap: 'break-word',
                     }}
                   >
-                    <div>
+                    <div style={{ maxWidth: '90%' }}>
                       <p className="text-white">
-                        <span className="text-sm">
+                        <span className="text-sm ">
                           Hint {idx + 1}: {hint.message}
                         </span>
                       </p>
                     </div>
                     <span className="mt-1 text-sm text-white">
-                      {assignment && assignment.challenge.hints[idx].penalty}{' '}
-                      points
+                      {assignment && assignment.challenge.hints[idx].penalty} points
                     </span>
                   </div>
                 );
