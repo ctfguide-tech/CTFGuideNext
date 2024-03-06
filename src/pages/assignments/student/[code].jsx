@@ -75,7 +75,7 @@ export default function Slug() {
     });
   }
 
-  console.log(assignment);
+  // console.log(assignment);
 
   const parseDate = (dateString) => {
     const date = new Date(dateString);
@@ -97,24 +97,27 @@ export default function Slug() {
     return formattedDate;
   };
 
+  /*
   const getChallenge = async (assignment) => {
     try {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
       const data = await request(url, "GET", null);
       if (data.success) {
         setChallenge(data.body);
+        console.log('Challenge:', data.body);
       }
     } catch (err) {
       console.log(err);
     }
   };
+  */
 
   const getAssignment = async () => {
     const params = window.location.href.split('/');
     if (params.length < 5) {
       return;
     }
-    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment-student/${params[5]}`;
     const data = await request(url, "GET", null);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
@@ -122,7 +125,7 @@ export default function Slug() {
         setAssignment(data.body);
         setSubmissionId(data.submissionId);
         setChallengeHints(data.body.challenge.hints);
-        getChallenge(data.body);
+        setChallenge(data.body.challenge);
       } else {
         console.log('You are not apart of this class');
       }
@@ -132,9 +135,8 @@ export default function Slug() {
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
     const data = await request(url, "GET", null);
-    return data && data.success;
+    return data && data.body.isStudent;
   };
-
 
   const createTerminal = async (skipToCheckStatus) => {
     if (!challenge) return;
@@ -215,13 +217,20 @@ export default function Slug() {
     }
   }, []);
 
-  const checkFlag = () => {
-    if (assignment && flagInput === assignment.solution.keyword) {
-      setSolved(true);
-      toast.success('Flag is Correct, Good Job!');
-    } else {
-      toast.error('Flag is incorrect. Try again!');
-      setSolved(false);
+  const checkFlag = async () => {
+    const url = `${baseUrl}/classroom-assignments/check-flag`;
+    const body = { flag: flagInput, challengeId: challenge.id};
+    setLoading(true);
+    const response = await request(url, "POST", body);
+    setLoading(false);
+    if(response && response.success) {
+      if(response.body.solved) {
+        setSolved(true);
+        toast.success('Flag is Correct, Good Job!');
+      } else {
+        toast.error('Flag is incorrect. Try again!');
+        setSolved(false);
+      }
     }
   };
 
@@ -262,7 +271,7 @@ export default function Slug() {
     const url = `${baseUrl}/submission/create/${assignment.classroom.classCode}`;
 
     const body = {
-      solved: flagInput === assignment.solution.keyword,
+      solved: solved,
       classroomId: assignment.classroomId,
       assignmentId: params[5],
       keyword: flagInput,
@@ -436,10 +445,12 @@ export default function Slug() {
                 value={flagInput}
               ></input>
               <button
+                disabled={loading}
                 onClick={checkFlag}
+                style={{ width: '40%' }}
                 className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
               >
-                Check Flag
+                {loading ? <><i className="fas fa-spinner fa-pulse"></i></>: 'Check Flag'}
               </button>
 
               {solved === true ? (

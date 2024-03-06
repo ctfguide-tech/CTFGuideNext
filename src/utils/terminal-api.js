@@ -25,7 +25,6 @@ const buildTerminal = async (challenge, token) => {
     };
 
     const response = await fetch(url, requestOptions);
-    console.log('Response from createTerminal: ', response);
     if(!response.ok) {
       return [false, null];
     }
@@ -103,8 +102,6 @@ async function checkUserTerminal(token, challengeId) {
       data = JSON.parse(stat);
       result = await reader.read();
     }
-
-    console.log("Data from checkUserTerminal: ", data);
 
     if(data && data.url) {
       return data;

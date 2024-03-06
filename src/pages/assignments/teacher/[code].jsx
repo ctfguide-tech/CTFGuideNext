@@ -100,7 +100,7 @@ export default function id() {
     if (params.length < 5) {
       return;
     }
-    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment-teacher/${params[5]}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
@@ -129,7 +129,8 @@ export default function id() {
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
     const data = await request(url, 'GET', null);
-    return data.success;
+    if(!data) return false;
+    return data.body.isTeacher;
   };
 
   const getChallenge = async (assignment) => {
@@ -223,13 +224,20 @@ export default function id() {
     }
   }, []);
 
-  const checkFlag = () => {
-    if (assignment && flagInput === assignment.solution.keyword) {
-      setSolved(true);
-      toast.success('Flag is Correct, Good Job!');
-    } else {
-      toast.error('Flag is incorrct');
-      setSolved(false);
+  const checkFlag = async () => {
+    const url = `${baseUrl}/classroom-assignments/check-flag`;
+    const body = { flag: flagInput, challengeId: challenge.id};
+    setLoading(true);
+    const response = await request(url, "POST", body);
+    setLoading(false);
+    if(response && response.success) {
+      if(response.body.solved) {
+        setSolved(true);
+        toast.success('Flag is Correct, Good Job!');
+      } else {
+        toast.error('Flag is incorrect. Try again!');
+        setSolved(false);
+      }
     }
   };
 
@@ -464,7 +472,7 @@ export default function id() {
                   onClick={checkFlag}
                   className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                 >
-                  Check Flag
+                {loading ? <><i className="fas fa-spinner fa-pulse"></i></>: 'Check Flag'}
                 </button>
 
                 {solved === true ? (

@@ -164,12 +164,16 @@ const Announcement = ({
                         {new Date(
                           announcementObj.createdAt
                         ).toLocaleTimeString()}{' '}
+                        {
+                          /*
                         <span
                           className="bg-green-900 ml-4 text-sm text-white px-2 py-1 rounded-md"
                           style={{ marginRight: '5px' }}
                         >
                           {`${announcementObj.type}`}
                         </span>
+                           * */
+                        }
                         <br></br> <span style={{whiteSpace: 'pre-wrap'}}> {announcementObj.message}</span>
                       </span>{' '}
                     </li>
@@ -317,7 +321,6 @@ const Announcement = ({
                       {new Date(
                         announcementObj.createdAt
                       ).toLocaleTimeString()}{' '}
-                      {`(${announcementObj.type}) `}
                       <br></br>
                       <textarea
                         value={announcementObj.message}
