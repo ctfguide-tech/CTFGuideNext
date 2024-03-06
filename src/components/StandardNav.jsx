@@ -302,7 +302,7 @@ export function StandardNav() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href={`../../users/${username}`}
+                                href={`${NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
                                 className={classNames(
                                   active ? '-100' : '',
                                   'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
@@ -435,7 +435,7 @@ export function StandardNav() {
                 <div className="space-y-1">
                   <Disclosure.Button
                     as="a"
-                    href="#"
+                    href={`${NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
                     className="hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-800 sm:px-6"
                   >
                     Your Profile
