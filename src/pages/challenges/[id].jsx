@@ -262,26 +262,13 @@
         }, 2000);
       } else {
         try {
-          const endPoint =
-            process.env.NEXT_PUBLIC_API_URL +
-            '/challenges/' +
-            id +
-            '/submissions';
-          const requestOptions = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-              keyword: flag,
-            }),
-          };
-          const response = await fetch(endPoint, requestOptions);
-          console.log(await response.json());
-          const { success, incorrect, error } = await response.json();
-
-
+          const endPoint = process.env.NEXT_PUBLIC_API_URL +'/challenges/' + id + '/submissions';
+          const response = await request(endPoint, "POST", { keyword: flag });
+          if(!response) {
+            console.log('Error occured while submitting the flag');
+            return;
+          }
+          const { success, incorrect, error } = response;
           if (error) {
             document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
             setSubmissionMsg('error');
@@ -297,10 +284,7 @@
             if (!alreadySolved) {
               try {
                 const endPoint =
-                  process.env.NEXT_PUBLIC_API_URL +
-                  '/users/' +
-                  localStorage.getItem('username') +
-                  '/complete-challenge/' +
+                  process.env.NEXT_PUBLIC_API_URL + '/users/' + localStorage.getItem('username') +'/complete-challenge/' +
                   id +
                   '/' +
                   difficulty;

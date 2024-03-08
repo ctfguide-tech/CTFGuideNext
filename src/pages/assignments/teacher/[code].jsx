@@ -115,7 +115,6 @@ export default function id() {
     }
   };
 
-  console.log('Assignment:', assignment);
   const getSubmissions = async (assignment) => {
     const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
     const data = await request(url, 'GET', null);
