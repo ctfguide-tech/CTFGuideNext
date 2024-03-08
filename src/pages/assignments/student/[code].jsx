@@ -13,7 +13,6 @@ import { Fragment } from 'react';
 import { getAuth } from 'firebase/auth';
 import api from '@/utils/terminal-api';
 const auth = getAuth();
-// import socket client
 import io from 'socket.io-client';
 import request from '@/utils/request';
 
@@ -74,8 +73,6 @@ export default function Slug() {
       theme: 'dark',
     });
   }
-
-  // console.log(assignment);
 
   const parseDate = (dateString) => {
     const date = new Date(dateString);
