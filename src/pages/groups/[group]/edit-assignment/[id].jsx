@@ -42,7 +42,7 @@ export default function EditingAssignment() {
   const { id } = router.query;
 
   const getAssignment = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment/${id}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/fetch-assignment-teacher/${id}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       console.log(data);
@@ -439,10 +439,11 @@ export default function EditingAssignment() {
                     setMessageOfConfirm(actions[1]);
                     setIndex(1);
                   }}
-                  className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-700"
                 >
                   Save
                 </button>
+                <button  className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-white hover:bg-blue-700" onClick={() => setIsEditingChallenge(true)}>Edit Challenge</button>
 
                 <button
                   onClick={() => {
@@ -454,7 +455,6 @@ export default function EditingAssignment() {
                 >
                   Delete Assignment
                 </button>
-                <button onClick={() => setIsEditingChallenge(true)}>Edit Challenge</button>
               </div>
             </div>
           </div>

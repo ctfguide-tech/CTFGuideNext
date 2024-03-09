@@ -384,6 +384,9 @@ export default function Users() {
                 const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user;
                 const result = await request(endPoint, "GET", null);
 
+                if (!result.username) {
+                    return window.location.href = '/404';
+                }
                 setUsername(result.username);
                 setCreateDate(result.createdAt);
                 setRank(result.leaderboardNum);
@@ -1107,31 +1110,27 @@ export default function Users() {
                             <div className="rounded-md">
                                 <h1 className="ml-2 mb-3 text-3xl font-semibold text-gray-300">Badges</h1>
                                 <div className="bg-neutral-800 rounded-xl grid grid-cols-5 gap-x-2 gap-y-2 py-4 px-4">
-                                    {(badges && badges.map((badge) => (
-                                        <Badge createdAt={badge.createdAt} badgeName={badge.badge.badgeName} badgeTier={badge.badge.badgeTier} badgeInfo={badge.badge.badgeInfo} />
-                                    ))) || (
-
-                                            <div
-                                                className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-                                                data-tooltip-content="Complete challenges to earn badges!"
-                                                data-tooltip-id="badge-tooltip"
-                                                data-tooltip-place="top"
-                                            >
-                                                {ownUser &&
-                                                    <Tooltip id="badge-tooltip" />
-                                                }
-                                                <img
-                                                    src={'/CuteKana.png'}
-                                                    width="100"
-                                                    className="mx-auto mt-2 px-1"
-                                                />
-
-                                                <h1 className="mx-auto mt-2 text-center text-xl text-white">
-                                                    No Badges Yet...
-                                                </h1>
-
-                                            </div>
-                                        )}
+                                    {badges && badges.length > 0 ? (
+                                        badges.map((badge) => (
+                                            <Badge
+                                                createdAt={badge.createdAt}
+                                                badgeName={badge.badge.badgeName}
+                                                badgeTier={badge.badge.badgeTier}
+                                                badgeInfo={badge.badge.badgeInfo}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div
+                                            className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                            data-tooltip-content="Complete challenges to earn badges!"
+                                            data-tooltip-id="badge-tooltip"
+                                            data-tooltip-place="top"
+                                        >
+                                            {ownUser && <Tooltip id="badge-tooltip" />}
+                                            <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
+                                            <h1 className="mx-auto mt-2 text-center text-xl text-white">No Badges Yet...</h1>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -1188,7 +1187,7 @@ export default function Users() {
                             <div className="rounded-md">
                                 <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Liked Challenges</h1>
                                 <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
-                                    {(pinnedChallenges && pinnedChallenges.map((challenge) => (
+                                    {pinnedChallenges && Array.isArray(pinnedChallenges) && pinnedChallenges.map((challenge) => (
                                         <ChallengeCard
                                             title={challenge.challenge.title}
                                             category={challenge.challenge.category}
@@ -1198,7 +1197,8 @@ export default function Users() {
                                             views={challenge.challenge.views}
                                             likes={challenge.challenge.upvotes}
                                         />
-                                    ))) || (
+                                    ))
+                                         || (
                                         <div
                                         className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
                                         data-tooltip-content="Like some challenges and they'll appear here!"

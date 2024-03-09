@@ -100,7 +100,7 @@ export default function id() {
     if (params.length < 5) {
       return;
     }
-    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[5]}`;
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment-teacher/${params[5]}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
@@ -129,7 +129,8 @@ export default function id() {
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
     const data = await request(url, 'GET', null);
-    return data.success;
+    if(!data) return false;
+    return data.body.isTeacher;
   };
 
   const getChallenge = async (assignment) => {
@@ -223,13 +224,21 @@ export default function id() {
     }
   }, []);
 
-  const checkFlag = () => {
-    if (assignment && flagInput === assignment.solution.keyword) {
-      setSolved(true);
-      toast.success('Flag is Correct, Good Job!');
-    } else {
-      toast.error('Flag is incorrct');
-      setSolved(false);
+  const checkFlag = async () => {
+    const url = `${baseUrl}/classroom-assignments/check-flag`;
+    console.log(assignment);
+    const body = { flag: flagInput, challengeId: assignment.challenge.id};
+    setLoading(true);
+    const response = await request(url, "POST", body);
+    setLoading(false);
+    if(response && response.success) {
+      if(response.body.solved) {
+        setSolved(true);
+        toast.success('Flag is Correct, Good Job!');
+      } else {
+        toast.error('Flag is incorrect. Try again!');
+        setSolved(false);
+      }
     }
   };
 
@@ -464,7 +473,7 @@ export default function id() {
                   onClick={checkFlag}
                   className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
                 >
-                  Check Flag
+                {loading ? <><i className="fas fa-spinner fa-pulse"></i></>: 'Check Flag'}
                 </button>
 
                 {solved === true ? (
@@ -494,30 +503,31 @@ export default function id() {
                 <p className="mt-6 font-semibold text-white">HINTS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />
                 {hints.map((hint, idx) => {
-                  return (
-                    <div
-                      className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
-                      onClick={() => showHint(idx)}
-                      style={{
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <div>
-                        <p className="text-white">
-                          <span className="text-sm">
-                            Hint {idx + 1}: {hint.message}
-                          </span>
-                        </p>
-                      </div>
-                      <span className="mt-1 text-sm text-white">
-                        {assignment && assignment.challenge.hints[idx].penalty}{' '}
-                        points
-                      </span>
+                return (
+                  <div
+                    className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                    onClick={() => showHint(idx)}
+                    style={{
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      wordWrap: 'break-word',
+                    }}
+                  >
+                    <div style={{ maxWidth: '90%' }}>
+                      <p className="text-white">
+                        <span className="text-sm ">
+                          Hint {idx + 1}: {hint.message}
+                        </span>
+                      </p>
                     </div>
-                  );
-                })}
+                    <span className="mt-1 text-sm text-white">
+                      {assignment && assignment.challenge.hints[idx].penalty} points
+                    </span>
+                  </div>
+                );
+              })}
               </div>
               
 

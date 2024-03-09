@@ -15,8 +15,6 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function id() {
   const [open, setOpen] = useState(false);
-
-
   
   const router = useRouter();
   const [assignment, setAssignment] = useState(null);
@@ -33,12 +31,9 @@ export default function id() {
   const [role, setRole] = useState(null);
 
   const [kanaError, setKanaError] = useState(false);
-
-
   const [submissions, setSubmissions] = useState([]);
 
-
-  console.log(submission);
+  //const [challenge, setChallenge] = useState(null);
 
   // fetch kana log
   const fetchKanaLog = async (password, challengeId, uid, assignmentID) => {
@@ -153,12 +148,6 @@ export default function id() {
   useEffect(() => {
     if (!loading) {
       getJson();
-      console.log("penguins")
-      console.log(router.query.key)
-      if (router.query.key == "t") {
-        setRole("t");
-      }
-    
     }
   }, [loading]);
 
@@ -202,41 +191,32 @@ export default function id() {
     }
   }, []);
 
-
-  // NEW SUBMISSION LOGIC
-
-  const parseDate = (dateString) => {
-    const date = new Date(dateString);
-    const offsetInMinutes = date.getTimezoneOffset();
-    date.setMinutes(date.getMinutes() + offsetInMinutes);
-    function to12HourFormat(hour, minute) {
-      let period = hour >=  12 ? "PM" : "AM";
-      hour = hour %  12;
-      hour = hour ? hour :  12; // the hour '0' should be '12'
-      return hour + ":" + minute.toString().padStart(2, '0') + " " + period;
+  const authenticate = async (assignment) => {
+    const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
+    const data = await request(url, 'GET', null);
+    console.log(data);
+    if (data.body.isTeacher) {
+      setRole('t');
+      return true;
     }
-    const day = date.getDate();
-    const month = date.getMonth() +  1; // Months are  0-based in JavaScript
-    const year = date.getFullYear().toString().slice(-2);
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-    const time = to12HourFormat(hour, minute);
-    const formattedDate = `${month}/${day}/${year} ${time}`;
-    return formattedDate;
+    setRole('');
+    return data.body.isStudent;
   };
 
+  // NEW SUBMISSION LOGIC
   const getAssignment = async () => {
     const params = window.location.href.split('/');
     if (params.length < 5) {
       return;
     }
-    const url = `${baseUrl}/classroom-assignments/fetch-assignment/${params[4]}`;
+    const r = router.query.key == "t" ? "teacher" : "student";
+    const url = `${baseUrl}/classroom-assignments/fetch-assignment-${r}/${params[4]}`;
     const data = await request(url, 'GET', null);
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
         setAssignment(data.body);
-        getChallenge(data.body);
+        //getChallenge(data.body);
         await getSubmissions(data.body);
       } else {
         console.log('You are not apart of this class');
@@ -250,8 +230,6 @@ export default function id() {
     window.location.href = `/assignments/${assignment.id}/submissions/${id}?key=t`;
   };
 
-
-
   const getSubmissions = async (assignment) => {
     const url = `${baseUrl}/submission/getSubmissionsForTeachers/${assignment.classroom.id}/${assignment.id}`;
     const data = await request(url, 'GET', null);
@@ -264,12 +242,7 @@ export default function id() {
     }
   };
 
-  const authenticate = async (assignment) => {
-    const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
-    const data = await request(url, 'GET', null);
-    return data.success;
-  };
-
+  /*
   const getChallenge = async (assignment) => {
     try {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
@@ -281,8 +254,7 @@ export default function id() {
       console.log(err);
     }
   };
-
-
+  */
 
   return (
     <>
@@ -318,7 +290,7 @@ export default function id() {
                   {/* go back */}
                   {assignment && (
                     <a
-                      href={`/assignments/teacher/${assignment.id}`}
+                      href={`/assignments/${role ? "teacher" : "student"}/${assignment.id}`}
                       className="text-blue-600 mt-4 px-3  font-semibold bg-white  text-center rounded-lg hover:text-blue-600 hover:bg-gray-100 cursor-pointer"
                     >
                       Back to Assignment View

@@ -3,8 +3,11 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getCookie } from '@/utils/request';
+import { Transition, Dialog } from '@headlessui/react';
+import { Fragment } from 'react';
+import request from "@/utils/request";
 
 import {
   updatePassword,
@@ -32,6 +35,14 @@ export default function Dashboard() {
   const [security, setSecurity] = useState(false);
   const [preferences, setPreferences] = useState(false);
   const [billing, setbilling] = useState(false);
+  const [username, setUsername] = useState('');
+
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
+
+
 
   var pfpString = '';
   var pfpChanged = false;
@@ -39,8 +50,127 @@ export default function Dashboard() {
   const auth = getAuth();
   const user = auth.currentUser;
 
+  const handlePopupOpen = () => {
+    setIsPopupOpen(true);
+}
+
+
+const handlePopupClose = () => {
+    setIsPopupOpen(false);
+}
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+}
+
+
+const handleSaveChanges = async () => {
+    if (!selectedImage) {
+        console.log("No image selected");
+        setIsPopupOpen(false)
+        return;
+    }
+
+
+    // upload to firebase storage
+    try {
+        const storage = getStorage();
+        const metadata = {
+            contentType: 'image/jpeg',
+        };
+
+
+        const storageRef = ref(storage, `${email}/pictures/pfp`);
+        const uploadTask = uploadBytesResumable(storageRef, selectedImage, metadata)
+
+
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                // progress function
+                const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Upload is running');
+                        break;
+                }
+            },
+            (error) => {
+                switch (error.code) {
+                    case 'storage/unauthorized':
+                        console.log('User does not have permission to access the object');
+                        break;
+                    case 'storage/canceled':
+                        console.log('User canceled the upload');
+                        break;
+                    case 'storage/unknown':
+                        console.log('Unknown error occurred, inspect error.serverResponse');
+                        break;
+                }
+            },
+            async () => {
+                const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
+                console.log(imageUrl)
+                console.log(user);
+                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/updatePfp';
+                const body = { imageUrl }
+                const response = await request(endPoint, "POST", body);
+                console.log("Here is the result: ", response)
+                if (response.success) {
+                    console.log("profile picture uploaded successfully");
+                } else {
+                    console.log("Failed to upload profile picture");
+                }
+                window.location.reload();
+
+            }
+        );
+        setIsPopupOpen(false);
+
+
+    } catch (err) {
+        console.log(err);
+        console.log("An error occured while uploading profile picture");
+    }
+}
+
+const handleClick = () => {
+
+}
+
+
   useEffect(() => {
     const fileInput = document.getElementById('fileInput');
+
+    // set username
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('readystatechange', function () {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+        try {
+          if (document.getElementById('first-name')) {
+        
+            setUsername(JSON.parse(this.responseText).username);
+          }
+
+          
+
+       
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    });
+
+    xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.withCredentials = true;
+    xhr.send();
   }, []);
 
   function pfpChange() {
@@ -109,18 +239,11 @@ export default function Dashboard() {
 
             if (pfpString == '') {
             } else {
-              document.getElementById('pfp').src = pfpString;
+            //  document.getElementById('pfp').src = pfpString;
             }
+            
 
-            if (JSON.parse(this.responseText).profileImage == '') {
-              document.getElementById('pfp').src = `https://robohash.org/${
-                document.getElementById('username').value
-              }.png?set=set1&size=150x150`;
-            } else {
-              document.getElementById('pfp').src = JSON.parse(
-                this.responseText
-              ).profileImage;
-            }
+          
           } catch (e) {
             console.log(e);
           }
@@ -230,77 +353,6 @@ export default function Dashboard() {
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
-    if (pfpChanged) {
-      var xhr = new XMLHttpRequest();
-      xhr.addEventListener('readystatechange', function () {
-        if (this.readyState === 4) {
-          const file = document.getElementById('fileInput').files[0];
-          const storage = getStorage();
-          const storageRef = ref(
-            storage,
-            JSON.parse(this.responseText).email + '/pictures/' + 'pfp'
-          );
-
-          uploadBytes(storageRef, file).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then((downloadURL) => {
-              document.getElementById('pfp').src = downloadURL;
-              console.log(downloadURL);
-
-              var firstName = document.getElementById('first-name').value;
-              var lastName = document.getElementById('last-name').value;
-              var bio = document.getElementById('bio').value;
-              var github = document.getElementById('url').value;
-              var location = document.getElementById('location').value;
-
-              var data = {};
-              if (bio !== '') {
-                data.bio = bio;
-              }
-              if (github !== '') {
-                data.githubUrl = github;
-              }
-              if (firstName !== '') {
-                data.firstName = firstName;
-              }
-              if (lastName !== '') {
-                data.lastName = lastName;
-              }
-              if (location !== '') {
-                data.location = location;
-              }
-              if (downloadURL !== '') {
-                data.profileImage = downloadURL;
-              }
-
-              var gooddata = JSON.stringify(data);
-
-              var xhr = new XMLHttpRequest();
-
-              xhr.addEventListener('readystatechange', function () {
-                if (this.readyState === 4) {
-                  console.log(this.responseText);
-                  document.getElementById('save').innerHTML = 'Save';
-                }
-              });
-
-              xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-              xhr.setRequestHeader('Content-Type', 'application/json');
-              let token = getCookie();
-              xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-              xhr.withCredentials = true;
-
-              xhr.send(gooddata);
-            });
-          });
-        }
-      });
-
-      xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-      let token = getCookie();
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-      xhr.withCredentials = true;
-      xhr.send();
-    } else {
       var firstName = document.getElementById('first-name').value;
       var lastName = document.getElementById('last-name').value;
       var bio = document.getElementById('bio').value;
@@ -330,7 +382,7 @@ export default function Dashboard() {
       xhr.setRequestHeader('Authorization', 'Bearer ' + token);
       xhr.withCredentials = true;
       xhr.send(data);
-    }
+    
   }
 
   function savePreferences() {
@@ -552,37 +604,34 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="blur-sm sm:col-span-6 ">
+                    <div className=" sm:col-span-6 ">
                       <label
                         htmlFor="photo"
                         className="block flex text-sm font-medium leading-6 text-white"
                       >
-                        Photo (Experimental)
+                        Profile Picture
                       </label>
                       <div className="mt-2 flex items-center">
                         <img
                           className="inline-block h-12 w-12 rounded-full"
                           id="pfp"
-                          src=""
+                          src={
+                            pfp
+                          }
                           alt="photo"
                         />
-                        <div className="relative ml-4">
                           <input
-                            onChange={pfpChange}
-                            id="fileInput"
-                            name="user-photo"
-                            type="file"
-                            className="peer absolute inset-0 h-full w-full rounded-md opacity-0"
-                            disabled
-                          />
-                          <label
-                            htmlFor="user-photo"
-                            className="bg-neutral cursor:pointer pointer-events-none block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 peer-hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
-                          >
-                            <span>Change</span>
-                            <span className="sr-only"> user photo</span>
-                          </label>
-                        </div>
+                                                        className="hidden"
+                                                        type="file"
+                                                        id="profileImageInput"
+                                                        onChange={handleImageChange}
+                                                        accept="image/*"
+                                                    />
+
+                        <button onClick={() => handlePopupOpen()} className="ml-4 bg-neutral cursor:pointer  block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600">
+                          Change
+                        </button>
+                      
                       </div>
                     </div>
 
@@ -1007,6 +1056,122 @@ export default function Dashboard() {
                       </select>
                     </div>
                   </div>
+
+ {/* PROFILE PICTURE POP-UP */}
+
+          <Transition.Root show={isPopupOpen} as={Fragment}>
+            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
+
+
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                            >
+                                <div onClick={() => {
+                                    handlePopupClose()
+                                    localStorage.setItem("22-18-update", false)
+                                }}
+                                    className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
+                            </Transition.Child>
+                            <div className="flex items-end justify-center min-h-screen pt-4 px-4 text-center sm:block sm:p-0">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                >
+                                    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="max-w-6xl relative inline-block align-bottom w-5/6 pb-10 pt-10 bg-gray-900 border border-gray-700 rounded-lg px-20 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
+                                        <div>
+                                            <div className="mt-3 sm:mt-5">
+                                                <h1 className="text-white text-4xl text-center pb-10">Change Profile Picture</h1>
+                                                <div className="grid grid-cols-2 flex justify-center items-center">
+                                                    <div className="mx-20 h-80 w-80 flex items-center justify-center">
+                                                        <div className="mx-10">
+                                                            <img
+                                                                className="h-48 w-48 border border-neutral-800 rounded-full sm:h-48 sm:w-48"
+                                                                src={pfp}
+                                                                alt=""
+                                                            />
+                                                            <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
+                                                                Current Profile Picture
+                                                            </h1>
+                                                        </div>
+                                                    </div>
+                                                    {/* INPUT BOX */}
+                                                    <div
+                                                        className="h-72 w-80 border border-neutral-800 mx-20 relative rounded-lg p-4 text-center cursor-pointer flex items-center justify-center"
+                                                        onClick={handleClick}
+                                                        onDrop={handleImageChange}
+                                                        onDragOver={handleImageChange}
+                                                    >
+                                                        <label htmlFor="profileImageInput">
+                                                            {selectedImage ? (
+                                                                <div>
+                                                                    <img
+                                                                        src={URL.createObjectURL(selectedImage)}
+                                                                        alt="Selected Profile Picture"
+                                                                        className="mx-auto h-48 w-48 object-cover rounded-full"
+                                                                    />
+                                                                    <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
+                                                                        New Profile Picture
+                                                                    </h1>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="">
+                                                                    <svg
+                                                                        className="mx-auto h-12 w-12 text-gray-400"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        viewBox="0 0 24 24"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            strokeWidth="2"
+                                                                            d="M12 4v16m8-8H4"
+                                                                        />
+                                                                    </svg>
+                                                                    <p className="mt-5 text-sm text-gray-600">Click here or Drag an Image!</p>
+                                                                </div>
+                                                            )}
+                                                        </label>
+                                                    </div>
+                                                    <input
+                                                        className="hidden"
+                                                        type="file"
+                                                        id="profileImageInput"
+                                                        onChange={handleImageChange}
+                                                        accept="image/*"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-2 pt-5">
+                                                    <div className="flex items-center justify-end">
+                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-neutral-800 hover:text-neutral-500"
+                                                            onClick={() => handlePopupClose()}>Close
+                                                        </button>
+                                                    </div>
+                                                    <div className="flex items-center justify-start">
+                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-green-900 hover:text-neutral-500"
+                                                            onClick={() => handleSaveChanges()}>Save
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Transition.Child>
+                            </div>
+                        </Dialog>
+                    </Transition.Root>
+                
 
                   <div className="flex justify-end gap-x-3 pt-8">
                     <button

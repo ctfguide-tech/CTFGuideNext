@@ -37,7 +37,7 @@ const NotFound = () => {
           <div className='grid-cols-1 grid'>
             <div>
 
-            <img width="200" src="ctfguide404WithLogo.png" className='mx-auto text-center mt-10'></img>
+            <img width="200" src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/ctfguide404WithLogo.png`} className='mx-auto text-center mt-10'></img>
               <h1 className='text-white text-xl mt-4'>Uh, oh. We looked everywhere and couldn't find that page.</h1>
 
               <div className='bg-black  text-white text-left   px-4 py-4 mt-4'>
@@ -60,7 +60,7 @@ const NotFound = () => {
               </div>
 
 
-              <img width="500" src="Kana404.png" className='mx-auto text-center mt-10'></img>
+              <img width="500" src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/Kana404.png`} className='mx-auto text-center mt-10'></img>
 
               <span
                 onClick={() => router.back()}
