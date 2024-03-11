@@ -66,6 +66,8 @@ export default function Users() {
 
     const [activity, setActivity] = useState([]);
 
+    const [isAdmin, setIsAdmin] = useState(false);
+
     const [friendedUser, setFriendedUser] = useState(null);
     const [pendingRequest, setPendingRequest] = useState(null);
     const [friendList, setFriendList] = useState(null);
@@ -392,6 +394,11 @@ export default function Users() {
                 setRank(result.leaderboardNum);
                 setEmail(result.email);
                 setUserData(result);
+
+                if (result.role === "ADMIN") {
+                    setIsAdmin(true);
+                }
+
                 console.log("USERDATA: " + result)
                 result.username == localStorage.getItem('username') ? setOwnUser(true) : setOwnUser(false);
                 result.location === '????' ? setLocation(null) : setLocation(result.location);
@@ -936,9 +943,8 @@ export default function Users() {
                                             <div>
 
 
-                                                <p className="text-red-600 font-bold text-lg">
-                                                    {/* <i class="fas fa-solid fa-user-shield mt-2"> </i>{' '}
-                                                    ADMIN */}
+                                                <p className="text-blue-600 font-bold text-md">
+                                                  {isAdmin && <span> <i class="fas fa-check-circle"></i>  CTFGuide Employee</span> }
                                                 </p>
 
 
