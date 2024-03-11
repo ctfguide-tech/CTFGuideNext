@@ -46,6 +46,8 @@
       NO_PLACE,
     ]);
 
+    const [loading, setLoading] = useState(true);
+
     const [award, setAward] = useState('');
     const [terminalUsername, setTerminalUsername] = useState('...');
     const [terminalPassword, setTerminalPassword] = useState('...');
@@ -113,21 +115,14 @@
       const { difficulty } = result.body;
       setChallenge(result.body);
       setDifficulty(difficulty);
+      setLoading(false);
     };
 
     const fetchLikeUrl = async () => {
       try {
         const userLikesUrl = localStorage.getItem('userLikesUrl');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include'
-        };
-        const response = await fetch(userLikesUrl, requestOptions);
-        const result = await response.json();
-        const likes = result.filter((item) => {
+        const response = await request(userLikesUrl, 'GET', null);
+        const likes = response.filter((item) => {
           return item.challenge.slug === slug;
         });
       } catch (err) {
@@ -137,13 +132,13 @@
 
     useEffect(() => {
       if (id) {
+        getChallengeData();
         fetchLeaderboard();
         //fetchComments();
         if (challenge.upvotes) {
           setLikeCount(challenge.upvotes);
         }
         fetchLikeUrl();
-        getChallengeData();
       }
       const award = localStorage.getItem('award');
       if (award) {
@@ -435,6 +430,14 @@
                   Challenge Description{' '}
                 </h1>
               </div>
+
+              {
+                loading && ( 
+                  <div className="flex place-items-center">
+                    <i className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-neutral-800"></i>
+                  </div>
+                )
+              }
 
               <div className="flex">
                 <button

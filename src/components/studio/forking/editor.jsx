@@ -8,12 +8,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
-import  fileApi  from '@/utils/file-api';
+import  fileApi, { getNewFileIds, getFileName } from '@/utils/file-api';
 
 const auth = getAuth();
 
 const Editor = (props) => {
-  console.log(props);
   const router = useRouter();
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
@@ -29,6 +28,7 @@ const Editor = (props) => {
   const [errMessage, setErrMessage] = useState('');
   const [penaltyErr, setPenaltyErr] = useState('');
   const [username, setUsername] = useState('anonymous');
+  const [existingFiles, setExistingFiles] = useState([]);
 
   const [existingConfig, setExistingConfig] = useState('');
   const [newConfig, setNewConfig] = useState('');
@@ -46,30 +46,38 @@ const Editor = (props) => {
     return true;
   };
 
-  const sendToFileApi = async () => {
-    const isValid = await validateNewChallege();
-    if (isValid) {
-      setIsCreating(true);
-      if (!selectedFile) {
-        await uploadChallenge('');
-        return;
-      } else {
-        const token = await auth.currentUser.accessToken;
-        const fileId = await fileApi(token, selectedFile);
-        if(fileId !== null) {
-          await uploadChallenge(fileId);
-        } else {
-          toast.error('Something went wrong with the file upload');
-        }
-      }
-    } else {
-      console.warn('Either the file, toke, or challenge is invalid');
+  const submitChallenge = async () => {
+    if(!validateNewChallege()) {
+      return;
     }
+    const token = await auth.currentUser.accessToken;
+    setIsCreating(true);
+    let fileIds = [];
+    const originalFileIds = existingFiles.filter((file) => file.using).map((file) => file.fileId);
+
+    if(originalFileIds.length > 0) { // if og challenge has existing files
+      const res = await getNewFileIds(originalFileIds, token); // copy them
+      if(res !== null) { // if the copy was successful
+        fileIds = res; // set the fileIds to the new ones
+      } else {
+        toast.error('Something went wrong with the file upload');
+        return;
+      }
+    }
+    if (selectedFile) { // if they added a file
+      const fileId = await fileApi(token, selectedFile);
+      if (fileId !== null) { // if the upload was successful
+        fileIds.push(fileId); // add it to the list
+      } else {
+        toast.error('Something went wrong with the file upload');
+        return;
+      }
+    }
+    await uploadChallenge(fileIds);
   };
 
-  const uploadChallenge = async (fileId) => {
+  const uploadChallenge = async (fileIds) => {
     const classCode = window.location.href.split('/')[4];
-
     const exConfig = existingConfig.replace('\n', ' && ');
     const nConfig = newConfig.replace('\n', ' && ');
     let finalConfig = '';
@@ -88,7 +96,7 @@ const Editor = (props) => {
       difficulty,
       category,
       commands: finalConfig,
-      fileId: fileId,
+      fileIds: fileIds,
     };
 
     const body = {
@@ -98,13 +106,14 @@ const Editor = (props) => {
       username: localStorage.getItem('username'),
     };
 
-    console.log(body.assignmentInfo);
-
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment/${classCode}`;
+    const url = 
+      `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-fork-assignment/${classCode}`;
     const data = await request(url, 'POST', body);
 
     if (data && data.success) {
       window.location.href = ``; 
+    } else {
+      toast.error('Something went wrong with the challenge creation, try again');
     }
   };
 
@@ -123,6 +132,15 @@ const Editor = (props) => {
         setCategory(data.body.category);
         setExistingConfig(data.body.commands.replace(' && ', '\n'));
         setPenalty(data.body.hintsPenalty);
+
+        let tmp = [];
+        for (let i = 0; i < data.body.fileIds.length; i++) {
+          const name = await getFileName(data.body.fileIds[i]);
+          console.log(name);
+          tmp.push({ name: name || "File " + i, 
+            using: true, fileId: data.body.fileIds[i] });
+        }
+        setExistingFiles(tmp);
       }
 
       return true;
@@ -380,9 +398,74 @@ const Editor = (props) => {
           </div>
 
           <div className="px-5 py-1">
-            <h1>Import files from your computer</h1>
 
-            <label className="mt-4 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div className="flex">
+            <h1>Existing Challenge Files </h1>
+            <h1 style={{marginLeft:"35%"}}>Import files from your computer</h1>
+            </div>
+          <div className="flex">
+              <label 
+                style={{padding: "10px", width: "50%", overflowY: "auto"}}
+
+                className="mt-4 grid grid-cols-2 grid-flow-row h-32 gap-4 appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
+                {existingFiles && existingFiles.length === 0 && (
+                    <h1 className="text-white">No files attached</h1>
+                )}
+                {existingFiles && existingFiles.map((file, idx) => {
+                  if(file.name.length > 28) {
+                    file.name = file.name.substring(0, 28) + "...";
+                  }
+                  return(
+                  <div
+                    key={idx}
+                    style={{maxHeight: "35px"}}
+                    onClick={() => {
+                        let tmp = [...existingFiles];
+                        tmp[idx].using = !tmp[idx].using;
+                        setExistingFiles(tmp);
+                      }}
+                    className="cursor-pointer rounded-lg bg-neutral-700 px-4 py-1 mb-2 text-white hover:bg-neutral-500/40">
+                    <h1 className="flex">
+                      {file.name}{' '}
+                      {file.using ? (
+                        <div className="ml-auto">
+                          <i
+                            title="Completed!"
+                            className="fas fa-check text-green-500"
+                          ></i>
+                        </div>
+                      ) : (
+                          <div className="ml-auto">
+                            <i
+                              title="Incomplete!"
+                                className="fas fa-times text-red-500"
+                            ></i>
+                          </div>
+                        )}
+                    </h1>
+                  </div>
+                  )})}
+              </label>
+
+
+            <label className="mt-4 flex h-32 w-1/2 cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
               <span className="flex items-center space-x-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -411,16 +494,36 @@ const Editor = (props) => {
               <input
                 style={{
                   position: 'absolute',
-                  width: '57%',
+                  width: '40%',
                   backgroundColor: 'yellow',
                   height: '13%',
                 }}
                 onChange={(e) => handleFileChange(e)}
                 type="file"
                 name="file_upload"
-                class="hidden"
+                  className="hidden"
               />
             </label>
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <div className="bg-neutral-850 mb-10 mt-10 rounded-lg border border-neutral-500 px-4 py-2 text-white">
               <b>🗒️ A note about file uploads</b>
@@ -432,7 +535,7 @@ const Editor = (props) => {
         </div>
 
         <button
-          onClick={sendToFileApi}
+          onClick={submitChallenge}
           disabled={isCreating}
           className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
         >
