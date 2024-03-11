@@ -112,6 +112,7 @@ export function StandardNav() {
       const result = await request(endPoint, 'GET', null);
       if (!result || !result.length) return;
 
+      console.log("Here is the result");
       console.log(result);
 
       setNotificationData(

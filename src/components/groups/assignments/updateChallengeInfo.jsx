@@ -9,8 +9,8 @@ import request from '@/utils/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import fileApi, { deleteFiles, getFileName } from '@/utils/file-api';
 import { getAuth } from 'firebase/auth';
-import  fileApi  from '@/utils/file-api';
 
 const auth = getAuth();
 
@@ -29,6 +29,8 @@ const Editor = (props) => {
   const [errMessage, setErrMessage] = useState('');
   const [penaltyErr, setPenaltyErr] = useState('');
   const [username, setUsername] = useState('anonymous');
+
+  const [existingFiles, setExistingFiles] = useState([]);
 
   const [existingConfig, setExistingConfig] = useState('');
   const [newConfig, setNewConfig] = useState('');
@@ -50,26 +52,41 @@ const Editor = (props) => {
   };
 
   const sendToFileApi = async () => {
-    await uploadChallenge([]);
-    return;
-    const isValid = await validateNewChallege();
-    if (isValid) {
-      setIsCreating(true);
-      if (!selectedFile) {
-        await uploadChallenge('');
-        return;
-      } else {
-        const token = await auth.currentUser.accessToken;
-        const fileId = await fileApi(token, selectedFile);
-        if(fileId !== null) {
-          await uploadChallenge(fileId);
-        } else {
-          toast.error('Something went wrong with the file upload');
-        }
-      }
-    } else {
-      console.warn('Either the file, toke, or challenge is invalid');
+    if(!validateNewChallege()) {
+      return;
     }
+
+    const token = await auth.currentUser.accessToken;
+    setIsCreating(true);
+    let fileIds = [];
+    let idsToDelete = [];
+
+    for(let i = 0; i < existingFiles.length; i++) {
+      if(existingFiles[i].using) {
+        fileIds.push(existingFiles[i].fileId);
+      } else {
+        idsToDelete.push(existingFiles[i].fileId);
+      }
+    }
+
+    if(idsToDelete.length > 0) {
+      const res = await deleteFiles(idsToDelete, token);
+      if(!res) {
+        toast.error('Something went wrong with the file upload');
+        return;
+      }
+    }
+
+    if (selectedFile) {
+      const fileId = await fileApi(token, selectedFile);
+      if (fileId !== null) {
+        fileIds.push(fileId);
+      } else {
+        toast.error('Something went wrong with the file upload');
+        return;
+      }
+    }
+    await uploadChallenge(fileIds);
   };
 
   const uploadChallenge = async (fileIds) => {
@@ -97,7 +114,6 @@ const Editor = (props) => {
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/update-assignment-challenge`;
     const data = await request(url, 'POST', challengeInfo);
-    //console.log(data);
 
     if (data && data.success) {
       window.location.href = ``; 
@@ -108,13 +124,12 @@ const Editor = (props) => {
   async function loadSolution() {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/solution/${props.challenge.id}/${props.classCode}`;
     const data = await request(url, 'GET', null);
-    console.log(data);
     if (data && data.success) {
       setSolution(data.body.keyword);
     }
   }
 
-  function loadProps() {
+  async function loadProps() {
     setClassCode(props.classCode);
     setHints(props.challenge.hints);
     setContentPreview(props.challenge.content);
@@ -133,12 +148,19 @@ const Editor = (props) => {
       hintMessage.push(h[i].message);
       hintPoints.push(h[i].penalty);
     }
+
+    let tmp = [];
+    for (let i = 0; i < props.challenge.fileIds.length; i++) {
+      const name = await getFileName(props.challenge.fileIds[i]);
+      tmp.push({ name: name || "File " + i, 
+        using: true, fileId: props.challenge.fileIds[i] });
+    }
+    setExistingFiles(tmp);
+
     setPenalty(hintPoints);
     setHints(hintMessage);
     loadSolution();
   }
-
-  console.log(hints);
 
   useEffect(() => {
     setUsername(localStorage.getItem('username'));
@@ -416,10 +438,66 @@ const Editor = (props) => {
             <br></br>
           </div>
 
-          <div className="px-5 py-1">
-            <h1>Import files from your computer</h1>
 
-            <label className="mt-4 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
+
+
+
+
+
+
+
+          
+            <div className="flex px-5">
+            <h1>Existing Challenge Files </h1>
+            <h1 style={{marginLeft:"35%"}}>Import files from your computer</h1>
+            </div>
+          <div className="px-5 py-1">
+            <div className="flex">
+
+              <label 
+                style={{padding: "10px", width: "50%", overflowY: "auto"}}
+
+                className="mt-4 grid grid-cols-2 grid-flow-row h-32 gap-4 appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
+                {existingFiles && existingFiles.length === 0 && (
+                    <h1 className="text-white">No files attached</h1>
+                )}
+                {existingFiles && existingFiles.map((file, idx) => {
+                  if(file.name.length > 28) {
+                    file.name = file.name.substring(0, 28) + "...";
+                  }
+                  return(
+                  <div
+                    key={idx}
+                    style={{maxHeight: "35px"}}
+                    onClick={() => {
+                        let tmp = [...existingFiles];
+                        tmp[idx].using = !tmp[idx].using;
+                        setExistingFiles(tmp);
+                      }}
+                    className="cursor-pointer rounded-lg bg-neutral-700 px-4 py-1 mb-2 text-white hover:bg-neutral-500/40">
+                    <h1 className="flex">
+                      {file.name}{' '}
+                      {file.using ? (
+                        <div className="ml-auto">
+                          <i
+                            title="Completed!"
+                            className="fas fa-check text-green-500"
+                          ></i>
+                        </div>
+                      ) : (
+                          <div className="ml-auto">
+                            <i
+                              title="Incomplete!"
+                                className="fas fa-times text-red-500"
+                            ></i>
+                          </div>
+                        )}
+                    </h1>
+                  </div>
+                  )})}
+              </label>
+
+            <label className="mt-4 flex h-32 w-1/2 cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
               <span className="flex items-center space-x-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -448,16 +526,18 @@ const Editor = (props) => {
               <input
                 style={{
                   position: 'absolute',
-                  width: '57%',
+                  width: '40%',
                   backgroundColor: 'yellow',
                   height: '13%',
                 }}
                 onChange={(e) => handleFileChange(e)}
                 type="file"
                 name="file_upload"
-                class="hidden"
+                  className="hidden"
               />
             </label>
+            </div>
+
 
             <div className="bg-neutral-850 mb-10 mt-10 rounded-lg border border-neutral-500 px-4 py-2 text-white">
               <b>🗒️ A note about file uploads</b>
@@ -468,10 +548,25 @@ const Editor = (props) => {
           </div>
         </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <button
           onClick={sendToFileApi}
           disabled={isCreating}
           className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
+          style={{margin: "10px"}}
         >
           <i class="fas fa-send"></i> { isCreating? "Updating..." : "Update Challenge" }
         </button>
