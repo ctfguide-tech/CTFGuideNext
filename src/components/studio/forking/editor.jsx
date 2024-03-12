@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
-import  fileApi, { getNewFileIds, getFileName } from '@/utils/file-api';
+import fileApi, {getNewFileIds, getFileName, getFile } from '@/utils/file-api';
 
 const auth = getAuth();
 
@@ -117,6 +117,10 @@ const Editor = (props) => {
     }
   };
 
+  const downloadFile = async (fileId, filename) => {
+    await getFile(fileId, filename);
+  }
+
   const getChallenge = async (isDefault, idName) => {
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/basicInfo/${idName}`;
@@ -136,7 +140,6 @@ const Editor = (props) => {
         let tmp = [];
         for (let i = 0; i < data.body.fileIds.length; i++) {
           const name = await getFileName(data.body.fileIds[i]);
-          console.log(name);
           tmp.push({ name: name || "File " + i, 
             using: true, fileId: data.body.fileIds[i] });
         }
@@ -429,37 +432,48 @@ const Editor = (props) => {
                     <h1 className="text-white">No files attached</h1>
                 )}
                 {existingFiles && existingFiles.map((file, idx) => {
-                  if(file.name.length > 28) {
-                    file.name = file.name.substring(0, 28) + "...";
+                  if(file.name.length > 24) {
+                    file.name = file.name.substring(0, 24) + "...";
                   }
                   return(
                   <div
                     key={idx}
-                    style={{maxHeight: "35px"}}
-                    onClick={() => {
-                        let tmp = [...existingFiles];
-                        tmp[idx].using = !tmp[idx].using;
-                        setExistingFiles(tmp);
-                      }}
-                    className="cursor-pointer rounded-lg bg-neutral-700 px-4 py-1 mb-2 text-white hover:bg-neutral-500/40">
+                    style={{maxHeight: "35px", fontSize: "13px"}}
+                    className="rounded-lg bg-neutral-700 px-4 py-2 mb-2 text-white hover:bg-neutral-500/40">
                     <h1 className="flex">
-                      {file.name}{' '}
-                      {file.using ? (
-                        <div className="ml-auto">
-                          <i
-                            title="Completed!"
-                            className="fas fa-check text-green-500"
-                          ></i>
-                        </div>
-                      ) : (
-                          <div className="ml-auto">
+                      <span
+                          className="cursor-pointer hover:text-white-500"
+                          onClick={() => {
+                            let tmp = [...existingFiles];
+                            tmp[idx].using = !tmp[idx].using;
+                            setExistingFiles(tmp);
+                          }}
+                        >{file.name}{' '}</span>
+                        <div className="py px-2">
+                        {
+                          file.using ? (
                             <i
-                              title="Incomplete!"
-                                className="fas fa-times text-red-500"
+                              style={{fontSize: "15px"}}
+                              title="Completed!"
+                              className="fas fa-check text-green-500"
                             ></i>
-                          </div>
-                        )}
-                    </h1>
+                          ) : (
+                            <i
+                              style={{fontSize: "15px"}}
+                              title="Incomplete!"
+                              className="fas fa-times text-red-500"
+                            ></i>
+                          )
+                        }
+                        </div>
+                        <div className="ml-auto">
+                          <i 
+                            style={{fontSize: "15px"}}
+                            onClick={() => downloadFile(file.fileId, file.name)} 
+                            className="cursor-pointer fas fa-download text-green-500 px-3">
+                          </i>
+                        </div>
+                      </h1>
                   </div>
                   )})}
               </label>

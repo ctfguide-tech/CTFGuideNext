@@ -1,18 +1,37 @@
 
-export const getFile = async (fileId) => {
-  const url = `${process.env.NEXT_PUBLIC_TERM_URL}/upload/getFile?fileID=${fileId}`;
+export const getFile = async (fileId, filename) => {
+  const url = `${process.env.NEXT_PUBLIC_TERM_URL}files/get?fileID=${fileId}`;
   const requestOptions = {
     method: 'GET', 
+    headers: {"Content-Type": "application/json"},
   };
   const response = await fetch(url, requestOptions);
-  console.log('response', response);
-  //return response;
+
+  if(!response.ok) {
+    console.error('Error during file download:', response);
+    return;
+  }
+
+  const blob = await response.blob();
+
+  const tempLink = document.createElement('a');
+  tempLink.href = URL.createObjectURL(blob);
+  tempLink.setAttribute('download', filename);
+  tempLink.style.display = 'none';
+  document.body.appendChild(tempLink);
+  tempLink.click();
+  document.body.removeChild(tempLink);
+
+  setTimeout(() => {
+    URL.revokeObjectURL(tempLink.href);
+  }, 100);
 }
 
 export const getFileName = async (fileId) => {
   const url = `${process.env.NEXT_PUBLIC_TERM_URL}/upload/getFileName?fileID=${fileId}`;
   const requestOptions = {
     method: 'GET', 
+    headers: {"Content-Type": "application/json"},
   };
   const response = await fetch(url, requestOptions);
 
@@ -43,11 +62,11 @@ export const getNewFileIds = async (oldFileIds, token) => {
 
   const requestOptions = {
     method: 'POST', 
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify(body),
   };
 
   const response = await fetch(url, requestOptions);
-  console.log('response', response);
 
   if(!response.ok) {
     console.error('Error during file duplication:', response);
@@ -66,8 +85,10 @@ export const getNewFileIds = async (oldFileIds, token) => {
     data.push(fileId);
     result = await reader.read();
   }
-  console.log('data', data);
-  return data;
+
+  const fileIds = JSON.parse(data);
+  const backToStringIds = fileIds.map((id) => id.toString());
+  return backToStringIds;
 }
 
 export const deleteFiles = async (fileIds, token) => {
@@ -76,11 +97,12 @@ export const deleteFiles = async (fileIds, token) => {
 
   const requestOptions = {
     method: 'POST', 
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({ fileIDs: parsedIds, jwtToken: token}),
   };
 
   const response = await fetch(url, requestOptions);
-  console.log('response', response);
+  //console.log('response', response);
   return response.ok;
 };
 
