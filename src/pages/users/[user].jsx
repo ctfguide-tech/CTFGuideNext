@@ -48,6 +48,9 @@ const shades = [
 export default function Users() {
     const router = useRouter();
     const { user } = router.query;
+if (!user) {
+    return window.location.href = '/404';
+}
 
 
     let invalidUser = null;

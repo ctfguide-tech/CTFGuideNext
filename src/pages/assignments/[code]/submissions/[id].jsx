@@ -298,12 +298,7 @@ export default function id() {
                   )}
 
                 </div>
-                <a
-                    href="/groups/{classroom.id}/home"
-                    className=" text-neutral-200 hover:text-neutral-500 ml-auto " 
-                  >
-                    <i className="fas fa-long-arrow-alt-left text-white"></i> <span className='text-white'>Return Home</span>
-                  </a>
+                
                 <div className="ml-auto">
                   <div className="rounded-md bg-white px-3 py-1 text-center gap-y-0">
                     <h1 className="text-4xl font-bold text-blue-600 text-center mb-0 pb-0 ">
