@@ -126,6 +126,7 @@ export default function Slug() {
         setChallenge(data.body.challenge);
       } else {
         console.log('You are not apart of this class');
+        router.push('/groups');
       }
     }
   };

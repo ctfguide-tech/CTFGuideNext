@@ -92,7 +92,6 @@ export function StandardNav() {
           try {
               const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
               const result = await request(endPoint, "GET", null);
-              console.log(result)
               if (result) {
                   setPfp(result)
               } else {

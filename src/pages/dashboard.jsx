@@ -36,7 +36,6 @@ export default function Dashboard() {
           `${localStorage.getItem('userBadgesUrl')}`
         );
         const data = await response.json();
-        console.log(data);
         setbadges(data);
       } catch {}
     };
@@ -48,7 +47,6 @@ export default function Dashboard() {
           `${localStorage.getItem('userChallengesUrl')}`
         );
         const data = await response.json();
-        console.log(data);
         setchallenges(data);
       } catch (error) {}
     };
