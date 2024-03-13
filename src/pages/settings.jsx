@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import SettingsNav from '@/components/settings/SettingsNav';
+import SettingsSection from '@/components/settings/SettingsSection';
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect } from 'react';
@@ -470,111 +472,7 @@ const handleClick = () => {
       })
       .catch((error) => {
         document.getElementById('saveSecurity').innerText = 'Save';
-        window.alert(error);
-      });
-  }
-
-  return (
-    <>
-      <Head>
-        <title>User Settings</title>
-        <meta
-          name="description"
-          content="Cybersecurity made easy for everyone"
-        />
-        <style>
-          @import
-          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-        </style>
-      </Head>
-
-      <StandardNav />
-
-      {general && (
-        <div id="general" className="">
-          <div className="mx-auto flex max-w-6xl">
-            <div
-              className="  mt-10 flex-none border-r pl-10 pr-10 text-gray-900"
-              style={{ borderColor: '#212121' }}
-            >
-              <ul className="mr-2 py-2">
-                <li className="py-1">
-                  <a
-                    href="../settings"
-                    className="px-2 py-2 text-lg  font-medium text-white"
-                  >
-                    {' '}
-                    General
-                  </a>
-                </li>
-                <li className="py-1 ">
-                  <a
-                    href="../settings?loc=security"
-                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
-                  >
-                    Security
-                  </a>
-                </li>
-                <li className="py-1 ">
-                  <a
-                    href="../settings?loc=preferences"
-                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
-                  >
-                    Email Preferences
-                  </a>
-                </li>
-                <li className="py-1 ">
-                  <a
-                    href="../settings?loc=billing"
-                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
-                  >
-                    Billing
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex-1 xl:overflow-y-auto">
-              <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-                <h1 className="text-3xl font-bold tracking-tight text-white">
-                  General
-                </h1>
-
-                <div className="mt-6 space-y-8 ">
-                  <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
-                    <div className="sm:col-span-6">
-                      <h2 className="text-xl font-medium text-white">
-                        Profile
-                      </h2>
-                      <p className="mt-1 text-sm text-white">
-                        This information will be displayed publicly so be
-                        careful what you share.
-                      </p>
-                    </div>
-
-                    <div className="sm:col-span-3">
-                      <label
-                        htmlFor="first-name"
-                        className="block text-sm font-medium leading-6 text-white"
-                      >
-                        First name
-                      </label>
-                      <input
-                        type="text"
-                        name="first-name"
-                        id="first-name"
-                        autoComplete="given-name"
-                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-3">
-                      <label
-                        htmlFor="last-name"
-                        className="block text-sm font-medium leading-6 text-white"
-                      >
-                        Last name
-                      </label>
+      <SettingsNav />
                       <input
                         type="text"
                         name="last-name"
