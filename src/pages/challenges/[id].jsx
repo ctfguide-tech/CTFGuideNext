@@ -178,6 +178,9 @@
       }
     };
 
+    const fetchTerminal = async () => {
+    };
+
     const submitFlag = async () => {
       const slug = challenge.slug;
       // console.log(flag.length);

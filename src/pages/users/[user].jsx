@@ -25,7 +25,6 @@ import Badge from '@/components/profile/Badge.jsx';
 import { SideNavContent } from '@/components/dashboard/SideNavContents';
 import { RightSideFiller } from '@/components/dashboard/RightSideFiller';
 import Skeleton from 'react-loading-skeleton';
-import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import useRef from 'react';
 import { Transition, Dialog } from '@headlessui/react';
@@ -48,10 +47,10 @@ const shades = [
 export default function Users() {
     const router = useRouter();
     const { user } = router.query;
-if (!user) {
-    return window.location.href = '/404';
-}
 
+  if(!user && router.isReady) {
+    router.push('/404');
+  }
 
     let invalidUser = null;
     const [ownUser, setOwnUser] = useState(false);
