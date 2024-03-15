@@ -7,6 +7,7 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import  fileApi  from '@/utils/file-api';
+import { getAuth } from 'firebase/auth';
 import request from '@/utils/request';
 
 const styles = {
@@ -17,6 +18,8 @@ const styles = {
   h5: { fontSize: '1.4rem' },
   h6: { fontSize: '1.2rem' },
 };
+
+const auth = getAuth();
 
 export default function Createchall(props) {
   const pages = [

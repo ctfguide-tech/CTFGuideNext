@@ -110,7 +110,7 @@ export default function id() {
         await getSubmissions(data.body);
       } else {
         console.log('You are not apart of this class');
-        window.location.href = '/groups';
+        router.push('/groups');
       }
     }
   };

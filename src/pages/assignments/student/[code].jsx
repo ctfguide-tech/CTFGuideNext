@@ -51,6 +51,7 @@ export default function Slug() {
   const [open, setOpen] = useState(true);
   const [terminalPopup, setTerminalPopup] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
+  const [isStudent, setIsStudent] = useState(true);
 
   const [submissionId, setSubmissionId] = useState(null);
 
@@ -125,6 +126,7 @@ export default function Slug() {
         setChallenge(data.body.challenge);
       } else {
         console.log('You are not apart of this class');
+        router.push('/groups');
       }
     }
   };
@@ -132,7 +134,9 @@ export default function Slug() {
   const authenticate = async (assignment) => {
     const url = `${baseUrl}/classroom/inClass/${assignment.classroom.id}`;
     const data = await request(url, "GET", null);
-    return data && data.body.isStudent;
+    if(!data) return false;
+    setIsStudent(data.body.isStudent);
+    return (data.body.isStudent || data.body.isTeacher);
   };
 
   const createTerminal = async (skipToCheckStatus) => {
@@ -258,6 +262,11 @@ export default function Slug() {
 
     if (password === "...") {
       toast.error('You cannot submit the assignment when you havent used the terminal.');
+      return;
+    }
+
+    if(!isStudent) {
+      toast.error('Teachers cannot submit assignments.');
       return;
     }
 
@@ -393,7 +402,7 @@ export default function Slug() {
                   <i className="fas fa-long-arrow-alt-left"></i> Return Home
                 </span>
                 {
-                  assignment && assignment.isOpen && (
+                  (assignment && assignment.isOpen) && (
                     <button
                       onClick={submitAssignment}
                       className="mt-3 rounded-lg   bg-blue-700 text-white px-3 py-2 hover:bg-blue-800"

@@ -46,6 +46,8 @@
       NO_PLACE,
     ]);
 
+    const [loading, setLoading] = useState(true);
+
     const [award, setAward] = useState('');
     const [terminalUsername, setTerminalUsername] = useState('...');
     const [terminalPassword, setTerminalPassword] = useState('...');
@@ -106,67 +108,6 @@
       spassword: 'Loading...',
     });
 
-    const getTerminalStatus = async (id) => {
-      setFetchingTerminal(true);
-      if (!foundTerminal) {
-        const isActive = await api.getStatus(id);
-        if (isActive) {
-
-          setFoundTerminal(true);
-          setFetchingTerminal(false);
-
-          setTimeout(() => {
-            document.getElementById('termurl').classList.remove('absolute');
-            document.getElementById('termurl').classList.remove('opacity-0');
-            document.getElementById('terminalLoader').classList.add('hidden');
-          }, 3000);
-
-        } else {
-          setTimeout(async () => {
-            await getTerminalStatus(id);
-          }, 3000);
-        }
-      }
-    };
-
-
-    const fetchTerminal = async () => {
-      if (!challenge) return;
-      loadBar();
-      const token = auth.currentUser.accessToken;
-      setFetchingTerminal(true);
-      const data = await api.checkUserTerminal(token, challenge.id);
-      if (data !== null) {
-        setPassword(data.password);
-        setServiceName(data.serviceName);
-        setTerminalUrl(data.url);
-        setUserName(data.userName);
-        setMinutesRemaining(data.minutesRemaining);
-        console.log('Terminal data ID:', data.id);
-        console.log('Terminal url:', data.url);
-        await getTerminalStatus(data.id);
-      } else {
-        await createTerminal();
-      }
-    };
-
-    const createTerminal = async () => {
-      if (!challenge) return;
-      setFetchingTerminal(true);
-      const token = auth.currentUser.accessToken;
-      const data = await api.buildTerminal(challenge, token);
-      if (data) {
-        setPassword(data.password);
-        setServiceName(data.serviceName);
-        setTerminalUrl(data.url);
-        setUserName(data.userName);
-        setMinutesRemaining(data.minutesRemaining);
-        await getTerminalStatus(data.id);
-      } else {
-        toast.error("Unable to create the terminal, please refresh the page and try again");
-        setFetchingTerminal(false);
-      }
-    };
 
     const getChallengeData = async () => {
       const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id;
@@ -174,21 +115,14 @@
       const { difficulty } = result.body;
       setChallenge(result.body);
       setDifficulty(difficulty);
+      setLoading(false);
     };
 
     const fetchLikeUrl = async () => {
       try {
         const userLikesUrl = localStorage.getItem('userLikesUrl');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include'
-        };
-        const response = await fetch(userLikesUrl, requestOptions);
-        const result = await response.json();
-        const likes = result.filter((item) => {
+        const response = await request(userLikesUrl, 'GET', null);
+        const likes = response.filter((item) => {
           return item.challenge.slug === slug;
         });
       } catch (err) {
@@ -198,13 +132,13 @@
 
     useEffect(() => {
       if (id) {
+        getChallengeData();
         fetchLeaderboard();
         //fetchComments();
         if (challenge.upvotes) {
           setLikeCount(challenge.upvotes);
         }
         fetchLikeUrl();
-        getChallengeData();
       }
       const award = localStorage.getItem('award');
       if (award) {
@@ -242,6 +176,9 @@
       } catch (error) {
         console.log(error);
       }
+    };
+
+    const fetchTerminal = async () => {
     };
 
     const submitFlag = async () => {
@@ -483,7 +420,7 @@
                   }
                   alt=""
                 />
-                <p className="my-auto text-sm">{challenge.creator}</p>
+                <a href={process.env.NEXT_PUBLIC_FRONTEND_URL + "/users/" + challenge.creator} className="my-auto text-sm hover:underline">{challenge.creator}</a>
               </div>
             </div>
           </div>
@@ -496,6 +433,14 @@
                   Challenge Description{' '}
                 </h1>
               </div>
+
+              {
+                loading && ( 
+                  <div className="flex place-items-center">
+                    <i className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-neutral-800"></i>
+                  </div>
+                )
+              }
 
               <div className="flex">
                 <button

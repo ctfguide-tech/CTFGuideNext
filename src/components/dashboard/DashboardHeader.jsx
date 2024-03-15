@@ -84,7 +84,7 @@ export function DashboardHeader() {
       <div className="mx-auto max-w-7xl ">
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
           <div className="flex">
-            <a href="./settings">
+            <a href={`https://ctfguide.com/users/${username}`}>
               {(pfp && (
                 <img
                   style={{ borderColor: '#ffbf00' }}

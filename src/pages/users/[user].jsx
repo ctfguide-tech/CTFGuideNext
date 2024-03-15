@@ -25,7 +25,6 @@ import Badge from '@/components/profile/Badge.jsx';
 import { SideNavContent } from '@/components/dashboard/SideNavContents';
 import { RightSideFiller } from '@/components/dashboard/RightSideFiller';
 import Skeleton from 'react-loading-skeleton';
-import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import useRef from 'react';
 import { Transition, Dialog } from '@headlessui/react';
@@ -49,6 +48,9 @@ export default function Users() {
     const router = useRouter();
     const { user } = router.query;
 
+  if(!user && router.isReady) {
+    router.push('/404');
+  }
 
     let invalidUser = null;
     const [ownUser, setOwnUser] = useState(false);
@@ -65,6 +67,8 @@ export default function Users() {
     const [userData, setUserData] = useState(null);
 
     const [activity, setActivity] = useState([]);
+
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [friendedUser, setFriendedUser] = useState(null);
     const [pendingRequest, setPendingRequest] = useState(null);
@@ -392,6 +396,11 @@ export default function Users() {
                 setRank(result.leaderboardNum);
                 setEmail(result.email);
                 setUserData(result);
+
+                if (result.role === "ADMIN") {
+                    setIsAdmin(true);
+                }
+
                 console.log("USERDATA: " + result)
                 result.username == localStorage.getItem('username') ? setOwnUser(true) : setOwnUser(false);
                 result.location === '????' ? setLocation(null) : setLocation(result.location);
@@ -936,9 +945,8 @@ export default function Users() {
                                             <div>
 
 
-                                                <p className="text-red-600 font-bold text-lg">
-                                                    {/* <i class="fas fa-solid fa-user-shield mt-2"> </i>{' '}
-                                                    ADMIN */}
+                                                <p className="text-blue-600 font-bold text-md">
+                                                  {isAdmin && <span> <i class="fas fa-check-circle"></i>  CTFGuide Employee</span> }
                                                 </p>
 
 

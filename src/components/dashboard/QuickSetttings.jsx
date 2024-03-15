@@ -15,7 +15,9 @@ export function QuickSettings() {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
-          document.getElementById('bio').value = data.bio;
+          if(document.getElementById('bio')) {
+            document.getElementById('bio').value = data.bio;
+          }
         })
         .catch((err) => {
           console.log(err);

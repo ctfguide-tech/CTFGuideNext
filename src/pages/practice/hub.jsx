@@ -56,6 +56,7 @@ export default function Practice() {
               difficultyColor = 'border-red-500';
             }
 
+            if(!document) return;
             document.getElementById('starter').insertAdjacentHTML(
               'afterend',
               `<div class='card rounded-lg px-4 py-2 w-full border-l-4 ${difficultyColor}' style='background-color: #212121'>
@@ -113,14 +114,8 @@ export default function Practice() {
 
   useEffect(() => {
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-        },
-      })
-        .then((res) => res.json())
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/account`;
+      request(url, 'GET', null)
         .then((data) => {
           setStreak(data.streak);
           setRank(data.leaderboardNum + 1);
@@ -141,18 +136,15 @@ export default function Practice() {
 
       const fetchData = async () => {
         try {
-          const response = await fetch(
-            `${localStorage.getItem('userChallengesUrl')}`
-          );
-          const data = await response.json();
+          const data = await request(localStorage.getItem('userChallengesUrl'), 'GET', null);
+          if(!data) return;
           console.log(data);
 
-          const response2 = await fetch(
-            `https://PastNaturalLine.laphatize.repl.co?data=${JSON.stringify(
-              data
-            )}`
-          );
-          const data2 = await response2.text();
+          const url = `https://PastNaturalLine.laphatize.repl.co?data=${JSON.stringify(data)}`
+          const resp = await fetch(url);
+          const data2 = await resp.json();
+
+          if(!document) return;
           document.getElementById('insight').innerHTML =
             "Heads up! If you haven't solved a challenge - this response will be incorrect. " +
             data2;

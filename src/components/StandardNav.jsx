@@ -92,7 +92,6 @@ export function StandardNav() {
           try {
               const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
               const result = await request(endPoint, "GET", null);
-              console.log(result)
               if (result) {
                   setPfp(result)
               } else {
@@ -112,6 +111,7 @@ export function StandardNav() {
       const result = await request(endPoint, 'GET', null);
       if (!result || !result.length) return;
 
+      console.log("Here is the result");
       console.log(result);
 
       setNotificationData(
