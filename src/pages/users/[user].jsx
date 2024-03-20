@@ -846,7 +846,7 @@ export default function Users() {
                 {/* BANNER */}
                 <div
                     style={{ backgroundSize: "cover", backgroundImage: `url(${banner})`, backgroundPosition: "center" }}
-                    className="h-48 w-full object-cover"
+                    className="h-56 w-full object-cover"
                     alt=""
                 >
                     <div className="flex p-2 grid grid-cols-5">
