@@ -19,8 +19,6 @@ export default function Dashboard() {
           `${localStorage.getItem('userBadgesUrl')}`
         );
         const data = await response.json();
-        console.log(data);
-        setUsername(localStorage.getItem('username'));
         setbadges(data);
       } catch {}
     };
@@ -47,7 +45,7 @@ export default function Dashboard() {
 
         <div className="mx-auto flex h-screen max-w-7xl ">
           {/* Sidebar */}
-          <SideNavContent username={username} />
+          <SideNavContent />
 
           {/* Main content area */}
           <div className="flex-1 mt-5">
