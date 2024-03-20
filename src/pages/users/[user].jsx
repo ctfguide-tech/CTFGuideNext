@@ -499,9 +499,12 @@ export default function Users() {
 
 
     const followUser = async () => {
-        console.log('flag')
         const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/follow`;
         const result = await request(endPoint, "POST", {});
+        if (result) {
+            setFollowerCount(prevCount => prevCount + 1);
+            setFollowedUser(true);
+        }
         console.log(result);
     }
 
@@ -509,24 +512,28 @@ export default function Users() {
     const unfollowUser = async () => {
         const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/unfollow`;
         const result = await request(endPoint, "DELETE", null);
+        if (result) {
+            setFollowerCount(prevCount => prevCount - 1);
+            setFollowedUser(false);
+        }
         console.log(result);
     }
 
 
-    const friendUser = async () => {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/sendRequest`;
-        const result = await request(endPoint, "POST", {});
-        setPendingRequest(true);
-        console.log(result);
-    }
+    // const friendUser = async () => {
+    //     const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/sendRequest`;
+    //     const result = await request(endPoint, "POST", {});
+    //     setPendingRequest(true);
+    //     console.log(result);
+    // }
 
 
-    const unFriendUser = async () => {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/unadd`;
-        const result = await request(endPoint, "DELETE", null);
-        console.log(result);
-        setFriendedUser(false);
-    }
+    // const unFriendUser = async () => {
+    //     const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/unadd`;
+    //     const result = await request(endPoint, "DELETE", null);
+    //     console.log(result);
+    //     setFriendedUser(false);
+    // }
 
 
     const handlePopupOpen = () => {
@@ -839,7 +846,7 @@ export default function Users() {
                 {/* BANNER */}
                 <div
                     style={{ backgroundSize: "cover", backgroundImage: `url(${banner})`, backgroundPosition: "center" }}
-                    className="h-40 w-full object-cover"
+                    className="h-48 w-full object-cover"
                     alt=""
                 >
                     <div className="flex p-2 grid grid-cols-5">
