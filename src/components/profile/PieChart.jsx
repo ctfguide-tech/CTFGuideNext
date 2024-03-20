@@ -96,7 +96,7 @@ const PieChart = ({ data }) => {
       <div>
         <svg width="170" height="170" viewBox="-1 -1 2 2">
           {donutSections}
-          <text x={centerX} y={centerY} style={ {fontSize: 0.2, textAnchor: 'text-middle', fill: '#fff' }}>
+          <text x={centerX} y={centerY} style={{ fontSize: 0.2, textAnchor: 'text-middle', fill: '#fff' }}>
             <tspan className="font-bold" x={centerX} dx="-0.725" dy="-0.05">No Challenges</tspan>
             <tspan className="font-bold" x={centerX} dx="-0.53" dy="0.3">Solved Yet</tspan>
           </text>

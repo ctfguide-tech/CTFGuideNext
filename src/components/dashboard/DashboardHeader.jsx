@@ -14,6 +14,8 @@ export function DashboardHeader() {
 
   const [points, setPoints] = useState('');
   const [rank, setRank] = useState('');
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
 
   useEffect(() => {
     try {
@@ -84,7 +86,7 @@ export function DashboardHeader() {
       <div className="mx-auto max-w-7xl ">
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
           <div className="flex">
-            <a href={`https://ctfguide.com/users/${username}`}>
+            <a href={`${baseUrl}/users/${username}`}>
               {(pfp && (
                 <img
                   style={{ borderColor: '#ffbf00' }}
