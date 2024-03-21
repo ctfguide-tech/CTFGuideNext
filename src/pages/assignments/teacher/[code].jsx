@@ -105,7 +105,7 @@ export default function id() {
     if (data && data.success) {
       const isAuth = await authenticate(data.body);
       if (isAuth) {
-        setAssignment(data.body);
+        Assignment(data.body);
         getChallenge(data.body);
         await getSubmissions(data.body);
       } else {

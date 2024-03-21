@@ -95,14 +95,12 @@ export default function Slug() {
     return formattedDate;
   };
 
-  
   const getChallenge = async (assignment) => {
     try {
       const url = `${baseUrl}/challenges/${assignment.challenge.id}?assignmentId=${assignment.id}`;
       const data = await request(url, "GET", null);
       if (data.success) {
         setChallenge(data.body);
-        console.log('Challenge:', data.body);
       }
     } catch (err) {
       console.log(err);
@@ -123,7 +121,6 @@ export default function Slug() {
         setAssignment(data.body);
         setSubmissionId(data.submissionId);
         setChallengeHints(data.body.challenge.hints);
-        //setChallenge(data.body.challenge);
         await getChallenge(data.body);
       } else {
         console.log('You are not apart of this class');

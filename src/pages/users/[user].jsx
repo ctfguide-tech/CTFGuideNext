@@ -25,10 +25,13 @@ import Badge from '@/components/profile/Badge.jsx';
 import { SideNavContent } from '@/components/dashboard/SideNavContents';
 import { RightSideFiller } from '@/components/dashboard/RightSideFiller';
 import Skeleton from 'react-loading-skeleton';
+import { Router } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import useRef from 'react';
+
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
+
 import request from "@/utils/request";
 
 const shades = [
@@ -48,9 +51,6 @@ export default function Users() {
     const router = useRouter();
     const { user } = router.query;
 
-  if(!user && router.isReady) {
-    router.push('/404');
-  }
 
     let invalidUser = null;
     const [ownUser, setOwnUser] = useState(false);
@@ -67,8 +67,6 @@ export default function Users() {
     const [userData, setUserData] = useState(null);
 
     const [activity, setActivity] = useState([]);
-
-    const [isAdmin, setIsAdmin] = useState(false);
 
     const [friendedUser, setFriendedUser] = useState(null);
     const [pendingRequest, setPendingRequest] = useState(null);
@@ -165,7 +163,6 @@ export default function Users() {
                         console.log("Failed to upload profile picture");
                     }
                     window.location.reload();
-
                 }
             );
             setIsPopupOpen(false);
@@ -342,22 +339,22 @@ export default function Users() {
             return;
         }
 
-    const fetchData = async () => {
-      try {
-        const challengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/challenges';
-        const challengeResult = await request(challengeEndPoint, "GET", null);
-        if (!challengeResult) {
-          setCreatedChallenges(null);
-          return;
+        const fetchData = async () => {
+            try {
+                const challengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/challenges';
+                const challengeResult = await request(challengeEndPoint, "GET", null);
+                if (!challengeResult) {
+                    setCreatedChallenges(null);
+                    return;
+                }
+                const publicChallenges = challengeResult.filter(challenge => challenge.private === false);
+                publicChallenges.length !== 0 ? setCreatedChallenges(publicChallenges) : setCreatedChallenges(null);
+            } catch (err) {
+                console.log(err);
+            }
         }
-        const publicChallenges = challengeResult.filter(challenge => challenge.private === false);
-        publicChallenges.length !== 0 ? setCreatedChallenges(publicChallenges) : setCreatedChallenges(null);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    fetchData();
-  }, [user]);
+        fetchData();
+    }, [user]);
 
 
     // Pinned Challenge useEffect
@@ -370,6 +367,7 @@ export default function Users() {
                 const pinnedChallengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/likes';
                 const pinnedChallengeResult = await request(pinnedChallengeEndPoint, "GET", null);
                 pinnedChallengeResult.length !== 0 ? setPinnedChallenges(pinnedChallengeResult) : setPinnedChallenges(null);
+                console.log("CHALLENGE INFO" + publicChallenges[0])
             } catch (err) {
                 console.log(err);
             }
@@ -396,11 +394,6 @@ export default function Users() {
                 setRank(result.leaderboardNum);
                 setEmail(result.email);
                 setUserData(result);
-
-                if (result.role === "ADMIN") {
-                    setIsAdmin(true);
-                }
-
                 console.log("USERDATA: " + result)
                 result.username == localStorage.getItem('username') ? setOwnUser(true) : setOwnUser(false);
                 result.location === '????' ? setLocation(null) : setLocation(result.location);
@@ -490,25 +483,28 @@ export default function Users() {
     };
 
 
-  async function saveBio() {
-    setBio(document.getElementById('bio').value);
-    closeBannerAndBio();
-    const body = {
-      bio: document.getElementById('bio').value
+    async function saveBio() {
+        setBio(document.getElementById('bio').value);
+        closeBannerAndBio();
+        const body = {
+            bio: document.getElementById('bio').value
+        }
+        const data = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "PUT", body);
+        if (!data) {
+            console.log("Failed to save the bio");
+        }
+        setBio(body.bio);
+        window.location.reload();
     }
-    const data = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "PUT", body);
-    if(!data) {
-      console.log("Failed to save the bio");
-    }
-    setBio(body.bio);
-    window.location.reload();
-  }
 
 
     const followUser = async () => {
-        console.log('flag')
         const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/follow`;
         const result = await request(endPoint, "POST", {});
+        if (result) {
+            setFollowerCount(prevCount => prevCount + 1);
+            setFollowedUser(true);
+        }
         console.log(result);
     }
 
@@ -516,24 +512,28 @@ export default function Users() {
     const unfollowUser = async () => {
         const endPoint = process.env.NEXT_PUBLIC_API_URL + `/followers/${user}/unfollow`;
         const result = await request(endPoint, "DELETE", null);
+        if (result) {
+            setFollowerCount(prevCount => prevCount - 1);
+            setFollowedUser(false);
+        }
         console.log(result);
     }
 
 
-    const friendUser = async () => {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/sendRequest`;
-        const result = await request(endPoint, "POST", {});
-        setPendingRequest(true);
-        console.log(result);
-    }
+    // const friendUser = async () => {
+    //     const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/sendRequest`;
+    //     const result = await request(endPoint, "POST", {});
+    //     setPendingRequest(true);
+    //     console.log(result);
+    // }
 
 
-    const unFriendUser = async () => {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/unadd`;
-        const result = await request(endPoint, "DELETE", null);
-        console.log(result);
-        setFriendedUser(false);
-    }
+    // const unFriendUser = async () => {
+    //     const endPoint = process.env.NEXT_PUBLIC_API_URL + `/friends/${username}/unadd`;
+    //     const result = await request(endPoint, "DELETE", null);
+    //     console.log(result);
+    //     setFriendedUser(false);
+    // }
 
 
     const handlePopupOpen = () => {
@@ -583,25 +583,25 @@ export default function Users() {
     }, [userData]);
 
 
-  return (
-    <>
-      <Head>
-        <title>{username}'s Profile - CTFGuide</title>
-        <meta
-          name="description"
-          content="Cybersecurity made easy for everyone"
-        />
-        <style>
-          @import
-          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-        </style>
-      </Head>
-      <StandardNav />
-      <main>
-        {/* PROFILE PICTURE POP-UP */}
-        {ownUser &&
-          <Transition.Root show={isPopupOpen} as={Fragment}>
-            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
+    return (
+        <>
+            <Head>
+                <title>{username}'s Profile - CTFGuide</title>
+                <meta
+                    name="description"
+                    content="Cybersecurity made easy for everyone"
+                />
+                <style>
+                    @import
+                    url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+                </style>
+            </Head>
+            <StandardNav />
+            <main>
+                {/* PROFILE PICTURE POP-UP */}
+                {ownUser &&
+                    <Transition.Root show={isPopupOpen} as={Fragment}>
+                        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
 
 
                             <Transition.Child
@@ -846,7 +846,7 @@ export default function Users() {
                 {/* BANNER */}
                 <div
                     style={{ backgroundSize: "cover", backgroundImage: `url(${banner})`, backgroundPosition: "center" }}
-                    className="h-40 w-full object-cover"
+                    className="h-56 w-full object-cover"
                     alt=""
                 >
                     <div className="flex p-2 grid grid-cols-5">
@@ -945,8 +945,9 @@ export default function Users() {
                                             <div>
 
 
-                                                <p className="text-blue-600 font-bold text-md">
-                                                  {isAdmin && <span> <i class="fas fa-check-circle"></i>  CTFGuide Employee</span> }
+                                                <p className="text-red-600 font-bold text-lg">
+                                                    {/* <i class="fas fa-solid fa-user-shield mt-2"> </i>{' '}
+                                                    ADMIN */}
                                                 </p>
 
 
@@ -1152,6 +1153,7 @@ export default function Users() {
                                 <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
                                     {(createdChallenges && createdChallenges.map((challenge) => (
                                         <ChallengeCard
+                                            id={challenge.id}
                                             title={challenge.title}
                                             category={challenge.category}
                                             difficulty={challenge.difficulty}
@@ -1161,26 +1163,26 @@ export default function Users() {
                                             likes={challenge.upvotes}
                                         />
                                     ))) || (
-                                        <div
-                                        className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-                                        data-tooltip-content="Create some challenges and they'll appear here!"
-                                        data-tooltip-id="cChal-tooltip"
-                                        data-tooltip-place="top"
-                                    >
-                                        {ownUser &&
-                                            <Tooltip id="cChal-tooltip" />
-                                        }
-                                        <img
-                                            src={'/CuteKana.png'}
-                                            width="100"
-                                            className="mx-auto mt-2 px-1"
-                                        />
+                                            <div
+                                                className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                                data-tooltip-content="Create some challenges and they'll appear here!"
+                                                data-tooltip-id="cChal-tooltip"
+                                                data-tooltip-place="top"
+                                            >
+                                                {ownUser &&
+                                                    <Tooltip id="cChal-tooltip" />
+                                                }
+                                                <img
+                                                    src={'/CuteKana.png'}
+                                                    width="100"
+                                                    className="mx-auto mt-2 px-1"
+                                                />
 
-                                        <h1 className="mx-auto mt-2 text-center text-xl text-white">
-                                            No Challenges Created Yet...
-                                        </h1>
+                                                <h1 className="mx-auto mt-2 text-center text-xl text-white">
+                                                    No Challenges Created Yet...
+                                                </h1>
 
-                                    </div>
+                                            </div>
                                         )}
                                 </div>
                             </div>
@@ -1197,6 +1199,7 @@ export default function Users() {
                                 <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
                                     {pinnedChallenges && Array.isArray(pinnedChallenges) && pinnedChallenges.map((challenge) => (
                                         <ChallengeCard
+                                            id={challenge.challengeId}
                                             title={challenge.challenge.title}
                                             category={challenge.challenge.category}
                                             difficulty={challenge.challenge.difficulty}
@@ -1206,27 +1209,27 @@ export default function Users() {
                                             likes={challenge.challenge.upvotes}
                                         />
                                     ))
-                                         || (
-                                        <div
-                                        className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-                                        data-tooltip-content="Like some challenges and they'll appear here!"
-                                        data-tooltip-id="lChal-tooltip"
-                                        data-tooltip-place="top"
-                                    >
-                                        {ownUser &&
-                                            <Tooltip id="cChal-tooltip" />
-                                        }
-                                        <img
-                                            src={'/CuteKana.png'}
-                                            width="100"
-                                            className="mx-auto mt-2 px-1"
-                                        />
+                                        || (
+                                            <div
+                                                className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                                data-tooltip-content="Like some challenges and they'll appear here!"
+                                                data-tooltip-id="lChal-tooltip"
+                                                data-tooltip-place="top"
+                                            >
+                                                {ownUser &&
+                                                    <Tooltip id="cChal-tooltip" />
+                                                }
+                                                <img
+                                                    src={'/CuteKana.png'}
+                                                    width="100"
+                                                    className="mx-auto mt-2 px-1"
+                                                />
 
-                                        <h1 className="mx-auto mt-2 text-center text-xl text-white">
-                                            No Challenges Liked Yet...
-                                        </h1>
+                                                <h1 className="mx-auto mt-2 text-center text-xl text-white">
+                                                    No Challenges Liked Yet...
+                                                </h1>
 
-                                    </div>
+                                            </div>
                                         )}
                                 </div>
                             </div>
