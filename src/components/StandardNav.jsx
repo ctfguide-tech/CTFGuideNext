@@ -81,13 +81,22 @@ export function StandardNav() {
   ]);
 
   const [username, setUsername] = useState(null);
-  const [pfp, setPfp] = useState('');
+  const [pfp, setPfp] = useState(null);
 
   // get user's profile picture
   useEffect(() => {
     if (!username) {
       return;
     }
+
+  
+  if (localStorage.getItem("pfp")) {
+    setPfp(localStorage.getItem("pfp"));
+  }
+
+  
+
+   
       const fetchData = async () => {
           try {
               const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';

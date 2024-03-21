@@ -52,6 +52,7 @@ export function DashboardHeader() {
                 console.log(result)
                 if (result) {
                     setPfp(result)
+                    localStorage("pfp", result)
                 } else {
                     setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
                 }
