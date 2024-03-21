@@ -28,7 +28,7 @@ function classNames(...classes) {
 const auth = getAuth();
 const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
-const adminList = ['pranav,'];
+const adminList = ['pranav'];
 
 const DEFAULT_NOTIFICATION = {
   image:
