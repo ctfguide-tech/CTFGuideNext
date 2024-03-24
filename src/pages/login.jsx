@@ -188,9 +188,6 @@ export default function Login() {
         }
         toast.error(userFriendlyMessage);
 
-
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('errorMessage').innerHTML = errorMessage;
       });
   }
 
