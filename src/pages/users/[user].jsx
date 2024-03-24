@@ -35,16 +35,16 @@ import { Fragment } from 'react';
 import request from "@/utils/request";
 
 const shades = [
-    'ml-1 h-5 w-5 bg-green-000',
-    'ml-1 h-5 w-5 bg-green-100',
-    'ml-1 h-5 w-5 bg-green-200',
-    'ml-1 h-5 w-5 bg-green-300',
-    'ml-1 h-5 w-5 bg-green-400',
-    'ml-1 h-5 w-5 bg-green-500',
-    'ml-1 h-5 w-5 bg-green-600',
-    'ml-1 h-5 w-5 bg-green-700',
-    'ml-1 h-5 w-5 bg-green-800',
-    'ml-1 h-5 w-5 bg-green-900',
+    'ml-1 h-5 w-5 bg-neutral-900',
+    'ml-1 h-5 w-5 bg-blue-100',
+    'ml-1 h-5 w-5 bg-blue-200',
+    'ml-1 h-5 w-5 bg-blue-300',
+    'ml-1 h-5 w-5 bg-blue-400',
+    'ml-1 h-5 w-5 bg-blue-500',
+    'ml-1 h-5 w-5 bg-blue-600',
+    'ml-1 h-5 w-5 bg-blue-700',
+    'ml-1 h-5 w-5 bg-blue-800',
+    'ml-1 h-5 w-5 bg-blue-900',
 ];
 
 export default function Users() {
@@ -90,11 +90,11 @@ export default function Users() {
 
     const [selectedBanner, setSelectedBanner] = useState(null);
     const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
-    const [banner, setBanner] = useState('https://images.unsplash.com/photo-1500964757637-c85e8a162699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3903&q=80');
+    const [banner, setBanner] = useState('https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80');
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
+    const [pfp, setPfp] = useState(process.env.NEXT_PUBLIC_FRONTEND_URL + `ConfusedKana.png`);
     const [isLoggedIn, setIsLoggedIn] = useState(null);
 
     const handleImageChange = (event) => {
@@ -482,7 +482,11 @@ export default function Users() {
                 const result = await request(endPoint, "GET", null);
                 console.log(result)
                 if (result) {
-                    setBanner(result)
+                    if (result !== "https://images.unsplash.com/photo-1500964757637-c85e8a162699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3903&q=80") {
+                        setBanner(result)
+
+                    }
+                   
                 } else {
                     setBanner('https://images.unsplash.com/photo-1500964757637-c85e8a162699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3903&q=80')
                 }
@@ -1038,10 +1042,8 @@ export default function Users() {
                                                 <div className="flex items-center justify-center">
                                                     {['', '', '', '', '', '', ''].map((e, j) => (
                                                         <div
-                                                            style={{
-                                                                marginBottom: '2px',
-                                                            }}
-                                                            className={`${shades[activity[idx + j]]}`}
+
+                                                            className={`${shades[activity[idx + j]]} mt-1`}
                                                         ></div>
                                                     ))}
                                                 </div>
