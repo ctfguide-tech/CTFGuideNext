@@ -38,12 +38,12 @@ const DEFAULT_NOTIFICATION = {
   receivedTime: '12h ago',
 };
 
-export function StandardNav() {
+export function StandardNav(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
-
+  const { guestAllowed } = props;
   const router = useRouter();
 
   function logout() {
@@ -267,7 +267,8 @@ export function StandardNav() {
                     )}
                   </div>
                 </div>
-                <div className="flex items-center">
+                { !guestAllowed && 
+                  <div className="flex items-center ">
                   <div
                     className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1"
                     style={{ backgroundColor: '#212121', borderWidth: '0px' }}
@@ -398,6 +399,8 @@ export function StandardNav() {
                     </Menu>
                   </div>
                 </div>
+                }
+              
               </div>
             </div>
 

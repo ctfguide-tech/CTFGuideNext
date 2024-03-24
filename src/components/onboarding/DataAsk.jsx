@@ -1,11 +1,34 @@
 import { Container } from '@/components/Container';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getCookie } from '@/utils/request';
+import AuthFooter from '@/components/auth/AuthFooter';
+import Link from 'next/link';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+
 
 export function DataAsk({ props }) {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [validationMessage, setValidationMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [userHasEdited, setUserHasEdited] = useState(false); // New state to track if the user has edited the input
+  function logout() {
+    signOut(auth)
+      .then(() => {
+        window.location.replace('/login');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  const auth = getAuth();
 
+  
   useEffect(() => {
     if (router.query.part == '1') {
       if (router.query.error) {
@@ -14,8 +37,27 @@ export function DataAsk({ props }) {
       }
     }
   });
+  useEffect(() => {
+    if (!userHasEdited) return; // Don't validate until the user edits the input
+  
+    // Your existing validation logic
+    if (username.length < 3 || username.length > 20) {
+      setValidationMessage('Username must be between 3 and 20 characters long.');
+    } else if (/^[0-9]/.test(username)) {
+      setValidationMessage('Username must not start with a number.');
+    } else if (/^[A-Z]/.test(username)) {
+      setValidationMessage('Username must not start with a capital letter.');
+    } else if (/^[!@#$%^&*(),.?":{}|<>]/.test(username)) {
+      setValidationMessage('Username must not start with a special character.');
+    } else if (!/^[a-zA-Z0-9]+$/.test(username)) {
+      setValidationMessage('Username can only contain letters and numbers.');
+    } else {
+      setValidationMessage('');
+    }
+  }, [username, userHasEdited]);
 
   function submitData() {
+    setIsLoading(true);
     // Generate JSON to send
     var username = document.getElementById('username').value;
     var birthday = document.getElementById('birthday').value;
@@ -37,27 +79,25 @@ export function DataAsk({ props }) {
     );
 
     if (!username || !birthday || !firstname || !lastname || !termsAgreement) {
-      document.getElementById('error').classList.remove('hidden');
-      document.getElementById('error').innerHTML = "Fill all fields.";
+
+      toast.error("Fill all fields.");
+      setIsLoading(false);
+
       return;
     } else if (username.length < 3 || username.length > 20) {
-      document.getElementById('error').classList.remove('hidden');
-      document.getElementById('error').innerHTML = "Username must be between 3 and 20 letters/numbers!";
+      toast.error("Username must be between 3 and 20 letters/numbers!");
+      setIsLoading(false);
       return;
     } else if (/^[0-9]/.test(username)) {
-
-      document.getElementById('error').classList.remove('hidden');
-      document.getElementById('error').innerHTML = "Username starts with a number.";
+      toast.error("Username starts with a number.");
+      setIsLoading(false);
     } else if (/^[A-Z]/.test(username)) {
-      document.getElementById('error').classList.remove('hidden');
-      document.getElementById('error').innerHTML = "Username starts with a capital letter.";
-   
+      toast.error("Username starts with a capital letter.");
+      setIsLoading(false);
       
     } else if (/^[!@#$%^&*(),.?":{}|<>]/.test(username)) {
-      document.getElementById('error').classList.remove('hidden');
-      document.getElementById('error').innerHTML = "Username starts with a special character.";
-   
-    
+        toast.error("Username starts with a special character.");
+        setIsLoading(false);
     } else  if (birthday) {
       const minDate = new Date("1900-01-01");
       const currentDate = new Date();
@@ -65,20 +105,20 @@ export function DataAsk({ props }) {
       const inputDate = new Date(birthday);
   
       if (isNaN(inputDate.getTime())) {
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('error').innerHTML = "Invalid date format.";
+        toast.error("Invalid date format.");
+        setIsLoading(false);
         return;
       }
   
       if (inputDate < minDate) {
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('error').innerHTML = "Date must be after January 1, 1900";
+        toast.error("Date must be after January 1, 1900");
+        setIsLoading(false);
         return;
       }
   
       if (inputDate > maxDate) {
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('error').innerHTML = "You must be 13 or older.";
+        toast.error("You must be 13 or older.");
+        setIsLoading(false);
         return;
       }
   
@@ -107,8 +147,9 @@ export function DataAsk({ props }) {
 
           if (parsed.error === 'undefined' || parsed.error) {
 
-            document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = parsed.error;
+
+            setIsLoading(false);
+            toast.error(parsed.error);
 
           } else {
             window.location.href = "./dashboard";
@@ -134,29 +175,44 @@ export function DataAsk({ props }) {
   
 
   return (
-    <div className="h-screen my-auto">
+    <div style={{
+      backgroundPosition: 'center',
+      backgroundRepeat: 'repeat',
+      width: '100%',
+      height: '100%',
+  }}>
 
+          <div
+                      style={{ fontFamily: 'Poppins, sans-serif' }}
+                      className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8"
+                      >
+            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
 
-      <div className='mt-60 mx-auto my-auto items-center justify-center grid grid-cols-2 max-w-6xl mx-auto mt-20'>
-
-        <div className="   my-auto">
-
-
-
-
-          <div style={{ backgroundColor: '#161716' }} className=" ">
 
 
 
             <div
-              style={{ backgroundColor: '#161716' }}
-              className=" "
+                
+                className=" pb-10 pt-4 px-4 shadow sm:px-10 border-t-4 border-blue-600 bg-neutral-800"
+                >
+
+
+
+            <div
+          
             >
-              <div className="  px-4 ">
-                <h1 className="text-xl text-white ">
+              <div className="  ">
+         
+
+              <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
+                <h1 className="text-xl text-white  ">
                   {' '}
                   Finish creating your account
                 </h1>
+     
+                </div>
+
+            
 
                 <div
                   id="error"
@@ -169,7 +225,7 @@ export function DataAsk({ props }) {
                 adow-sm">
                     <div
                       style={{ borderColor: '#212121' }}
-                      className="relative rounded-md rounded-b-none border  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                      className="relative rounded-md rounded-b-none   py-2 focus-within:z-10 "
                     >
 
                       <label
@@ -180,18 +236,27 @@ export function DataAsk({ props }) {
                       </label>
 
                       <input
-                        type="text"
-                        name="name"
-                        id="username"
-                        style={{ backgroundColor: '#212121' }}
-                        className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
-                        placeholder="This is what people on CTFGuide will know you as."
-                      />
+      type="text"
+      name="name"
+      id="username"
+      value={username}
+      onChange={(e) => {
+        setUsername(e.target.value);
+        if (!userHasEdited) setUserHasEdited(true); // Set to true on first edit
+      }}
+      className="bg-neutral-900 mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
+      placeholder="This is what people on CTFGuide will know you as."
+    />
+    {userHasEdited && validationMessage && (
+      <div className="text-red-500 text-sm mt-2">
+        {validationMessage}
+      </div>
+    )}
                     </div>
 
                     <div
                       style={{ borderColor: '#212121' }}
-                      className="relative rounded-md rounded-t-none rounded-b-none border gap-x-4  px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                      className="relative rounded-md rounded-t-none rounded-b-none  gap-x-4   py-2 focus-within:z-10 "
                     >       <label
                       htmlFor="job-title"
                       className="block text-xs font-medium text-white"
@@ -203,8 +268,7 @@ export function DataAsk({ props }) {
                           type="text"
                           name="name"
                           id="firstname"
-                          style={{ backgroundColor: '#212121' }}
-                          className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
+                          className="bg-neutral-900 mt-2 block w-full rounded border-0 p-0 py-1 px-4  text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
                           placeholder="First Name"
                         />
 
@@ -212,8 +276,7 @@ export function DataAsk({ props }) {
                           type="text"
                           name="name"
                           id="lastname"
-                          style={{ backgroundColor: '#212121' }}
-                          className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
+                          className="bg-neutral-900 mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white  placeholder-gray-500 focus:ring-0 sm:text-sm"
                           placeholder="Last Name"
                         />
                       </div>
@@ -221,7 +284,7 @@ export function DataAsk({ props }) {
 
                     <div
                       style={{ borderColor: '#212121' }}
-                      className="relative rounded-md rounded-t-none border px-3 py-2 focus-within:z-10 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                      className="relative rounded-md rounded-t-none  py-2 focus-within:z-10 "
                     >
                       <label
                         htmlFor="job-title"
@@ -233,51 +296,63 @@ export function DataAsk({ props }) {
                       <input
                         id="birthday"
                         type="date"
-                        style={{ backgroundColor: '#212121' }}
-                        className="mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
+                        className="bg-neutral-900 mt-2 block w-full rounded--sm border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
                       ></input>
                     </div>
                   </div>
 
-                  <div className="mx-auto inline-flex text-center mt-4">
+                  <div className="mx-auto inline-flex text-left mt-4">
                     <input
                       id="legal"
-                      style={{ backgroundColor: '#212121' }}
                       type="checkbox"
-                      className="mt-1  rounded-lg border border-gray-700 px-2 py-1"
+                      className="mt-1  rounded-lg bg-neutral-900 border-none px-2 py-1"
                     ></input>
-                    <p className="ml-2 text-white">
-                      I agree to the <a href="https://ctfguide.com/terms-of-service" className='text-blue-500'>Terms of Service</a> and <a href="https://ctfguide.com/privacy-policy" className='text-blue-500'>Privacy Policy</a>
+                    <p className="ml-2 text-sm text-white">
+                      I agree to the <a href="https://ctfguide.com/terms-of-service" target="_blank" rel="noopener noreferrer" className='text-blue-500'>Terms of Service</a> and <a href="https://ctfguide.com/privacy-policy" target="_blank" rel="noopener noreferrer" className='text-blue-500'>Privacy Policy</a>
+
                     </p>
                   </div>
 
-                  <div className="mx-auto mx-auto text-center">
+                  <div className="mx-auto mx-auto text-center mt-4">
                     <button
                       onClick={() => {
                         submitData();
                       }}
-                      className="button mx-auto mt-8 w-2/3 rounded bg-blue-800 py-2 text-white hover:bg-blue-900"
-                    >
-                      Start Hacking
+                      className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 hover:bg-blue-700/90 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      >
+                      {
+                        isLoading ? (
+                          <i className="fas fa-spinner text-lg fa-spin"></i>
+                        ) : (
+                          <span>Start Hacking</span>
+                        )
+                      }
                     </button>
+
+                    <p className='text-sm text-neutral-500 hover:text-white hover:cursor-pointer mt-4' onClick={logout}><i className="fas fa-sign-out-alt"></i> Logout</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className='mx-auto my-auto text-white px-10'>
-
-
-          <h1> We learned 55% of new signups weren't finishing our onboarding process, so we tried cutting it down to just 4 input boxes. </h1>
-
-          <h1 className='mt-4'>We need a username (to know who you are) and date of birth (COPPA laws).  </h1>
-
-          <h1 className='mt-4 bg-neutral-800 px-4 py-2'>"I was able to get a Ferrari because I finished creating my CTFGuide account."<br />- Scratch (Employee #2)</h1>
-        </div>
+                <AuthFooter />
+</div>
 
       </div>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }

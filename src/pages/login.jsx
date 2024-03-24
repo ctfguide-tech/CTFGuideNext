@@ -19,6 +19,7 @@ import {
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AuthFooter from '@/components/auth/AuthFooter';
 
 const provider = new GoogleAuthProvider();
 
@@ -27,6 +28,7 @@ export default function Login() {
   const auth = getAuth();
   const [session, setSession] = useState();
   const [logoutUrl, setLogoutUrl] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -38,6 +40,8 @@ export default function Login() {
   async function loginUser() {
     const email = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+
+    setIsLoading(true);
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -84,6 +88,7 @@ export default function Login() {
         });
       })
       .catch((error) => {
+        setIsLoading(false);
         const errorCode = error.code;
         const errorMessage = error.message;
      
@@ -273,7 +278,7 @@ export default function Login() {
         }}>
             <div
             style={{ fontFamily: 'Poppins, sans-serif' }}
-            className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8"
+            className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
             >
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
            
@@ -369,10 +374,16 @@ export default function Login() {
                     <button
                         type="submit"
                         onClick={loginUser}
-                        className="flex w-full justify-center rounded-sm border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 hover:bg-blue-700/90 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
-                        Sign in
-                    </button>
+                        {
+                          isLoading ? (
+                            <i className="fas fa-spinner text-md fa-spin"></i>
+                          ) : (
+                            <span className='text-md'>Sign in</span>
+                          )
+                        }
+                  </button>
                     </div>
                 </div>
 
@@ -430,16 +441,7 @@ export default function Login() {
             
                 </div>
 
-                <div className='text-neutral-500 text-sm mt-4  items-center justify-center'>
-              &copy; CTFGuide Corporation 2024 <br />
-            <div className='flex items-center'>
-            <Link href="/terms-of-service"><p className="text-sm text-blue-600 hover:text-blue-700 mr-2">Terms of Service</p></Link>  
-              <Link href="/privacy-policy"><p className="text-sm text-blue-600 hover:text-blue-700 mr-2">Privacy Policy</p></Link> 
-              <Link href="/status"><p className="text-sm text-blue-600 hover:text-blue-700 ">Status</p></Link>
-              </div>         
-              
-              
-                 </div>
+            <AuthFooter/>
 
               </div>
 

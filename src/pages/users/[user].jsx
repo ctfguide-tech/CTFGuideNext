@@ -95,7 +95,7 @@ export default function Users() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
-
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -274,6 +274,34 @@ export default function Users() {
         fetchData();
     }, [user]);
 
+    // check to see if user is logged in
+    useEffect(() => {
+        try {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + localStorage.getItem('idToken'),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.error || !data.username) {
+                        console.log("debug| user not logged in :(");
+                        setIsLoggedIn(false);
+                    } else {
+                        setIsLoggedIn(true);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("debug| user not logged in :(")
+                    setIsLoggedIn(false);
+                })
+        } catch {
+        }
+    }, []);
+    
 
     // Follower useEffect
     useEffect(() => {
@@ -387,7 +415,7 @@ export default function Users() {
                 const result = await request(endPoint, "GET", null);
 
                 if (!result.username) {
-                    return window.location.href = '/404';
+                  //  return window.location.href = '/404';
                 }
                 setUsername(result.username);
                 setCreateDate(result.createdAt);
@@ -412,6 +440,7 @@ export default function Users() {
 
             } catch (err) {
                 invalidUser = true;
+                console.log("this happened")
             }
         };
         fetchData();
@@ -596,7 +625,7 @@ export default function Users() {
                     url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
                 </style>
             </Head>
-            <StandardNav />
+            <StandardNav guestAllowed={isLoggedIn}/>
             <main>
                 {/* PROFILE PICTURE POP-UP */}
                 {ownUser &&
@@ -903,7 +932,7 @@ export default function Users() {
                                             {/* <h1 className="ml-2 truncate text-3xl font-bold text-blue-600">
                                                 #{rank}
                                             </h1> */}
-                                            {!ownUser && (!followedUser ? (
+                                            {!ownUser &&  (!followedUser ? (
                                                 <button className="ml-3"
                                                     data-tooltip-id="follow-user"
                                                     data-tooltip-content="Follow User"
