@@ -113,7 +113,7 @@ export function Community({ challenges }) {
         <div className="w-full ml-4">
           <label
             htmlFor="search"
-            className="block text-sm font-medium leading-5 text-gray-200"
+            className="block text-sm font-medium border-none leading-5 text-gray-200"
           >
             Search
           </label>
@@ -122,7 +122,7 @@ export function Community({ challenges }) {
             style={{ backgroundColor: '#212121' }}
             onChange={search}
             placeholder="Search for a Challenge"
-            className="mt-1 block w-full rounded py-2 pr-40 pl-3 pr-10 text-base leading-6 text-gray-200 focus:outline-none sm:text-sm sm:leading-5"
+            className="mt-1 block w-full rounded py-2 pr-40 pl-3 pr-10  leading-6  border-none text-white focus:outline-none sm:text-sm sm:leading-5"
           ></input>
         </div>
       </div>
