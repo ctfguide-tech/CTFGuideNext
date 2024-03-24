@@ -26,8 +26,18 @@ export default function Register() {
   useEffect(() => {
     if (!userHasEdited) return; // Don't validate until the user edits the input
   
+    if (password !== cpassword) {
+      setValidationMessage2('Passwords do not match.');
+    } else {
+      if (cpassword !== "") {
+      setValidationMessage2('Looks good!');
+      } else {
+        setValidationMessage2('');
+      }
+    }
     if (password == "") {
       setValidationMessage('')
+
       return;
     }
     // some password safety
@@ -47,15 +57,6 @@ export default function Register() {
     
   }
 
-  if (password !== cpassword) {
-    setValidationMessage2('Passwords do not match.');
-  } else {
-    if (cpassword !== "") {
-    setValidationMessage2('Looks good!');
-    } else {
-      setValidationMessage2('');
-    }
-  }
     
   }, [password, cpassword, userHasEdited]);
 
