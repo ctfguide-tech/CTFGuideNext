@@ -10,10 +10,6 @@ export default function Onboarding() {
           name="description"
           content="Cybersecurity made easy for everyone"
         />
-        <style>
-          @import
-          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
-        </style>
       </Head>
       <main>
         <div className="h-flex h-screen items-center justify-center">
