@@ -111,7 +111,7 @@ export function Hero() {
           </div>
           <div className="py-24 sm:py-32 lg:pb-40">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <div className="mx-auto max-w-4xl text-center">
+              <div className= "  animate__animated animate__fadeInUp mx-auto max-w-4xl text-center">
                 <h1 className="text-4xl font-bold tracking-normal text-white sm:text-6xl leading-relaxed ">
                   The platform that <span className="text-blue-600 leading-relaxed">
                     <TextLoop>
@@ -127,7 +127,7 @@ export function Hero() {
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <a
                     href="../register"
-                    className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                    className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-neutral-800/100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                   >
                     Get started
                   </a>
@@ -145,7 +145,7 @@ export function Hero() {
               autoPlay
               width={2432}
               height={1442}
-              className="mt-16 rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10 sm:mt-24"
+              className="animate__animated animate__fadeInUp mt-16 rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10 sm:mt-24"
          
               >
                 <source src="../sample_vid.mp4" type="video/mp4" />

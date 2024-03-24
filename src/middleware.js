@@ -12,6 +12,11 @@ export function middleware(req) {
 
   const idToken = req.cookies.get('idToken');
 
+  // ensure token is valid 
+  // basic request to server to ensure that the token is valid
+
+  
+
   if (!idToken) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';
@@ -22,5 +27,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|favicon.ico|login|careers|register|onboarding|privacy-policy|404|terms-of-service|learn|$).*)'],
+  matcher: ['/((?!_next/static|favicon.ico|login|careers|register|onboarding|userrs|privacy-policy|404|terms-of-service|learn|$).*)'],
 }

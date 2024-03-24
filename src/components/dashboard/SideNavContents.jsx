@@ -1,4 +1,14 @@
-export function SideNavContent({ username }) {
+import { useState } from 'react';
+import { useEffect } from 'react';
+
+export function SideNavContent({ }) {
+
+  const [username, setUsername] = useState(null);
+
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
+  }, []);
+  
   return (
     <>
       <div
@@ -16,7 +26,7 @@ export function SideNavContent({ username }) {
           </li>
           <li className="mb-4 py-1">
             <a
-              href={`../dashboard/profile`}
+              href={`../users/${username}`}
               className="px-2 py-1 text-lg font-medium text-white hover:text-neutral-300"
             >
               <i class="fas fa-user-circle mr-2"></i>Profile

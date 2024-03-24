@@ -1,7 +1,9 @@
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
 
-const ChallengeCard = ({ title, category, difficulty, createdAt, creator, views, likes }) => {
+const ChallengeCard = ({ id, title, category, difficulty, createdAt, creator, views, likes }) => {
+
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
     let color;
     const colors = ['blue-600', 'green-600', 'orange-600', 'red-600', 'purple-400'];
@@ -25,6 +27,7 @@ const ChallengeCard = ({ title, category, difficulty, createdAt, creator, views,
 
     return (
         <div className={`bg-${color} rounded-md`}>
+            <a href={`${baseUrl}/challenges/${id}`}>
             <div className="ml-1 relative isolate overflow-hidden rounded-md bg-neutral-900 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
                 <div className="relative mx-auto max-w-7xl px-5">
                     <div
@@ -65,6 +68,7 @@ const ChallengeCard = ({ title, category, difficulty, createdAt, creator, views,
                     </div>
                 </div>
             </div>
+            </a>
         </div>
     )
 };
