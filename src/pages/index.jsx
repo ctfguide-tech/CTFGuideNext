@@ -6,7 +6,7 @@ import { FeaturesPanel } from '@/components/home/FeaturePanel';
 import { Stats } from '@/components/home/Stats';
 import { LearningPanel } from '@/components/home/LearningPanel';
 import { Enterprise } from '@/components/home/Enterprise';
-
+import { SecondaryFeatures } from '@/components/home/SecondaryFeatures';
 export default function Home() {
   return (
     <>
@@ -39,7 +39,8 @@ export default function Home() {
 
       <FeaturesPanel />
 
-      <LearningPanel />
+      <SecondaryFeatures/>
+
       <Stats></Stats>
       <Enterprise />
 
