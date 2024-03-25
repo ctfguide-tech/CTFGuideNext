@@ -148,7 +148,7 @@ function FeaturesMobile() {
             width={2432}
             height={1442}
             muted
-            ref={(el) => setTimeout(() => { observer.current.observe(el) })}
+            ref={(el) => setTimeout(() => { el && observer.current.observe(el) })}
 
             autoSave='true'
             loop
@@ -175,10 +175,8 @@ function FeaturesDesktop() {
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].intersectionRatio > 0.4) {
           selectedVideo.current?.play();
-          console.log("playing")
         } else {
           selectedVideo.current?.pause();
-          console.log("pausing")
         }
       }, { threshold: [0, 0.5] });
     }
@@ -194,18 +192,18 @@ function FeaturesDesktop() {
       return;
     }
     selectedVideo.current = vid;
-    console.log("Restarted", id)
     vid.currentTime = 0;
     if (previousVideo !== null) {
       vid.play();
       previousVideo.pause();
       previousVideo.currentTIme = 0;
     }
+
     previousVideo = vid;
   };
 
   return (
-    <Tab.Group as="div" ref={(el) => setTimeout(() => observer.current?.observe(el) || restartVideo("video-0"))} className="hidden lg:mt-20 lg:block" onChange={(id) => restartVideo("video-" + id.toString())}>
+    <Tab.Group as="div" ref={(el) => setTimeout(() => el && observer.current?.observe(el) || restartVideo("video-0"))} className="hidden lg:mt-20 lg:block" onChange={(id) => restartVideo("video-" + id.toString())}>
       {({ selectedIndex }) => {
         return (
           <>
