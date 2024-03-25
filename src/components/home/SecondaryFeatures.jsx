@@ -1,6 +1,6 @@
 'use client'
 
-import { useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import Image from 'next/image'
 import { Tab } from '@headlessui/react'
 import clsx from 'clsx'
@@ -48,18 +48,18 @@ const features = [
       'Review recorded student lab sessions.',
     description:
       'We automatically records lab sessions, so you can review them later.',
-      image: '../../videoproof.mp4',
-      icon: function InventoryIcon() {
+    image: '../../videoproof.mp4',
+    icon: function InventoryIcon() {
       return (
         <>
 
 
 
-<svg xmlns="http://www.w3.org/2000/svg"  opacity=".5" fill="#fff"
- viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-  <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
-</svg>
+          <svg xmlns="http://www.w3.org/2000/svg" opacity=".5" fill="#fff"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+          </svg>
 
         </>
       )
@@ -71,19 +71,19 @@ const features = [
       'Cloud machines streamed to the browser.',
     description:
       'Easily access cloud machines from your browser, no need to install anything.',
-      image: '../../terminalproof.mp4',
-      icon: function ContactsIcon() {
+    image: '../../terminalproof.mp4',
+    icon: function ContactsIcon() {
       return (
         <>
 
 
 
-      <svg xmlns="http://www.w3.org/2000/svg" opacity=".5" fill="#fff" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z" />
-</svg>
+          <svg xmlns="http://www.w3.org/2000/svg" opacity=".5" fill="#fff" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z" />
+          </svg>
 
 
-          
+
         </>
       )
     },
@@ -123,32 +123,43 @@ function Feature({ feature, isActive, className, ...props }) {
 }
 
 function FeaturesMobile() {
+  let observer = useRef(null);
+
+  useEffect(() => {
+    if (!observer.current) {
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].intersectionRatio > 0.4) {
+          entries[0].target.play();
+        } else {
+          entries[0].target.pause();
+        }
+      }, { threshold: [0, 0.5] });
+    }
+  }, []);
+
   return (
     <div className="-mx-4 mt-20 flex flex-col gap-y-10 overflow-hidden px-4 sm:-mx-6 sm:px-6 lg:hidden">
       {features.map((feature) => (
         <div key={feature.summary}>
           <Feature feature={feature} className="mx-auto max-w-2xl" isActive />
-    
 
-
-            <video 
-
+          <video
             className="mt-4 object-contain rounded-xl shadow-xl h-auto m-auto ring-1 ring-gray-400/10 w-full"
             width={2432}
             height={1442}
-              muted
-        
-              autoSave='true'
-              loop
-              onLoadedMetadata={(e) => {
-                e.target.currentTime = 2; // Skip first two seconds
-              }}
-              autoPlay
-            >
-              <source src={feature.image}
-                type="video/mp4" >
-                  </source>
-            </video>
+            muted
+            ref={(el) => setTimeout(() => { observer.current.observe(el) })}
+
+            autoSave='true'
+            loop
+            onLoadedMetadata={(e) => {
+              e.target.currentTime = 2; // Skip first two seconds
+            }}
+          >
+            <source src={feature.image}
+              type="video/mp4" >
+            </source>
+          </video>
         </div>
       ))}
     </div>
@@ -156,69 +167,108 @@ function FeaturesMobile() {
 }
 
 function FeaturesDesktop() {
+  let observer = useRef(null);
+  let selectedVideo = useRef(null);
+
+  useEffect(() => {
+    if (!observer.current) {
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].intersectionRatio > 0.4) {
+          selectedVideo.current?.play();
+          console.log("playing")
+        } else {
+          selectedVideo.current?.pause();
+          console.log("pausing")
+        }
+      }, { threshold: [0, 0.5] });
+    }
+  }, []);
+
+  let previousVideo = null;
+  const restartVideo = (id) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const vid = document.getElementById(id);
+    if (!vid || previousVideo == vid) {
+      return;
+    }
+    selectedVideo.current = vid;
+    console.log("Restarted", id)
+    vid.currentTime = 0;
+    if (previousVideo !== null) {
+      vid.play();
+      previousVideo.pause();
+      previousVideo.currentTIme = 0;
+    }
+    previousVideo = vid;
+  };
+
   return (
-    <Tab.Group as="div" className="hidden lg:mt-20 lg:block">
-      {({ selectedIndex }) => (
-        <>
-          <Tab.List className="grid grid-cols-3 gap-x-8">
-            {features.map((feature, featureIndex) => (
-              <Feature
-                key={feature.summary}
-                feature={{
-                  ...feature,
-                  name: (
-                    <Tab className="ui-not-focus-visible:outline-none focus-outline-none focus:outline-none outline-none">
-                      <span className="absolute inset-0" />
-                      {feature.name}
-                    </Tab>
-                  ),
-                }}
-                isActive={featureIndex === selectedIndex}
-                className="relative"
-              />
-            ))}
-          </Tab.List>
-          <Tab.Panels className="relative mt-20 overflow-hidden rounded-4xl bg-neutral-800 px-14 py-16 xl:px-16">
-            <div className="-mx-5 flex">
+    <Tab.Group as="div" ref={(el) => setTimeout(() => observer.current?.observe(el) || restartVideo("video-0"))} className="hidden lg:mt-20 lg:block" onChange={(id) => restartVideo("video-" + id.toString())}>
+      {({ selectedIndex }) => {
+        return (
+          <>
+            <Tab.List className="grid grid-cols-3 gap-x-8">
               {features.map((feature, featureIndex) => (
-                <Tab.Panel
-                  static
+                <Feature
                   key={feature.summary}
-                  className={clsx(
-                    'px-5 transition duration-500 ease-in-out ui-not-focus-visible:outline-none',
-                    featureIndex !== selectedIndex && 'opacity-60',
-                  )}
-                  style={{ transform: `translateX(-${selectedIndex * 100}%)` }}
-                  aria-hidden={featureIndex !== selectedIndex}
-                >
-                  <div className="w-[52.75rem] overflow-hidden rounded-xl bg-neutral-900 shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10">
-
-            <video className='w-full'
-              muted
-              width={1055}
-              height={810}
-              autoSave='true'
-              loop
-              onLoadedMetadata={(e) => {
-                e.target.currentTime = 2; // Skip first two seconds
-              }}
-              autoPlay
-            >
-              <source src={feature.image}
-                type="video/mp4" >
-                  </source>
-            </video>
-       
-
-
-                  </div>
-                </Tab.Panel>
+                  feature={{
+                    ...feature,
+                    name: (
+                      <Tab className="ui-not-focus-visible:outline-none focus-outline-none focus:outline-none outline-none">
+                        <span className="absolute inset-0" />
+                        {feature.name}
+                      </Tab>
+                    ),
+                  }}
+                  isActive={selectedIndex === featureIndex}
+                  className="relative"
+                />
               ))}
-            </div>
-            <div className="pointer-events-none absolute inset-0 rounded-4xl ring-1 ring-inset ring-slate-900/10" />
-          </Tab.Panels>
-        </>
-      )}
+            </Tab.List>
+            <Tab.Panels className="relative mt-20 overflow-hidden rounded-4xl bg-neutral-800 px-14 py-16 xl:px-16">
+              <div className="-mx-5 flex">
+                {features.map((feature, featureIndex) => (
+                  <Tab.Panel
+                    static
+                    key={feature.summary}
+                    className={clsx(
+                      'px-5 transition duration-500 ease-in-out ui-not-focus-visible:outline-none',
+                      featureIndex !== selectedIndex && 'opacity-60',
+                    )}
+                    style={{ transform: `translateX(-${selectedIndex * 100}%)` }}
+                    aria-hidden={featureIndex !== selectedIndex}
+                  >
+                    <div className="w-[52.75rem] overflow-hidden rounded-xl bg-neutral-900 shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10">
+
+                      <video className='w-full'
+                        muted
+                        width={1055}
+                        height={810}
+                        autoSave='true'
+                        loop
+                        onLoadedMetadata={(e) => {
+                          e.target.currentTime = 2; // Skip first two seconds
+                        }}
+                        id={"video-" + featureIndex.toString()}
+                      >
+                        <source src={feature.image}
+                          type="video/mp4" >
+                        </source>
+                      </video>
+
+
+
+                    </div>
+                  </Tab.Panel>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-0 rounded-4xl ring-1 ring-inset ring-slate-900/10" />
+            </Tab.Panels>
+          </>
+        )
+      }}
     </Tab.Group>
   )
 }
@@ -235,11 +285,11 @@ export function SecondaryFeatures() {
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             We're the best platform for teaching cybersecurity.
           </h2>
-     
+
         </div>
         <div className='max-w-7xl mx-auto'>
-        <FeaturesMobile />
-        <FeaturesDesktop />
+          <FeaturesMobile />
+          <FeaturesDesktop />
         </div>
       </Container>
     </section>
