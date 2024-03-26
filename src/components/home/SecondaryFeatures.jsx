@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Tab } from '@headlessui/react'
 import clsx from 'clsx'
@@ -167,8 +167,15 @@ function FeaturesMobile() {
 }
 
 function FeaturesDesktop() {
-  let observer = useRef(null);
-  let selectedVideo = useRef(null);
+  const observer = useRef(null);
+  const selectedVideo = useRef(null);
+  const previousVideo = useRef(null);
+  const [selectedIndex, _setSelectedIndex] = useState(0);
+  const selectedIndexRef = useRef(selectedIndex);
+  const setSelectedIndex = (index) => {
+    selectedIndexRef.current = index;
+    _setSelectedIndex(index);
+  };
 
   useEffect(() => {
     if (!observer.current) {
@@ -182,29 +189,42 @@ function FeaturesDesktop() {
     }
   }, []);
 
-  let previousVideo = null;
-  const restartVideo = (id) => {
+  const restartVideo = () => {
     if (typeof window === "undefined") {
       return;
     }
-    const vid = document.getElementById(id);
-    if (!vid || previousVideo == vid) {
+    const vid = document.getElementById("video-" + selectedIndexRef.current);
+    if (!vid || previousVideo.current == vid) {
       return;
     }
     selectedVideo.current = vid;
     vid.currentTime = 0;
-    if (previousVideo !== null) {
+    if (previousVideo.current !== null) {
       vid.play();
-      previousVideo.pause();
-      previousVideo.currentTIme = 0;
+      previousVideo.current.pause();
+      previousVideo.current.currentTIme = 0;
     }
 
-    previousVideo = vid;
+    previousVideo.current = vid;
   };
 
+  const onVideoEnd = () => {
+    setSelectedIndex((selectedIndex + 1) % features.length);
+    restartVideo();
+  }
+
   return (
-    <Tab.Group as="div" ref={(el) => setTimeout(() => el && observer.current?.observe(el) || restartVideo("video-0"))} className="hidden lg:mt-20 lg:block" onChange={(id) => restartVideo("video-" + id.toString())}>
-      {({ selectedIndex }) => {
+    <Tab.Group
+      as="div"
+      ref={(el) => setTimeout(() => el && observer.current?.observe(el) || restartVideo("video-0"))}
+      className="hidden lg:mt-20 lg:block"
+      onChange={(index) => {
+        setSelectedIndex(index);
+        restartVideo();
+      }}
+      selectedIndex={selectedIndex}
+    >
+      {() => {
         return (
           <>
             <Tab.List className="grid grid-cols-3 gap-x-8">
@@ -245,11 +265,11 @@ function FeaturesDesktop() {
                         width={1055}
                         height={810}
                         autoSave='true'
-                        loop
                         onLoadedMetadata={(e) => {
                           e.target.currentTime = 2; // Skip first two seconds
                         }}
                         id={"video-" + featureIndex.toString()}
+                        onEnded={onVideoEnd}
                       >
                         <source src={feature.image}
                           type="video/mp4" >
