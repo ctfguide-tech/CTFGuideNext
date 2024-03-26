@@ -52,8 +52,10 @@ export default function Slug() {
   const [terminalPopup, setTerminalPopup] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [isStudent, setIsStudent] = useState(true);
-
   const [submissionId, setSubmissionId] = useState(null);
+
+  const [isDynamicLab, setIsDynmaicLab] = useState(false);
+  const [loadingLabStatus, setLoadingLabStatus] = useState(true);
 
   function copy(tags) {
     var copyText = document.getElementById(tags);
@@ -106,7 +108,6 @@ export default function Slug() {
       console.log(err);
     }
   };
-  
 
   const getAssignment = async () => {
     const params = window.location.href.split('/');
@@ -122,6 +123,7 @@ export default function Slug() {
         setSubmissionId(data.submissionId);
         setChallengeHints(data.body.challenge.hints);
         await getChallenge(data.body);
+        await checkIfDynamicLab(data.body.challenge.id);
       } else {
         console.log('You are not apart of this class');
         router.push('/groups');
@@ -216,11 +218,24 @@ export default function Slug() {
     }
   }, []);
 
+  const checkIfDynamicLab = async (challengeId) => {
+    const url = `${baseUrl}/classroom-assignments/check-flag`;
+    const body = { flag: "", challengeId: challengeId};
+    const response = await request(url, "POST", body);
+    if(response && response.success) {
+      if(response.body.solved) {
+        setIsDynmaicLab(true);
+      }
+    }
+    setLoadingLabStatus(false);
+  };
+
   const checkFlag = async () => {
     const url = `${baseUrl}/classroom-assignments/check-flag`;
     const body = { flag: flagInput, challengeId: challenge.id};
     setLoading(true);
     const response = await request(url, "POST", body);
+    console.log(response);
     setLoading(false);
     if(response && response.success) {
       if(response.body.solved) {
@@ -275,7 +290,7 @@ export default function Slug() {
     const url = `${baseUrl}/submission/create/${assignment.classroom.classCode}`;
 
     const body = {
-      solved: solved,
+      solved: isDynamicLab ? true : solved,
       classroomId: assignment.classroomId,
       assignmentId: params[5],
       keyword: flagInput,
@@ -356,6 +371,7 @@ export default function Slug() {
   function handleDataAsk() {
     socketRef.current.emit('data_ask', { whoami: password });
   }
+  console.log(isDynamicLab);
 
   return (
     <>
@@ -433,12 +449,15 @@ export default function Slug() {
               content={challenge && challenge.content}
             />
 
-
             <h1 className="mt-4 text-xl font-semibold text-white">
-              Submission Area
-
+              {
+                !loadingLabStatus && !isDynamicLab ? 'Submission Area' : 'Dynamic Lab'
+              }
             </h1>
             <div className="w-1/2 bg-neutral-800 px-4 rounded-lg py-3">
+              {
+                !loadingLabStatus && !isDynamicLab && (
+                <div>
               <p className="mt-2 font-semibold text-white">FLAG SUBMISSION</p>
               <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
 
@@ -451,7 +470,7 @@ export default function Slug() {
               <button
                 disabled={loading}
                 onClick={checkFlag}
-                style={{ width: '40%' }}
+                style={{ width: '130px' }}
                 className="mt-3 rounded-lg bg-green-800 px-2 py-1 text-white hover:bg-green-700"
               >
                 {loading ? <><i className="fas fa-spinner fa-pulse"></i></>: 'Check Flag'}
@@ -480,6 +499,9 @@ export default function Slug() {
                   ></i>
                 )
               )}
+              </div>
+              )
+              }
 
               <p className="mt-6 font-semibold text-white">HINTS</p>
               <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />

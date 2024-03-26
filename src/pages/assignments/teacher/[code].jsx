@@ -73,6 +73,9 @@ export default function id() {
   const [code, setCode] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState('');
 
+  const [isDynamicLab, setIsDynmaicLab] = useState(false);
+  const [loadingLabStatus, setLoadingLabStatus] = useState(true);
+
   const router = useRouter();
 
   const parseDate = (dateString) => {
@@ -108,6 +111,7 @@ export default function id() {
         setAssignment(data.body);
         getChallenge(data.body);
         await getSubmissions(data.body);
+        await checkIfDynamicLab(data.body.challenge.id);
       } else {
         console.log('You are not apart of this class');
         router.push('/groups');
@@ -262,6 +266,18 @@ export default function id() {
 
   const routeToSubmission = (id) => {
     router.replace(`/assignments/${assignment.id}/submissions/${id}?key=t`);
+  };
+
+  const checkIfDynamicLab = async (challengeId) => {
+    const url = `${baseUrl}/classroom-assignments/check-flag`;
+    const body = { flag: "", challengeId: challengeId};
+    const response = await request(url, "POST", body);
+    if(response && response.success) {
+      if(response.body.solved) {
+        setIsDynmaicLab(true);
+      }
+    }
+    setLoadingLabStatus(false);
   };
 
   const checkIfTerminalExists = async () => {
@@ -460,6 +476,9 @@ export default function id() {
 
             <div className="grid h-full grid-cols-6 gap-x-8 mt-10">
               <div className="col-span-2">
+                {
+                  !isDynamicLab && !loadingLabStatus && (
+                    <div>
                 <p className="mt-2 font-semibold text-white">FLAG SUBMISSION</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900" />
 
@@ -499,6 +518,10 @@ export default function id() {
                       ></i>
                     )
                   )}
+
+                    </div>
+                  )
+                }
 
                 <p className="mt-6 font-semibold text-white">HINTS</p>
                 <hr className="rounded-lg border border-blue-600 bg-neutral-900 " />

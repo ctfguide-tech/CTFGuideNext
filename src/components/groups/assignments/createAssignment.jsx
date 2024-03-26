@@ -26,6 +26,7 @@ export default function CreateGroup(props) {
   const [displayExistingChallenge, setDisplayExistingChallenge] =
     useState(false);
   const [displayCustomChallenge, setDisplayCustomChallenge] = useState(false);
+  const [displayDynamicLab, setDisplayDynamicLab] = useState(false);
 
   const [errMessage, setErrMessage] = useState([]);
 
@@ -120,6 +121,8 @@ export default function CreateGroup(props) {
       setDisplayExistingChallenge(true);
     } else if (selectedOption === 'customChallenge') {
       setDisplayCustomChallenge(true);
+    } else if(selectedOption === 'dynamicLab') {
+      setDisplayDynamicLab(true);
     } else {
       setErrMessage('Please select an assignment type');
     }
@@ -137,6 +140,7 @@ export default function CreateGroup(props) {
           assignmentPoints,
           selectedCategory,
           latePenalty: parseInt(latePenalty),
+          option: selectedOption
         }}
         setDisplay={setDisplayExistingChallenge}
       />
@@ -153,8 +157,26 @@ export default function CreateGroup(props) {
           assignmentPoints,
           selectedCategory,
           latePenalty: parseInt(latePenalty),
+          option: selectedOption
         }}
         setDisplay={setDisplayCustomChallenge}
+      />
+    );
+  } else if(displayDynamicLab) {
+    return (
+      <CreateChallenge
+        assignmentInfo={{
+          classCode: props.classCode,
+          title,
+          description,
+          time,
+          dueDate,
+          assignmentPoints,
+          selectedCategory,
+          latePenalty: parseInt(latePenalty),
+          option: selectedOption
+        }}
+        setDisplay={setDisplayDynamicLab}
       />
     );
   }
@@ -408,12 +430,16 @@ export default function CreateGroup(props) {
                     </h1>
                   </div>
                   <div
-                    className={`bg-neutral-900 px-2 py-2 text-center`}
-                    // onClick={() => setSelectedOption('dynamicLab')}
+                    className={`cursor-pointer bg-neutral-800 px-2 py-2 text-center ${
+                      selectedOption === 'dynamicLab'
+                        ? 'border-2 border-blue-600'
+                        : 'border-2 border-neutral-800 hover:border-neutral-900 hover:bg-neutral-900'
+                    }`}
+                    onClick={() => setSelectedOption('dynamicLab')}
                   >
                     <i className="fas fa-robot text-3xl text-green-500"></i>
                     <h1 className="text-lg font-semibold">
-                      Dynamic Lab (Coming Soon)
+                      Dynamic Lab
                     </h1>
                     <h1 className="text-sm">
                       Create a simulated Cybersecurity environent graded by AI{' '}

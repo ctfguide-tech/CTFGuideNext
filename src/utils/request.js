@@ -1,7 +1,6 @@
 
 const request = async (url, req_method, body) => {
   try {
-    //const token = getCookie();
     let method = req_method.toUpperCase();
     if(method === 'GET' || method === "DELETE") {
 
@@ -25,6 +24,13 @@ const request = async (url, req_method, body) => {
       }
       const response = await fetch(url, requestOptions);
       const data = await response.json();
+
+      if(response.status === 401 && data.error) {
+        console.log("Unauthorized");
+        window.location.href = "/login";
+        return null;
+      }
+
       return data;
     } else {
       return null;
