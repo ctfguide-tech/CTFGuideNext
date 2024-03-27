@@ -22,6 +22,7 @@ const styles = {
 const auth = getAuth();
 
 export default function Createchall(props) {
+
   const pages = [
     {
       name: 'Create Assignment',
@@ -36,6 +37,7 @@ export default function Createchall(props) {
       click: () => {},
     },
   ];
+
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
   const [hints, setHints] = useState([
@@ -43,6 +45,7 @@ export default function Createchall(props) {
     'No hints set',
     'No hints set',
   ]);
+
   const [solution, setSolution] = useState('');
   const [difficulty, setDifficulty] = useState('Easy');
   const [category, setCategory] = useState('forensics');
@@ -100,13 +103,15 @@ export default function Createchall(props) {
   const uploadChallenge = async (fileId) => {
     try {
       const nConfig = newConfig.replace('\n', ' && ');
+      let new_solution = props.assignmentInfo.option !== "dynamicLab" ? solution : "";
+
       const challengeInfo = {
         name: newChallengeName,
         category: [category],
         hints,
         penalty,
         content: contentPreview,
-        solution,
+        solution: new_solution,
         difficulty,
         category,
         commands: nConfig,
@@ -116,7 +121,10 @@ export default function Createchall(props) {
       const classCode = window.location.pathname.split('/')[2];
       const assignmentInfo = props.assignmentInfo;
       const url = `${process.env.NEXT_PUBLIC_API_URL}/classroom-assignments/create-new-assignment/${classCode}`;
-      const data = await request(url, 'POST', { challengeInfo, assignmentInfo, username: localStorage.getItem('username') });
+      const data = await request(url, 'POST', { 
+        challengeInfo, assignmentInfo, 
+        username: localStorage.getItem('username') 
+      });
       if (data && data.success) {
         toast.success('Assignment Created', {
           position: 'bottom-right',
@@ -394,6 +402,8 @@ export default function Createchall(props) {
             </div>
           </div>
 
+          {
+            props.assignmentInfo && props.assignmentInfo.option !== "dynamicLab" && (
           <div className="900 mt-5 rounded-sm   bg-neutral-800/40 shadow-lg">
             <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
               Challenge Solution
@@ -408,6 +418,8 @@ export default function Createchall(props) {
               ></textarea>
             </div>
           </div>
+            )
+          }
 
           <div className="900 mt-5 rounded-sm   bg-neutral-800/40 shadow-lg">
             <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
