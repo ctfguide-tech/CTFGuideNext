@@ -57,16 +57,12 @@ export function StandardNav(props) {
   }
 
   // if user signed out redirect
-
   // if env is NEXT_PUBLIC_APP_AUTH_DOMAIN=ctfguide-dev.firebaseapp.com the logo should say CTFGuide Developer not CTFGuide Beta
 
-  
-  
   useEffect(() => {
     if (!localStorage.getItem('dismissStatus')) {
       setShowBanner(true);
     }
-
 
     if (
       process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN === 'ctfguide-dev.firebaseapp.com'
@@ -89,32 +85,28 @@ export function StandardNav(props) {
       return;
     }
 
-  
-  if (localStorage.getItem("pfp")) {
-    setPfp(localStorage.getItem("pfp"));
-  }
+    if (localStorage.getItem("pfp")) {
+      setPfp(localStorage.getItem("pfp"));
+    }
 
-  
+    const fetchData = async () => {
+      try {
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
+        const result = await request(endPoint, "GET", null);
+        if (result) {
+          setPfp(result)
+        } else {
+          setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+        }
 
-   
-      const fetchData = async () => {
-          try {
-              const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
-              const result = await request(endPoint, "GET", null);
-              if (result) {
-                  setPfp(result)
-              } else {
-                  setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
-              }
-
-          } catch (err) {
-              console.log('failed to get profile picture')
-          }
-      };
-      fetchData();
+      } catch (err) {
+        console.log('failed to get profile picture')
+      }
+    };
+    fetchData();
   }, [username]);
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchNotification = async () => {
       const endPoint = process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
       const result = await request(endPoint, 'GET', null);
@@ -149,7 +141,7 @@ export function StandardNav(props) {
             receivedTime: noti + ' ago',
             detailPage: '/events',
             image:
-            'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
+              'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
           };
         })
       );
@@ -157,7 +149,6 @@ export function StandardNav(props) {
     setUsername(localStorage.getItem("username") || null);
     fetchNotification();
   }, []);
-
 
   function dismissStatus() {
     localStorage.setItem('dismissStatus', true);
@@ -169,14 +160,14 @@ export function StandardNav(props) {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/notification`;
       const data = await request(url, 'GET', null);
       console.log(data);
-      if(data.success) {
+      if (data.success) {
         setNotifications(data.body);
         console.log(data);
       } else {
         setNotifications(["Unable to get notification, try again"]);
       }
 
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
@@ -212,201 +203,201 @@ export function StandardNav(props) {
                     </Link>
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
-                    {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:font-bold" */}
+                    {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:text-white" */}
                     <Link
                       href={`${baseUrl}/dashboard`}
-                      className="ml-2 inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200 "
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Dashboard
                     </Link>
                     <Link
                       href={`${baseUrl}/learn`}
-                      className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Learn
                     </Link>
                     <Link
                       href={`${baseUrl}/groups`}
-                      className=" inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Classes
                     </Link>
                     <Link
                       href={`${baseUrl}/practice`}
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Practice
                     </Link>
                     <Link
                       href={`${baseUrl}/create`}
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Create
                     </Link>
 
-                    <Link
-                      href={`${baseUrl}/live`}
-                      className="hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                    >
-                      Live
-                    </Link>
-
-                    <a
-                      href={`${baseUrl}/edu`}
-                      className="inline-flex hidden items-center border-b-2 border-transparent px-4 pt-1 text-sm font-medium text-gray-300 hover:font-bold hover:text-gray-200"
-                    >
-                      EDU
-                    </a>
+                    {/* <Link */}
+                    {/*   href={`${baseUrl}/live`} */}
+                    {/*   className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all" */}
+                    {/* > */}
+                    {/*   Live */}
+                    {/* </Link> */}
+                    {/**/}
+                    {/* <a */}
+                    {/*   href={`${baseUrl}/edu`} */}
+                    {/*   className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all" */}
+                    {/* > */}
+                    {/*   EDU */}
+                    {/* </a> */}
                     {isAdmin && (
                       <p
                         href={`${baseUrl}/live`}
-                        className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm text-xl font-medium font-semibold text-neutral-800  "
+                        className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                       >
                         CTFGUIDE INTERNAL
                       </p>
                     )}
                   </div>
                 </div>
-                { !guestAllowed && 
+                {!guestAllowed &&
                   <div className="flex items-center ">
-                  <div
-                    className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1"
-                    style={{ backgroundColor: '#212121', borderWidth: '0px' }}
-                  >
-                    <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500">
-                      <i class="far fa-check-circle"></i> {points}
-                    </h1>
+                    {/* <div */}
+                    {/*   className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" */}
+                    {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
+                    {/* > */}
+                    {/*   <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500"> */}
+                    {/*     <i class="far fa-check-circle"></i> {points} */}
+                    {/*   </h1> */}
+                    {/* </div> */}
+                    {/* <div */}
+                    {/*   className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1" */}
+                    {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
+                    {/* > */}
+                    {/*   <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-orange-400"> */}
+                    {/*     <i class="fas fa-fire"></i> 0 */}
+                    {/*   </h1> */}
+                    {/* </div> */}
+                    <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
+                      {/* Profile dropdown */}
+                      <Menu as="div" className="relative ml-3">
+                        <div>
+                          <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <span className="sr-only">Open user menu</span>
+                            <img
+                              className="h-8 w-8 rounded-full border bg-neutral-900 "
+                              src={pfp}
+                              loading="lazy"
+                              alt=""
+                            />
+                          </Menu.Button>
+                        </div>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
+                                  className={classNames(
+                                    active ? '-100' : '',
+                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                  )}
+                                >
+                                  Your Profile{' '}
+                                  <UserCircleIcon
+                                    className="ml-auto mt-1 block h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                </a>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="../../settings"
+                                  className={classNames(
+                                    active ? '-100' : '',
+                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                  )}
+                                >
+                                  Settings{' '}
+                                  <Cog6ToothIcon
+                                    className="ml-auto mt-1 block h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                </a>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="https://ctfguide.hellonext.co/b/feedback"
+                                  className={classNames(
+                                    active ? '-100' : '',
+                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                  )}
+                                >
+                                  Feedback{' '}
+                                  <PencilSquareIcon
+                                    className="ml-auto mt-1 block h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                </a>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="../../report"
+                                  className={classNames(
+                                    active ? '-100' : '',
+                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                  )}
+                                >
+                                  Report{' '}
+                                  <ShieldExclamationIcon
+                                    className="ml-auto mt-1 block h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                </a>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <span
+                                  onClick={logout}
+                                  className={classNames(
+                                    active ? '-100' : '',
+                                    'block flex cursor-pointer px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                  )}
+                                >
+                                  Sign out{' '}
+                                  <ArrowRightIcon
+                                    className="ml-auto mt-1 block h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              )}
+                            </Menu.Item>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
+                    </div>
                   </div>
-                  <div
-                    className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1"
-                    style={{ backgroundColor: '#212121', borderWidth: '0px' }}
-                  >
-                    <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-orange-400">
-                      <i class="fas fa-fire"></i> 0
-                    </h1>
-                  </div>
-                  <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-                    {/* Profile dropdown */}
-                    <Menu as="div" className="relative ml-3">
-                      <div>
-                        <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                          <span className="sr-only">Open user menu</span>
-                          <img
-                            className="h-8 w-8 rounded-full border bg-neutral-900 "
-                            src={pfp}
-                            loading="lazy"
-                            alt=""
-                          />
-                        </Menu.Button>
-                      </div>
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                      >
-                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
-                                className={classNames(
-                                  active ? '-100' : '',
-                                  'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
-                                )}
-                              >
-                                Your Profile{' '}
-                                <UserCircleIcon
-                                  className="ml-auto mt-1 block h-4 w-4"
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="../../settings"
-                                className={classNames(
-                                  active ? '-100' : '',
-                                  'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
-                                )}
-                              >
-                                Settings{' '}
-                                <Cog6ToothIcon
-                                  className="ml-auto mt-1 block h-4 w-4"
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="https://ctfguide.hellonext.co/b/feedback"
-                                className={classNames(
-                                  active ? '-100' : '',
-                                  'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
-                                )}
-                              >
-                                Feedback{' '}
-                                <PencilSquareIcon
-                                  className="ml-auto mt-1 block h-4 w-4"
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="../../report"
-                                className={classNames(
-                                  active ? '-100' : '',
-                                  'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
-                                )}
-                              >
-                                Report{' '}
-                                <ShieldExclamationIcon
-                                  className="ml-auto mt-1 block h-4 w-4"
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <span
-                                onClick={logout}
-                                className={classNames(
-                                  active ? '-100' : '',
-                                  'block flex cursor-pointer px-4 py-2 text-sm text-white hover:bg-neutral-800'
-                                )}
-                              >
-                                Sign out{' '}
-                                <ArrowRightIcon
-                                  className="ml-auto mt-1 block h-4 w-4"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </Menu.Item>
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
-                  </div>
-                </div>
                 }
-              
+
               </div>
             </div>
 
             <Disclosure.Panel className="md:hidden">
               <div className="space-y-1 bg-neutral-800/50 pb-3 pt-2">
-                {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300  hover:font-bold" */}
+                {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300  hover:text-white" */}
                 <Disclosure.Button
                   as="a"
                   href="../dashboard"
