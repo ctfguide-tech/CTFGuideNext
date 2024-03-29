@@ -2,27 +2,12 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { Stats } from '@/components/dashboard/Stats';
-import { Performance } from '@/components/dashboard/Performance';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { SideNavContent } from '@/components/dashboard/SideNavContents';
 import { QuickSettings } from '@/components/dashboard/QuickSetttings';
 import { Suggest } from '@/components/dashboard/Suggest';
-import { YourChallenges } from '@/components/dashboard/YourChallenges';
-import { Likes } from '@/components/dashboard/Likes';
-import { Badges } from '@/components/dashboard/Badges';
-import { useRouter } from 'next/router';
-
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-import { onAuthStateChanged, getAuth, verifyIdToken } from 'firebase/auth';
 
 export default function Dashboard() {
-
-
-  const router = useRouter();
-  const auth = getAuth();
 
   const [likes, setLikes] = useState([]);
   const [badges, setbadges] = useState([]);
@@ -36,12 +21,12 @@ export default function Dashboard() {
           `${localStorage.getItem('userBadgesUrl')}`
         );
         const data = await response.json();
-        // no error checking???
         setbadges(data);
       } catch { }
     };
     fetchBadges();
     setbadges([]);
+
     const fetchChallenges = async () => {
       try {
         const response = await fetch(
@@ -118,34 +103,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <main className="p-4 animate__animated animate__fadeIn">
+      <main className="animate__animated animate__fadeIn">
 
         <DashboardHeader />
-        <div className="mx-auto flex max-w-7xl">
-          {/* Sidebar */}
-
-          <SideNavContent />
-
+        <div className="p-4 mx-auto flex max-w-7xl">
           {/* Main content area */}
           <div className="flex-1">
-            {router.pathname === '/dashboard' ? (
-              <div className='sm:px-10 px-10 md:px-0 lg:px-0'>
-                <QuickSettings />
-                <Stats />
-                <Suggest />
-                <Performance></Performance>
-              </div>
-            ) : null}
-            {router.pathname === '/dashboard/challenges' ? (
-              <YourChallenges challenges={challenges} />
-            ) : null}
-            {router.pathname === '/dashboard/badges' ? (
-              <Badges badges={badges} />
-            ) : null}
-
-            {router.pathname === '/dashboard/likes' ? (
-              <Likes likes={likes} />
-            ) : null}
           </div>
         </div>
       </main>

@@ -174,7 +174,7 @@ export function StandardNav(props) {
 
   return (
     <>
-      <Disclosure as="nav" className=" shadow">
+      <Disclosure as="nav" className=" shadow border-b border-white/10">
         {({ open }) => (
           <>
             <div className="mx-auto sm:max-w-7xl md:max-w-7xl lg:max-w px-4 sm:px-6 lg:px-8">
@@ -198,38 +198,38 @@ export function StandardNav(props) {
                     </Disclosure.Button>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
-                    <Link href={`${baseUrl}/dashboard`} aria-label="Dashboard">
+                    <Link href='/dashboard' aria-label="Dashboard">
                       {isAdmin ? <LogoAdmin /> : <Logo />}
                     </Link>
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
                     {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:text-white" */}
                     <Link
-                      href={`${baseUrl}/dashboard`}
+                      href='/dashboard'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Dashboard
                     </Link>
                     <Link
-                      href={`${baseUrl}/learn`}
+                      href='/learn'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Learn
                     </Link>
                     <Link
-                      href={`${baseUrl}/groups`}
+                      href='/groups'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Classes
                     </Link>
                     <Link
-                      href={`${baseUrl}/practice`}
+                      href='/practice'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Practice
                     </Link>
                     <Link
-                      href={`${baseUrl}/create`}
+                      href='/create'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Create
@@ -242,12 +242,12 @@ export function StandardNav(props) {
                     {/*   Live */}
                     {/* </Link> */}
                     {/**/}
-                    {/* <a */}
-                    {/*   href={`${baseUrl}/edu`} */}
+                    {/* <Link */}
+                    {/*   href='/edu' */}
                     {/*   className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all" */}
                     {/* > */}
                     {/*   EDU */}
-                    {/* </a> */}
+                    {/* </Link> */}
                     {isAdmin && (
                       <p
                         href={`${baseUrl}/live`}
@@ -283,7 +283,7 @@ export function StandardNav(props) {
                           <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <span className="sr-only">Open user menu</span>
                             <img
-                              className="h-8 w-8 rounded-full border bg-neutral-900 "
+                              className="h-10 w-10 rounded-full border bg-neutral-900 border-white"
                               src={pfp}
                               loading="lazy"
                               alt=""
@@ -299,89 +299,89 @@ export function StandardNav(props) {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <Menu.Item>
+                          <Menu.Items className="absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Menu.Item className="flex items-center">
                               {({ active }) => (
-                                <a
-                                  href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
+                                <Link
+                                  href={`/users/${username}`}
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
-                                  Your Profile{' '}
                                   <UserCircleIcon
-                                    className="ml-auto mt-1 block h-4 w-4"
+                                    className="mr-4 block h-6 w-6"
                                     aria-hidden="true"
                                   />
-                                </a>
+                                  Profile
+                                </Link>
                               )}
                             </Menu.Item>
-                            <Menu.Item>
+                            <Menu.Item className="flex items-center">
                               {({ active }) => (
-                                <a
-                                  href="../../settings"
+                                <Link
+                                  href="/settings"
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
-                                  Settings{' '}
                                   <Cog6ToothIcon
-                                    className="ml-auto mt-1 block h-4 w-4"
+                                    className="mr-4 block h-6 w-6"
                                     aria-hidden="true"
                                   />
-                                </a>
+                                  Settings
+                                </Link>
                               )}
                             </Menu.Item>
-                            <Menu.Item>
+                            <Menu.Item className="flex items-center">
                               {({ active }) => (
                                 <a
                                   href="https://ctfguide.hellonext.co/b/feedback"
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
-                                  Feedback{' '}
                                   <PencilSquareIcon
-                                    className="ml-auto mt-1 block h-4 w-4"
+                                    className="mr-4 block h-6 w-6"
                                     aria-hidden="true"
                                   />
+                                  Feedback
                                 </a>
                               )}
                             </Menu.Item>
-                            <Menu.Item>
+                            <Menu.Item className="flex items-center">
                               {({ active }) => (
-                                <a
-                                  href="../../report"
+                                <Link
+                                  href="/report"
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'block flex px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
-                                  Report{' '}
                                   <ShieldExclamationIcon
-                                    className="ml-auto mt-1 block h-4 w-4"
+                                    className="block mr-4 h-6 w-6"
                                     aria-hidden="true"
                                   />
-                                </a>
+                                  Report
+                                </Link>
                               )}
                             </Menu.Item>
-                            <Menu.Item>
+                            <Menu.Item className="flex items-center">
                               {({ active }) => (
                                 <span
                                   onClick={logout}
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'block flex cursor-pointer px-4 py-2 text-sm text-white hover:bg-neutral-800'
+                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700 cursor-pointer'
                                   )}
                                 >
-                                  Sign out{' '}
                                   <ArrowRightIcon
-                                    className="ml-auto mt-1 block h-4 w-4"
+                                    className="block mr-4 h-6 w-6"
                                     aria-hidden="true"
                                   />
+                                  Sign out
                                 </span>
                               )}
                             </Menu.Item>
@@ -463,19 +463,22 @@ export function StandardNav(props) {
             </Disclosure.Panel>
           </>
         )}
-      </Disclosure>
+      </Disclosure >
 
       {isAdmin && (
         <div className="bg-neutral-800 py-1 text-center text-sm text-white ">
           <h1>CTFGuide is running in development mode. </h1>
         </div>
-      )}
+      )
+      }
 
-      {!['/groups', '/assignments', '/submissions'].some(path => router.pathname.includes(path) || !showBanner) && (
-        <div className="bg-neutral-800 py-1 text-center text-sm text-white  mx-auto ">
-          <h1 className='max-w-6xl mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
-        </div>
-      )}
+      {
+        !['/groups', '/assignments', '/submissions'].some(path => router.pathname.includes(path) || !showBanner) && (
+          <div className="bg-neutral-800 py-1 text-center text-sm text-white  mx-auto ">
+            <h1 className='max-w-6xl mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
+          </div>
+        )
+      }
     </>
   );
 }

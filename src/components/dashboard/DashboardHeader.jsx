@@ -19,12 +19,12 @@ export function DashboardHeader() {
 
   useEffect(() => {
     try {
-        request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
         .then((data) => {
           setUsername(data.username);
           setLocation(data.location);
           localStorage.setItem("username", data.username)
-          
+
           setJoin(data.createdAt.substring(0, 10));
           if (data.githubUrl) {
             setGithub(`https://github.com/${data.githubUrl}`);
@@ -41,28 +41,28 @@ export function DashboardHeader() {
   }, []);
 
   // get user's profile picture
-    useEffect(() => {
-      if (!username) {
-        return;
-      }
-        const fetchData = async () => {
-            try {
-                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
-                const result = await request(endPoint, "GET", null);
-                console.log(result)
-                if (result) {
-                    setPfp(result)
-                    localStorage("pfp", result)
-                } else {
-                    setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
-                }
+  useEffect(() => {
+    if (!username) {
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
+        const result = await request(endPoint, "GET", null);
+        console.log(result)
+        if (result) {
+          setPfp(result)
+          localStorage("pfp", result)
+        } else {
+          setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+        }
 
-            } catch (err) {
-                console.log('failed to get profile picture')
-            }
-        };
-        fetchData();
-    }, [username]);
+      } catch (err) {
+        console.log('failed to get profile picture')
+      }
+    };
+    fetchData();
+  }, [username]);
 
   function createPopupWin(pageURL, pageTitle,
     popupWinWidth, popupWinHeight) {
@@ -144,14 +144,10 @@ export function DashboardHeader() {
                 )}
               </div>
 
-         
               <div
                 onClick={() => {
-
                   createPopupWin('../terminal',
                     'CTFGuide Terminal', 1200, 650);
-
-
                 }}
                 className="hidden cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
               >
