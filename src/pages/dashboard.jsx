@@ -65,7 +65,6 @@ export default function Dashboard() {
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-      <StandardNav />
 
       <div class="hidden fixed z-50 inset-0 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -103,16 +102,43 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <main className="animate__animated animate__fadeIn">
-
+      <div className='flex flex-col min-h-screen'>
+        <StandardNav />
         <DashboardHeader />
-        <div className="p-4 mx-auto flex max-w-7xl">
-          {/* Main content area */}
-          <div className="flex-1">
+        <main className="animate__animated animate__fadeIn">
+          <div className="flex mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
+            <div className='w-full bg-neutral-800 rounded-sm'>
+              <div className='w-full p-8 h-64'>
+                <h1 className='text-3xl tracking-tight'>Suggested Challenges</h1>
+              </div>
+            </div>
+            <div className='hidden lg:flex flex-col w-[400px] shrink-0 gap-4'>
+              <div className='w-full bg-neutral-800 p-4 rounded-sm shadow'>
+                <h1 className='text-2xl mb-4'>Daily Objectives</h1>
+                <ul className='list-disc list-inside'>
+                  <li>One</li>
+                  <li>One</li>
+                  <li>One</li>
+                </ul>
+              </div>
+              <div className='flex flex-col bg-neutral-800 p-6 w-full'>
+                <h1 className='text-3xl mb-6 text-left tracking-tight'>Start here</h1>
+                <p className='text-justify'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
+                  take the learning assessment. We will give you a <b>custom</b> learning path tailored to your specific needs.</p>
+                <button className='mt-8 bg-blue-600 mx-auto w-full hover:bg-blue-500 hover:shadow-md active:shadow-sm active:bg-blue-700 transition-colors py-3 px-8 text-lg font-medium rounded-sm text-blue-50'>Begin Assessment</button>
+              </div>
+              <div className='w-full bg-neutral-800 p-4 h-64 rounded-sm'>
+                <h1 className='text-2xl mb-4'>Activity</h1>
+                <div className='truncate line-clamp-2'><b>Pranav</b> just completed some challenge idk</div>
+                <div className='overflow-ellipsis line-clamp-2'><b>Pranav</b> just completed some really long challenge name for absolutely no reason</div>
+                <div className='overflow-ellipsis line-clamp-2'><b>Pranav</b> just completed a challenge with an even longer name this one has no right to be this long</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
+        </main>
+        <div className='flex w-full h-full grow basis-0'></div>
+        <Footer />
+      </div>
     </>
   );
 }
