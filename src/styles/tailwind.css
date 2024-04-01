@@ -183,8 +183,6 @@ body {
   background-color:#0A0A0A;
   font-family: 'Poppins', sans-serif;
   height: "100%";
-
-
 }
 
 .typewriter  {
@@ -267,12 +265,14 @@ ul {
   }
 }
 
-.animate-slide-in-right {
-  animation: slideInRight 1s;
-}
+@layer utilities {
+  .animate-slide-in-right {
+    animation: slideInRight 1s;
+  }
 
-.animate-slide-in-right3 {
-  animation: slideInRight 3s;
+  .animate-slide-in-right3 {
+    animation: slideInRight 3s;
+  }
 }
 
 .root {
@@ -287,3 +287,14 @@ ul {
   --rt-transition-closing-delay: 0.10s;
 }
 
+@layer components {
+  .card-decorator {
+    display: flex;
+    position: absolute;
+    background-color: theme(colors.neutral.500);
+    width: 100%;
+    height: 1rem;
+    left: 0;
+    top: 0;
+  }
+}

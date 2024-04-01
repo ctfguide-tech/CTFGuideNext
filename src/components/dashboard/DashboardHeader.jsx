@@ -114,7 +114,7 @@ export function DashboardHeader() {
                 )}
               </h1>
               <p className="text-white">
-                <i class="fas fa-map-marker-alt mt-2"></i>{' '}
+                <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                 {location || (
                   <Skeleton baseColor="#262626" highlightColor="#262626" />
                 )}
@@ -152,7 +152,7 @@ export function DashboardHeader() {
                 className="hidden cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
               >
 
-                <p className="mt-0 text-white"><i class="fas fa-terminal mr-1"></i> Terminal</p>
+                <p className="mt-0 text-white"><i className="fas fa-terminal mr-1"></i> Terminal</p>
               </div>
               <div
                 className="ml-4 mt-8 mb-0 rounded-lg px-10 py-1 hidden"
