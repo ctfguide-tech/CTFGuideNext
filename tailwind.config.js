@@ -33,14 +33,19 @@ module.exports = {
     plugin(function({ addComponents, theme }) {
       addComponents({
         '.card-decorator': {
-          display: 'flex',
-          position: 'absolute',
+          'display': 'flex',
+          'position': 'absolute',
           'background-color': theme('colors.neutral.500'),
-          width: '100%',
-          height: '1rem',
-          left: '0',
-          top: '0',
-        }
+          'width': '100%',
+          'height': '1rem',
+          'left': '0',
+          'top': '0',
+        },
+        '.card-container': {
+          'position': 'relative',
+          'overflow': 'hidden',
+          'border-radius': theme('borderRadius.sm')
+        },
       })
     })
   ],
