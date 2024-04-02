@@ -121,7 +121,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className='hidden relative lg:flex flex-col w-[400px] card-container shrink-0 gap-4'>
-              <CardDecorator className=''></CardDecorator>
+              <CardDecorator></CardDecorator>
               <div className='flex flex-col bg-neutral-800 p-6 rounded-sm w-full'>
                 <h1 className='text-3xl mb-2 text-left tracking-tight'>Start here</h1>
                 <p className='text-justify bg-neutral-700/50 p-4 rounded-sm border border-white/10 leading-[1.6rem]'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
@@ -129,7 +129,7 @@ export default function Dashboard() {
                 <button className='mt-8 bg-blue-600 mx-auto w-full hover:bg-blue-500 hover:shadow-md active:shadow-sm active:bg-blue-700 transition-colors py-3 px-8 text-lg font-medium rounded-sm text-blue-50'>Begin Assessment</button>
               </div>
               <div className='w-full bg-neutral-800 pt-8 p-4 card-container shadow relative'>
-                <CardDecorator className=''></CardDecorator>
+                <CardDecorator></CardDecorator>
                 <h1 className='text-2xl mb-4'>Daily Objectives</h1>
                 <ul className='list-disc list-inside [&>li]:mt-4 [&>li]:marker:text-slate-300'>
                   <li>Complete one challenge.</li>
@@ -138,7 +138,7 @@ export default function Dashboard() {
                 </ul>
               </div>
               <div className='w-full bg-neutral-800 pt-8 p-4 h-fit relative card-container'>
-                <CardDecorator className=''></CardDecorator>
+                <CardDecorator></CardDecorator>
                 <h1 className='text-2xl mb-4'>Activity</h1>
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
                   <li className=''><b>Pranav</b> just completed some challenge idk</li>

@@ -36,10 +36,18 @@ module.exports = {
           'display': 'flex',
           'position': 'absolute',
           'background-color': theme('colors.slate.500'),
+        },
+        '.card-decorator-top': {
+          'top': '0',
+          'left': '0',
           'width': '100%',
           'height': '1rem',
-          'left': '0',
+        },
+        '.card-decorator-left': {
           'top': '0',
+          'left': '0',
+          'width': '1rem',
+          'height': '100%',
         },
         '.card-container': {
           'position': 'relative',
