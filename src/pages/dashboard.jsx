@@ -6,6 +6,8 @@ import { CardDecorator } from '@/components/design/CardDecorator'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Card } from '@/components/create/Card';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 
 export default function Dashboard() {
 
@@ -110,32 +112,38 @@ export default function Dashboard() {
             <div className='w-full bg-neutral-800 rounded-sm'>
               <div className='w-full p-8 h-64'>
                 <h1 className='text-3xl tracking-tight'>Suggested Challenges</h1>
+                <button className='w-14 h-14 p-2 rounded-full bg-black'>
+                  <ArrowLeftIcon></ArrowLeftIcon>
+                </button>
+                <button className='w-14 h-14 p-2 rounded-full bg-black'>
+                  <ArrowLeftIcon className='rotate-180'></ArrowLeftIcon>
+                </button>
               </div>
             </div>
-            <div className='hidden relative lg:flex flex-col w-[400px] shrink-0 gap-4'>
-              <CardDecorator className='bg-neutral-500'></CardDecorator>
+            <div className='hidden relative lg:flex flex-col w-[400px] card-container shrink-0 gap-4'>
+              <CardDecorator className=''></CardDecorator>
               <div className='flex flex-col bg-neutral-800 p-6 rounded-sm w-full'>
-                <h1 className='text-3xl mb-6 text-left tracking-tight'>Start here</h1>
-                <p className='text-justify'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
+                <h1 className='text-3xl mb-2 text-left tracking-tight'>Start here</h1>
+                <p className='text-justify bg-neutral-700/50 p-4 rounded-sm border border-white/10 leading-[1.6rem]'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
                   take the learning assessment. We will give you a <b>custom</b> learning path tailored to your specific needs.</p>
                 <button className='mt-8 bg-blue-600 mx-auto w-full hover:bg-blue-500 hover:shadow-md active:shadow-sm active:bg-blue-700 transition-colors py-3 px-8 text-lg font-medium rounded-sm text-blue-50'>Begin Assessment</button>
               </div>
               <div className='w-full bg-neutral-800 pt-8 p-4 card-container shadow relative'>
-                <CardDecorator className='bg-neutral-500'></CardDecorator>
+                <CardDecorator className=''></CardDecorator>
                 <h1 className='text-2xl mb-4'>Daily Objectives</h1>
-                <ul className='list-disc list-inside'>
-                  <li>One</li>
+                <ul className='list-disc list-inside [&>li]:mt-4 [&>li]:marker:text-slate-300'>
+                  <li>Complete one challenge.</li>
                   <li>One</li>
                   <li>One</li>
                 </ul>
               </div>
-              <div className='w-full bg-neutral-800 pt-8 p-4 h-fit relative'>
-                <CardDecorator className='bg-neutral-500'></CardDecorator>
+              <div className='w-full bg-neutral-800 pt-8 p-4 h-fit relative card-container'>
+                <CardDecorator className=''></CardDecorator>
                 <h1 className='text-2xl mb-4'>Activity</h1>
-                <ul className='list-disc list-outside [&>*]:before:content-["Hello"]'>
-                  <li className='line-clamp-2'><b>Pranav</b> just completed some challenge idk</li>
-                  <li className='line-clamp-2'><b>Pranav</b> just completed some really long challenge name for absolutely no reason</li>
-                  <li className='line-clamp-2'><b>Pranav</b> just completed a challenge with an even longer name this one has no right to be this long</li>
+                <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
+                  <li className=''><b>Pranav</b> just completed some challenge idk</li>
+                  <li className=''><b>Pranav</b> just completed some really long challenge name for absolutely no reason</li>
+                  <li className=''><b>Pranav</b> just completed a challenge with an even longer name this one has no right to be this long</li>
                 </ul>
               </div>
             </div>

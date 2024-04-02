@@ -35,7 +35,7 @@ module.exports = {
         '.card-decorator': {
           'display': 'flex',
           'position': 'absolute',
-          'background-color': theme('colors.neutral.500'),
+          'background-color': theme('colors.slate.500'),
           'width': '100%',
           'height': '1rem',
           'left': '0',
@@ -44,7 +44,7 @@ module.exports = {
         '.card-container': {
           'position': 'relative',
           'overflow': 'hidden',
-          'border-radius': theme('borderRadius.sm')
+          'border-radius': theme('borderRadius.sm'),
         },
       })
     })

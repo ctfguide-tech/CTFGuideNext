@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Disclosure, Menu, Popover, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   XMarkIcon,
@@ -278,9 +278,9 @@ export function StandardNav(props) {
                     {/* </div> */}
                     <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
                       {/* Profile dropdown */}
-                      <Menu as="div" className="relative ml-3">
+                      <Popover as="div" className="relative ml-3">
                         <div>
-                          <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          <Popover.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-10 w-10 rounded-full border bg-neutral-900 border-white"
@@ -288,7 +288,7 @@ export function StandardNav(props) {
                               loading="lazy"
                               alt=""
                             />
-                          </Menu.Button>
+                          </Popover.Button>
                         </div>
                         <Transition
                           as={Fragment}
@@ -299,14 +299,14 @@ export function StandardNav(props) {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <Menu.Items className="absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <Menu.Item className="flex items-center">
+                          <Popover.Panel className="absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Popover.Button className="flex w-full items-center">
                               {({ active }) => (
                                 <Link
                                   href={`/users/${username}`}
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
                                   <UserCircleIcon
@@ -316,14 +316,14 @@ export function StandardNav(props) {
                                   Profile
                                 </Link>
                               )}
-                            </Menu.Item>
-                            <Menu.Item className="flex items-center">
+                            </Popover.Button>
+                            <Popover.Button className="flex items-center w-full">
                               {({ active }) => (
                                 <Link
                                   href="/settings"
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                    'flex px-4 py-3 font-semibold text-neutral-50 w-full hover:bg-neutral-700'
                                   )}
                                 >
                                   <Cog6ToothIcon
@@ -333,14 +333,14 @@ export function StandardNav(props) {
                                   Settings
                                 </Link>
                               )}
-                            </Menu.Item>
-                            <Menu.Item className="flex items-center">
+                            </Popover.Button>
+                            <Popover.Button className="flex items-center w-full">
                               {({ active }) => (
                                 <a
                                   href="https://ctfguide.hellonext.co/b/feedback"
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
                                   <PencilSquareIcon
@@ -350,14 +350,14 @@ export function StandardNav(props) {
                                   Feedback
                                 </a>
                               )}
-                            </Menu.Item>
-                            <Menu.Item className="flex items-center">
+                            </Popover.Button>
+                            <Popover.Button className="flex w-full items-center">
                               {({ active }) => (
                                 <Link
                                   href="/report"
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                                   )}
                                 >
                                   <ShieldExclamationIcon
@@ -367,14 +367,14 @@ export function StandardNav(props) {
                                   Report
                                 </Link>
                               )}
-                            </Menu.Item>
-                            <Menu.Item className="flex items-center">
+                            </Popover.Button>
+                            <Popover.Button className="flex w-full items-center">
                               {({ active }) => (
                                 <span
                                   onClick={logout}
                                   className={classNames(
                                     active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700 cursor-pointer'
+                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700 cursor-pointer'
                                   )}
                                 >
                                   <ArrowRightIcon
@@ -384,10 +384,10 @@ export function StandardNav(props) {
                                   Sign out
                                 </span>
                               )}
-                            </Menu.Item>
-                          </Menu.Items>
+                            </Popover.Button>
+                          </Popover.Panel>
                         </Transition>
-                      </Menu>
+                      </Popover>
                     </div>
                   </div>
                 }
@@ -441,7 +441,7 @@ export function StandardNav(props) {
                     href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
                     className="hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-800 sm:px-6"
                   >
-                    Your Profile
+                    Profile
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
