@@ -304,7 +304,7 @@ export function StandardNav(props) {
                               <Link
                                 href={`/users/${username}`}
                                 className={classNames(
-                                  'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                  'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <UserCircleIcon
@@ -318,7 +318,7 @@ export function StandardNav(props) {
                               <Link
                                 href="/settings"
                                 className={classNames(
-                                  'flex px-4 py-3 font-semibold text-neutral-50 w-full hover:bg-neutral-700'
+                                  'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <Cog6ToothIcon
@@ -328,57 +328,42 @@ export function StandardNav(props) {
                                 Settings
                               </Link>
                             </div>
-                            <Popover.Button className="flex items-center w-full">
-                              {({ active }) => (
-                                <a
-                                  href="https://ctfguide.hellonext.co/b/feedback"
-                                  className={classNames(
-                                    active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
-                                  )}
-                                >
-                                  <PencilSquareIcon
-                                    className="mr-4 block h-6 w-6"
-                                    aria-hidden="true"
-                                  />
-                                  Feedback
-                                </a>
+                            <a
+                              href="https://ctfguide.hellonext.co/b/feedback"
+                              className={classNames(
+                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                               )}
-                            </Popover.Button>
-                            <Popover.Button className="flex w-full items-center">
-                              {({ active }) => (
-                                <Link
-                                  href="/report"
-                                  className={classNames(
-                                    active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
-                                  )}
-                                >
-                                  <ShieldExclamationIcon
-                                    className="block mr-4 h-6 w-6"
-                                    aria-hidden="true"
-                                  />
-                                  Report
-                                </Link>
+                            >
+                              <PencilSquareIcon
+                                className="mr-4 block h-6 w-6"
+                                aria-hidden="true"
+                              />
+                              Feedback
+                            </a>
+                            <Link
+                              href="/report"
+                              className={classNames(
+                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
                               )}
-                            </Popover.Button>
-                            <Popover.Button className="flex w-full items-center">
-                              {({ active }) => (
-                                <span
-                                  onClick={logout}
-                                  className={classNames(
-                                    active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700 cursor-pointer'
-                                  )}
-                                >
-                                  <ArrowRightIcon
-                                    className="block mr-4 h-6 w-6"
-                                    aria-hidden="true"
-                                  />
-                                  Sign out
-                                </span>
+                            >
+                              <ShieldExclamationIcon
+                                className="block mr-4 h-6 w-6"
+                                aria-hidden="true"
+                              />
+                              Report
+                            </Link>
+                            <button
+                              onClick={logout}
+                              className={classNames(
+                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700 cursor-pointer'
                               )}
-                            </Popover.Button>
+                            >
+                              <ArrowRightIcon
+                                className="block mr-4 h-6 w-6"
+                                aria-hidden="true"
+                              />
+                              Sign out
+                            </button>
                           </Popover.Panel>
                         </Transition>
                       </Popover>
