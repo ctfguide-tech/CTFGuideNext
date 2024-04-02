@@ -300,40 +300,34 @@ export function StandardNav(props) {
                           leaveTo="transform opacity-0 scale-95"
                         >
                           <Popover.Panel className="absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <Popover.Button className="flex w-full items-center">
-                              {({ active }) => (
-                                <Link
-                                  href={`/users/${username}`}
-                                  className={classNames(
-                                    active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
-                                  )}
-                                >
-                                  <UserCircleIcon
-                                    className="mr-4 block h-6 w-6"
-                                    aria-hidden="true"
-                                  />
-                                  Profile
-                                </Link>
-                              )}
-                            </Popover.Button>
-                            <Popover.Button className="flex items-center w-full">
-                              {({ active }) => (
-                                <Link
-                                  href="/settings"
-                                  className={classNames(
-                                    active ? '-100' : '',
-                                    'flex px-4 py-3 font-semibold text-neutral-50 w-full hover:bg-neutral-700'
-                                  )}
-                                >
-                                  <Cog6ToothIcon
-                                    className="mr-4 block h-6 w-6"
-                                    aria-hidden="true"
-                                  />
-                                  Settings
-                                </Link>
-                              )}
-                            </Popover.Button>
+                            <div className="flex items-center w-full">
+                              <Link
+                                href={`/users/${username}`}
+                                className={classNames(
+                                  'flex px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                )}
+                              >
+                                <UserCircleIcon
+                                  className="mr-4 block h-6 w-6"
+                                  aria-hidden="true"
+                                />
+                                Profile
+                              </Link>
+                            </div>
+                            <div className="flex items-center w-full">
+                              <Link
+                                href="/settings"
+                                className={classNames(
+                                  'flex px-4 py-3 font-semibold text-neutral-50 w-full hover:bg-neutral-700'
+                                )}
+                              >
+                                <Cog6ToothIcon
+                                  className="mr-4 block h-6 w-6"
+                                  aria-hidden="true"
+                                />
+                                Settings
+                              </Link>
+                            </div>
                             <Popover.Button className="flex items-center w-full">
                               {({ active }) => (
                                 <a
