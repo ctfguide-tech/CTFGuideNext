@@ -1,74 +1,56 @@
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
+import { CardDecorator } from '../design/CardDecorator';
+import Link from 'next/link';
 
 const ChallengeCard = ({ id, title, category, difficulty = 'BEGINNER', createdAt, creator, views, likes }) => {
 
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+  const dateFormatted = new Date(createdAt)
+    .toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric',
+    });
 
-  let color;
-  const colors = ['text-blue-600', 'text-green-600', 'text-orange-600', 'text-red-600', 'text-purple-400'];
-
-  if (difficulty === 'BEGINNER') {
-    color = colors[0];
-  } else if (difficulty === 'EASY') {
-    color = colors[1];
-  } else if (difficulty === 'MEDIUM') {
-    color = colors[2];
-  } else if (difficulty === 'HARD') {
-    color = colors[3];
-  } else if (difficulty === 'INSANE') {
-    color = colors[4];
-  } else {
-    color = colors[0];
-  }
+  const colorBG = {
+    'BEGINNER': 'group-hover:bg-blue-500',
+    'EASY': 'group-hover:bg-green-500',
+    'MEDIUM': 'group-hover:bg-orange-500',
+    'HARD': 'group-hover:bg-red-500',
+    'INSANE': 'group-hover:bg-purple-500',
+  };
+  const colorText = {
+    'BEGINNER': 'bg-blue-500 text-blue-50',
+    'EASY': 'bg-green-500 text-green-50',
+    'MEDIUM': 'bg-orange-500 text-orange-50',
+    'HARD': 'bg-red-500 text-red-50',
+    'INSANE': 'bg-purple-500 text-purple-50',
+  };
   // Override for now
-  color = 'text-neutral-400';
+  // color = 'text-neutral-300';
 
   return (
-    <div className={`bg-${color} rounded-sm`}>
-      <a href={`${baseUrl}/challenges/${id}`}>
-        <div className="ml-1 relative isolate overflow-hidden rounded-md bg-zinc-800 pb-2 ring-1 ring-white/10 hover:ring-neutral-600">
-          <div className="relative mx-auto max-w-7xl px-5">
-            <div
-              className="hidden absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
-              aria-hidden="true"
-            >
-              <div
-                className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
-                style={{
-                  clipPath:
-                    'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-                }}
-              />
-            </div>
-            <div className="mx-auto lg:mx-0 lg:max-w-3xl">
-              <div className="mt-4 text-lg leading-8 text-gray-300">
-                <h1 className="text-2xl font-semibold text-white">{title}</h1>
-                <h1 className="text-base text-neutral-400 line-clamp-1">Creator: {creator}</h1>
-                <div className="grid grid-cols-2">
-                  <p className="text-white font-bold text-lg ">
-                    <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
-                    {views}
-                    <i class="text-red-400 fas fa-solid fa-heart mt-2 ml-4 "> </i>{' '}
-                    {likes}
-
-                  </p>
-                  <p className="text-neutral-400 font-bold text-lg flex justify-end">
-                    <i class="fas fa-solid fa-calendar mt-1.5 mr-2"> </i>{' '}
-                    {new Date(createdAt).toLocaleDateString('en-US', {
-                      month: '2-digit',
-                      day: '2-digit',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <h1 className={`text-xl font-bold capitalize ${color}`}>{difficulty.toLowerCase()}</h1>
-              </div>
-            </div>
-          </div>
+    <Link className={`bg-neutral-800 group border border-white/10 hover:bg-stone-700 max-w-md rounded-sm card-container shadow-sm transition-colors shadow-black/20`} href={`${baseUrl}/challenges/${id}`}>
+      <CardDecorator position='left' className={`${colorBG[difficulty]} w-2 transition-colors`}></CardDecorator>
+      <div className="pl-8 pr-6 py-4 text-sm leading-8 text-gray-300">
+        <h1 className="text-2xl font-semibold text-white">{title}</h1>
+        <h1 className="text-base text-neutral-400 line-clamp-1">Created by {creator}</h1>
+        <h1 className={`text-base px-2 mb-1 leading-6 font-bold capitalize w-fit rounded-sm text-neutral-50 ${colorText[difficulty]}`}>{difficulty.toLowerCase()}</h1>
+        <div className="flex justify-between">
+          <p className="text-neutral-400 flex">
+            <i class="text-lg mt-[5px] mr-2 fas fa-solid fa-calendar"></i>
+            {dateFormatted}
+          </p>
+          <p className="flex text-neutral-200 opacity-70 items-center text-sm">
+            <i class="fas fa-solid fa-eye mr-2 text-lg"></i>
+            {views}
+            <i class="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
+            {likes}
+          </p>
         </div>
-      </a>
-    </div>
+      </div>
+    </Link >
   )
 };
 

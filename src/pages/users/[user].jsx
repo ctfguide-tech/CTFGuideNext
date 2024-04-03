@@ -394,7 +394,13 @@ export default function Users() {
       try {
         const pinnedChallengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/likes';
         const pinnedChallengeResult = await request(pinnedChallengeEndPoint, "GET", null);
-        pinnedChallengeResult.length !== 0 ? setPinnedChallenges(pinnedChallengeResult) : setPinnedChallenges(null);
+        ["BEGINNER", "EASY", "MEDIUM", "HARD", "INSANE"]
+          .forEach((dif) => {
+            const c = { challenge: { ...pinnedChallengeResult[0].challenge, difficulty: dif }, challengeId: pinnedChallengeResult[0].challengeId };
+            pinnedChallengeResult.push(c);
+          })
+        pinnedChallengeResult.shift()
+        setPinnedChallenges(pinnedChallengeResult.length == 0 ? null : pinnedChallengeResult);
         console.log("CHALLENGE INFO" + publicChallenges[0])
       } catch (err) {
         console.log(err);
