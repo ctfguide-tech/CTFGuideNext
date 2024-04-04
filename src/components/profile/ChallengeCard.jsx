@@ -31,9 +31,9 @@ const ChallengeCard = ({ id, title, category, difficulty = 'BEGINNER', createdAt
   // color = 'text-neutral-300';
 
   return (
-    <Link className={`bg-neutral-800 group border border-white/10 hover:bg-stone-700 max-w-md rounded-sm card-container shadow-sm transition-colors shadow-black/20`} href={`${baseUrl}/challenges/${id}`}>
+    <Link className={`bg-neutral-700 group hover:bg-stone-600 max-w-md rounded-sm card-container shadow-sm transition-colors shadow-black/20`} href={`${baseUrl}/challenges/${id}`}>
       <CardDecorator position='left' className={`${colorBG[difficulty]} w-2 transition-colors`}></CardDecorator>
-      <div className="pl-8 pr-6 py-4 text-sm leading-8 text-gray-300">
+      <div className="pl-8 pr-6 py-4 box-content border-y border-r border-blue-100/10 rounded-l-lg text-sm leading-8 text-gray-300">
         <h1 className="text-2xl font-semibold text-white">{title}</h1>
         <h1 className="text-base text-neutral-400 line-clamp-1">Created by {creator}</h1>
         <h1 className={`text-base px-2 mb-1 leading-6 font-bold capitalize w-fit rounded-sm text-neutral-50 ${colorText[difficulty]}`}>{difficulty.toLowerCase()}</h1>

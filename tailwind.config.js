@@ -35,7 +35,7 @@ module.exports = {
         '.card-decorator': {
           'display': 'flex',
           'position': 'absolute',
-          'background-color': theme('colors.neutral.700'),
+          'background-color': theme('colors.neutral.500'),
         },
         '.card-decorator-top': {
           'top': '0',
