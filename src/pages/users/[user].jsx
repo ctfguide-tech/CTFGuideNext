@@ -48,11 +48,8 @@ const shades = [
 ];
 
 export default function Users() {
-  const router = useRouter();
-  const { user } = router.query;
-
-
   let invalidUser = null;
+  const user = localStorage.getItem('username');
   const [ownUser, setOwnUser] = useState(false);
 
   const [location, setLocation] = useState(null);
@@ -394,7 +391,8 @@ export default function Users() {
       try {
         const pinnedChallengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/likes';
         const pinnedChallengeResult = await request(pinnedChallengeEndPoint, "GET", null);
-        setPinnedChallenges(pinnedChallengeResult.length == 0 ? null : pinnedChallengeResult);
+        setPinnedChallenges(pinnedChallengeResult?.length == 0 ? null : pinnedChallengeResult);
+        console.log(pinnedChallengeResult)
         console.log("CHALLENGE INFO" + publicChallenges[0])
       } catch (err) {
         console.log(err);
@@ -1184,14 +1182,8 @@ export default function Users() {
                 <div className="bg-neutral-800 rounded-sm mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
                   {(createdChallenges && createdChallenges.map((challenge) => (
                     <ChallengeCard
-                      id={challenge.id}
-                      title={challenge.title}
-                      category={challenge.category}
-                      difficulty={challenge.difficulty}
-                      createdAt={challenge.createdAt}
-                      creator={challenge.creator}
-                      views={challenge.views}
-                      likes={challenge.upvotes}
+                      challenge={challenge.challenge}
+                      key={challenge.challengeId}
                     />
                   ))) || (
                       <div
@@ -1230,14 +1222,8 @@ export default function Users() {
                 <div className="bg-neutral-800 rounded-sm mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
                   {pinnedChallenges && Array.isArray(pinnedChallenges) && pinnedChallenges.map((challenge) => (
                     <ChallengeCard
-                      id={challenge.challengeId}
-                      title={challenge.challenge.title}
-                      category={challenge.challenge.category}
-                      difficulty={challenge.challenge.difficulty}
-                      createdAt={challenge.challenge.createdAt}
-                      creator={challenge.challenge.creator}
-                      views={challenge.challenge.views}
-                      likes={challenge.challenge.upvotes}
+                      challenge={challenge.challenge}
+                      key={challenge.challengeId}
                     />
                   ))
                     || (

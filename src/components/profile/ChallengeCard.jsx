@@ -3,8 +3,12 @@ import { Tooltip } from 'react-tooltip';
 import { CardDecorator } from '../design/CardDecorator';
 import Link from 'next/link';
 
-const ChallengeCard = ({ id, title, category, difficulty = 'BEGINNER', createdAt, creator, views, likes }) => {
-
+/** 
+ * @param {import('react').HTMLAttributes<HTMLDivElement> & { challenge: {id: string, title: string, category: string, difficulty: string, createdAt: string, creator: string, views: number, likes: number} }} props 
+ * */
+const ChallengeCard = (_props) => {
+  const { challenge, ...props } = _props;
+  const { id, title, category, difficulty, createdAt, creator, views, upvotes } = challenge;
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
   const dateFormatted = new Date(createdAt)
     .toLocaleDateString('en-US', {
@@ -27,16 +31,14 @@ const ChallengeCard = ({ id, title, category, difficulty = 'BEGINNER', createdAt
     'HARD': 'bg-red-500 text-red-50',
     'INSANE': 'bg-purple-500 text-purple-50',
   };
-  // Override for now
-  // color = 'text-neutral-300';
 
   return (
-    <Link className={`bg-neutral-700 group hover:bg-stone-600 max-w-md rounded-sm card-container shadow-sm transition-colors shadow-black/20`} href={`${baseUrl}/challenges/${id}`}>
+    <Link {...props} className={`group w-full rounded-sm card-container shadow-sm transition-colors shadow-black/20 ${props.className ?? ''}`} href={`${baseUrl}/challenges/${id}`} >
       <CardDecorator position='left' className={`${colorBG[difficulty]} w-2 transition-colors`}></CardDecorator>
-      <div className="pl-8 pr-6 py-4 box-content border-y border-r border-blue-100/10 rounded-l-lg text-sm leading-8 text-gray-300">
+      <div className="bg-neutral-700 group-hover:bg-stone-600 transition-colors pl-8 pr-6 py-4 box-content border-y border-r border-blue-100/10 rounded-l-lg text-sm leading-8 text-gray-300">
         <h1 className="text-2xl font-semibold text-white">{title}</h1>
         <h1 className="text-base text-neutral-400 line-clamp-1">Created by {creator}</h1>
-        <h1 className={`text-base px-2 mb-1 leading-6 font-bold capitalize w-fit rounded-sm text-neutral-50 ${colorText[difficulty]}`}>{difficulty.toLowerCase()}</h1>
+        <h1 className={`text-base px-2 mb-1 leading-6 font-bold capitalize w-fit rounded-sm text-neutral-50 ${colorText[difficulty]}`}>{difficulty?.toLowerCase()}</h1>
         <div className="flex justify-between">
           <p className="text-neutral-400 flex">
             <i class="text-lg mt-[5px] mr-2 fas fa-solid fa-calendar"></i>
@@ -46,7 +48,7 @@ const ChallengeCard = ({ id, title, category, difficulty = 'BEGINNER', createdAt
             <i class="fas fa-solid fa-eye mr-2 text-lg"></i>
             {views}
             <i class="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
-            {likes}
+            {upvotes}
           </p>
         </div>
       </div>

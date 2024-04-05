@@ -6,10 +6,11 @@ import { CardDecorator } from '@/components/design/CardDecorator'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import { ChallengeCard } from '@/components/create/ChallengeCard';
 
 export default function Dashboard() {
 
-  const [likes, setLikes] = useState([]);
+  const [likes, setLikes] = useState(null);
   const [badges, setbadges] = useState([]);
   const [challenges, setchallenges] = useState([]);
 
@@ -41,12 +42,12 @@ export default function Dashboard() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`${localStorage.getItem('userLikesUrl')}`);
-        const data = await response.json();
-        console.log(data);
-        setLikes(data);
-        likes.map((like) => console.log(like.challenge.id));
-      } catch (error) { }
+        const pinnedChallengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/likes';
+        const pinnedChallengeResult = await request(pinnedChallengeEndPoint, "GET", null);
+        setLikes(pinnedChallengeResult);
+      } catch (error) {
+        console.error("Failed to fetch pinnedChallengeResults: ", error)
+      }
     };
     fetchData();
     setLikes([]);
@@ -111,6 +112,7 @@ export default function Dashboard() {
               <div className='w-full p-8 h-64'>
                 <h1 className='text-3xl font-semibold'>Learning Path</h1>
                 <h1 className='text-3xl font-semibold'>Suggested Challenges</h1>
+                {/* <ChallengeCard challenge={likes}></ChallengeCard> */}
                 <button className='w-14 h-14 p-2 rounded-full bg-black'>
                   <ArrowLeftIcon></ArrowLeftIcon>
                 </button>
