@@ -21,8 +21,12 @@ export default function Pratice() {
         // const data = await response.json();
         // setChallenges([...data]);
 
-        let result = []
-        const res = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges`, 'GET', null);
+        let result = [];
+        const res = await request(
+          `${process.env.NEXT_PUBLIC_API_URL}/challenges`,
+          'GET',
+          null
+        );
         if (res) result = res.result;
 
         let publicChallenges = [];
@@ -50,7 +54,7 @@ export default function Pratice() {
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-      <div className='flex flex-col min-h-screen'>
+      <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
           <div className="mx-auto mt-10 hidden max-w-7xl">
@@ -68,13 +72,13 @@ export default function Pratice() {
                     }}
                   />
                 </div>
-                <div className="mx-auto hidden max-w-6xl lg:mx-0 lg:max-w-3xl">
+                <div className="mx-auto  max-w-6xl lg:mx-0 lg:max-w-3xl">
                   <p className="mt-2 text-xl font-semibold tracking-tight text-white">
                     All of these practice problems are community created!
                   </p>
                   <p className="mt-4 text-lg leading-8 text-gray-300">
-                    As of March 2023, we are still migrating the data from our old
-                    site. Some challenges won't show below.
+                    As of March 2023, we are still migrating the data from our
+                    old site. Some challenges won't show below.
                     <br></br>
                     <br></br>
                     Want to create your own challenges? Check out our{' '}
@@ -98,7 +102,7 @@ export default function Pratice() {
             </div>
           </div>
         </main>
-        <div className='flex w-full h-full grow basis-0'></div>
+        <div className="flex h-full w-full grow basis-0"></div>
         <Footer />
       </div>
     </>
