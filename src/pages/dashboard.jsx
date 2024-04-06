@@ -107,8 +107,8 @@ export default function Dashboard() {
         <DashboardHeader />
         <main className="animate__animated animate__fadeIn">
           <div className="flex mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
-            <div className='h-full grow w-full lg:self-stretch bg-neutral-800 rounded-sm'>
-              <div className='w-full p-8 h-64'>
+            <div className='w-full bg-neutral-800 rounded-sm'>
+              <div className='w-full p-8'>
                 <h1 className='text-3xl font-semibold'>Learning Path</h1>
                 <h1 className='text-3xl font-semibold'>Suggested Challenges</h1>
                 <div className='border border-neutral-700 w-full p-4 rounded-sm'>
