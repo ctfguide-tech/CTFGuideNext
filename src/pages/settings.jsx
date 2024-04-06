@@ -18,6 +18,7 @@ import {
 } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
+import Link from 'next/link';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
@@ -52,94 +53,94 @@ export default function Dashboard() {
 
   const handlePopupOpen = () => {
     setIsPopupOpen(true);
-}
+  }
 
 
-const handlePopupClose = () => {
+  const handlePopupClose = () => {
     setIsPopupOpen(false);
-}
+  }
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setSelectedImage(file);
-}
+  }
 
 
-const handleSaveChanges = async () => {
+  const handleSaveChanges = async () => {
     if (!selectedImage) {
-        console.log("No image selected");
-        setIsPopupOpen(false)
-        return;
+      console.log("No image selected");
+      setIsPopupOpen(false)
+      return;
     }
 
 
     // upload to firebase storage
     try {
-        const storage = getStorage();
-        const metadata = {
-            contentType: 'image/jpeg',
-        };
+      const storage = getStorage();
+      const metadata = {
+        contentType: 'image/jpeg',
+      };
 
 
-        const storageRef = ref(storage, `${email}/pictures/pfp`);
-        const uploadTask = uploadBytesResumable(storageRef, selectedImage, metadata)
+      const storageRef = ref(storage, `${email}/pictures/pfp`);
+      const uploadTask = uploadBytesResumable(storageRef, selectedImage, metadata)
 
 
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                // progress function
-                const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                console.log('Upload is ' + progress + '% done');
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused');
-                        break;
-                    case 'running':
-                        console.log('Upload is running');
-                        break;
-                }
-            },
-            (error) => {
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        console.log('User does not have permission to access the object');
-                        break;
-                    case 'storage/canceled':
-                        console.log('User canceled the upload');
-                        break;
-                    case 'storage/unknown':
-                        console.log('Unknown error occurred, inspect error.serverResponse');
-                        break;
-                }
-            },
-            async () => {
-                const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
-                console.log(imageUrl)
-                console.log(user);
-                const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/updatePfp';
-                const body = { imageUrl }
-                const response = await request(endPoint, "POST", body);
-                console.log("Here is the result: ", response)
-                if (response.success) {
-                    console.log("profile picture uploaded successfully");
-                } else {
-                    console.log("Failed to upload profile picture");
-                }
-                window.location.reload();
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          // progress function
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case 'paused':
+              console.log('Upload is paused');
+              break;
+            case 'running':
+              console.log('Upload is running');
+              break;
+          }
+        },
+        (error) => {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              console.log('User does not have permission to access the object');
+              break;
+            case 'storage/canceled':
+              console.log('User canceled the upload');
+              break;
+            case 'storage/unknown':
+              console.log('Unknown error occurred, inspect error.serverResponse');
+              break;
+          }
+        },
+        async () => {
+          const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
+          console.log(imageUrl)
+          console.log(user);
+          const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/updatePfp';
+          const body = { imageUrl }
+          const response = await request(endPoint, "POST", body);
+          console.log("Here is the result: ", response)
+          if (response.success) {
+            console.log("profile picture uploaded successfully");
+          } else {
+            console.log("Failed to upload profile picture");
+          }
+          window.location.reload();
 
-            }
-        );
-        setIsPopupOpen(false);
+        }
+      );
+      setIsPopupOpen(false);
 
 
     } catch (err) {
-        console.log(err);
-        console.log("An error occured while uploading profile picture");
+      console.log(err);
+      console.log("An error occured while uploading profile picture");
     }
-}
+  }
 
-const handleClick = () => {
+  const handleClick = () => {
 
-}
+  }
 
 
   useEffect(() => {
@@ -148,18 +149,18 @@ const handleClick = () => {
     // set username
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function () {
+    xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         console.log(this.responseText);
         try {
           if (document.getElementById('first-name')) {
-        
+
             setUsername(JSON.parse(this.responseText).username);
           }
 
-          
 
-       
+
+
         } catch (e) {
           console.log(e);
         }
@@ -209,7 +210,7 @@ const handleClick = () => {
     if (router.query.loc == 'general' || router.query.loc == undefined) {
       var xhr = new XMLHttpRequest();
 
-      xhr.addEventListener('readystatechange', function () {
+      xhr.addEventListener('readystatechange', function() {
         if (this.readyState === 4) {
           console.log(this.responseText);
           try {
@@ -239,11 +240,11 @@ const handleClick = () => {
 
             if (pfpString == '') {
             } else {
-            //  document.getElementById('pfp').src = pfpString;
+              //  document.getElementById('pfp').src = pfpString;
             }
-            
 
-          
+
+
           } catch (e) {
             console.log(e);
           }
@@ -353,36 +354,36 @@ const handleClick = () => {
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
-      var firstName = document.getElementById('first-name').value;
-      var lastName = document.getElementById('last-name').value;
-      var bio = document.getElementById('bio').value;
-      var github = document.getElementById('url').value;
-      var location = document.getElementById('location').value;
+    var firstName = document.getElementById('first-name').value;
+    var lastName = document.getElementById('last-name').value;
+    var bio = document.getElementById('bio').value;
+    var github = document.getElementById('url').value;
+    var location = document.getElementById('location').value;
 
-      var data = JSON.stringify({
-        bio: bio,
-        githubUrl: github,
-        firstName: firstName,
-        lastName: lastName,
-        location: location,
-      });
+    var data = JSON.stringify({
+      bio: bio,
+      githubUrl: github,
+      firstName: firstName,
+      lastName: lastName,
+      location: location,
+    });
 
-      var xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
 
-      xhr.addEventListener('readystatechange', function () {
-        if (this.readyState === 4) {
-          console.log(this.responseText);
-          document.getElementById('save').innerHTML = 'Save';
-        }
-      });
+    xhr.addEventListener('readystatechange', function() {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+        document.getElementById('save').innerHTML = 'Save';
+      }
+    });
 
-      xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      let token = getCookie();
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-      xhr.withCredentials = true;
-      xhr.send(data);
-    
+    xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.withCredentials = true;
+    xhr.send(data);
+
   }
 
   function savePreferences() {
@@ -395,7 +396,7 @@ const handleClick = () => {
 
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function () {
+    xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         document.getElementById('savePreferences').innerHTML = 'Save';
       }
@@ -416,7 +417,7 @@ const handleClick = () => {
 
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function () {
+    xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         console.log(this.responseText);
         console.log('PREFFF');
@@ -499,37 +500,37 @@ const handleClick = () => {
             >
               <ul className="mr-2 py-2">
                 <li className="py-1">
-                  <a
+                  <Link
                     href="../settings"
                     className="px-2 py-2 text-lg  font-medium text-white"
                   >
                     {' '}
                     General
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=security"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Security
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=preferences"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Billing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -620,18 +621,18 @@ const handleClick = () => {
                           }
                           alt="photo"
                         />
-                          <input
-                                                        className="hidden"
-                                                        type="file"
-                                                        id="profileImageInput"
-                                                        onChange={handleImageChange}
-                                                        accept="image/*"
-                                                    />
+                        <input
+                          className="hidden"
+                          type="file"
+                          id="profileImageInput"
+                          onChange={handleImageChange}
+                          accept="image/*"
+                        />
 
                         <button onClick={() => handlePopupOpen()} className="ml-4 bg-neutral cursor:pointer  block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600">
                           Change
                         </button>
-                      
+
                       </div>
                     </div>
 
@@ -1057,121 +1058,121 @@ const handleClick = () => {
                     </div>
                   </div>
 
- {/* PROFILE PICTURE POP-UP */}
+                  {/* PROFILE PICTURE POP-UP */}
 
-          <Transition.Root show={isPopupOpen} as={Fragment}>
-            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
+                  <Transition.Root show={isPopupOpen} as={Fragment}>
+                    <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => handlePopupClose()}>
 
 
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <div onClick={() => {
-                                    handlePopupClose()
-                                    localStorage.setItem("22-18-update", false)
-                                }}
-                                    className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
-                            </Transition.Child>
-                            <div className="flex items-end justify-center min-h-screen pt-4 px-4 text-center sm:block sm:p-0">
-                                <Transition.Child
-                                    as={Fragment}
-                                    enter="ease-out duration-300"
-                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                                    leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                >
-                                    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="max-w-6xl relative inline-block align-bottom w-5/6 pb-10 pt-10 bg-gray-900 border border-gray-700 rounded-lg px-20 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
-                                        <div>
-                                            <div className="mt-3 sm:mt-5">
-                                                <h1 className="text-white text-4xl text-center pb-10">Change Profile Picture</h1>
-                                                <div className="grid grid-cols-2 flex justify-center items-center">
-                                                    <div className="mx-20 h-80 w-80 flex items-center justify-center">
-                                                        <div className="mx-10">
-                                                            <img
-                                                                className="h-48 w-48 border border-neutral-800 rounded-full sm:h-48 sm:w-48"
-                                                                src={pfp}
-                                                                alt=""
-                                                            />
-                                                            <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
-                                                                Current Profile Picture
-                                                            </h1>
-                                                        </div>
-                                                    </div>
-                                                    {/* INPUT BOX */}
-                                                    <div
-                                                        className="h-72 w-80 border border-neutral-800 mx-20 relative rounded-lg p-4 text-center cursor-pointer flex items-center justify-center"
-                                                        onClick={handleClick}
-                                                        onDrop={handleImageChange}
-                                                        onDragOver={handleImageChange}
-                                                    >
-                                                        <label htmlFor="profileImageInput">
-                                                            {selectedImage ? (
-                                                                <div>
-                                                                    <img
-                                                                        src={URL.createObjectURL(selectedImage)}
-                                                                        alt="Selected Profile Picture"
-                                                                        className="mx-auto h-48 w-48 object-cover rounded-full"
-                                                                    />
-                                                                    <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
-                                                                        New Profile Picture
-                                                                    </h1>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="">
-                                                                    <svg
-                                                                        className="mx-auto h-12 w-12 text-gray-400"
-                                                                        fill="none"
-                                                                        stroke="currentColor"
-                                                                        viewBox="0 0 24 24"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M12 4v16m8-8H4"
-                                                                        />
-                                                                    </svg>
-                                                                    <p className="mt-5 text-sm text-gray-600">Click here or Drag an Image!</p>
-                                                                </div>
-                                                            )}
-                                                        </label>
-                                                    </div>
-                                                    <input
-                                                        className="hidden"
-                                                        type="file"
-                                                        id="profileImageInput"
-                                                        onChange={handleImageChange}
-                                                        accept="image/*"
-                                                    />
-                                                </div>
-                                                <div className="grid grid-cols-2 pt-5">
-                                                    <div className="flex items-center justify-end">
-                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-neutral-800 hover:text-neutral-500"
-                                                            onClick={() => handlePopupClose()}>Close
-                                                        </button>
-                                                    </div>
-                                                    <div className="flex items-center justify-start">
-                                                        <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-green-900 hover:text-neutral-500"
-                                                            onClick={() => handleSaveChanges()}>Save
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <div onClick={() => {
+                          handlePopupClose()
+                          localStorage.setItem("22-18-update", false)
+                        }}
+                          className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" />
+                      </Transition.Child>
+                      <div className="flex items-end justify-center min-h-screen pt-4 px-4 text-center sm:block sm:p-0">
+                        <Transition.Child
+                          as={Fragment}
+                          enter="ease-out duration-300"
+                          enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                          enterTo="opacity-100 translate-y-0 sm:scale-100"
+                          leave="ease-in duration-200"
+                          leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                          leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        >
+                          <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: "#161716" }} className="max-w-6xl relative inline-block align-bottom w-5/6 pb-10 pt-10 bg-gray-900 border border-gray-700 rounded-lg px-20 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ">
+                            <div>
+                              <div className="mt-3 sm:mt-5">
+                                <h1 className="text-white text-4xl text-center pb-10">Change Profile Picture</h1>
+                                <div className="grid grid-cols-2 flex justify-center items-center">
+                                  <div className="mx-20 h-80 w-80 flex items-center justify-center">
+                                    <div className="mx-10">
+                                      <img
+                                        className="h-48 w-48 border border-neutral-800 rounded-full sm:h-48 sm:w-48"
+                                        src={pfp}
+                                        alt=""
+                                      />
+                                      <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
+                                        Current Profile Picture
+                                      </h1>
                                     </div>
-                                </Transition.Child>
+                                  </div>
+                                  {/* INPUT BOX */}
+                                  <div
+                                    className="h-72 w-80 border border-neutral-800 mx-20 relative rounded-lg p-4 text-center cursor-pointer flex items-center justify-center"
+                                    onClick={handleClick}
+                                    onDrop={handleImageChange}
+                                    onDragOver={handleImageChange}
+                                  >
+                                    <label htmlFor="profileImageInput">
+                                      {selectedImage ? (
+                                        <div>
+                                          <img
+                                            src={URL.createObjectURL(selectedImage)}
+                                            alt="Selected Profile Picture"
+                                            className="mx-auto h-48 w-48 object-cover rounded-full"
+                                          />
+                                          <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
+                                            New Profile Picture
+                                          </h1>
+                                        </div>
+                                      ) : (
+                                        <div className="">
+                                          <svg
+                                            className="mx-auto h-12 w-12 text-gray-400"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth="2"
+                                              d="M12 4v16m8-8H4"
+                                            />
+                                          </svg>
+                                          <p className="mt-5 text-sm text-gray-600">Click here or Drag an Image!</p>
+                                        </div>
+                                      )}
+                                    </label>
+                                  </div>
+                                  <input
+                                    className="hidden"
+                                    type="file"
+                                    id="profileImageInput"
+                                    onChange={handleImageChange}
+                                    accept="image/*"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-2 pt-5">
+                                  <div className="flex items-center justify-end">
+                                    <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-neutral-800 hover:text-neutral-500"
+                                      onClick={() => handlePopupClose()}>Close
+                                    </button>
+                                  </div>
+                                  <div className="flex items-center justify-start">
+                                    <button className="border border-neutral-700 mx-3 rounded-md w-20 text-white py-2 bg-green-900 hover:text-neutral-500"
+                                      onClick={() => handleSaveChanges()}>Save
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                        </Dialog>
-                    </Transition.Root>
-                
+                          </div>
+                        </Transition.Child>
+                      </div>
+                    </Dialog>
+                  </Transition.Root>
+
 
                   <div className="flex justify-end gap-x-3 pt-8">
                     <button
@@ -1199,37 +1200,37 @@ const handleClick = () => {
             >
               <ul className="mr-2 py-2">
                 <li className="py-1">
-                  <a
+                  <Link
                     href="../settings"
                     className="px-2 py-2 text-lg  font-medium text-white"
                   >
                     {' '}
                     General
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=security"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Security
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=preferences"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Billing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -1401,37 +1402,37 @@ const handleClick = () => {
             >
               <ul className="mr-2 py-2">
                 <li className="py-1">
-                  <a
+                  <Link
                     href="../settings"
                     className="px-2 py-2 text-lg  font-medium text-white"
                   >
                     {' '}
                     General
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=security"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Security
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=preferences"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Billing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -1525,37 +1526,37 @@ const handleClick = () => {
             >
               <ul className="mr-2 list-none py-2">
                 <li className="py-1">
-                  <a
+                  <Link
                     href="../settings"
                     className="px-2 py-2 text-lg  font-medium text-white"
                   >
                     {' '}
                     General
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=security"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Security
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=preferences"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Email Preferences
-                  </a>
+                  </Link>
                 </li>
                 <li className="py-1 ">
-                  <a
+                  <Link
                     href="../settings?loc=billing"
                     className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
                   >
                     Billing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

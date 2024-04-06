@@ -183,8 +183,6 @@ body {
   background-color:#0A0A0A;
   font-family: 'Poppins', sans-serif;
   height: "100%";
-
-
 }
 
 .typewriter  {
@@ -267,12 +265,14 @@ ul {
   }
 }
 
-.animate-slide-in-right {
-  animation: slideInRight 1s;
-}
+@layer utilities {
+  .animate-slide-in-right {
+    animation: slideInRight 1s;
+  }
 
-.animate-slide-in-right3 {
-  animation: slideInRight 3s;
+  .animate-slide-in-right3 {
+    animation: slideInRight 3s;
+  }
 }
 
 .root {
@@ -286,4 +286,3 @@ ul {
   --rt-transition-show-delay: 0.10s;
   --rt-transition-closing-delay: 0.10s;
 }
-
