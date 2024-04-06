@@ -112,6 +112,8 @@ export default function Dashboard() {
                 <h1 className='text-3xl font-semibold'>Learning Path</h1>
                 <h1 className='text-3xl font-semibold'>Suggested Challenges</h1>
                 <div className='border border-neutral-700 w-full p-4 rounded-sm'>
+
+                  <ChallengeCard></ChallengeCard>
                   {likes?.length > 0 &&
                     <ChallengeCard challenge={likes[0].challenge}></ChallengeCard>}
                 </div>
