@@ -3,7 +3,8 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Transition, Fragment, Dialog } from '@headlessui/react';
+import { Transition, Dialog } from '@headlessui/react';
+import { Fragment } from 'react';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -26,8 +27,7 @@ export default function Createclass() {
   const createClass = async () => {
     setLoading(true);
     try {
-
-      // this is for now since we are not letting anyone pay 
+      // this is for now since we are not letting anyone pay
       setSelectedOption('student');
 
       if (seats <= 0) {
@@ -53,7 +53,7 @@ export default function Createclass() {
 
       if (usingPaymentLink && selectedOption === 'institution') {
         dataObj['isPayedFor'] = false;
-        let url = baseUrl + "/classroom/create";
+        let url = baseUrl + '/classroom/create';
         const res = await request(url, 'POST', dataObj);
         if (res && res.success) {
           window.location.href = '/groups';
@@ -66,9 +66,18 @@ export default function Createclass() {
           ? `${baseUrl}/classroom/create`
           : `${baseUrl}/payments/stripe/create-checkout-session`;
 
-      const response = await request(url, 'POST',
-        selectedOption === 'student' ? { ...dataObj }
-          : { subType: selectedOption, quantity: seats, data: { ...dataObj }, operation: 'createClass' });
+      const response = await request(
+        url,
+        'POST',
+        selectedOption === 'student'
+          ? { ...dataObj }
+          : {
+              subType: selectedOption,
+              quantity: seats,
+              data: { ...dataObj },
+              operation: 'createClass',
+            }
+      );
 
       if (selectedOption === 'student') {
         window.location.href = '/groups';
@@ -223,13 +232,10 @@ export default function Createclass() {
                       more. This field is optional.
                     </p>
                   </div>
-
-
                 </div>
 
-                {
-                  /*
-                  
+                {/*
+
                                   <h1 className="mt-4 text-sm text-white">Pricing Model</h1>
                                   <div className="grid-row-1 mt-2 grid grid-cols-2 gap-4 gap-x-4 text-white ">
                                     <div
@@ -268,8 +274,7 @@ export default function Createclass() {
                                       <h1 className="text-sm">per student, per semester</h1>
                                     </div>
                                   </div>
-                   * */
-                }
+                   * */}
                 <h1 className="mt-4 text-sm text-white">
                   Expected amount of students
                 </h1>

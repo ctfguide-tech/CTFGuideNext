@@ -101,21 +101,6 @@ export default function Careers() {
         },
     ];
 
-    // useEffect(() => {
-    //   try {
-    //    // fetch('api.ctfguide.com/dashboard')
-    //
-    //    fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
-    //
-    //    .then((res) => res.json())
-    //
-    //       .then((data) => {
-    //         if (data.onboardingComplete === false) {
-    //         }
-    //       });
-    //   } catch (error) {}
-    // });
-
     return (
         <>
             <Head>
@@ -150,7 +135,7 @@ export default function Careers() {
          sm is for "smaller" devices
          */}
                 <div
-                    className="hidden mb-12 mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
+                    className=" mb-12 mx-auto grid max-w-7xl grid-cols-1 gap-4 text-center md:grid-cols-3 lg:grid-cols-3">
                     {team.map((person) => {
                         return (
                             <PersonCard person={person}/>
