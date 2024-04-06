@@ -35,19 +35,20 @@ module.exports = {
         '.card-decorator': {
           'display': 'flex',
           'position': 'absolute',
-          'background-color': theme('colors.neutral.500'),
         },
         '.card-decorator-top': {
           'top': '0',
           'left': '0',
           'width': '100%',
-          'height': '1rem',
+          'height': '0.5rem',
+          'background-color': theme('colors.blue.500'),
         },
         '.card-decorator-left': {
           'top': '0',
           'left': '0',
-          'width': '1rem',
+          'width': '0.375rem',
           'height': '100%',
+          'background-color': theme('colors.neutral.500'),
         },
         '.card-container': {
           'position': 'relative',
