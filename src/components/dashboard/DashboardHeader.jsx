@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import request from '@/utils/request';
+import Link from 'next/link';
 
 export function DashboardHeader() {
   const [username, setUsername] = useState(null);
@@ -87,10 +88,9 @@ export function DashboardHeader() {
       <div className="mx-auto max-w-7xl ">
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
           <div className="flex">
-            <a href={`${baseUrl}/users/${username}`}>
+            <Link href={`${baseUrl}/users/${username}`}>
               {(pfp && (
                 <img
-                  style={{ borderColor: '#ffbf00' }}
                   className="h-24 w-24 rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
                   src={pfp}
                   alt=""
@@ -98,25 +98,25 @@ export function DashboardHeader() {
               )) || (
                   <Skeleton
                     circle={true}
-                    height={150}
-                    width={150}
+                    height={128}
+                    width={128}
                     baseColor="#262626"
                     highlightColor="#262626"
                   />
                 )}
-            </a>
+            </Link>
           </div>
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
               <h1 className="mt-8 truncate text-2xl font-bold text-white">
                 {username || (
-                  <Skeleton baseColor="#262626" highlightColor="#262626" />
+                  <Skeleton baseColor="#262626" highlightColor="#262626" width='15rem' />
                 )}
               </h1>
               <p className="text-white">
                 <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                 {location || (
-                  <Skeleton baseColor="#262626" highlightColor="#262626" />
+                  <Skeleton width='25rem' baseColor="#262626" highlightColor="#262626" />
                 )}
               </p>
             </div>

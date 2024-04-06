@@ -109,20 +109,14 @@ export default function Dashboard() {
           <div className="flex mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
             <div className='w-full bg-neutral-800 rounded-sm'>
               <div className='w-full p-8'>
-                <h1 className='text-3xl font-semibold'>Learning Path</h1>
-                <h1 className='text-3xl font-semibold'>Suggested Challenges</h1>
-                <div className='border border-neutral-700 w-full p-4 rounded-sm'>
+                <h1 className='text-3xl mb-6 font-semibold'>Learning Path</h1>
+                <h1 className='text-3xl mb-6 font-semibold'>Suggested Challenges</h1>
+                <div className='flex flex-col gap-4 w-full'>
 
-                  <ChallengeCard></ChallengeCard>
                   {likes?.length > 0 &&
-                    <ChallengeCard challenge={likes[0].challenge}></ChallengeCard>}
+                    likes.map((challenge) => <ChallengeCard challenge={challenge.challenge} key={challenge.challenge.challengeId} />)
+                    || <><ChallengeCard /><ChallengeCard /></>}
                 </div>
-                <button className='w-14 h-14 p-2 rounded-full bg-black'>
-                  <ArrowLeftIcon></ArrowLeftIcon>
-                </button>
-                <button className='w-14 h-14 p-2 rounded-full bg-black'>
-                  <ArrowLeftIcon className='rotate-180'></ArrowLeftIcon>
-                </button>
               </div>
             </div>
             <div className='hidden relative lg:flex flex-col w-[400px] card-container shrink-0 gap-4'>
