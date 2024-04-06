@@ -56,9 +56,9 @@ const ChallengeCard = (_props) => {
       </Link >)
     || (
       <div className="bg-neutral-700 rounded-sm pl-8 pr-6 py-4 box-content leading-8">
-        <Skeleton baseColor='#999' highlightColor='#eee' width='50%' />
-        <Skeleton baseColor='#999' highlightColor='#eee' width='60%' />
-        <Skeleton baseColor='#999' highlightColor='#eee' width='10%' />
+        <Skeleton baseColor='#999' highlightColor='#eee' width='10rem' />
+        <Skeleton baseColor='#999' highlightColor='#eee' width='12rem' />
+        <Skeleton baseColor='#999' highlightColor='#eee' width='4rem' />
         <Skeleton baseColor='#999' highlightColor='#eee' />
       </div>)
   )
