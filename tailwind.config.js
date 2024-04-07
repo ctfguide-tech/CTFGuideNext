@@ -41,14 +41,14 @@ module.exports = {
           'left': '0',
           'width': '100%',
           'height': '0.5rem',
-          'background-color': theme('colors.blue.500'),
+          'background-color': theme('colors.neutral.600'),
         },
         '.card-decorator-left': {
           'top': '0',
           'left': '0',
           'width': '0.375rem',
           'height': '100%',
-          'background-color': theme('colors.neutral.500'),
+          'background-color': theme('colors.neutral.600'),
         },
         '.card-container': {
           'position': 'relative',

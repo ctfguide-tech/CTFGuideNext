@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Challenge from '../challenge/ChallengeComponent';
 import ChallengeCard from '../profile/ChallengeCard';
 
 export function Community({ challenges }) {

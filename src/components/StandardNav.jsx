@@ -203,13 +203,6 @@ export function StandardNav(props) {
                     </Link>
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
-                    {/* Current: "border-blue-500 text-white", Default: "border-transparent text-gray-300 hover:text-white" */}
-                    <Link
-                      href='/dashboard'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
-                    >
-                      Dashboard
-                    </Link>
                     <Link
                       href='/learn'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
