@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect, useState, Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
+import Markdown from 'react-markdown';
+
 import {
   XMarkIcon,
   HeartIcon,
@@ -24,6 +26,9 @@ import {
 import request from '@/utils/request';
 
 import api from '@/utils/terminal-api';
+
+import CommentCard from '@/components/challenge/CommentCard.jsx';
+
 
 export default function Challenge() {
   const router = useRouter();
@@ -64,6 +69,14 @@ export default function Challenge() {
   const [progress, setProgress] = useState(0);
   const [eta, setEta] = useState(15);
   const [username, setUsername] = useState(null);
+
+  const markdownContent = 
+`#### Thanks for using CTFGuide!
+- Praise Kana.
+- Buy EDU.
+- Get CTFGuide Pro **Soon**.
+![Kana, the CTFGuide mascot](/TophatKana.png)
+`;
 
   // change eta by one every sec
   useEffect(() => {
@@ -146,6 +159,7 @@ export default function Challenge() {
       fetchLeaderboard();
       getLikes();
       fetchLikeUrl();
+      fetchComments();
       //fetchComments();
       if (challenge.upvotes) {
         setLikeCount(challenge.upvotes);
@@ -278,6 +292,11 @@ export default function Challenge() {
       console.log(error);
     }
   };
+
+
+  function usernameMatch(username) {
+    return username === localStorage.getItem('username');
+  }
 
   // Kshitij
   async function fetchHints() {
@@ -698,17 +717,36 @@ export default function Challenge() {
               Error posting comment! This could be because it was less than 5
               characters or greater than 250 characters.{' '}
             </h1>
-            {comments.map((message, index) => (
+
+
+            {comments && comments.length > 0 && (
+              comments.map((comment) => (
+                <CommentCard
+                  message = {comment.content}
+                  username = {comment.username}
+                  createAt = {comment.createdAt}
+                  ownUser = {usernameMatch(comment.username)}
+                  pfp = {comment.pfp}
+                />
+              ))
+            )} 
+
+            {/* {comments.map((message, index) => (
               <div
                 key={index}
                 className="mt-4 rounded-lg bg-black  "
                 style={{ backgroundColor: '#212121' }}
               >
-                <h1 className="px-5 pt-4 text-xl text-white">
-                  @{message.username}
-                </h1>
+                <div className="flex">
+                  <h1 className="pl-5 pt-4 text-xl text-blue-600/90">
+                    {message.username}
+                  </h1>
+                  <h1 className="px-2 pt-5 text-md text-white">
+                    19 hours ago
+                  </h1>
+                </div>
                 <p className="space-y-10 px-5 pb-4 text-white">
-                  <span className="mb-5">{message.content}</span>
+                  <span className="mb-5 ml-4">Uhhh I was getting an error running the ___ command. Did anyone get the same thing?</span>
                   <br className="mt-10"></br>
                   <a
                     onClick={onCommentReport}
@@ -718,8 +756,228 @@ export default function Challenge() {
                   </a>
                 </p>
               </div>
-            ))}
+            ))} */}
+
+{/* 
+
+            <div
+              className="flex mt-4 rounded-lg bg-black  "
+              style={{ backgroundColor: '#212121' }}
+            >
+              <div className="ml-8 relative flex items-center">
+                <img
+                  style={{ borderColor: '#ffbf00' }}
+                  className="mr-4 h-24 w-24 rounded-full"
+                  src={'https://firebasestorage.googleapis.com/v0/b/ctfguide-dev.appspot.com/o/kshitij%40ctfguide.com%2Fpictures%2Fpfp?alt=media&token=11186c43-2936-4fb8-9e54-e7e087fe1537'}
+                  alt=""
+                />
+              </div>
+              <div className="w-full">
+                <div className="flex grid grid-cols-2">
+                  <div className="flex">
+                    <h1 className="pl-5 pt-4 text-xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 text-transparent bg-clip-text">
+                      kkochhar04
+                    </h1>
+                    <img
+                      style={{ borderColor: '#ffbf00' }}
+                      className="ml-2 mt-5 h-6 w-6 rounded-md"
+                      src={'https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&'}
+                      alt=""
+                    />
+                    <h1 className="px-2 pt-5 text-md text-white">
+                      19 hours ago
+                    </h1>
+
+                  </div>
+                  <div className="flex justify-end w-fill">
+                    <i class="text-white fas fa-solid fa-flag p-4"> </i>{' '}
+                  </div>
+                </div>
+                <p className="space-y-10 px-5 pb-4 text-white">
+                  <span className="mb-2 ml-4">
+                    I was getting an error running the cd command. Did anyone get the same thing?</span>
+                  <br className="mt-10"></br>
+                </p>
+                <div className="flex  ">
+                  <i class="text-white text-lg far fa-thumbs-up  pl-6 -mt-1 pb-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Like
+                  </h1>
+                  <i class="text-white text-lg fas fa-reply -mt-1 ml-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Reply
+                  </h1>
+                  <i class="text-white text-lg fas fa-edit -mt-1 ml-4"> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Edit
+                  </h1>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="flex mt-4 ml-10 rounded-lg bg-black  "
+              style={{ backgroundColor: '#212121' }}
+            >
+              <div className="ml-8 relative flex items-center">
+                <img
+                  style={{ borderColor: '#ffbf00' }}
+                  className="mr-4 h-24 w-24 rounded-full"
+                  src={'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSExMWFhUVGBUaFxcYFRYXFhcYFx0YGBcXGBcYHSggGBolGxcXITEiJSkrLi4uFx8zODMsNygtLisBCgoKDg0OGhAQGy0mICUuLS0tKzItLS0rLS0tLS0tLS0tLS0tLS0tLS01LS0tLS0tMC0tLS0tLS0tLS0tLS0tLf/AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAQUBAAAAAAAAAAAAAAAABAECAwUGB//EAEEQAAEDAgMFBwMBBQYFBQAAAAEAAhEDIQQxQQUSUWFxBiKBkaGx8BPB0TIHQlLh8RQVM2JykiM1hLPCNFNjgoP/xAAaAQEAAgMBAAAAAAAAAAAAAAAAAQQCBQYD/8QAKREAAgIBAwMDBAMBAAAAAAAAAAECAxEEITEFEkETMlEUYYGRIlKxcf/aAAwDAQACEQMRAD8A49ERdacyEREAREQBERAEREARUc4C5MBa7EbYYP0970H5XlZdCtZkz0rqnZ7UbJFoqm06jsob0z8ysRxLj++7zVOXUq1wmy3Hp83y0jokXN/Xd/EeVz/RSaeLcP3jn1WK6nDzFkvp8vDN2igN2hBgwRxFvS6mUqodkZVyrU12+1lWzT2V+5F6Ii9zxCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCwYzFCmJNzoNT+BzWWrUDQXHILmcTWL3Fx19P5KlrNV6KxHllvS6f1Xl8IricS6obmRwGSxhqq0SOA91lpN4SPO/yVoZTcnls3UYqKwjEAqgeikPw56eP5Qs8FBJQsdmRAtPRX3zy8vuPkLKbjPMCRPpbqVe6lGuf2gXlQDFS1nXhAI5hUaYNibnoVmNK02urHssOP4ngpTa4IaybDCYresc/fRSlpS2J0jrlotlg60iCZI9tFudFrHL+E+fDNVq9Korvhx5JCIi2ZrwiIgCIiAIiIAiIgCIiAIiIAiIgCIiA1e3KphrR1P2WpYB4fPRT9rGakcAPW/wB1hpUfNc5rJ910mb7SQxVEyYXAueRaXHIcIyup7sPYfxAwePHTxWz2PsB7279+lhwyK27OzVQgSROtptfPiYPotdK1ZNjGiTXBx9elnYyLEe0LE2geBytwn8Zrvz2NcXb2+Ae7Ai1tSOM9FZW7DVHZ1PJsffL8KVdEPTz+Dz5lIxM5Tl5+SzR+Ok5ruKnYgt3bA3G9Bj309VqsV2TryYpO3b5QLaWJ6ZLNWxZ5umS8HPAWjUfICtafKfZbOrsmqyQWPkZ90xyuPnmoxwLh+oGRxtYrLuRh2P4IgF5555WNlfQqmxExOqzVcPAJI5dMh7qPUdMgjKP5LOMsPKMJRysM27XSJCqo+DdaOCkLpqbPUgpHPW19k3EIiL1PMIiIAiIgCIiAIiIAiIgCIiAIiEqAjR1RvvceanYPCy4fM+eiuwGHnM5wtrgsLD26Xj1v85Lkbp5bZ1NMMJI7HZtLcptHL1W0pNsoNG0Kfh3LWM3C4JdNqlMpKPS6qbSWaREmW/SHGVR1PgpIaIVpCywYZIdWkIWvxGzaT/1MBIyJF1tqoUKqo7mjPCZz+0ezNN1wSLQINlxmP7L1WAkd6AcjpnqvSaryodZekLWV7KYs8twYhwHIqcrMdS3cS8f5nfPVXrqemNun8nK9QWLfwERFsSiEREAREQBERAEREAREQBERAFR2SkYHCmrUawa68ALk+QXVu7NUatItp92oBYmQT1BNwVR1eurofbLll7R6C3UJyjwjl8DhrC3z5C2GCod/p7q5tEsO44Q4WcOB+fZbHAUbSuTnI6iuBtaMWU3D05WkxWOZRG885+wWuZ2vNyGd0ZTafPNeca3Lg95Wxhyd/RpqWxi4XBdt2ZER00XU7M29RrCWPBOqz9NoxVsZcGzJzWEO/pCyfWBzRkZrAzMb2KPUpqc6qodV0oyVwQa7FrsW6FtajVotoOiUS3MWzh9oGcRUPh88ljRxlzjxcUXZaGHZRFfk4zWz7r5BERXCqEREAREQBERAEREAREQBERAb7sUwHEwf4H+7ftK7g0xLnAxBMHKI+y4DsnW3cXS/zFzf9zTHrC9NpNH0+9lDnHxJgLl+spq9f8Oq6LJPTtfc43bzWvqU6jf323HNsD7x4KZhaXdAUfadHdrNH+WY4bxNvRbnAU7BahvY2iW7NRV2TT3vqVLxxmAOAAPyVrsb2hoMDxTwwq/THfhohg5mLec8l1+MwIeCHEwdMlrWbBY0FrWwOQGufVZwl8mE4fBxFHG0MY/6bcHLi0uJpgktAzkWJItlOYibxN2ZskU3B9N1iLGfYj2I0XW4fYzacmmCybd0BhjgSI1JVtDAtbvRMk8SQTxM5lZzmsbGFdb8m0wFcuA4x4LPWdui5VNnUgLLNtWnLD0XgWODS4/bTWAknLnmuTxP7QLlobB6gz4qXTwhc4uc0kExx3Rx3ZG90kLSdosPXpVD9EPczu7jvp02wbFwcwNJdqM4yuV71RT5K90n4Lqfbl5kZcAdVstnbcZiG7ps8acVDfXqURTbiWUnb4BlrQC06sdBIngR6a5cJspgriq0BudhlBWTUU+Dzj3NZyaMMIAJBg6wYPQ6ouo7QYicO0NYBTJaGk5nMyBoIB81y66vQ3+tUpYx4/Ry+u0/oWuOc+f2ERFcKYREQBERAEREAREQBERAEREBJ2ZW3K1N5ya9hPSbr1MFw3siAIjiD01Xka9A7NbVFekGn/EYA09Bk75zWi61Q3GNq8bM33RLkpSqfndEPalScVH/AMVOep3pHmt7s85cFx+1sW3+8XNByYxp6gSfddZgHWC56S4N9CW7NyxkhX/ShY6D1LZTlYpHoRHU5WN9KFsXMDRK1mJqlzoAsEaJRmwcbyybQ/SVTCMhX40WUohnPYbCwTzUnFYHeBBaD1sb6ys2F/UW6qexnFSmYNeTi8b2dZUsWkX4kqbUwIpU44BdM+k3NaXbTxulv8Vh42+6nLMcYOS7U1obRo6tYHO6uENHlPmufUva2I+pWqP0LjHQWHoAoi7TR1elTGP2ON1l3q3yn9wiIrJWCIiAIiIAiIgCIiAIiIAiIgCy4Vzg9u6SDIFiQb6WWJZ8F/iNjQz5XXle0q5Z+GetCbsjj5Rp3YncxRdqHXnxnxXqOy8UCwO5A+d143iqhNRzjmXEm2pJXd9ltry1rHmCA2JsToAuOuhsmjrKbP5NM9IwrlsqVSy0GEqSFmxG1mUo33ATle6rIv5WDbv72eS1LsYGuc3dLnEnKB0NyFBxXaygBZ0nThaZ68LakeHE7e7TVKzgKUsacnAgExzOUnovSNbZ4yvjE9NwWMEw8FpEGDnByysfBY9rbVYweg4leX7N2/UaxwrOc7PcdvQW8BOZBA9NCoOI2/W3w/fMwLExA1gwIBWfosw+pjjJ6xQrguaQQSQZgzaR+VtHuAuuO7JbWpVWiLPgbwJk+B1C6d9URmvGSw9z3g1JbGPF1rLk9u7R3Wkzf93rp+Vutq4kBpXm22McX4jdmzRHKdVZ0VasuipcZKuutddMnHksREXanFhERAEREAREQBERAEREAREQBERAFP2KP+KLZBx5ZZKAthsF4+s3m1wHM2PsCtV1S1KrsT3Nl0yrNqk+DisWO++37xtpxifPyUjZ2L3XTrpwBkCeOUqu3qW5Xqji4kcIP4MhQQM/uY+WWmW6Ns9pHtOwtoNeIkSPuJ+dFwnayhX/ALZUjedIEQT+mASALx6KJsLbD2SJ1BOkxpJ6LdbP2kauLaXGXGxNhxsRocsuCrKDhJst96nFIw7K7O4iuGlzqbGxmTJE8hqtu7sZTgA4po1dusLiT5gLfu2exwFhnpbzWZmyQR3bH5dFY2WIaevyco/sJTJH08STE7zXsAOtx3uPooWO7F1CQKdenUH8Lt5kcpEz4LsnbIc6e8fT8KDi9mVGCQ/50ClSl8mc9JUjgGsq4WpuulhB1tPPoYXa9nO0JqOdTdmBvA+kLWbdaXM3asGBY/vDXPwWt7I4QU3VMQ490AtE6nU36DzSeJR35KsU67MJ7G97UbV+mOfDiVw2Bql7y88b+Kv27tI1qh/hBtxjoq7Ipd3eOvH38ir3T6X6iKHUL12M2SIi6g5oIiIAiIgCIiAIiIAiIgCIiAIij4qtAgZ+y87bI1x7pGddbnLtRWjVBf4GPQK6hWLCHAwWukToR9iCo1KWuH+k5dQstY5kZEXHLTyuucsm7JOT8m/rioJJeCR2qZSqMbiGSHGzhwPAnl8zXKPJNzJz1+akLoaWI3ARG814IM5HhlkQcj8HP4gbpgG18/vzXhGPbse0pd25lwz3RI5EeAN+v5C2+wcYKbwQ0l0gAA6cP90HyWiY6M/LIgjS/P2U3DPuCQCTlMHOZtwCSWUIvDO6f2scAAC2Zzmbcyc7/dSKX7QGtAlkzYQfZcMWufvH9VgbnTmPSOivobPc8mDIYJLrbo4NHE8l5KtIsevPwegYX9oFBx/w3tPG3nY5LJiu0VOp+k3PLL4PdeaVKAmwm9ozgGLnS32UzDYndGfwyABr8PVJVmS1MvJte02NkwMtTyPPT+q0eK2k4s+mDEi4+dIUXHVt8/nhy9FibnM2g3PIHll8K9IwSRXnY22xhqe8Q0dJ6Z+y6KmyAAtTsilJ3oyW4W96dViDl8mk19mZ9vwERFsigEREAREQBERAEREARFa54GZWMpKKy2SotvCLlRzgLlR34g6WUeob8zxVK3qEI7R3/wALlehnLeWxJq17W8/woTQZKkELEG3Wquuna8yNlVTCtYiXPzbHGPCCsu9FvzmramXS/ldW4kE+VuUrxPUtfRsSBbh+FAxVMHTx+xj3WxoVRxv8KVqAcL2PugNE+zTxGds5B+0q7CPESdPaRlwUnG4RzZIu3W3Qjn8KhCdDnbjmOJ6FYmRtGYg34FoHSZI9RPh5Zm4yGbgPdiTB/U5xtPIcuC1DKjrmTYaz84jqEa+ffx++fqoaJTwbb+2BpMcbi8wbQY8o5LAIgkRci3Xw5Zc1ry/P28cp0V1OoZEEiI16+qJBszl4bleRLreY5aKlIAxb7rGKhIIGpHkP5wug2P2ce/C1cXkynugXDZJgk3zgEWGcrIhmPCy0DKOGoUltQKynkrXC6uVauytYT2Klmlrm8tbkhFhBVzXK9X1CL96wU7NBJe15MiKm8qq7C2E/a8lOdcoe5BERehgEREAREQEV9Ynl84rHKrCouZnZKbzJ5OhhXGCxFFCeaUx3lcFfSGqwMw4LG4XWct+WVjhf50QFAOXsrqVxxIkZcIsfCD4oFsdkYR1cVaLRvODfqsAI/U0tY6eRBZ0jmUBpq2HkS0/kRor6WJvuuHSykOaBBNmnPk7+ax1cNPVAWvbwNudwtbjsM2JAgi9rhTBv0+Pz3VwrMdrHH5koBpHPIjjrYZ3j3Ksc3UyLR8+arcVsI097yi3isf8AZhlfz+SowTk15aBPD0nOI1iEFOZ9I4+fVT24G8xx+e6yCiBy5zZMDJjweCkzpNsstF6JRpijsSq47hNeuN2Qd7u7rbaEjccbRaVxdJpMBsSYAJNpNhnn7Ltv2o1Dh6eB2eN//hU998ua5pMboM5kyKnK6khnHMKrCsonT5/VZlkDGW6q5quIQD5kgK7qH4VVGonjghrJaCrghKqCrMNXbDz+zwnpapeCiJErCBuugaq3DqP9olSWg/qzMiKqtfWU/JW+kt+CHu2VY+SqhUcFoDeFDl/PorxMK1rZWQkIC2VQnNZCOascEBQFS9ibVdha7MQ0TuG7ZgOYbOaeufUBRHCFQiyA6rtnscU6v1GXw+IAfTdADRObRHODfQ+K51rSLHMRytou27H4uljcN/d9ZzW1G96hUcZIP/tsbYxmTBuCeC5faOBfSc6lUAY5h7zSZIyIytEIiCAWfBIWCrhAbFo8uozUj6c5j1+XVHYUHU66n8dEBB/sY0JHIH8ngrhQeMnjxF/TNTBhIzJ8eatdRbrPjKEkPddcFwHhfXxWSjRnQk8/sNPJTmsaBaBqqtbFwfyoB0H7N9jfXxrajp+nhh9V5G6bj9AINyJBNh+4tF2zx4xGKqVxu9553SBALWw1pg3BLc51JXd7Qb/duzRQsMVi7vG8RUY3qyd4CAIJiXnPJebY2j+6AOH9EAptss7XKPhnS2VlPwrIF6oqtvwVEBc1XbqsKMqZ8vkIDJAVFj+qsgKArCxYod0HgfRZQFbXEtI5H5CAx/X+Qih/W+QiAkSqOVYkSrKzHAW0+aqAXtCvUejXmxseCkqQU8E3RmqkhWSCoBRrfX0QcFU+6r7IC/A130yHscWvpvlrhEg6EE63XpG7T2vhw5sMxlFoBaAya5ga2hpg/wCkk6Z+bUW3I4i2t1P2djX0Xtq03FlRkw4RbiINiDwKAY7Clr3Me0tc0w4EXBHGFDcYPEeXp4r0d1bDbVp2ijimjdY3uk1nESS87vebYmcxc8jx+19k1cPUdTqsIcJAIB+m45918QemfRMg1+YuOmXzNWWFhPWyuNPl4aq/c4jTx/KEFnKOWX2Xc9gNk0i12MxIAp0YLHOI+mXDQznBjxjULT9l+y9TEy95LKDL1KhhvdvJbvWOWeQ14LZ9tdtscG4TCkChTjeLHAtrZEEgAXBF73PRYyWQzn+0W1X4us6s4kDJjN4ubTb/AAjKOOWq0lcj5kVKfbSOYH5Kj1G/PO6yGSFhjmOBKkarBQHfI4wfMc+akGxQkK6fNWhUICkgx16pFm5n059FdSpQOPNXBkTbrqrghIcPJZdFicVlHv8ACgKKjjZUJCxlyA1nz5dFWfl/yiAm4f8AT5rOMvEexRFANdtLIKcz55KqICjsvD7Kjv1Do32RFIK6eapTyPgiKAZqH+I3x9kofqP/AN/dEQG87Kf+qo/6z7Fekdt/+Wf/AKu96qqih8jweTPzHT7rHRy80RSQe11P+Uf9Gf8AtrxOnm75oiKESVpZfOCwOzPh7lEUkEVn6z0+5WapmiISVCOyVEUgu+eyM+eiIgKVs/FVbr81REBWt9j/AOKwDXx9kRAQkREB/9k='}
+                  alt=""
+                />
+              </div>
+              <div className="w-full">
+                <div className="flex grid grid-cols-2">
+                  <div className="flex">
+                    <h1 className="pl-5 pt-4 text-xl text-blue-600/90">
+                      Drake
+                    </h1>
+                    <h1 className="px-2 pt-5 text-md text-white">
+                      10 hours ago
+                    </h1>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <i class="text-white fas fa-solid fa-flag p-4"> </i>{' '}
+                  </div>
+                </div>
+                <p className="space-y-10 px-5 pb-4 text-white">
+                  <span className="mb-2 ml-4">
+                    That's why I need a one dance
+                    Got a Hennessy in my hand
+                    One more time 'fore I go
+                    Higher powers taking a hold on me
+                    I need a one dance
+                    Got a Hennessy in my hand
+                    One more time 'fore I go
+                    Higher powers taking a
+                    <span className="text-gray-500">
+                      {' '}...Read More
+                    </span>
+                  </span>
+                  <br className="mt-10"></br>
+                </p>
+                <div className="flex  ">
+                  <i class="text-white text-lg far fa-thumbs-up  pl-6 -mt-1 pb-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Like
+                  </h1>
+                  <i class="text-white text-lg fas fa-reply -mt-1 ml-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Reply
+                  </h1>
+
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="flex mt-4 ml-20 rounded-lg bg-black  "
+              style={{ backgroundColor: '#212121' }}
+            >
+              <div className="ml-8 relative pt-5">
+                <img
+                  style={{ borderColor: '#ffbf00' }}
+                  className="mr-4 h-24 w-24 rounded-full"
+                  src={'https://firebasestorage.googleapis.com/v0/b/ctfguide-dev.appspot.com/o/kshitij%40ctfguide.com%2Fpictures%2Fpfp?alt=media&token=11186c43-2936-4fb8-9e54-e7e087fe1537'}
+                  alt=""
+                />
+              </div>
+              <div className="w-full">
+                <div className="flex grid grid-cols-2 mb-2">
+                  <div className="flex">
+                    <h1 className="pl-5 pt-4 text-xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 text-transparent bg-clip-text">
+                      kkochhar04
+                    </h1>
+                    <img
+                      style={{ borderColor: '#ffbf00' }}
+                      className="ml-2 mt-5 h-6 w-6 rounded-md"
+                      src={'https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&'}
+                      alt=""
+                    />
+                    <h1 className="px-2 pt-5 text-md text-white">
+                      3 hours ago
+                    </h1>
+
+                  </div>
+                  <div className="flex justify-end w-fill">
+                    <i class="text-white fas fa-solid fa-flag p-4"> </i>{' '}
+                  </div>
+                </div>
+                <div className=" ml-4 px-5 pb-4 text-white overflow-y-auto max-h-40">
+                    <Markdown>
+                      {markdownContent}
+                    </Markdown>
+                </div>
+                <div className="flex pt-4">
+                  <i class="text-white text-lg far fa-thumbs-up  pl-6 -mt-1 pb-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Like
+                  </h1>
+                  <i class="text-white text-lg fas fa-reply -mt-1 ml-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Reply
+                  </h1>
+                  <i class="text-white text-lg fas fa-edit -mt-1 ml-4"> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Edit
+                  </h1>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="flex mt-4 ml-32 rounded-lg bg-black  "
+              style={{ backgroundColor: '#212121' }}
+            >
+              <div className="ml-8 relative flex items-center">
+                <img
+                  style={{ borderColor: '#ffbf00' }}
+                  className="mr-4 h-24 w-24 rounded-full"
+                  src={'data:image/jpeg;base64,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'}
+                  alt=""
+                />
+              </div>
+              <div className="w-full">
+                <div className="flex grid grid-cols-2">
+                  <div className="flex">
+                    <h1 className="pl-5 pt-4 text-xl text-blue-600/90">
+                      Drake
+                    </h1>
+                    <h1 className="px-2 pt-5 text-md text-white">
+                      19 minutes ago
+                    </h1>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <i class="text-white fas fa-solid fa-flag p-4"> </i>{' '}
+                  </div>
+                </div>
+                <p className="space-y-10 px-5 pb-4 text-white">
+                  <span className="mb-2 ml-4">
+                    Hey!
+                    </span>
+                  <br className="mt-10"></br>
+                </p>
+                <div className="flex  ">
+                  <i class="text-white text-lg far fa-thumbs-up  pl-6 -mt-1 pb-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Like
+                  </h1>
+                  <i class="text-white text-lg fas fa-reply -mt-1 ml-4 "> </i>{' '}
+                  <h1 className="pl-2 text-md text-white">
+                    Reply
+                  </h1>
+                  
+                </div>
+              </div>
+            </div>
+ */}
+
+
           </div>
+
         </div>
         {/* ***************************************** */}
       </main>

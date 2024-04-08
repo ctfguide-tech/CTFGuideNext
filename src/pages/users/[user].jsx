@@ -55,6 +55,9 @@ export default function Users() {
     let invalidUser = null;
     const [ownUser, setOwnUser] = useState(false);
 
+    const [proUser, setproUser] = useState(false);
+
+
     const [location, setLocation] = useState(null);
     const [username, setUsername] = useState(null);
 
@@ -895,392 +898,414 @@ export default function Users() {
                                     <div className="flex flex-col mt-14">
                                         {/* TOP LINE */}
                                         <div className="flex">
-                                            <h1 className="truncate text-3xl font-bold text-white">
-                                                {username || (
+                                            {proUser ? (
+                                                <h1 className = "truncate text-3xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 text-transparent bg-clip-text">
+                                                {username 
+                                                    || 
+                                                (
                                                     <Skeleton baseColor="#262626" highlightColor="#262626" />
                                                 )}
                                             </h1>
-                                            {/* <h1 className="ml-2 truncate text-3xl font-bold text-blue-600">
+                                            ): (
+                                                <h1 className = "truncate text-3xl font-bold text-white">
+                                                {username 
+                                                    || 
+                                                (
+                                                    <Skeleton baseColor="#262626" highlightColor="#262626" />
+                                                )}
+                                            </h1>
+                                            )}
+
+                                        {proUser &&
+                                            <img
+                                                style={{ borderColor: '#ffbf00' }}
+                                                className="ml-2 mt-1 h-8 w-8 rounded-md"
+                                                src={'https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&'}
+                                                alt=""
+                                            />
+                                        }
+                                        {/* <h1 className="ml-2 truncate text-3xl font-bold text-blue-600">
                                                 #{rank}
                                             </h1> */}
-                                            {!ownUser && (!followedUser ? (
-                                                <button className="ml-3"
-                                                    data-tooltip-id="follow-user"
-                                                    data-tooltip-content="Follow User"
-                                                    data-tooltip-place="top"
-                                                    onClick={() => followUser()}>
-                                                    <i class="text-xl text-white hover:text-gray-400 fas fa-solid fa-user-plus"></i>{' '}
-                                                    <Tooltip id="follow-user" />
-                                                </button>
-                                            ) : (
-                                                <button className="ml-3"
-                                                    data-tooltip-id="unFollow-user"
-                                                    data-tooltip-content="Unfollow User"
-                                                    data-tooltip-place="top"
-                                                    onClick={() => unfollowUser()}
-                                                >
-                                                    <i class="text-xl text-white hover:text-gray-400 fas fa-solid fa-users-slash"></i>{' '}
-                                                    <Tooltip id="unFollow-user" />
-                                                </button>
-                                            ))}
+                                        {!ownUser && (!followedUser ? (
+                                            <button className="ml-3"
+                                                data-tooltip-id="follow-user"
+                                                data-tooltip-content="Follow User"
+                                                data-tooltip-place="top"
+                                                onClick={() => followUser()}>
+                                                <i class="text-xl text-white hover:text-gray-400 fas fa-solid fa-user-plus"></i>{' '}
+                                                <Tooltip id="follow-user" />
+                                            </button>
+                                        ) : (
+                                            <button className="ml-3"
+                                                data-tooltip-id="unFollow-user"
+                                                data-tooltip-content="Unfollow User"
+                                                data-tooltip-place="top"
+                                                onClick={() => unfollowUser()}
+                                            >
+                                                <i class="text-xl text-white hover:text-gray-400 fas fa-solid fa-users-slash"></i>{' '}
+                                                <Tooltip id="unFollow-user" />
+                                            </button>
+                                        ))}
 
-                                        </div>
+                                    </div>
 
-                                        {/* BOTTOM LINE */}
-                                        <div className="flex gap-x-3">
-                                            {location &&
-                                                <div className="flex">
-                                                    <p className="text-white text-lg">
-                                                        <i class="fas fa-map-marker-alt mt-2"> </i>{' '}
-                                                        {location}
-                                                    </p>
-                                                </div>
-                                            }
-                                            {/* <div>
+                                    {/* BOTTOM LINE */}
+                                    <div className="flex gap-x-3">
+                                        {location &&
+                                            <div className="flex">
+                                                <p className="text-white text-lg">
+                                                    <i class="fas fa-map-marker-alt mt-2"> </i>{' '}
+                                                    {location}
+                                                </p>
+                                            </div>
+                                        }
+                                        {/* <div>
                                                 <p className="ml-3 text-blue-600 font-bold text-lg ">
                                                     <i class="fas fa-solid fa-eye mt-2"> </i>{' '}
                                                     1.2k
                                                 </p>
                                             </div> */}
-                                            <div>
+                                        <div>
 
 
-                                                <p className="text-red-600 font-bold text-lg">
-                                                    {/* <i class="fas fa-solid fa-user-shield mt-2"> </i>{' '}
+                                            <p className="text-red-600 font-bold text-lg">
+                                                {/* <i class="fas fa-solid fa-user-shield mt-2"> </i>{' '}
                                                     ADMIN */}
-                                                </p>
+                                            </p>
 
 
 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="pr-16 pt-6 flex">
+                            <div className="flex flex-auto items-center justify-center mt-10">
+                                {/* Social Stats */}
+                                <div className="ml-3 flex items-center justify-center">
+                                    <div className="mx-4 flex items-center">
+                                        <h1 className="text-lg text-white">
+                                            Followers:
+                                        </h1>
+                                        <h1 className="ml-2 text-lg font-bold text-white">
+                                            {followerCount}
+                                        </h1>
+                                    </div>
+
+                                    <div className="mx-4 flex items-center">
+                                        <h1 className="text-lg text-white">
+                                            Following:
+                                        </h1>
+                                        <h1 className="ml-2 text-lg font-bold text-white">
+                                            {followingCount}
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {/* ACTUAL CONTENT AREA */}
+            <div className="container  max-w-6xl mx-auto mt-5 h-full justify-center">
+                <div className="flex justify-center flex-rows w-full ">
+                    {/* LEFT SIDE CONTENT */}
+                    <div className="h-full w-1/3 mr-4">
+                        <div className="bg-neutral-800 rounded-xl h-full grid grid-cols-1 pb-12">
+
+                            <div className="mt-6">
+                                <h1 className="flex justify-center font-bold text-white pb-4">
+                                    Streak Chart
+                                </h1>
+                            </div>
+
+
+                            {/* STREAK CHART */}
+                            <div>
+                                <div className=" grid-rows-10 grid">
+                                    {['', '', '', '', ''].map((e, idx) => {
+                                        idx = idx * 7;
+                                        return (
+                                            <div className="flex items-center justify-center">
+                                                {['', '', '', '', '', '', ''].map((e, j) => (
+                                                    <div
+                                                        style={{
+                                                            marginBottom: '2px',
+                                                        }}
+                                                        className={`${shades[activity[idx + j]]}`}
+                                                    ></div>
+                                                ))}
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="pr-16 pt-6 flex">
-                                <div className="flex flex-auto items-center justify-center mt-10">
-                                    {/* Social Stats */}
-                                    <div className="ml-3 flex items-center justify-center">
-                                        <div className="mx-4 flex items-center">
-                                            <h1 className="text-lg text-white">
-                                                Followers:
-                                            </h1>
-                                            <h1 className="ml-2 text-lg font-bold text-white">
-                                                {followerCount}
-                                            </h1>
-                                        </div>
-
-                                        <div className="mx-4 flex items-center">
-                                            <h1 className="text-lg text-white">
-                                                Following:
-                                            </h1>
-                                            <h1 className="ml-2 text-lg font-bold text-white">
-                                                {followingCount}
-                                            </h1>
-                                        </div>
-                                    </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
+
+                        </div>
+                    </div>
+
+                    {/* MIDDLE */}
+                    <div className="h-full w-full">
+                        <div className="rounded-xl bg-neutral-800 shadow p-2 h-full mb-4">
+                            <div className="grid grid-cols-5 flex justify-center ">
+                                <div className="col-span-2"></div>
+                                <h1 className="flex justify-center text-2xl font-bold text-white pt-2 pb-4">
+                                    Bio
+                                </h1>
+                                <div className="col-span-1"></div>
+                                {ownUser ? ((!openBio && ownUser) &&
+                                    <div className="flex justify-end">
+                                        <button className="flex justify-end pointer-events-none"
+                                            onClick={openTheBio}
+                                            hidden={openBio}
+                                            data-tooltip-id="edit-bio"
+                                            data-tooltip-content="Edit Bio"
+                                            data-tooltip-place="top-end">
+
+                                            <i class="pointer-events-auto text-xl mt-2 mr-4 text-white hover:text-gray-400 fas fa-edit"></i>{' '}
+                                            <Tooltip className="" id="edit-bio" />
+                                        </button>
+                                    </div>
+                                ) || (
+                                        <div className="flex justify-end">
+                                            <button className="flex justify-end pointer-events-none"
+                                                onClick={closeBannerAndBio}
+                                                hidden={!openBio}
+                                                data-tooltip-id="cancel-edit"
+                                                data-tooltip-content="Cancel Edits"
+                                                data-tooltip-place="top-end">
+
+                                                <i class="pointer-events-auto text-2xl mr-3 text-red-700 hover:text-red-400 fas fa-times"></i>{' '}
+                                                <Tooltip className="" id="cancel-edit" />
+                                            </button>
+                                        </div>
+                                    ) : (<div></div>)}
+                            </div>
+                            <div>
+                                <div className="px-5 pb-5">
+                                    {((openBio && ownUser) &&
+                                        <div>
+                                            <textarea
+                                                id="bio"
+                                                style={{ backgroundColor: '#212121', resize: "none" }}
+                                                readOnly={false}
+                                                onChange={openBanner}
+                                                value={tempBio}
+                                                className="w-full rounded-lg border-white/10 bg-neutral-900/50 px-6 pt-3 pb-12 text-lg text-white"
+                                            ></textarea>
+                                        </div>
+                                    ) || (
+                                            <div className="w-full border border-2 border-white/10 rounded-lg bg-neutral-800 px-6 pt-3 pb-10 text-lg text-white overflow-y-auto max-h-56">
+                                                <Markdown>
+                                                    {bio === null || bio === "" ? "No Bio Set..." : bio}
+                                                </Markdown>
+                                            </div>
+
+                                        )}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* RIGHT SIDE CONTENT */}
+                    <div className="h-full w-1/3 ml-4">
+                        <div className="bg-neutral-800 rounded-xl h-full grid grid-cols-1">
+                            <div className="my-6">
+                                <h1 className="flex items-center justify-center text-white font-bold">
+                                    Challenge Completion
+                                </h1>
+                                <div className="my-8 flex items-center justify-center">
+                                    {completedChallenges &&
+                                        <PieChart data={[
+                                            completedChallenges.completedBeginnerChallenges.length,
+                                            completedChallenges.completedEasyChallenges.length,
+                                            completedChallenges.completedMediumChallenges.length,
+                                            completedChallenges.completedHardChallenges.length,
+                                            completedChallenges.completedInsaneChallenges.length]}
+                                        />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                {/* BADGE */}
+                <div>
+                    <div className=" rounded-md mt-4 ">
+                        {/* Badge Content */}
+                        <div className="rounded-md">
+                            <h1 className="ml-2 mb-3 text-3xl font-semibold text-gray-300">Badges</h1>
+                            <div className="bg-neutral-800 rounded-xl grid grid-cols-5 gap-x-2 gap-y-2 py-4 px-4">
+                                {badges && badges.length > 0 ? (
+                                    badges.map((badge) => (
+                                        <Badge
+                                            createdAt={badge.createdAt}
+                                            badgeName={badge.badge.badgeName}
+                                            badgeTier={badge.badge.badgeTier}
+                                            badgeInfo={badge.badge.badgeInfo}
+                                        />
+                                    ))
+                                ) : (
+                                    <div
+                                        className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                        data-tooltip-content="Complete challenges to earn badges!"
+                                        data-tooltip-id="badge-tooltip"
+                                        data-tooltip-place="top"
+                                    >
+                                        {ownUser && <Tooltip id="badge-tooltip" />}
+                                        <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
+                                        <h1 className="mx-auto mt-2 text-center text-xl text-white">No Badges Yet...</h1>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                {/* ACTUAL CONTENT AREA */}
-                <div className="container  max-w-6xl mx-auto mt-5 h-full justify-center">
-                    <div className="flex justify-center flex-rows w-full ">
-                        {/* LEFT SIDE CONTENT */}
-                        <div className="h-full w-1/3 mr-4">
-                            <div className="bg-neutral-800 rounded-xl h-full grid grid-cols-1 pb-12">
-
-                                <div className="mt-6">
-                                    <h1 className="flex justify-center font-bold text-white pb-4">
-                                        Streak Chart
-                                    </h1>
-                                </div>
-
-
-                                {/* STREAK CHART */}
-                                <div>
-                                    <div className=" grid-rows-10 grid">
-                                        {['', '', '', '', ''].map((e, idx) => {
-                                            idx = idx * 7;
-                                            return (
-                                                <div className="flex items-center justify-center">
-                                                    {['', '', '', '', '', '', ''].map((e, j) => (
-                                                        <div
-                                                            style={{
-                                                                marginBottom: '2px',
-                                                            }}
-                                                            className={`${shades[activity[idx + j]]}`}
-                                                        ></div>
-                                                    ))}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-
-                        {/* MIDDLE */}
-                        <div className="h-full w-full">
-                            <div className="rounded-xl bg-neutral-800 shadow p-2 h-full mb-4">
-                                <div className="grid grid-cols-5 flex justify-center ">
-                                    <div className="col-span-2"></div>
-                                    <h1 className="flex justify-center text-2xl font-bold text-white pt-2 pb-4">
-                                        Bio
-                                    </h1>
-                                    <div className="col-span-1"></div>
-                                    {ownUser ? ((!openBio && ownUser) &&
-                                        <div className="flex justify-end">
-                                            <button className="flex justify-end pointer-events-none"
-                                                onClick={openTheBio}
-                                                hidden={openBio}
-                                                data-tooltip-id="edit-bio"
-                                                data-tooltip-content="Edit Bio"
-                                                data-tooltip-place="top-end">
-
-                                                <i class="pointer-events-auto text-xl mt-2 mr-4 text-white hover:text-gray-400 fas fa-edit"></i>{' '}
-                                                <Tooltip className="" id="edit-bio" />
-                                            </button>
-                                        </div>
-                                    ) || (
-                                            <div className="flex justify-end">
-                                                <button className="flex justify-end pointer-events-none"
-                                                    onClick={closeBannerAndBio}
-                                                    hidden={!openBio}
-                                                    data-tooltip-id="cancel-edit"
-                                                    data-tooltip-content="Cancel Edits"
-                                                    data-tooltip-place="top-end">
-
-                                                    <i class="pointer-events-auto text-2xl mr-3 text-red-700 hover:text-red-400 fas fa-times"></i>{' '}
-                                                    <Tooltip className="" id="cancel-edit" />
-                                                </button>
-                                            </div>
-                                        ) : (<div></div>)}
-                                </div>
-                                <div>
-                                    <div className="px-5 pb-5">
-                                        {((openBio && ownUser) &&
-                                            <div>
-                                                <textarea
-                                                    id="bio"
-                                                    style={{ backgroundColor: '#212121', resize: "none" }}
-                                                    readOnly={false}
-                                                    onChange={openBanner}
-                                                    value={tempBio}
-                                                    className="w-full rounded-lg border-white/10 bg-neutral-900/50 px-6 pt-3 pb-12 text-lg text-white"
-                                                ></textarea>
-                                            </div>
-                                        ) || (
-                                                <div className="w-full h-full border border-2 border-white/10 rounded-lg bg-neutral-800 px-6 pt-3 pb-20 text-lg text-white">
-                                                    <Markdown>
-                                                        {bio === null || bio === "" ? "No Bio Set..." : bio}
-                                                    </Markdown>
-                                                </div>
-                                            )}
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        {/* RIGHT SIDE CONTENT */}
-                        <div className="h-full w-1/3 ml-4">
-                            <div className="bg-neutral-800 rounded-xl h-full grid grid-cols-1">
-                                <div className="my-6">
-                                    <h1 className="flex items-center justify-center text-white font-bold">
-                                        Challenge Completion
-                                    </h1>
-                                    <div className="my-8 flex items-center justify-center">
-                                        {completedChallenges &&
-                                            <PieChart data={[
-                                                completedChallenges.completedBeginnerChallenges.length,
-                                                completedChallenges.completedEasyChallenges.length,
-                                                completedChallenges.completedMediumChallenges.length,
-                                                completedChallenges.completedHardChallenges.length,
-                                                completedChallenges.completedInsaneChallenges.length]}
-                                            />
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-                    {/* BADGE */}
-                    <div>
-                        <div className=" rounded-md mt-4 ">
-                            {/* Badge Content */}
-                            <div className="rounded-md">
-                                <h1 className="ml-2 mb-3 text-3xl font-semibold text-gray-300">Badges</h1>
-                                <div className="bg-neutral-800 rounded-xl grid grid-cols-5 gap-x-2 gap-y-2 py-4 px-4">
-                                    {badges && badges.length > 0 ? (
-                                        badges.map((badge) => (
-                                            <Badge
-                                                createdAt={badge.createdAt}
-                                                badgeName={badge.badge.badgeName}
-                                                badgeTier={badge.badge.badgeTier}
-                                                badgeInfo={badge.badge.badgeInfo}
-                                            />
-                                        ))
-                                    ) : (
+                {/* Created Challenges */}
+                <div>
+                    {/* CHALLENGE */}
+                    <div className="rounded-md">
+                        <div className="rounded-md">
+                            <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Created Challenges</h1>
+                            <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
+                                {(createdChallenges && createdChallenges.map((challenge) => (
+                                    <ChallengeCard
+                                        id={challenge.id}
+                                        title={challenge.title}
+                                        category={challenge.category}
+                                        difficulty={challenge.difficulty}
+                                        createdAt={challenge.createdAt}
+                                        creator={challenge.creator}
+                                        views={challenge.views}
+                                        likes={challenge.upvotes}
+                                    />
+                                ))) || (
                                         <div
                                             className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-                                            data-tooltip-content="Complete challenges to earn badges!"
-                                            data-tooltip-id="badge-tooltip"
+                                            data-tooltip-content="Create some challenges and they'll appear here!"
+                                            data-tooltip-id="cChal-tooltip"
                                             data-tooltip-place="top"
                                         >
-                                            {ownUser && <Tooltip id="badge-tooltip" />}
-                                            <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
-                                            <h1 className="mx-auto mt-2 text-center text-xl text-white">No Badges Yet...</h1>
+                                            {ownUser &&
+                                                <Tooltip id="cChal-tooltip" />
+                                            }
+                                            <img
+                                                src={'/CuteKana.png'}
+                                                width="100"
+                                                className="mx-auto mt-2 px-1"
+                                            />
+
+                                            <h1 className="mx-auto mt-2 text-center text-xl text-white">
+                                                No Challenges Created Yet...
+                                            </h1>
+
                                         </div>
                                     )}
-                                </div>
                             </div>
                         </div>
                     </div>
-                    {/* Created Challenges */}
-                    <div>
-                        {/* CHALLENGE */}
+
+                </div>
+
+                {/* Pinned Challenges */}
+                < div >
+                    {/* CHALLENGE */}
+                    <div className="rounded-md">
                         <div className="rounded-md">
-                            <div className="rounded-md">
-                                <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Created Challenges</h1>
-                                <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
-                                    {(createdChallenges && createdChallenges.map((challenge) => (
-                                        <ChallengeCard
-                                            id={challenge.id}
-                                            title={challenge.title}
-                                            category={challenge.category}
-                                            difficulty={challenge.difficulty}
-                                            createdAt={challenge.createdAt}
-                                            creator={challenge.creator}
-                                            views={challenge.views}
-                                            likes={challenge.upvotes}
-                                        />
-                                    ))) || (
-                                            <div
-                                                className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-                                                data-tooltip-content="Create some challenges and they'll appear here!"
-                                                data-tooltip-id="cChal-tooltip"
-                                                data-tooltip-place="top"
-                                            >
-                                                {ownUser &&
-                                                    <Tooltip id="cChal-tooltip" />
-                                                }
-                                                <img
-                                                    src={'/CuteKana.png'}
-                                                    width="100"
-                                                    className="mx-auto mt-2 px-1"
-                                                />
+                            <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Liked Challenges</h1>
+                            <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
+                                {pinnedChallenges && Array.isArray(pinnedChallenges) && pinnedChallenges.map((challenge) => (
+                                    <ChallengeCard
+                                        id={challenge.challengeId}
+                                        title={challenge.challenge.title}
+                                        category={challenge.challenge.category}
+                                        difficulty={challenge.challenge.difficulty}
+                                        createdAt={challenge.challenge.createdAt}
+                                        creator={challenge.challenge.creator}
+                                        views={challenge.challenge.views}
+                                        likes={challenge.challenge.upvotes}
+                                    />
+                                ))
+                                    || (
+                                        <div
+                                            className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
+                                            data-tooltip-content="Like some challenges and they'll appear here!"
+                                            data-tooltip-id="lChal-tooltip"
+                                            data-tooltip-place="top"
+                                        >
+                                            {ownUser &&
+                                                <Tooltip id="cChal-tooltip" />
+                                            }
+                                            <img
+                                                src={'/CuteKana.png'}
+                                                width="100"
+                                                className="mx-auto mt-2 px-1"
+                                            />
 
-                                                <h1 className="mx-auto mt-2 text-center text-xl text-white">
-                                                    No Challenges Created Yet...
-                                                </h1>
+                                            <h1 className="mx-auto mt-2 text-center text-xl text-white">
+                                                No Challenges Liked Yet...
+                                            </h1>
 
-                                            </div>
-                                        )}
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {/* Pinned Challenges */}
-                    < div >
-                        {/* CHALLENGE */}
-                        <div className="rounded-md">
-                            <div className="rounded-md">
-                                <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Liked Challenges</h1>
-                                <div className="bg-neutral-800 rounded-xl mt-2 gap-x-4 gap-y-2 p-4 flex flex-col grid grid-cols-3">
-                                    {pinnedChallenges && Array.isArray(pinnedChallenges) && pinnedChallenges.map((challenge) => (
-                                        <ChallengeCard
-                                            id={challenge.challengeId}
-                                            title={challenge.challenge.title}
-                                            category={challenge.challenge.category}
-                                            difficulty={challenge.challenge.difficulty}
-                                            createdAt={challenge.challenge.createdAt}
-                                            creator={challenge.challenge.creator}
-                                            views={challenge.challenge.views}
-                                            likes={challenge.challenge.upvotes}
-                                        />
-                                    ))
-                                        || (
-                                            <div
-                                                className="border col-span-5 border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-                                                data-tooltip-content="Like some challenges and they'll appear here!"
-                                                data-tooltip-id="lChal-tooltip"
-                                                data-tooltip-place="top"
-                                            >
-                                                {ownUser &&
-                                                    <Tooltip id="cChal-tooltip" />
-                                                }
-                                                <img
-                                                    src={'/CuteKana.png'}
-                                                    width="100"
-                                                    className="mx-auto mt-2 px-1"
-                                                />
-
-                                                <h1 className="mx-auto mt-2 text-center text-xl text-white">
-                                                    No Challenges Liked Yet...
-                                                </h1>
-
-                                            </div>
-                                        )}
-                                </div>
-                            </div>
-                        </div>
-                    </div >
-
-                    <div>
-                        {/* Join Date */}
-                        <div className="rounded-md mt-12 ">
-                            {/* Badge Content */}
-                            <div className="flex justify-center rounded-md">
-                                {createDate && (
-                                    <h1 className="ml-2 text-2xl text-gray-300">CTFGuide Member since {createDate.slice(0, 10)}</h1>
-                                )}
+                                        </div>
+                                    )}
                             </div>
                         </div>
                     </div>
                 </div >
 
-            </main >
-            <Footer />
-            {
-                bioBanner && (
-                    <div
-                        style={{ backgroundColor: '#212121' }}
-                        id="savebanner"
-                        className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-y-4 gap-x-8 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
-                        hidden={!openBio}
-                    >
-                        <p className="max-w-4xl text-2xl leading-6 text-white">
-                            You have unsaved changes.
-                        </p>
-                        <div className="flex flex-none items-center gap-x-5">
-                            <button
-                                onClick={saveBio}
-                                type="button"
-                                className="rounded-md bg-green-700 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
-                            >
-                                Save Changes
-                            </button>
-                            <button
-                                onClick={closeBannerAndBio}
-                                type="button"
-                                className="text-xl font-semibold leading-6 text-white"
-                            >
-                                Cancel
-                            </button>
+                <div>
+                    {/* Join Date */}
+                    <div className="rounded-md mt-12 ">
+                        {/* Badge Content */}
+                        <div className="flex justify-center rounded-md">
+                            {createDate && (
+                                <h1 className="ml-2 text-2xl text-gray-300">CTFGuide Member since {createDate.slice(0, 10)}</h1>
+                            )}
                         </div>
                     </div>
-                )
-            }
+                </div>
+            </div >
+
+        </main >
+            <Footer />
+    {
+        bioBanner && (
+            <div
+                style={{ backgroundColor: '#212121' }}
+                id="savebanner"
+                className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-y-4 gap-x-8 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                hidden={!openBio}
+            >
+                <p className="max-w-4xl text-2xl leading-6 text-white">
+                    You have unsaved changes.
+                </p>
+                <div className="flex flex-none items-center gap-x-5">
+                    <button
+                        onClick={saveBio}
+                        type="button"
+                        className="rounded-md bg-green-700 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+                    >
+                        Save Changes
+                    </button>
+                    <button
+                        onClick={closeBannerAndBio}
+                        type="button"
+                        className="text-xl font-semibold leading-6 text-white"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        )
+    }
         </>
     );
 };
