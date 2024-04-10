@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<website>
+    <page>
+        <title>Home</title>
+        <url>https://ctfguide.com/</url> <!-- Index page URL -->
+    </page>
+    <page>
+        <title>Login</title>
+        <url>https://ctfguide.com/login</url> <!-- Assuming the Login URL pattern -->
+    </page>
+    <page>
+        <title>Register</title>
+        <url>https://ctfguide.com/register</url> <!-- Assuming the Register URL pattern -->
+    </page>
+</website>
