@@ -155,7 +155,7 @@ export default function Dashboard() {
                   Start here
                 </h1>
                 <div className='border-b border-neutral-700 mb-4'></div>
-                <p className='text-left rounded-sm leading-[1.6rem]'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
+                <p className='text-left rounded-sm leading-8'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
                   take the learning assessment. We will give you a <b>custom</b> learning path tailored to your specific needs.</p>
                 <button className='mt-8 bg-blue-600 mx-auto w-full hover:bg-blue-500 hover:shadow-md active:shadow-sm active:bg-blue-700 transition-colors py-3 px-8 text-lg font-semibold tracking-wide rounded-sm text-blue-50'>Begin Assessment</button>
               </div>

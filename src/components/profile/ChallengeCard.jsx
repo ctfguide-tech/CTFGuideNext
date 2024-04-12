@@ -35,7 +35,7 @@ const ChallengeCard = (_props) => {
 
   return (
     challenge && (
-      <Link {...props} className={`group w-full rounded-sm card-container shadow-sm transition-colors shadow-black/20 ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
+      <Link {...props} className={`group w-full rounded-sm card-container transition-all shadow-sm hover:shadow-lg shadow-black/40 ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
         <CardDecorator position='left' className={`${colorBG[challenge.difficulty || 0]} w-2 transition-colors`}></CardDecorator>
         <div className="bg-neutral-700 group-hover:bg-stone-600 transition-colors pl-8 pr-6 py-4 box-content border-y border-r border-neutral-100/20 rounded-l-lg text-sm leading-8 text-gray-300">
           <h1 className="text-2xl font-semibold text-white">{challenge.title}</h1>

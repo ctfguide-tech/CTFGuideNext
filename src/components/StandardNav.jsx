@@ -204,12 +204,6 @@ export function StandardNav(props) {
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
                     <Link
-                      href='/learn'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
-                    >
-                      Learn
-                    </Link>
-                    <Link
                       href='/groups'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
