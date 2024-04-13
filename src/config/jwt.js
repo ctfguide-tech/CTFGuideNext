@@ -22,10 +22,12 @@ const updateAuthToken = async (auth) => {
   }
 }
 
+
+// I changed 1000 to 10000 temp
 const updateAuthTokenInterval = (auth) => {
   const intervalId = setInterval(() => {
     updateAuthToken(auth);
-  }, 10 * 60 * 1000);
+  }, 10 * 60 * 100000);
   return () => {
     clearInterval(intervalId);
   };

@@ -298,6 +298,10 @@ export default function Challenge() {
     return username === localStorage.getItem('username');
   }
 
+  function userLikedComment(likedUsers) {
+    return likedUsers.includes(localStorage.getItem('username'));
+  }
+
   // Kshitij
   async function fetchHints() {
     try {
@@ -722,11 +726,15 @@ export default function Challenge() {
             {comments && comments.length > 0 && (
               comments.map((comment) => (
                 <CommentCard
+                  likedComment = {userLikedComment(comment.likedUsers)}
+                  challengeId = {id}
+                  commentId = {comment.id}
                   message = {comment.content}
                   username = {comment.username}
-                  createAt = {comment.createdAt}
+                  createAt = {comment.updatedAt}
                   ownUser = {usernameMatch(comment.username)}
                   pfp = {comment.pfp}
+                  likeCount = {comment.likedUsers.length}
                 />
               ))
             )} 
