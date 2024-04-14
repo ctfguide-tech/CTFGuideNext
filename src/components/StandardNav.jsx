@@ -38,12 +38,11 @@ const DEFAULT_NOTIFICATION = {
   receivedTime: '12h ago',
 };
 
-export function StandardNav(props) {
+export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
-  const { guestAllowed } = props;
   const router = useRouter();
 
   function logout() {
@@ -177,7 +176,7 @@ export function StandardNav(props) {
       <Disclosure as="nav" className=" shadow border-b border-white/10">
         {({ open }) => (
           <>
-            <div className="mx-auto sm:max-w-7xl md:max-w-7xl lg:max-w px-4 sm:px-6 lg:px-8">
+            <div className={`px-2 ${alignCenter ? 'mx-auto sm:max-w-7xl md:max-w-7xl lg:max-w' : ''}`}>
               <div className="flex h-16 justify-between">
                 <div className="flex">
                   <div className="-ml-2 mr-2 flex items-center md:hidden">
