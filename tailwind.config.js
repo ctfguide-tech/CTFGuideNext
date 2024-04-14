@@ -41,7 +41,7 @@ module.exports = {
           'left': '0',
           'width': '100%',
           'height': '0.5rem',
-          'background-color': theme('colors.blue.500'),
+          'background-color': theme('colors.neutral.500'),
         },
         '.card-decorator-left': {
           'top': '0',

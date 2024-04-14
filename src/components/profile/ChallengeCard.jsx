@@ -1,21 +1,22 @@
 import React from 'react';
-import { Tooltip } from 'react-tooltip';
 import { CardDecorator } from '../design/CardDecorator';
 import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
 
 /** 
  * @param {import('react').HTMLAttributes<HTMLDivElement> & { challenge: {id: string, title: string, category: string, difficulty: string, createdAt: string, creator: string, views: number, likes: number} }} props 
  * */
 const ChallengeCard = (_props) => {
   const { challenge, ...props } = _props;
-  const { id, title, category, difficulty, createdAt, creator, views, upvotes } = challenge;
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
-  const dateFormatted = new Date(createdAt)
-    .toLocaleDateString('en-US', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric',
-    });
+  console.log(challenge)
+  const dateFormatted = (date) =>
+    new Date(date)
+      .toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+      })
 
   const colorBG = {
     'BEGINNER': 'group-hover:bg-blue-500',
@@ -33,26 +34,34 @@ const ChallengeCard = (_props) => {
   };
 
   return (
-    <Link {...props} className={`group w-full rounded-sm card-container shadow-sm transition-colors shadow-black/20 ${props.className ?? ''}`} href={`${baseUrl}/challenges/${id}`} >
-      <CardDecorator position='left' className={`${colorBG[difficulty]} w-2 transition-colors`}></CardDecorator>
-      <div className="bg-neutral-700 group-hover:bg-stone-600 transition-colors pl-8 pr-6 py-4 box-content border-y border-r border-blue-100/10 rounded-l-lg text-sm leading-8 text-gray-300">
-        <h1 className="text-2xl font-semibold text-white">{title}</h1>
-        <h1 className="text-base text-neutral-400 line-clamp-1">Created by {creator}</h1>
-        <h1 className={`text-base px-2 mb-1 leading-6 font-bold capitalize w-fit rounded-sm text-neutral-50 ${colorText[difficulty]}`}>{difficulty?.toLowerCase()}</h1>
-        <div className="flex justify-between">
-          <p className="text-neutral-400 flex">
-            <i class="text-lg mt-[5px] mr-2 fas fa-solid fa-calendar"></i>
-            {dateFormatted}
-          </p>
-          <p className="flex text-neutral-200 opacity-70 items-center text-sm">
-            <i class="fas fa-solid fa-eye mr-2 text-lg"></i>
-            {views}
-            <i class="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
-            {upvotes}
-          </p>
+    challenge && (
+      <Link {...props} className={`group w-full rounded-sm card-container transition-all shadow-sm hover:shadow-lg shadow-black/40 ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
+        <CardDecorator position='left' className={`${colorBG[challenge.difficulty || 0]} w-2 transition-colors`}></CardDecorator>
+        <div className="bg-neutral-700 group-hover:bg-stone-600 transition-colors pl-8 pr-6 py-4 box-content border-y border-r border-neutral-100/20 rounded-l-lg text-sm leading-8 text-gray-300">
+          <h1 className="text-2xl font-semibold text-white">{challenge.title}</h1>
+          <h1 className="text-base text-neutral-400 line-clamp-1">{challenge.creator}</h1>
+          <h1 className={`text-base px-2 mb-1 leading-6 font-bold capitalize w-fit rounded-sm text-neutral-50 ${colorText[challenge.difficulty || 0]}`}>{challenge.difficulty?.toLowerCase() || <Skeleton />}</h1>
+          <div className="flex justify-between">
+            <p className="text-neutral-400 flex">
+              <i class="text-lg mt-[5px] mr-2 fas fa-solid fa-calendar"></i>
+              {dateFormatted(challenge.createdAt)}
+            </p>
+            <p className="flex text-neutral-200 opacity-70 items-center text-sm">
+              <i class="fas fa-solid fa-eye mr-2 text-lg"></i>
+              {challenge.views}
+              <i class="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
+              {challenge.upvotes}
+            </p>
+          </div>
         </div>
-      </div>
-    </Link >
+      </Link >)
+    || (
+      <div className={`bg-neutral-700 w-full rounded-sm pl-8 pr-6 py-4 leading-8 ${props.className ?? ''}`}>
+        <Skeleton baseColor='#999' highlightColor='#eee' width='10rem' />
+        <Skeleton baseColor='#999' highlightColor='#eee' width='12rem' />
+        <Skeleton baseColor='#999' highlightColor='#eee' width='4rem' />
+        <Skeleton baseColor='#999' highlightColor='#eee' />
+      </div>)
   )
 };
 
