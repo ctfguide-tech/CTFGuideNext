@@ -69,14 +69,9 @@ export default function Challenge() {
   const [progress, setProgress] = useState(0);
   const [eta, setEta] = useState(15);
   const [username, setUsername] = useState(null);
+  const [userPfp, setPfp] = useState(null);
 
-  const markdownContent = 
-`#### Thanks for using CTFGuide!
-- Praise Kana.
-- Buy EDU.
-- Get CTFGuide Pro **Soon**.
-![Kana, the CTFGuide mascot](/TophatKana.png)
-`;
+
 
   // change eta by one every sec
   useEffect(() => {
@@ -153,6 +148,21 @@ export default function Challenge() {
     }
   };
 
+  const fetchUserPfp = async () => {
+    try {
+      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + localStorage.getItem('username') + '/pfp';
+      const result = await request(endPoint, 'GET', null);
+      if (result) {
+        setPfp(result)
+    } else {
+        setPfp(`https://robohash.org/${localStorage.getItem('username')}.png?set=set1&size=150x150`)
+    }
+    } catch (error) {
+      console.log(error);
+    }
+  
+  }
+
   useEffect(() => {
     if (id) {
       getChallengeData();
@@ -160,6 +170,7 @@ export default function Challenge() {
       getLikes();
       fetchLikeUrl();
       fetchComments();
+      fetchUserPfp();
       //fetchComments();
       if (challenge.upvotes) {
         setLikeCount(challenge.upvotes);
@@ -293,6 +304,19 @@ export default function Challenge() {
     }
   };
 
+  function returnChildComments(parentId, childrenArray) {
+    if (childrenArray.length === 0) {
+      return;
+    }
+    const childrenComments = [];
+    childrenArray.forEach(childId => {
+        const childComment = comments.find(comment => comment.id === childId.id);
+        if (childComment && childComment.parentId === parentId) {
+            childrenComments.push(childComment);
+        }
+    });
+    return childrenComments;
+  }
 
   function usernameMatch(username) {
     return username === localStorage.getItem('username');
@@ -374,15 +398,18 @@ export default function Challenge() {
     const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments';
     const result = await request(endPoint, 'POST', { content: comment });
 
-    setComments([result, ...comments]);
+    document.getElementById('comment').value = '';
+    fetchComments();
 
     if (result.error) {
       console.log('Error occured while adding the comment');
     }
   };
+
   const commentChange = (event) => {
     setComment(event.target.value);
   };
+  
   const flagChanged = (event) => {
     setFlag(event.target.value);
   };
@@ -721,23 +748,38 @@ export default function Challenge() {
               Error posting comment! This could be because it was less than 5
               characters or greater than 250 characters.{' '}
             </h1>
-
-
+    
             {comments && comments.length > 0 && (
-              comments.map((comment) => (
-                <CommentCard
-                  likedComment = {userLikedComment(comment.likedUsers)}
-                  challengeId = {id}
-                  commentId = {comment.id}
-                  message = {comment.content}
-                  username = {comment.username}
-                  createAt = {comment.updatedAt}
-                  ownUser = {usernameMatch(comment.username)}
-                  pfp = {comment.pfp}
-                  likeCount = {comment.likedUsers.length}
-                />
-              ))
-            )} 
+              comments
+                .filter(comment => !comment.parentId) // Filter comments with parentId as null
+                .map((comment) => (
+                  <CommentCard
+                    key={comment.id}
+                    commentId={comment.id}
+                    message={comment.content}
+                    createAt={comment.updatedAt}
+                    pfp={comment.pfp}
+                    likeCount={comment.likedUsers.length}
+                    children={returnChildComments(comment.id, comment.children)}
+                    likedComment={userLikedComment(comment.likedUsers)}
+                    challengeId={id}
+                    username={comment.username}
+                    ownUser={usernameMatch(comment.username)}
+                    allComments={comments}
+                    indent={0}
+                    ownPfp={userPfp}
+                    ownUsername={username}
+                    fetchComments={fetchComments}
+                  />
+                ))
+            )}
+
+
+
+
+
+
+
 
             {/* {comments.map((message, index) => (
               <div
@@ -766,7 +808,7 @@ export default function Challenge() {
               </div>
             ))} */}
 
-{/* 
+            {/* 
 
             <div
               className="flex mt-4 rounded-lg bg-black  "

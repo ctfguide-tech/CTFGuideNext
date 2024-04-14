@@ -4,7 +4,9 @@ import Markdown from 'react-markdown';
 import { useEffect, useState, Fragment } from 'react';
 import request from '../../utils/request';
 
-const CommentCard = ({ likedComment, commentId, challengeId, message, username, createAt, proUser, ownUser, pfp, likeCount }) => {
+const CommentCard = ({ commentObject, likedComment, commentId, challengeId,
+  message, username, createAt, proUser, ownUser, pfp, likeCount,
+  children, allComments, indent, ownPfp, ownUsername, fetchComments }) => {
 
   // const [likes, setLikes] = useState(likeList.length);
   const [liked, setLiked] = useState(likedComment);
@@ -16,9 +18,71 @@ const CommentCard = ({ likedComment, commentId, challengeId, message, username, 
   const [banner, setBanner] = useState(false);
   const [time, setTime] = useState(createAt);
 
+  const [replyMode, setReplyMode] = useState(false);
+  const [reply, setReply] = useState('');
+  
+
+  let offset = 0;
+  let replyOffset = 0;
+  if (indent > 4) {
+    offset = 40;
+    replyOffset = 40;
+  } else {
+    offset = indent * 8;
+    replyOffset = indent * 8 + 8;
+  }
+  const marginLeft = 'ml-' + offset;
+  const replyMarginLeft = 'ml-' + replyOffset;
+
   proUser = false;
 
-  const commentReply = async () => { };
+
+  const submitComment = async () => {
+    const endPoint = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + challengeId + '/comments/' + commentId + '/reply';
+    const result = await request(endPoint, 'POST', { content: reply });
+
+    document.getElementById('comment').value = '';
+    setReplyMode(false);
+    window.location.reload();
+
+    if (!result || result.error) {
+      console.log('Error occured while adding the comment');
+    }
+  };
+
+  const commentChange = (event) => {
+    setReply(event.target.value);
+  };
+
+  function replyModeOn() {
+    setReplyMode(true);
+  }
+
+  function replyModeOff() {
+    setReplyMode(false);
+  }
+
+  function returnChildComments(parentId, childrenArray) {
+    if (childrenArray.length === 0) {
+      return;
+    }
+    const childrenComments = [];
+    childrenArray.forEach(childId => {
+      const childComment = allComments.find(comment => comment.id === childId.id);
+      if (childComment && childComment.parentId === parentId) {
+        childrenComments.push(childComment);
+      }
+    });
+    return childrenComments;
+  }
+
+  function userLikedComment(likedUsers) {
+    return likedUsers.includes(localStorage.getItem('username'));
+  }
+
+  function usernameMatch(user) {
+    return user === localStorage.getItem('username');
+  }
 
   async function saveEdit() {
     setContent(document.getElementById('commentArea').value);
@@ -96,7 +160,7 @@ const CommentCard = ({ likedComment, commentId, challengeId, message, username, 
   return (
     <>
       <div
-        className="flex mt-4 rounded-lg bg-black "
+        className={`${marginLeft} flex mt-4 rounded-lg bg-black `}
         style={{ backgroundColor: '#212121' }}
       >
         {/* Profile Picture */}
@@ -148,7 +212,7 @@ const CommentCard = ({ likedComment, commentId, challengeId, message, username, 
                   readOnly={false}
                   onChange={openBanner}
                   value={tempContent}
-                  className="px-5 text-white overflow-y-auto max-h-40 w-full resize-none"
+                  className="rounded-md px-5 text-white overflow-y-auto max-h-40 w-full resize-none"
                 ></textarea>
               </div>
             )
@@ -184,7 +248,7 @@ const CommentCard = ({ likedComment, commentId, challengeId, message, username, 
             {/* ADD FUNCT */}
             {/* Reply Button */}
             <button
-              onClick={commentReply}
+              onClick={replyModeOn}
               className="ml-2 -mt-1 mb-4 px-2 flex items-center justify-center rounded-md hover:bg-neutral-700"
             >
               <h1 className=" text-md text-white">
@@ -254,44 +318,91 @@ const CommentCard = ({ likedComment, commentId, challengeId, message, username, 
       </div>
 
       {/* REPLY COMMENT */}
-      <div className="ml-8 flex mt-4 rounded-lg bg-black "
-        style={{ backgroundColor: '#212121' }}>
+      {replyMode &&
+        <div className={`${replyMarginLeft} flex mt-4 rounded-lg bg-black `}
+          style={{ backgroundColor: '#212121' }}>
           <div className="ml-8 py-5 relative flex items-start">
-          <img
-            className="border border-blue-400/50 mr-2 h-16 w-16 rounded-full"
-            src={pfp}
-            alt=""
-          />
-        </div>
-        <div className="w-full">
-          {/* Username + Badge + Time */}
-          <div className="flex grid grid-cols-2">
-            <div className="flex">
-              {proUser ?
-                (<div className="flex">
-                  <h1 className="pl-8 pt-4 text-xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 text-transparent bg-clip-text">
-                    {username}
-                  </h1>
-                  <img
-                    style={{ borderColor: '#ffbf00' }}
-                    className="ml-2 mt-5 h-6 w-6 rounded-md"
-                    src={'https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&'}
-                    alt=""
-                  />
-                </div>)
-                :
-                (<h1 className="pl-8 pt-4 text-xl text-white">
-                  {username}
-                </h1>)
-              }
-              
-            </div>
-            
+            <img
+              className="border border-blue-400/50 mr-2 h-16 w-16 rounded-full"
+              src={ownPfp}
+              alt=""
+            />
           </div>
-
-         
+          <div className="w-full">
+            {/* Username + Badge + Time */}
+            <div className="flex grid grid-cols-2">
+              <div className="flex">
+                {proUser ?
+                  (<div className="flex">
+                    <h1 className="pl-8 pt-4 text-xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 text-transparent bg-clip-text">
+                      {ownUsername}
+                    </h1>
+                    <img
+                      style={{ borderColor: '#ffbf00' }}
+                      className="ml-2 mt-5 h-6 w-6 rounded-md"
+                      src={'https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&'}
+                      alt=""
+                    />
+                  </div>)
+                  :
+                  (<h1 className="pl-8 pt-4 text-xl text-white">
+                    {ownUsername}
+                  </h1>)
+                }
+              </div>
+            </div>
+            <div>
+            <div className="pt-2 ml-4 pr-10 ">
+                <textarea
+                  id="comment"
+                  style={{ backgroundColor: '#212121' }}
+                  readOnly={false}
+                  onChange={commentChange}
+                  className="rounded-md px-5 text-white overflow-y-auto max-h-40 w-full resize-none"
+                ></textarea>
+              </div>
+            </div>
+            <button
+              onClick={replyModeOff}
+              id="CancelReplyButton"
+              className="ml-4 mt-2 mb-4 rounded-lg  border border-gray-700  px-4 py-1 text-white hover:bg-gray-900"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={submitComment}
+              id="PostReplyButton"
+              className="ml-4 mt-2 mb-4 rounded-lg bg-blue-800/50 border border-gray-700  px-4 py-1 text-white hover:bg-gray-900"
+            >
+              Post
+            </button>
+          </div>
         </div>
-       
+      }
+      <div className="">
+
+        {children && children.length > 0 && (
+          children.map((reply) => (
+            <CommentCard
+              key={comment.id}
+              likedComment={userLikedComment(reply.likedUsers)}
+              challengeId={challengeId}
+              commentId={reply.id}
+              message={reply.content}
+              username={reply.username}
+              createAt={reply.updatedAt}
+              ownUser={usernameMatch(reply.username)}
+              pfp={reply.pfp}
+              likeCount={reply.likedUsers.length}
+              children={returnChildComments(reply.id, reply.children)}
+              allComments={allComments}
+              indent={indent + 1}
+              ownPfp={ownPfp}
+              ownUsername={ownUsername}
+              fetchComments={fetchComments}
+            />
+          ))
+        )}
       </div>
     </>
   )
