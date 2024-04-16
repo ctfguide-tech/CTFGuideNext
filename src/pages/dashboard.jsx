@@ -141,9 +141,9 @@ export default function Dashboard() {
                   <h1 className='text-3xl mb-3 font-semibold'>Popular Challenges</h1>
                   <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
 
-                    {likes?.length > 0 &&
-                      likes.map((challenge) => <ChallengeCard challenge={challenge.challenge} key={challenge.challenge.challengeId} />)
-                      || <><ChallengeCard /><ChallengeCard /></>}
+                    {likes?.length > 0 ?
+                      likes.map((challenge, index) => <ChallengeCard challenge={challenge.challenge} key={challenge.challenge.challengeId} />)
+                      : <><ChallengeCard /><ChallengeCard /></>}
                   </div>
                 </div>
               </div>
