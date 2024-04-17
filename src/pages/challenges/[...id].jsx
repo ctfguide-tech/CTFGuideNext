@@ -15,7 +15,7 @@ export default function Challenge() {
   // I hate this
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
   const [cache, _setCache] = useState({});
-  const setCache = (name, value) => {
+  const addCache = (name, value) => {
     const newCache = { ...cache };
     newCache[name] = value;
     _setCache(newCache);
@@ -34,11 +34,14 @@ export default function Challenge() {
       return;
     }
     (async () => {
+      if (cache.challenge) {
+        return;
+      }
       try {
         const getChallengeByIdEndPoint = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}`;
         const getChallengeResult = await request(getChallengeByIdEndPoint, "GET", null);
         if (getChallengeResult.success) {
-          setCache("challenge", getChallengeResult.body);
+          addCache("challenge", getChallengeResult.body);
         }
       } catch (error) { throw "Failed to fetch challenge: " + error; }
     })();
@@ -100,7 +103,7 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             {/* Only this element should rerender on tab switch */}
-            {<selectedTab.element cache={cache} />}
+            {<selectedTab.element cache={cache} addCache={addCache} />}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full">
@@ -176,7 +179,15 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
   return <p className={`${bgColor} ${textColor} capitalize rounded-sm px-2`}>{children}</p>
 }
 
-function WriteUpPage() {
+function WriteUpPage({ cache, addCache }) {
+  useEffect(() => {
+    (async () => {
+      if (cache['write-page']) {
+        return;
+      }
+      addCache('write-page', {});
+    })();
+  })
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
