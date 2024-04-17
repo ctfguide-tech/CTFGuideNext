@@ -3,129 +3,141 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-.markdown {
-  overflow-wrap: break-word;
+@layer utilities {
+  .markdown {
+    @apply break-words;
+  }
+  
+  .markdown p {
+    @apply leading-10;
+  }
+
+  .markdown h1 {
+    @apply text-4xl font-bold mt-2 mb-5;
+  }
+
+  .markdown h2 {
+    @apply text-3xl font-bold mt-2 mb-5;
+  }
+
+  .markdown h3 {
+    @apply text-2xl font-bold mt-2 mb-5;
+  }
+
+  .markdown h4 {
+    @apply text-xl font-bold;
+  }
+
+  .markdown h5 {
+    @apply text-lg font-bold ;
+  }
+
+  .markdown h6 {
+    @apply text-base font-bold ;
+  }
+
+  .markdown a {
+    @apply text-blue-500 underline;
+  }
+
+  .markdown p {
+    @apply leading-8;
+  }
+
+  .markdown underline {
+    @apply underline;
+  }
+
+  .markdown ul {
+    @apply list-disc ml-8 mb-2;
+  }
+
+  .markdown li li {
+    list-style-type: circle;
+  }
+
+  .markdown li li li {
+    list-style-type: square;
+  }
+
+  .markdown ol {
+    @apply list-decimal ml-8 mb-1;
+  }
+
+  .markdown li {
+    @apply leading-10 pl-2 marker:font-bold;
+  }
+
+  .markdown blockquote {
+    @apply border-l-4 border-gray-300 pl-4 pb-4;
+  }
+
+  .markdown pre {
+    @apply bg-zinc-700 text-white rounded p-4 pb-4;
+  }
+
+  .markdown code {
+    @apply bg-zinc-700 text-white rounded p-1;
+  }
+
+  .markdown table {
+    @apply w-full border-collapse border border-gray-300 pb-4;
+  }
+
+  .markdown table th {
+    @apply bg-gray-100 border border-gray-300 px-4 py-2;
+  }
+
+  .markdown table td {
+    @apply border border-gray-300 px-4 py-2;
+  }
+
+  .markdown table tr:nth-child(even) {
+    @apply bg-gray-100;
+  }
+
+  .markdown table tr:hover {
+    @apply bg-gray-200;
+  }
+
+  .markdown img {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown hr {
+    @apply border-neutral-700 border-t my-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper img {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper picture {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper picture img {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper picture source {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper picture source img {
+    @apply mx-auto mb-4;
+  }
+
+  .markdown .gatsby-resp-image-wrapper picture img {
+    @apply mx-auto mb-4;
+  }
 }
-
-.markdown h1 {
-  @apply text-4xl font-bold mb-4;
-}
-
-.markdown h2 {
-  @apply text-3xl font-bold mb-4;
-}
-
-.markdown h3 {
-  @apply text-2xl font-bold mb-4;
-}
-
-.markdown h4 {
-  @apply text-xl font-bold ;
-}
-
-.markdown h5 {
-  @apply text-lg font-bold ;
-}
-
-.markdown h6 {
-  @apply text-base font-bold ;
-}
-
-
-.markdown a {
-  @apply text-blue-500 underline;
-}
-
-.markdown underline {
-  @apply underline;
-}
-
-.markdown ul {
-  @apply list-disc pl-4;
-}
-
-
-.markdown ol {
-  @apply list-decimal pl-4;
-}
-
-.markdown li {
-}
-
-.markdown blockquote {
-  @apply border-l-4 border-gray-300 pl-4 mb-4;
-}
-
-.markdown pre {
-  @apply bg-gray-800 text-white rounded p-4 mb-4;
-}
-
-.markdown code {
-  @apply bg-gray-800 text-white rounded p-1;
-}
-
-.markdown table {
-  @apply w-full border-collapse border border-gray-300 mb-4;
-}
-
-.markdown table th {
-  @apply bg-gray-100 border border-gray-300 px-4 py-2;
-}
-
-.markdown table td {
-  @apply border border-gray-300 px-4 py-2;
-}
-
-.markdown table tr:nth-child(even) {
-  @apply bg-gray-100;
-}
-
-.markdown table tr:hover {
-  @apply bg-gray-200;
-}
-
-.markdown img {
-  @apply mx-auto mb-4;
-}
-
-.markdown hr {
-  @apply border-gray-300 border-t my-4;
-}
-
-.markdown .gatsby-resp-image-wrapper {
-  @apply mx-auto mb-4;
-}
-
-.markdown .gatsby-resp-image-wrapper img {
-  @apply mx-auto mb-4;
-}
-
-.markdown .gatsby-resp-image-wrapper picture {
-  @apply mx-auto mb-4;
-}
-
-.markdown .gatsby-resp-image-wrapper picture img {
-  @apply mx-auto mb-4;
-}
-
-.markdown .gatsby-resp-image-wrapper picture source {
-  @apply mx-auto mb-4;
-}
-
-.markdown .gatsby-resp-image-wrapper picture source img {
-  @apply mx-auto mb-4;
-}
-
-.markdown .gatsby-resp-image-wrapper picture img {
-  @apply mx-auto mb-4;
-}
-
-
-
 
 .bg-gradient-custom {
   @apply bg-gradient-to-br from-blue-600 to-indigo-900;
@@ -208,8 +220,6 @@ body {
   50% { border-color: blue; }
 }
 
-
-
 .floating { 
   animation-name: floating;
   animation-duration: 0s;
@@ -234,8 +244,6 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #666;
 }
-
-
 .fade-in-section {
   opacity: 0;
   transform: translateY(20vh);

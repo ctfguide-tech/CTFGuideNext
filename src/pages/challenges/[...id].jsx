@@ -35,7 +35,7 @@ export default function Challenge() {
         if (getChallengeResult.success) {
           setChallenge(getChallengeResult.body);
         }
-      } catch (error) { console.error(error) }
+      } catch (error) { throw "Failed to fetch challenge: " + error; }
     })();
   }, [urlChallengeId]);
 
@@ -143,21 +143,21 @@ function DescriptionPage({ challenge }) {
               {<Tag bgColor={colorText[challenge.difficulty]} textColor="font-bold">{challenge.difficulty.toLowerCase()}</Tag>}
               {challenge.category.map((s) => <Tag key={s}>{s}</Tag>)}
             </>)
-            : <Skeleton baseColor="#333" highlightColor="#666" />}
+            : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
         </h2>
         <h2 className="flex gap-2 pb-8">
-          {challenge ? (
-            <>
-              <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline">{challenge.creator} </Link>
-              <p className="flex text-neutral-200 opacity-70 items-center text-sm">
-                <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
-                {challenge.views}
-                <i className="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
-                {challenge.upvotes}
-              </p>
-            </>)
-            : <Skeleton baseColor="#333" highlightColor="#666" />}
+          {challenge ? <>
+            <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline">{challenge.creator} </Link>
+            <p className="flex text-neutral-200 opacity-70 items-center text-sm">
+              <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
+              {challenge.views}
+              <i className="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
+              {challenge.upvotes}
+            </p>
+          </>
+            : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
         </h2>
+        <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
