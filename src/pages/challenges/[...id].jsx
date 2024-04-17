@@ -14,6 +14,12 @@ export default function Challenge() {
   const router = useRouter();
   // I hate this
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+  const [cache, _setCache] = useState({});
+  const setCache = (name, value) => {
+    const newCache = { ...cache };
+    newCache[name] = value;
+    _setCache(newCache);
+  }
 
   // Tab system is designed to keep browser state in url,
   // while mainting persistence of the terminal.
@@ -22,7 +28,6 @@ export default function Challenge() {
     'write-up': { text: 'Write Up', element: WriteUpPage, },
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
-  const [challenge, setChallenge] = useState(null);
 
   useEffect(() => {
     if (!urlChallengeId) {
@@ -33,7 +38,7 @@ export default function Challenge() {
         const getChallengeByIdEndPoint = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}`;
         const getChallengeResult = await request(getChallengeByIdEndPoint, "GET", null);
         if (getChallengeResult.success) {
-          setChallenge(getChallengeResult.body);
+          setCache("challenge", getChallengeResult.body);
         }
       } catch (error) { throw "Failed to fetch challenge: " + error; }
     })();
@@ -95,7 +100,7 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             {/* Only this element should rerender on tab switch */}
-            {<selectedTab.element challenge={challenge} />}
+            {<selectedTab.element cache={cache} />}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full">
@@ -124,7 +129,8 @@ function TabLink({ tabName, selected, url }) {
   )
 }
 
-function DescriptionPage({ challenge }) {
+function DescriptionPage({ cache }) {
+  const { challenge } = cache;
   const colorText = {
     'BEGINNER': 'bg-blue-500 text-blue-50',
     'EASY': 'bg-green-500 text-green-50',
