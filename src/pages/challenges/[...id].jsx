@@ -91,8 +91,8 @@ export default function Challenge() {
         <StandardNav alignCenter={false} />
         <main className="flex flex-grow p-2 gap-2 overflow-y-hidden">
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-y-hidden rounded-md">
-            <div className="flex shrink-0 p-1 items-center bg-neutral-700 h-12 w-full">
-              {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={urlSelectedTab == url} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
+            <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full">
+              {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             {/* Only this element should rerender on tab switch */}
             {<selectedTab.element challenge={challenge} />}
@@ -115,8 +115,9 @@ export default function Challenge() {
 
 
 function TabLink({ tabName, selected, url }) {
+  const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
   return (
-    <Link href={url} className="flex justify-center items-center text-white px-2 hover:bg-neutral-600 rounded-sm h-full">
+    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white px-2 hover:bg-neutral-600 rounded-sm h-full`}>
       <DocumentTextIcon className="text-blue-500 w-6 mr-1 inline-flex" />
       {tabName ?? 'This is a test button'}
     </Link>
