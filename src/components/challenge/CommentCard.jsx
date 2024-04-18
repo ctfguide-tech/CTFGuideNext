@@ -4,7 +4,7 @@ import Markdown from 'react-markdown';
 import { useEffect, useState, Fragment } from 'react';
 import request from '../../utils/request';
 
-const CommentCard = ({ commentObject, likedComment, commentId, challengeId,
+const CommentCard = ({ likedComment, commentId, challengeId,
   message, username, createAt, proUser, ownUser, pfp, likeCount,
   children, allComments, indent, ownPfp, ownUsername, fetchComments }) => {
 
