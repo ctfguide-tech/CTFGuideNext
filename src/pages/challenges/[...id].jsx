@@ -1,11 +1,12 @@
 import { MarkdownViewer } from "@/components/MarkdownViewer";
 import { StandardNav } from "@/components/StandardNav";
 import request from "@/utils/request";
+import { Dialog } from "@headlessui/react";
 import { DocumentTextIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState, lazy, useMemo, memo } from "react";
+import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import ReactMarkdown from "react-markdown";
@@ -14,8 +15,10 @@ export default function Challenge() {
   const router = useRouter();
   // I hate this
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
+  // Very primitive cache system
   const [cache, _setCache] = useState({});
-  const addCache = (name, value) => {
+  const setCache = (name, value) => {
     const newCache = { ...cache };
     newCache[name] = value;
     _setCache(newCache);
@@ -41,7 +44,7 @@ export default function Challenge() {
         const getChallengeByIdEndPoint = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}`;
         const getChallengeResult = await request(getChallengeByIdEndPoint, "GET", null);
         if (getChallengeResult.success) {
-          addCache("challenge", getChallengeResult.body);
+          setCache("challenge", getChallengeResult.body);
         }
       } catch (error) { throw "Failed to fetch challenge: " + error; }
     })();
@@ -95,6 +98,7 @@ export default function Challenge() {
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
+      <FlagDialog />
       <div className='flex flex-col min-w-[64rem] text-white overflow-x-auto overflow-y-hidden min-h-0 h-screen'>
         <StandardNav alignCenter={false} />
         <main className="flex flex-grow p-2 gap-2 overflow-y-hidden">
@@ -103,7 +107,7 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             {/* Only this element should rerender on tab switch */}
-            {<selectedTab.element cache={cache} addCache={addCache} />}
+            {<selectedTab.element cache={cache} setCache={setCache} />}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full">
@@ -121,6 +125,33 @@ export default function Challenge() {
   )
 }
 
+function FlagDialog({ color, title, message }) {
+  let [isOpen, setIsOpen] = useState(true)
+
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={() => undefined}
+      className="relative z-50"
+    >
+      {/* The backdrop, rendered as a fixed sibling to the panel container */}
+      <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+
+      {/* Full-screen scrollable container */}
+      <div className="fixed inset-0 w-screen overflow-y-auto">
+        {/* Container to center the panel */}
+        <div className="flex min-h-full items-center justify-center p-4">
+          {/* The actual dialog panel  */}
+          <Dialog.Panel className="mx-auto p-8 max-w-sm rounded bg-neutral-900 text-white">
+            <Dialog.Title>{title}</Dialog.Title>
+            <p>{message}</p>
+            <button onClick={() => setIsOpen(false)}>Close</button>
+          </Dialog.Panel>
+        </div>
+      </div>
+    </Dialog >
+  )
+}
 
 function TabLink({ tabName, selected, url }) {
   const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
@@ -179,13 +210,13 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
   return <p className={`${bgColor} ${textColor} capitalize rounded-sm px-2`}>{children}</p>
 }
 
-function WriteUpPage({ cache, addCache }) {
+function WriteUpPage({ cache, setCache }) {
   useEffect(() => {
     (async () => {
       if (cache['write-page']) {
         return;
       }
-      addCache('write-page', {});
+      setCache('write-page', {});
     })();
   })
   return (
