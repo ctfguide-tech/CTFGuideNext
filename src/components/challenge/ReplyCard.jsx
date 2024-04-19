@@ -3,10 +3,8 @@ import { Tooltip } from 'react-tooltip';
 import Markdown from 'react-markdown';
 import { useEffect, useState, Fragment } from 'react';
 import request from '../../utils/request';
-import ReplyCard from './ReplyCard.jsx';
 
-
-const CommentCard = ({ likedComment, commentId, challengeId,
+const ReplyCard = ({ likedComment, commentId, challengeId,
   message, username, createAt, proUser, ownUser, pfp, likeCount,
   children, allComments, ownPfp, ownUsername, fetchComments }) => {
 
@@ -21,8 +19,9 @@ const CommentCard = ({ likedComment, commentId, challengeId,
   const [time, setTime] = useState(createAt);
 
   const [replyMode, setReplyMode] = useState(false);
-  const [reply, setReply] = useState('');
+  const [reply, setReply] = useState(`[@${username}](/users/${username})`);
   
+
 
   proUser = false;
 
@@ -50,28 +49,6 @@ const CommentCard = ({ likedComment, commentId, challengeId,
 
   function replyModeOff() {
     setReplyMode(false);
-  }
-
-  function returnChildComments(parentId, childrenArray) {
-    if (childrenArray.length === 0) {
-      return;
-    }
-    const childrenComments = [];
-    childrenArray.forEach(childId => {
-      const childComment = allComments.find(comment => comment.id === childId.id);
-      if (childComment && childComment.parentId === parentId) {
-        childrenComments.push(childComment);
-      }
-    });
-    return childrenComments;
-  }
-
-  function userLikedComment(likedUsers) {
-    return likedUsers.includes(localStorage.getItem('username'));
-  }
-
-  function usernameMatch(user) {
-    return user === localStorage.getItem('username');
   }
 
   async function saveEdit() {
@@ -150,7 +127,7 @@ const CommentCard = ({ likedComment, commentId, challengeId,
   return (
     <>
       <div
-        className={`flex mt-4 rounded-lg bg-black `}
+        className={`ml-24 mt-2 flex`}
         style={{ backgroundColor: '#212121' }}
       >
         {/* Profile Picture */}
@@ -161,9 +138,9 @@ const CommentCard = ({ likedComment, commentId, challengeId,
             alt=""
           />
         </div>
-        <div className="w-full">
+        <div className=" w-full" style={{ backgroundColor: '#212121' }} >
           {/* Username + Badge + Time */}
-          <div className="flex grid grid-cols-2">
+          <div className="grid grid-cols-2">
             <div className="flex">
               {proUser ?
                 (<div className="flex">
@@ -309,7 +286,7 @@ const CommentCard = ({ likedComment, commentId, challengeId,
 
       {/* REPLY COMMENT */}
       {replyMode &&
-        <div className={`ml-8 flex mt-4 rounded-lg bg-black `}
+        <div className={`flex mt-4 rounded-lg bg-black `}
           style={{ backgroundColor: '#212121' }}>
           <div className="ml-8 py-5 relative flex items-start">
             <img
@@ -349,7 +326,7 @@ const CommentCard = ({ likedComment, commentId, challengeId,
                   readOnly={false}
                   onChange={commentChange}
                   className="rounded-md px-5 text-white overflow-y-auto max-h-40 w-full resize-none"
-                ></textarea>
+                >{`[@${username}](/users/${username})`}</textarea>
               </div>
             </div>
             <button
@@ -369,32 +346,8 @@ const CommentCard = ({ likedComment, commentId, challengeId,
           </div>
         </div>
       }
-      <div className="">
-
-        {children && children.length > 0 && (
-          children.map((reply) => (
-            <ReplyCard
-              key={comment.id}
-              likedComment={userLikedComment(reply.likedUsers)}
-              challengeId={challengeId}
-              commentId={reply.id}
-              message={reply.content}
-              username={reply.username}
-              createAt={reply.updatedAt}
-              ownUser={usernameMatch(reply.username)}
-              pfp={reply.pfp}
-              likeCount={reply.likedUsers.length}
-              children={returnChildComments(reply.id, reply.children)}
-              allComments={allComments}
-              ownPfp={ownPfp}
-              ownUsername={ownUsername}
-              fetchComments={fetchComments}
-            />
-          ))
-        )}
-      </div>
     </>
   )
 };
 
-export default CommentCard;
+export default ReplyCard;

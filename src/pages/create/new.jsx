@@ -50,6 +50,7 @@ export default function Createchall() {
 
   const [newConfig, setNewConfig] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const validateNewChallege = async () => {
     for (const p of penalty) {

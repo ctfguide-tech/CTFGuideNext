@@ -766,7 +766,6 @@ export default function Challenge() {
                     username={comment.username}
                     ownUser={usernameMatch(comment.username)}
                     allComments={comments}
-                    indent={0}
                     ownPfp={userPfp}
                     ownUsername={username}
                     fetchComments={fetchComments}
