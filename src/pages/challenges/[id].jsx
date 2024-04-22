@@ -154,13 +154,13 @@ export default function Challenge() {
       const result = await request(endPoint, 'GET', null);
       if (result) {
         setPfp(result)
-    } else {
+      } else {
         setPfp(`https://robohash.org/${localStorage.getItem('username')}.png?set=set1&size=150x150`)
-    }
+      }
     } catch (error) {
       console.log(error);
     }
-  
+
   }
 
   useEffect(() => {
@@ -228,7 +228,7 @@ export default function Challenge() {
       document.getElementById('enteredFlag').classList.add('border-red-600');
       document.getElementById('enterFlagBTN').innerHTML = 'Submit Flag';
 
-      setTimeout(function () {
+      setTimeout(function() {
         document
           .getElementById('enteredFlag')
           .classList.remove('border-red-600');
@@ -267,7 +267,7 @@ export default function Challenge() {
             }
           }
 
-          setTimeout(function () {
+          setTimeout(function() {
             document
               .getElementById('enteredFlag')
               .classList.remove('border-green-600');
@@ -280,7 +280,7 @@ export default function Challenge() {
           setSubmissionMsg('incorrect');
           setOpen(true);
 
-          setTimeout(function () {
+          setTimeout(function() {
             document
               .getElementById('enteredFlag')
               .classList.remove('border-red-600');
@@ -296,9 +296,22 @@ export default function Challenge() {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + id + '/comments';
       const { result } = await request(url, 'GET', null);
+
       if (result && result.length) {
         setComments([...result]);
       }
+      // **************************************
+      // THIS IS FOR GETTING REPLIES DEBUG
+      // **************************************
+      result.forEach((obj) => {
+        (async () => {
+          const url = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + obj.id + '/replies';
+          const repliesResult = await request(url, 'GET', null);
+          const findIndex = result.findIndex((value) => value.id == obj.id);
+          result.splice(findIndex, 0, ...repliesResult.result);
+          setComments([...result]);
+        })();
+      })
     } catch (error) {
       console.log(error);
     }
@@ -310,16 +323,12 @@ export default function Challenge() {
     }
     const childrenComments = [];
     childrenArray.forEach(childId => {
-        const childComment = comments.find(comment => comment.id === childId.id);
-        if (childComment && childComment.parentId === parentId) {
-            childrenComments.push(childComment);
-        }
+      const childComment = comments.find(comment => comment.id === childId.id);
+      if (childComment && childComment.parentId === parentId) {
+        childrenComments.push(childComment);
+      }
     });
     return childrenComments;
-  }
-
-  function usernameMatch(username) {
-    return username === localStorage.getItem('username');
   }
 
   function userLikedComment(likedUsers) {
@@ -409,7 +418,7 @@ export default function Challenge() {
   const commentChange = (event) => {
     setComment(event.target.value);
   };
-  
+
   const flagChanged = (event) => {
     setFlag(event.target.value);
   };
@@ -535,7 +544,7 @@ export default function Challenge() {
                   document
                     .getElementById('reportalert')
                     .classList.remove('hidden');
-                  setTimeout(function () {
+                  setTimeout(function() {
                     document
                       .getElementById('reportalert')
                       .classList.add('hidden');
@@ -748,29 +757,19 @@ export default function Challenge() {
               Error posting comment! This could be because it was less than 5
               characters or greater than 250 characters.{' '}
             </h1>
-    
+
             {comments && comments.length > 0 && (
               comments
-                .filter(comment => !comment.parentId) // Filter comments with parentId as null
                 .map((comment) => (
                   <CommentCard
                     key={comment.id}
-                    commentId={comment.id}
-                    message={comment.content}
-                    createAt={comment.updatedAt}
-                    pfp={comment.pfp}
-                    likeCount={comment.likedUsers.length}
-                    children={returnChildComments(comment.id, comment.children)}
                     likedComment={userLikedComment(comment.likedUsers)}
                     challengeId={id}
-                    username={comment.username}
-                    ownUser={usernameMatch(comment.username)}
-                    allComments={comments}
                     ownPfp={userPfp}
-                    ownUsername={username}
-                    fetchComments={fetchComments}
+                    comment={comment}
                   />
                 ))
+                .reverse()
             )}
 
 

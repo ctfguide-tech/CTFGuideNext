@@ -1,14 +1,17 @@
 import React from 'react';
-import { Tooltip } from 'react-tooltip';
 import Markdown from 'react-markdown';
-import { useEffect, useState, Fragment } from 'react';
+import { useState } from 'react';
 import request from '../../utils/request';
-import ReplyCard from './ReplyCard.jsx';
 
 
-const CommentCard = ({ likedComment, commentId, challengeId,
-  message, username, createAt, proUser, ownUser, pfp, likeCount,
-  children, allComments, ownPfp, ownUsername, fetchComments }) => {
+const CommentCard = ({ likedComment, challengeId, proUser, ownPfp, comment }) => {
+  const commentId = comment.id;
+  const message = comment.content;
+  const createdAt = comment.updatedAt;
+  const likeCount = comment.likedUsers.length;
+  const username = comment.username;
+  const { pfp } = comment;
+  const isParent = comment.parentId === null;
 
   // const [likes, setLikes] = useState(likeList.length);
   const [liked, setLiked] = useState(likedComment);
@@ -18,11 +21,13 @@ const CommentCard = ({ likedComment, commentId, challengeId,
   const [editMode, setEditMode] = useState(false);
   const [tempContent, setTempContent] = useState(content);
   const [banner, setBanner] = useState(false);
-  const [time, setTime] = useState(createAt);
+  const [time, setTime] = useState(createdAt);
 
   const [replyMode, setReplyMode] = useState(false);
   const [reply, setReply] = useState('');
-  
+
+  const ownUsername = localStorage.getItem('username');
+  const ownUser = ownUsername === localStorage.getItem('username');
 
   proUser = false;
 
@@ -150,7 +155,7 @@ const CommentCard = ({ likedComment, commentId, challengeId,
   return (
     <>
       <div
-        className={`flex mt-4 rounded-lg bg-black `}
+        className={`${isParent ? '' : 'ml-24'} flex mt-4 rounded-lg bg-black `}
         style={{ backgroundColor: '#212121' }}
       >
         {/* Profile Picture */}
@@ -342,7 +347,7 @@ const CommentCard = ({ likedComment, commentId, challengeId,
               </div>
             </div>
             <div>
-            <div className="pt-2 ml-4 pr-10 ">
+              <div className="pt-2 ml-4 pr-10 ">
                 <textarea
                   id="comment"
                   style={{ backgroundColor: '#212121' }}
@@ -369,30 +374,6 @@ const CommentCard = ({ likedComment, commentId, challengeId,
           </div>
         </div>
       }
-      <div className="">
-
-        {children && children.length > 0 && (
-          children.map((reply) => (
-            <ReplyCard
-              key={comment.id}
-              likedComment={userLikedComment(reply.likedUsers)}
-              challengeId={challengeId}
-              commentId={reply.id}
-              message={reply.content}
-              username={reply.username}
-              createAt={reply.updatedAt}
-              ownUser={usernameMatch(reply.username)}
-              pfp={reply.pfp}
-              likeCount={reply.likedUsers.length}
-              children={returnChildComments(reply.id, reply.children)}
-              allComments={allComments}
-              ownPfp={ownPfp}
-              ownUsername={ownUsername}
-              fetchComments={fetchComments}
-            />
-          ))
-        )}
-      </div>
     </>
   )
 };
