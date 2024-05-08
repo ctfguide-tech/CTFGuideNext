@@ -294,3 +294,51 @@ ul {
   --rt-transition-show-delay: 0.10s;
   --rt-transition-closing-delay: 0.10s;
 }
+
+.slide-rotate-hor-bottom {
+	-webkit-animation: slide-rotate-hor-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) reverse both;
+	        animation: slide-rotate-hor-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) reverse both;
+}
+
+/**
+ * ----------------------------------------
+ * animation slide-rotate-hor-bottom
+ * ----------------------------------------
+ */
+ @-webkit-keyframes slide-rotate-hor-bottom {
+  0% {
+    -webkit-transform: translateY(0) rotateX(0deg);
+            transform: translateY(0) rotateX(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(150px) rotateX(90deg);
+            transform: translateY(150px) rotateX(90deg);
+  }
+}
+@keyframes slide-rotate-hor-bottom {
+  0% {
+    -webkit-transform: translateY(0) rotateX(0deg);
+            transform: translateY(0) rotateX(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(150px) rotateX(90deg);
+            transform: translateY(150px) rotateX(90deg);
+  }
+}
+.bogo {
+ 
+  animation: slide-rotate-hor-bottom 3s infinite reverse; /* Adjust '3s' to change duration, 'infinite' for continuous loop */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  
+}

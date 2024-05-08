@@ -7,6 +7,7 @@ import { Stats } from '@/components/home/Stats';
 import { LearningPanel } from '@/components/home/LearningPanel';
 import { Enterprise } from '@/components/home/Enterprise';
 import { SecondaryFeatures } from '@/components/home/SecondaryFeatures';
+import GP  from '@/components/home/GP';
 export default function Home() {
   return (
     <>
@@ -39,13 +40,14 @@ export default function Home() {
 
       <FeaturesPanel />
 
+      <GP/>
+
       <SecondaryFeatures/>
 
-      <Stats></Stats>
-      <Enterprise />
+
 
       <div
-        className="mx-auto mx-auto max-w-7xl px-6 py-20 text-center lg:px-8"
+        className="mx-auto mx-auto max-w-7xl px-6 py-20 text-center lg:px-8 hidden"
         style={{ backgroundColor: '#212121' }}
       >
         <h1 className="mx-auto mb-8 text-center text-4xl font-semibold text-white">

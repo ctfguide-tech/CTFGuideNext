@@ -300,6 +300,8 @@ export function SecondaryFeatures() {
     >
       <Container>
         <div className="mx-auto max-w-6xl md:text-center">
+        <h2 className="text-base font-semibold leading-7 text-blue-600">CTFGuide Education</h2>
+
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             We're the best platform for teaching cybersecurity.
           </h2>

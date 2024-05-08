@@ -38,7 +38,7 @@ export function FeaturesPanel() {
       className="overflow-hidden  py-24 sm:py-32"
       style={{ backgroundColor: '#212121' }}
     >
-      <div className="mx-auto px-6 lg:px-8">
+      <div className="mx-auto px-20 lg:px-20">
         <div className="flex justify-center items-center flex-col lg:flex-row gap-y-16 gap-x-10 sm:gap-y-20 lg:mx-0 w-full">
           <div className="lg:pr-8 lg:pt-4 max-w-2xl shrink grow-0">
             <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">

@@ -8,9 +8,7 @@ import Banner from '@/components/home/Banner';
 
 
 const navigation = [
-  { name: 'Careers', href: '../careers' },
-  { name: 'Open Source', href: 'https://github.com/ctfguide-tech' },
-  { name: 'Practice', href: '../practice' },
+
 ]
 
 
@@ -47,8 +45,13 @@ export function Hero() {
                 </a>
               ))}
             </div>
-            <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              <a href="./login" className="text-sm font-semibold leading-6 text-white">
+            <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-x-4">
+            <a href="./register" className="text-sm font-semibold leading-6 text-white px-4 py-1">
+                Create an account 
+              </a>
+
+
+              <a href="./login" className="text-sm font-semibold leading-6 text-white border border-white px-4 py-1 hover:bg-white hover:text-black">
                 Log in <span aria-hidden="true">&rarr;</span>
               </a>
             </div>
@@ -127,7 +130,7 @@ export function Hero() {
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <a
                     href="../register"
-                    className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-neutral-800/100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                    className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                   >
                     Get started
                   </a>
