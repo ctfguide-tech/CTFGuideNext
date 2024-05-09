@@ -23,7 +23,7 @@ export default function Home() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="CTFGuide" />
         <meta name="twitter:description" content="The data-driven simulation platform for finding and building cybersecurity talent." />
-        <meta name="twitter:image" content="https://ctfguide.com/images/siteBanner.png" />
+        <meta name="twitter:image" content="https://ctfguide.com/siteBanner.png" />
 
 
 
