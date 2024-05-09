@@ -202,21 +202,27 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Link>
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
-                    <Link
+                  <Link
                       href='/groups'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                      className="hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Classes
                     </Link>
                     <Link
                       href='/practice'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Practice
                     </Link>
                     <Link
+                      href='/practice'
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                    >
+                      Competitions
+                    </Link>
+                    <Link
                       href='/create'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Create
                     </Link>
