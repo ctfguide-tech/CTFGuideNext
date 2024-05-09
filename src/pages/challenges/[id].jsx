@@ -307,6 +307,9 @@ export default function Challenge() {
         (async () => {
           const url = process.env.NEXT_PUBLIC_API_URL + '/challenges/' + obj.id + '/replies';
           const repliesResult = await request(url, 'GET', null);
+          if (!repliesResult) {
+            return
+          }
           const findIndex = result.findIndex((value) => value.id == obj.id);
           result.splice(findIndex, 0, ...repliesResult.result);
           setComments([...result]);
