@@ -8,9 +8,7 @@ import Banner from '@/components/home/Banner';
 
 
 const navigation = [
-  { name: 'Careers', href: '../careers' },
-  { name: 'Open Source', href: 'https://github.com/ctfguide-tech' },
-  { name: 'Practice', href: '../practice' },
+
 ]
 
 
@@ -47,15 +45,20 @@ export function Hero() {
                 </a>
               ))}
             </div>
-            <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              <a href="./login" className="text-sm font-semibold leading-6 text-white">
+            <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-x-4">
+            <a href="./register" className="text-sm font-semibold leading-6 text-white px-4 py-1">
+                Create an account 
+              </a>
+
+
+              <a href="./login" className="text-sm font-semibold leading-6 text-white border border-white px-4 py-1 hover:bg-white hover:text-black">
                 Log in <span aria-hidden="true">&rarr;</span>
               </a>
             </div>
           </nav>
           <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
             <div className="fixed inset-0 z-50" />
-            <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
+            <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-neutral-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
               <div className="flex items-center justify-between">
               <Link href="../" aria-label="Home">
               <Logo className="h-10 w-auto" />
@@ -71,12 +74,12 @@ export function Hero() {
               </div>
               <div className="mt-6 flow-root">
                 <div className="-my-6 divide-y divide-gray-500/25">
-                  <div className="space-y-2 py-6">
+                  <div className="space-y-2 py-6 hidden">
                     {navigation.map((item) => (
                       <a
                         key={item.name}
                         href={item.href}
-                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-800"
+                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-neutral-800/50"
                       >
                         {item.name}
                       </a>
@@ -84,11 +87,21 @@ export function Hero() {
                   </div>
                   <div className="py-6">
                     <a
+                      href="../register"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-neutral-800/50"
+                    >
+                      Create an account
+                    </a>
+                    <a
                       href="../login"
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-gray-800"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-neutral-800/50"
                     >
                       Log in
                     </a>
+
+                    <div className='bg-neutral-800 text-white px-4 py-4 text-left mt-4'>
+                   CTFGuide is recommended to be used on a desktop or laptop for the best experience.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -127,7 +140,7 @@ export function Hero() {
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <a
                     href="../register"
-                    className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-neutral-800/100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                    className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                   >
                     Get started
                   </a>

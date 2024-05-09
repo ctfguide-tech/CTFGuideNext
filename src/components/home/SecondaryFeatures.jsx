@@ -245,7 +245,7 @@ function FeaturesDesktop() {
                 />
               ))}
             </Tab.List>
-            <Tab.Panels className="relative mt-20 overflow-hidden rounded-4xl bg-neutral-800 px-14 py-16 xl:px-16">
+            <Tab.Panels className="relative mt-20 overflow-hidden rounded-4xl bg-neutral-800/50 px-14 py-16 xl:px-16">
               <div className="-mx-5 flex">
                 {features.map((feature, featureIndex) => (
                   <Tab.Panel
@@ -300,6 +300,8 @@ export function SecondaryFeatures() {
     >
       <Container>
         <div className="mx-auto max-w-6xl md:text-center">
+        <h2 className="text-base font-semibold leading-7 text-blue-600">CTFGuide Education</h2>
+
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             We're the best platform for teaching cybersecurity.
           </h2>
