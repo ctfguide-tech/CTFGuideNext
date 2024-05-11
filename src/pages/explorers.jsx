@@ -4,7 +4,6 @@ import { Header } from '@/components/Header';
 import { Hero } from '@/components/home/Hero';
 import { Footer } from '@/components/Footer';
 import { FeaturesPanel } from '@/components/home/FeaturePanel';
-import { Stats } from '@/components/home/Stats';
 import { LearningPanel } from '@/components/home/LearningPanel';
 import { Enterprise } from '@/components/home/Enterprise';
 import { useState } from 'react'
