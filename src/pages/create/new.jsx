@@ -64,7 +64,6 @@ export default function Createchall() {
   const sendToFileApi = async () => {
     const isValid = await validateNewChallege();
     if (isValid) {
-      setIsCreating(true);
       if (!selectedFile) {
         await uploadChallenge('');
         return;
