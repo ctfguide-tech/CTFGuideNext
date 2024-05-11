@@ -1,7 +1,7 @@
 import { DonutChart } from '@tremor/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import CountUp from 'react-countup';
+
 import request from '@/utils/request';
 
 export function LearnNav({ navElements, lessonNum }) {
@@ -65,10 +65,7 @@ export function LearnNav({ navElements, lessonNum }) {
               showAnimation={true}
             />
             <h1 className="mx-auto mt-2 text-center text-xl text-white">
-              <CountUp
-                end={lessonProgress ? lessonProgress.totalProgress : 0}
-                duration={3}
-              />
+      
               %
             </h1>
             <h1 className="mx-auto text-center text-white">Lesson Progress</h1>

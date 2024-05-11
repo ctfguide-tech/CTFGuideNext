@@ -215,7 +215,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       Practice
                     </Link>
                     <Link
-                      href='/practice'
+                      href='/competitions'
                       className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
                     >
                       Competitions

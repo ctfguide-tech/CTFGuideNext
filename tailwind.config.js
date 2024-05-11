@@ -56,6 +56,7 @@ module.exports = {
           'border-radius': theme('borderRadius.sm'),
         },
       })
-    })
-  ],
+    }),
+      require("tailwindcss-animate")
+],
 }
