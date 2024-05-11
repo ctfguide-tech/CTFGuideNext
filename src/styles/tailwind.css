@@ -342,3 +342,25 @@ ul {
   scrollbar-width: none;  /* Firefox */
   
 }
+
+.modal-enter {
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.modal-enter-active {
+  opacity: 1;
+}
+
+.modal-exit {
+  opacity: 1;
+  transition: opacity 300ms ease-in-out;
+}
+
+.modal-exit-active {
+  opacity: 0;
+}
+
+.fastanimate {
+  --animate-duration: 0.3s;
+}
