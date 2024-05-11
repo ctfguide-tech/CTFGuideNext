@@ -8,14 +8,14 @@ import {
   ShieldExclamationIcon,
   UserCircleIcon,
   ArrowRightIcon,
+  EllipsisVerticalIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
 import request from "@/utils/request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
-
 // Do not remove, even if detected as unused by vscode!
 import { app } from '../config/firebaseConfig';
 
@@ -49,6 +49,10 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  
+
 
   const router = useRouter();
 
@@ -76,6 +80,27 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       //  setIsAdmin(true)
     }
   }, []);
+    // Function to close the modal
+    const closeModal = () => {
+      setShowSearchModal(false);
+    };
+  
+    // Effect to add and remove the event listener
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (event.keyCode === 27) { // 27 is the key code for ESC key
+          closeModal();
+        }
+      };
+  
+      // Add event listener
+      document.addEventListener('keydown', handleKeyDown);
+  
+      // Remove event listener on cleanup
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }, []); 
 
   const toggleSearchModal = () => {
     setShowSearchModal(prev => !prev); // Toggle the state
@@ -188,10 +213,23 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
 
   return (
     <>
+        {isPopoverOpen && (
+            <div 
+            className="fastanimate hidden  fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-70 animate__animated animate__faster animate__fadeIn"
+            style={{ 
+              backdropFilter: 'blur(2px)',
+             }}
+            onClick={() => setShowSearchModal(false)}
+          >
+            <h1>test</h1>
+
+            <br></br>
+            </div>
+    )}
       <Disclosure as="nav" className=" shadow border-b border-white/10">
         {({ open }) => (
           <>
-            <div className={`px-2 ${alignCenter ? 'mx-auto sm:max-w-7xl md:max-w-7xl lg:max-w' : ''}`}>
+            <div className={`px-2 ${alignCenter ? 'mx-auto' : ''}`}>
               <div className="flex h-16 justify-between">
                 <div className="flex">
                   <div className="-ml-2 mr-2 flex items-center md:hidden">
@@ -216,7 +254,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       {isAdmin ? <LogoAdmin /> : <Logo />}
                     </Link>
                   </div>
-                  <div className="hidden md:ml-6 md:flex ">
+                  <div className=" md:ml-6 md:flex vertical-align  ">
              
                     <Link
                       href='/practice'
@@ -236,19 +274,48 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     >
                       Leaderboards
                     </Link>
-                    <Link
-                      href='/create'
-                      className={linkClass('/create')}
-                    >
-                      Create
-                    </Link>
-
-                    <Link
-                      href='/groups'
-                      className={linkClass('/groups')}
-                    >
-                      Classrooms
-                                          </Link>
+                    {/* Ellipsis dropdown */}
+                    <Popover className="relative">
+                      {({ open }) => (
+                        <>
+                          <Popover.Button className="inline-flex items-center p-2 text-gray-400 hover:text-white ring-none outline-none " >
+                            <EllipsisVerticalIcon className="h-6 w-6 mt-3" aria-hidden="true" />
+                          </Popover.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="opacity-0 translate-y-1"
+                            enterTo="opacity-100 translate-y-0"
+                            leave="transition ease-in duration-150"
+                            leaveFrom="opacity-100 translate-y-0"
+                            leaveTo="opacity-0 translate-y-1"
+                          >
+                            <Popover.Panel className="absolute z-10 w-48 max-w-sm transform px-4 sm:px-0 lg:max-w-3xl">
+                              <div className="overflow-hidden  shadow-lg ">
+                                <div className="relative grid gap-6 bg-neutral-900 border border-neutral-800  sm:gap-8 sm:p-8">
+                                  <Link
+                                    href="/create"
+                                    className="w-full flex items-start rounded-lg "
+                                  >
+                                    <p className="text-base font-medium text-gray-400 hover:text-white">
+                                      Create
+                                    </p>
+                                  </Link>
+                                  <Link
+                                    href="/groups"
+                                    className=" flex items-start rounded-lg s"
+                                  >
+                                    <p className="text-base font-medium text-gray-400 hover:text-white">
+                                      Classrooms
+                                    </p>
+                                  </Link>
+                                </div>
+                              </div>
+                            </Popover.Panel>
+                          </Transition>
+                        </>
+                      )}
+                    </Popover>
 
                       {/*search bar*/}
                       <div className="mt-3 ml-4 flex-grow ">
@@ -305,9 +372,9 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     {/* </div> */}
                     <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
                       {/* Profile dropdown */}
-                      <Popover as="div" className="relative ml-3">
+                      <Popover as="div" className="relative ml-3" >
                         <div>
-                          <Popover.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          <Popover.Button onClick={() => setIsPopoverOpen(true)} className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-10 w-10 rounded-full border bg-neutral-900 border-white"
@@ -326,7 +393,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <Popover.Panel className="absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <Popover.Panel className="z-40 absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div className="flex items-center w-full">
                               <Link
                                 href={`/users/${username}`}
@@ -476,14 +543,14 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       
         >
         <div 
-      className="fastanimate fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 animate__animated animate__faster animate__fadeIn"
+      className="fastanimate  fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 animate__animated animate__faster animate__fadeIn"
       style={{ 
         backdropFilter: 'blur(2px)',
        }}
       onClick={() => setShowSearchModal(false)}
     >
          <div 
-        className="relative transform overflow-hidden rounded-lg bg-neutral-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
+        className="relative transform overflow-hidden rounded-lg bg-neutral-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 sm:max-w-3xl sm:mx-auto sm:rounded-xl sm:shadow-2xl sm:ring-1 sm:ring-white/10"
         onClick={(e) => e.stopPropagation()}
       >
             <div className="px-4 py-5 sm:px-6 mx-auto">
