@@ -12,6 +12,8 @@ import {
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
 import request from "@/utils/request";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 // Do not remove, even if detected as unused by vscode!
 import { app } from '../config/firebaseConfig';
@@ -43,6 +45,8 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
   const router = useRouter();
 
   function logout() {
@@ -69,6 +73,10 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       //  setIsAdmin(true)
     }
   }, []);
+
+  const toggleSearchModal = () => {
+    setShowSearchModal(prev => !prev); // Toggle the state
+  };
 
   const [notification, showNotifications] = useState(false);
   const [notificationData, setNotificationData] = useState([
@@ -171,6 +179,10 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     }
   }
 
+  const linkClass = (path) => `inline-flex items-center border-b-2 px-4 pt-1 text-md font-semibold transition-all ${
+    router.pathname === path ? 'text-blue-500 border-blue-500' : 'text-gray-300 hover:text-gray-50 border-transparent'
+  }`;
+
   return (
     <>
       <Disclosure as="nav" className=" shadow border-b border-white/10">
@@ -202,31 +214,51 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Link>
                   </div>
                   <div className="hidden md:ml-6 md:flex ">
-                  <Link
-                      href='/groups'
-                      className="hidden inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
-                    >
-                      Classes
-                    </Link>
+             
                     <Link
                       href='/practice'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                      className={linkClass('/practice')}
                     >
                       Practice
                     </Link>
                     <Link
                       href='/competitions'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                      className={linkClass('/competitions')}
                     >
                       Competitions
                     </Link>
                     <Link
+                      href='/leaderboards'
+                      className={linkClass('/leaderboards')}
+                    >
+                      Leaderboards
+                    </Link>
+                    <Link
                       href='/create'
-                      className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-md font-semibold text-gray-300 hover:text-gray-50 transition-all"
+                      className={linkClass('/create')}
                     >
                       Create
                     </Link>
 
+                    <Link
+                      href='/groups'
+                      className={linkClass('/groups')}
+                    >
+                      Classrooms
+                                          </Link>
+
+                      {/*search bar*/}
+                      <div className="mt-3 ml-4 flex-grow ">
+                      
+                          <div
+                          type="text" 
+                          className="w-full px-16 vertical-align flex  py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800   hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          onClick={() => setShowSearchModal(true)}
+                        >
+                          <FontAwesomeIcon icon={faSearch} className="w-3 h-3 mt-1.5 mr-1" /> Search for anything
+                          </div>
+                        
+                        </div>
                     {/* <Link */}
                     {/*   href={`${baseUrl}/live`} */}
                     {/*   className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all" */}
@@ -252,14 +284,14 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                 </div>
                 {!guestAllowed &&
                   <div className="flex items-center ">
-                    {/* <div */}
-                    {/*   className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" */}
-                    {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
-                    {/* > */}
-                    {/*   <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500"> */}
-                    {/*     <i class="far fa-check-circle"></i> {points} */}
-                    {/*   </h1> */}
-                    {/* </div> */}
+               
+                   <div  className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
+                     style={{ backgroundColor: '#212121', borderWidth: '0px' }} 
+                     > 
+                     <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500"> 
+                   <i class="far fa-check-circle"></i> {points} 
+                  </h1> 
+                   </div> 
                     {/* <div */}
                     {/*   className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1" */}
                     {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
@@ -423,8 +455,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
-                    href="#"
-                    onClick={{ logout }}
+                    onClick={logout}
                     className="hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-800 sm:px-6"
                   >
                     Sign out
@@ -435,6 +466,20 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
           </>
         )}
       </Disclosure >
+
+      {showSearchModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <input
+              autoFocus
+              type="text"
+              className="w-full border-0 border-b-2 border-gray-300 focus:ring-0"
+              placeholder="Type to search..."
+            />
+            <button onClick={toggleSearchModal} className="mt-4">Close</button>
+          </div>
+        </div>
+      )}
 
       {isAdmin && (
         <div className="bg-neutral-800 py-1 text-center text-sm text-white ">

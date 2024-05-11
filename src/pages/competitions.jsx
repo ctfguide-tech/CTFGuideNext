@@ -10,7 +10,7 @@ import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
 import request from '@/utils/request';
-
+import { MyTable } from '@/components/Table';
 export default function Competitions() {
 
 
@@ -28,7 +28,7 @@ export default function Competitions() {
         <StandardNav />
         <main>
           <div className="mx-auto mt-10  max-w-7xl">
-            <div className="  relative isolate overflow-hidden  rounded-lg bg-black/10 bg-neutral-900 shadow-2xl ring-1 ring-white/10 py-4">
+            <div className="  relative isolate overflow-hidden  bg-black/10 bg-neutral-900 shadow-2xl ring-1 ring-white/10 py-4">
               <div className="relative mx-auto  max-w-7xl px-6 lg:px-8">
                 <div
                   className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
@@ -50,6 +50,16 @@ export default function Competitions() {
                   <p className='text-lg text-white'>
                     Your one stop destination for all the upcoming CTF Competitions. 
                   </p>
+
+                <div className='flex space-x-4'>
+                <button className='flex items-center mt-4 border-white border hover:opacity-100 opacity-90 text-white px-4 py-2 rounded-lg text-sm'>
+                    Connect CTFTime Account
+                  </button>
+
+                  <button className='flex items-center mt-4   text-white    px-4 py-2 rounded-lg text-sm'>
+                    Post a Competition
+                  </button>
+                  </div>
                   </div>
 
                 <img src="../newflag.svg" alt="flag" className="w-1/8   text-white ml-auto absolute bottom-0 right-10 mb-[-50px]" />
@@ -64,8 +74,9 @@ export default function Competitions() {
             {/* <PracticeNav /> */}
             {/* </div> */}
             <div>
-              <div className="w-full p-4 pt-8">
-             
+              <div className="w-full pt-8">
+                  <MyTable />
+              
               </div>
             </div>
           </div>
