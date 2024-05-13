@@ -25,17 +25,40 @@ const provider = new GoogleAuthProvider();
 
 
 export default function Login() {
-  const auth = getAuth();
-  const [session, setSession] = useState();
-  const [logoutUrl, setLogoutUrl] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      // removing the cookie
-      document.cookie = "idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    });
-  }, []);
+
+
+
+  const handleLogin = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const requestOptions = { method: 'POST', body: JSON.stringify({ email, password }), headers: { 'Content-Type': 'application/json' } };
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/login`, requestOptions);
+      const { success, idToken, body } = await response.json();
+      if (success) {
+        document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
+
+        /*
+        localStorage.setItem('username', body.username);
+        localStorage.setItem('userLikesUrl', body.userLikesUrl);
+        localStorage.setItem('userChallengesUrl', body.userChallengesUrl);
+        localStorage.setItem('userBadgesUrl', body.userBadgesUrl);
+        localStorage.setItem('notificationsUrl', body.notificationsUrl);
+        localStorage.setItem('role', body.role);
+        */
+
+        router.push('/dashboard');
+      } else {
+        toast.error('Invalid credentials');
+      }
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  // do the same for google auth login
 
   async function loginUser() {
     const email = document.getElementById('username').value;
@@ -107,7 +130,6 @@ export default function Login() {
             userFriendlyMessage = 'An error occurred. Please try again.';
         }
         toast.error(userFriendlyMessage);
-
       });
   }
 
@@ -427,12 +449,12 @@ export default function Login() {
   className="inline-flex items-center w-full justify-center rounded-sm py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
   onClick={loginMicrosoft} // Remember to update this to your Microsoft login function
 >
-  <span className="sr-only">Sign in with Microsoft</span>
-  <img className='w-5 h-5 mr-2' src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png" alt="Microsoft"/>
-  <p>Login with Microsoft</p>
-</a>
-</div>
-</div>
+                        <span className="sr-only">Sign in with Microsoft</span>
+                        <img className='w-5 h-5 mr-2' src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png" alt="Microsoft"/>
+                        <p>Login with Microsoft</p>
+                      </a>
+                    </div>
+                  </div>
                 </div>
 
             

@@ -1,22 +1,18 @@
-import { Container } from '@/components/Container';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getCookie } from '@/utils/request';
 import AuthFooter from '@/components/auth/AuthFooter';
-import Link from 'next/link';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
-
-export function DataAsk({ props }) {
+export function DataAsk(props) {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [validationMessage, setValidationMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userHasEdited, setUserHasEdited] = useState(false); // New state to track if the user has edited the input
+
   function logout() {
     signOut(auth)
       .then(() => {
@@ -26,8 +22,6 @@ export function DataAsk({ props }) {
         console.log(error);
       });
   }
-  const auth = getAuth();
-
   
   useEffect(() => {
     if (router.query.part == '1') {
@@ -37,6 +31,7 @@ export function DataAsk({ props }) {
       }
     }
   });
+
   useEffect(() => {
     if (!userHasEdited) return; // Don't validate until the user edits the input
   
@@ -56,7 +51,7 @@ export function DataAsk({ props }) {
     }
   }, [username, userHasEdited]);
 
-  function submitData() {
+  async function submitData() {
     setIsLoading(true);
     // Generate JSON to send
     var username = document.getElementById('username').value;
@@ -122,55 +117,29 @@ export function DataAsk({ props }) {
         return;
       }
   
-      // send http request
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-
-      let token = getCookie();
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-
-      xhr.withCredentials = true;
-
-      xhr.addEventListener('readystatechange', function () {
-        if (this.readyState === 4 && this.readyState === 201) {
-          var parsed = JSON.parse(this.responseText);
-          if (parsed.username) {
-            // Sign out
-            // Redirect to login
-            window.location.href = '/dashboard';
-          }
-        }
-
-        if (this.readyState === 4 && this.readyState != 201) {
-          var parsed = JSON.parse(this.responseText);
-
-          if (parsed.error === 'undefined' || parsed.error) {
-
-
-            setIsLoading(false);
-            toast.error(parsed.error);
-
-          } else {
-            window.location.href = "./dashboard";
-            //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
-         //   document.getElementById('error').classList.remove('hidden');
-         //   document.getElementById('error').innerHTML = parsed.error;
-          }
-        }
-      });
-
-      xhr.send(
-        JSON.stringify({
-          username: localStorage.getItem('username'),
-          birthday: localStorage.getItem('birthday'),
-          firstName: localStorage.getItem('firstname'),
-          lastName: localStorage.getItem('lastname'),
-          location: "????",
-        })
-      );
+      const body = {
+        email: props.email,
+        password: props.password,
+        username: localStorage.getItem('username'),
+        birthday: localStorage.getItem('birthday'),
+        firstName: localStorage.getItem('firstname'),
+        lastName: localStorage.getItem('lastname'),
+        location: "????",
       }
-    
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/account/register`;
+      const requestOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if(data.success) {
+        setIsLoading(false);
+        // set the cookie, this should act as a login aswell as a signup
+        router.push('/dashboard');
+      } else {
+        setIsLoading(false);
+        toast.error(data.error);
+      }
+    }
   } 
   
 

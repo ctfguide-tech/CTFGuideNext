@@ -4,7 +4,7 @@ import { DataAskPart2 } from '@/components/onboarding/DataAskPart2';
 import { Demo } from '@/components/onboarding/Demo';
 import { useRouter } from 'next/router';
 
-export function OnboardingFlow() {
+export function OnboardingFlow(props) {
   const router = useRouter();
 
   const [flowState, setFlowState] = useState(router.query.part || '1');
@@ -19,15 +19,13 @@ export function OnboardingFlow() {
     setFlowState(router.query.part);
   }, [router.query.part]);
 
-  // Read part from URL query parameter
-
   if (flowState === '1') {
-    return <DataAsk />;
+    return <DataAsk email={props.email} password={props.password}/>;
   } else if (flowState === '2') {
     return <DataAskPart2 />;
   } else if (flowState === '3') {
     return <Demo />;
   } else {
-    return <DataAsk />;
+    return <DataAsk email={props.email} password={props.password}/>;
   }
 }
