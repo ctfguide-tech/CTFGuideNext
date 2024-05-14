@@ -16,6 +16,7 @@ import { Logo } from '@/components/Logo'
 const navigation = [
   { name: 'Enterprise', href: 'https://enterprise.ctfguide.com' },
   { name: 'Careers', href: '../careers' },
+  { name: 'TESTPAGE', href: '../TESTPAGE' },
   { name: 'Explorers League', href: 'https://github.com/ctfguide-tech' },
   { name: 'Open Source', href: 'https://github.com/ctfguide-tech' },
 ]
