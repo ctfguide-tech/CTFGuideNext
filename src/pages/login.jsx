@@ -1,44 +1,29 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@/components/Button';
-import { TextField } from '@/components/Fields';
-import { Logo } from '@/components/Logo';
-import { Alert } from '@/components/Alert';
-import { useState, useEffect } from 'react';
-import { app } from '../config/firebaseConfig';
+import { useState } from 'react';
 import router from 'next/router';
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  OAuthProvider,
-  signInWithPopup,
-} from 'firebase/auth';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthFooter from '@/components/auth/AuthFooter';
 
-const provider = new GoogleAuthProvider();
-
-
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-
-
-
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const requestOptions = { method: 'POST', body: JSON.stringify({ email, password }), headers: { 'Content-Type': 'application/json' } };
+    const requestOptions = { 
+      method: 'POST', 
+      body: JSON.stringify({ email, password }), 
+      headers: { 'Content-Type': 'application/json' } 
+    };
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/login`, requestOptions);
-      const { success, idToken, body } = await response.json();
+      const { success, token, body } = await response.json();
       if (success) {
-        document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
+        document.cookie = `idToken=${token}; SameSite=None; Secure; Path=/`;
 
         /*
         localStorage.setItem('username', body.username);
@@ -350,6 +335,7 @@ export default function Login() {
                         style={{ backgroundColor: '#161716', borderWidth: '0px' }}
                         id="username"
                         name="email"
+                        onChange={(e) => setEmail(e.target.value)}
                         type="text"
                         autoComplete="email"
                         required
@@ -370,6 +356,7 @@ export default function Login() {
                         style={{ backgroundColor: '#161716', borderWidth: '0px' }}
                         id="password"
                         name="password"
+                        onChange={(e) => setPassword(e.target.value)}
                         type="password"
                         autoComplete="current-password"
                         required
@@ -392,7 +379,7 @@ export default function Login() {
                     <div>
                     <button
                         type="submit"
-                        onClick={loginUser}
+                        onClick={handleLogin}
                         className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 hover:bg-blue-700/90 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                         {
