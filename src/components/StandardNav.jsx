@@ -1,5 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Popover, Transition } from '@headlessui/react';
+import { Dialog } from '@headlessui/react'
+
 import {
   Bars3Icon,
   XMarkIcon,
@@ -50,7 +52,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [showBanner, setShowBanner] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-
+  const [open, setOpen] = useState(true)
   
 
 
@@ -226,7 +228,127 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
             <br></br>
             </div>
     )}
-      <Disclosure as="nav" className=" shadow border-b border-white/10">
+
+<Transition.Root show={open} as={Fragment}>
+      <Dialog className="relative z-10" onClose={setOpen}>
+        <div className="fixed inset-0" />
+
+        <div className="fixed inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                  <div className="flex h-full flex-col divide-y divide-neutral-800 bg-neutral-900 border-l-2 border-neutral-800 shadow-xl">
+                    <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-xl text-white">
+                          <i className="fas fa-terminal"></i> Spawn a terminal
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-red-900 text-red-400 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                              onClick={() => setOpen()}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6 text-white">
+
+                      <h1>Choose an operating system</h1>
+                      <div>
+
+      <select
+        id="os"
+        name="os"
+        className="mt-2 block w-full bg-neutral-800 rounded-md py-1.5 pl-3 pr-10 text-white  border-neutral-800 sm:text-sm sm:leading-6"
+        defaultValue="Ubuntu 22.10 LTS"
+      >
+        <option>Ubuntu 22.10 LTS</option>
+        <option>Alpine Linux</option>
+        <option>Kali Linux (CTFGuide Pro)</option>
+      </select>
+    </div>
+
+    <div className='border-l-4  border-blue-600 px-4 py-3 bg-neutral-800 mt-4'>
+              <h1>You need CTFGuide Pro to use this operating system.</h1>
+              <button className='text-sm bg-blue-600 hover:bg-blue-500 px-2 py-1 mt-2 rounded-lg '>Upgrade now for $5/month</button>
+    </div>
+
+    <h1 className="mt-6">Container Interaction</h1>
+
+    <div className="mt-2 flex w-full mx-auto text-center gap-x-4">
+      <div className='border rounded-lg w-full py-4 cursor-pointer hover:bg-neutral-600/50'>
+              <h1>WebVNC</h1>
+      </div>
+           <div className='border rounded-lg w-full py-4 cursor-pointer hover:bg-neutral-600/50'>
+              <h1>ShellInABox</h1>
+      </div>
+    </div>
+
+    <h1 className="mt-6">Import Files</h1>
+    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
+                <div className="text-center">
+                <i className="text-4xl text-neutral-200 fas fa-file-archive"></i>
+                  <div className="mt-4 flex text-sm leading-6 text-gray-400">
+                    <label
+                      htmlFor="file-upload"
+                      className="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-blue-500"
+                    >
+                      <span>Upload a file</span>
+                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs leading-5 text-gray-400">.zip</p>
+                </div>
+              </div>
+     
+      
+
+
+                      </div>
+                    </div>
+                    <div className="flex flex-shrink-0 justify-end px-4 py-4">
+                      <button
+                        type="button"
+                        className="rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
+                        onClick={() => {
+                          setOpen(true);
+                        
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="ml-4 inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                      >
+                        Deploy machine
+                      </button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+      <Disclosure as="nav" className=" shadow border-b border-neutral-800">
         {({ open }) => (
           <>
             <div className={`px-2 ${alignCenter ? 'mx-auto' : ''}`}>
@@ -270,12 +392,26 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Link>
                     <Link
                       href='/leaderboards'
-                      className={linkClass('/leaderboards')}
+                      className={linkClass('/leaderboards') + " hidden lg:inline-flex"}
                     >
                       Leaderboards
                     </Link>
+                    <Link
+                      href='/create'
+                      className={linkClass('/create') + " lg:hidden"}
+                    >
+                      Create
+                                         </Link>
+
+                    <Link
+                      href='/groups'
+                      className={linkClass('/groups')}
+                    >
+                      Classrooms
+                    </Link>
+
                     {/* Ellipsis dropdown */}
-                    <Popover className="relative">
+                    <Popover className="relative lg:hidden ">
                       {({ open }) => (
                         <>
                           <Popover.Button className="inline-flex items-center p-2 text-gray-400 hover:text-white ring-none outline-none " >
@@ -354,8 +490,8 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                 </div>
                 {!guestAllowed &&
                   <div className="flex items-center ">
-               
-                   <div  className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
+                    <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md' onClick={setOpen(true)}>Open Terminal</button>
+                   <div  className="ml-2 mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
                      style={{ backgroundColor: '#212121', borderWidth: '0px' }} 
                      > 
                      <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500"> 
