@@ -12,7 +12,9 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
     const requestOptions = { 
       method: 'POST', 
       body: JSON.stringify({ email, password }), 
@@ -41,229 +43,14 @@ export default function Login() {
     } catch(error) {
       console.log(error);
     }
+    setIsLoading(false);
   }
 
   // do the same for google auth login
 
-  async function loginUser() {
-    const email = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+  async function googleLogin() {
 
-    setIsLoading(true);
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Fetch ID Token
-        userCredential.user.getIdToken().then((idToken) => {
-
-          // Send token to backend via HTTPS
-          var data = new FormData();
-          var xhr = new XMLHttpRequest();
-
-          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
-
-          xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-              var parsed = JSON.parse(this.responseText);
-
-              // Sotre username
-              localStorage.setItem('username', parsed.username);
-
-              if (!parsed.email) {
-                window.location.replace('/onboarding');
-                return;
-              }
-
-              // Store related API endpoints in local storage.
-              localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
-              localStorage.setItem(
-                'userChallengesUrl',
-                parsed.userChallengesUrl
-              );
-
-              localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
-              localStorage.setItem('notificationsUrl', parsed.notificationsUrl);
-              localStorage.setItem('role', parsed.role);
-
-              localStorage.setItem('username', parsed.username);
-
-              router.push('/dashboard');
-            }
-          });
-          xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
-          xhr.send(data);
-        });
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-     
-        let userFriendlyMessage;
-        switch (errorCode) {
-          case 'auth/user-not-found':
-            userFriendlyMessage = 'No user found with this email.';
-            break;
-          case 'auth/wrong-password':
-            userFriendlyMessage = 'Incorrect password. Please try again.';
-            break;
-          case 'auth/too-many-requests':
-            userFriendlyMessage = 'Too many attempts. Please try again later.';
-            break;
-          default:
-            userFriendlyMessage = 'An error occurred. Please try again.';
-        }
-        toast.error(userFriendlyMessage);
-      });
   }
-
-  async function loginGoogle() {
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // Fetch ID Token
-        result.user.getIdToken().then((idToken) => {
-
-          // Send token to backend via HTTPS
-          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
-
-          var data = new FormData();
-          var xhr = new XMLHttpRequest();
-
-          xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-              try {
-                var parsed = JSON.parse(this.responseText);
-
-                if (!parsed.email) {
-                  // User hasn't finished onboarding.
-                  window.location.replace('/onboarding');
-                  return;
-                }
-
-                // Store related API endpoints in local storage.
-                localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
-                localStorage.setItem(
-                  'userChallengesUrl',
-                  parsed.userChallengesUrl
-                );
-                localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
-                localStorage.setItem(
-                  'notificationsUrl',
-                  parsed.notificationsUrl
-                );
-
-                localStorage.setItem('role', parsed.role);
-                localStorage.setItem('username', parsed.username);
-
-                // addthing the token to cookies
-
-                router.push('/dashboard');
-
-              } catch (error) {
-                console.log('Error parsing JSON data:', error);
-              }
-            }
-          });
-          xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
-          xhr.send(data);
-        });
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // basic cleaned errormeSSAGE to send back
-
-        let userFriendlyMessage;
-        switch (errorCode) {
-          case 'auth/user-not-found':
-            userFriendlyMessage = 'No user found with this email.';
-            break;
-          case 'auth/wrong-password':
-            userFriendlyMessage = 'Incorrect password. Please try again.';
-            break;
-          case 'auth/too-many-requests':
-            userFriendlyMessage = 'Too many attempts. Please try again later.';
-            break;
-          default:
-            userFriendlyMessage = 'An error occurred. Please try again.';
-        }
-        toast.error(userFriendlyMessage);
-
-      });
-  }
-
-  const loginMicrosoft = () => {
-    // Microsoft login logic here
-    const provider2 = new OAuthProvider('microsoft.com');
-    signInWithPopup(auth, provider2)
-      .then((result) => {
-        result.user.getIdToken().then((idToken) => {
-
-          // Send token to backend via HTTPS
-          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
-
-          var data = new FormData();
-          var xhr = new XMLHttpRequest();
-
-          xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-              try {
-                var parsed = JSON.parse(this.responseText);
-
-                if (!parsed.email) {
-                  // User hasn't finished onboarding.
-                  window.location.replace('/onboarding');
-                  return;
-                }
-
-                // Store related API endpoints in local storage.
-                localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
-                localStorage.setItem(
-                  'userChallengesUrl',
-                  parsed.userChallengesUrl
-                );
-                localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
-                localStorage.setItem(
-                  'notificationsUrl',
-                  parsed.notificationsUrl
-                );
-
-                localStorage.setItem('role', parsed.role);
-                localStorage.setItem('username', parsed.username);
-
-                // addthing the token to cookies
-
-                router.push('/dashboard');
-
-              } catch (error) {
-                console.log('Error parsing JSON data:', error);
-              }
-            }
-          });
-          xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
-          xhr.send(data);
-        });
-      }).catch((error) => {
-        // Handle Errors here.
-        console.log(error)
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The MicrosoftAuthProvider credential to access the Microsoft API.
-        const credential = error.credential;
-        // Display error message
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('errorMessage').innerHTML = errorMessage;
-      });
-  };
 
   return (
     <>
@@ -284,6 +71,8 @@ export default function Login() {
             style={{ fontFamily: 'Poppins, sans-serif' }}
             className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
             >
+          <form onSubmit={handleLogin}>
+
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
            
             </div>
@@ -450,9 +239,8 @@ export default function Login() {
             <AuthFooter/>
 
               </div>
-
-
             </div>
+          </form>
             </div>
         </div>
 

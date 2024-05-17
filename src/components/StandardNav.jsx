@@ -16,10 +16,7 @@ import request from "@/utils/request";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
-// Do not remove, even if detected as unused by vscode!
-import { app } from '../config/firebaseConfig';
 
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import 'reactjs-popup/dist/index.css';
 import { useRouter } from 'next/router';
 import { LogoAdmin } from './LogoAdmin';
@@ -30,9 +27,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const auth = getAuth();
 const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
-
 const adminList = ['pranav'];
 
 const DEFAULT_NOTIFICATION = {
@@ -51,19 +46,11 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  
-
-
   const router = useRouter();
 
   function logout() {
-    signOut(auth)
-      .then(() => {
-        window.location.replace('/login');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    document.cookie = 'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    router.push('/login');
   }
 
   // if user signed out redirect

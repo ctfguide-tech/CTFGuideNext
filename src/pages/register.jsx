@@ -105,13 +105,42 @@ function Register() {
       });
   }
 
-  async function registerUser() {
+  async function registerUser(e) {
+    e.preventDefault();
     if (document.getElementById('password').value !== document.getElementById('cpassword').value) {
       toast.error('Passwords do not match.');
       return;
     }
+    const exists = await emailExists();
+    if(!exists) {
+      toast.error('Email already exists.');
+      return;
+    }
     setShowOnboarding(true);
     console.log('Registering user...');
+  }
+
+  async function emailExists() {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/account/check-email`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data.success;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
+    }
   }
 
   return (
@@ -152,6 +181,7 @@ function Register() {
                   style={{ fontFamily: 'Poppins, sans-serif' }}
                   className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
                 >
+              <form onSubmit={registerUser}>
                   <div className="sm:mx-auto sm:w-full sm:max-w-md">
 
                   </div>
@@ -344,6 +374,7 @@ function Register() {
 
 
                   </div>
+              </form>
                 </div>
               </div>
 
