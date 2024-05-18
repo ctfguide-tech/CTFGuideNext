@@ -119,16 +119,20 @@ export function DataAsk(props) {
       const body = {
         email: props.email,
         password: props.password,
-        username: localStorage.getItem('username'),
-        birthday: localStorage.getItem('birthday'),
-        firstName: localStorage.getItem('firstname'),
-        lastName: localStorage.getItem('lastname'),
-        location: "????",
+        username,
+        birthday,
+        firstName: firstname,
+        lastName: lastname,
+        location: "???"
       }
 
       try {
         const url = `${process.env.NEXT_PUBLIC_API_URL}/account/register`;
-        const requestOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
+        const requestOptions = { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify(body) 
+        };
         const response = await fetch(url, requestOptions);
         const data = await response.json();
 
@@ -146,7 +150,6 @@ export function DataAsk(props) {
         console.log(error);
         toast.error("An error occurred. Please try again later.");
       }
-
     }
   } 
   
