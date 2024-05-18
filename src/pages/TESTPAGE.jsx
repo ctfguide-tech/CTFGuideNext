@@ -6,7 +6,7 @@ import { Header } from '@/components/Header';
 import PersonCard from '@/components/PersonCard';
 import  TESTCOMPONENT  from '@/components/TESTCOMPONENT';
 
-export default function Careers() {
+export default function TESTPAGE() {
   /*
         Code to check if onboarding has been complete
       */
