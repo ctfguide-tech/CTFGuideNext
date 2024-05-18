@@ -23,6 +23,8 @@ import { app } from '../config/firebaseConfig';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import 'reactjs-popup/dist/index.css';
+import Upgrade from './nav/Upgrade';
+
 import { useRouter } from 'next/router';
 import { LogoAdmin } from './LogoAdmin';
 import { CSSTransition } from 'react-transition-group';
@@ -47,6 +49,8 @@ const DEFAULT_NOTIFICATION = {
 
 export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [terminaIsOpen, setTerminalIsOpen] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [points, setPoints] = useState('0');
@@ -378,6 +382,14 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
                             onClick={() => setTerminalIsOpen(true)}
                             >Open Terminal</button>
+
+<button
+        className='ml-4 bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 text-sm rounded-md'
+        onClick={() => setUpgradeModalOpen(true)}
+      >
+        <i className="fas fa-crown"></i> Upgrade to Pro
+      </button>
+
                    <div  className="ml-2 mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
                      style={{ backgroundColor: '#212121', borderWidth: '0px' }} 
                      > 
@@ -562,6 +574,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
 
 
              <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />
+             <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
  
       {isAdmin && (
