@@ -1,9 +1,35 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
 
 const SpawnTerminal = ({ open, setOpen }) => {
+
+  let proMachines = ["Kali Linux (CTFGuide Pro)"];
+
+
+
+  const [requiresUpgrade, setRequiresUpgrade] = useState(false);
+  const [activeSub, setActiveSub] = useState("Ubuntu 22.10 LTS");
+
+  function hasPermission(e) {
+
+    // Also handle input change
+
+    setActiveSub(e);
+
+    if (proMachines.includes(e)) {
+      setRequiresUpgrade(true)
+    } else {
+      setRequiresUpgrade(false);
+    }
+
+  }
+
+
+
   return (
+
     <Transition.Root show={open} as={Fragment}>
       <Dialog className="relative z-10" onClose={setOpen}>
         <div className="fixed inset-0" />
@@ -47,8 +73,9 @@ const SpawnTerminal = ({ open, setOpen }) => {
                           <select
                             id="os"
                             name="os"
+                            onChange={e => hasPermission(e.target.value)}
+                            value={activeSub}
                             className="mt-2 block w-full bg-neutral-800 rounded-md py-1.5 pl-3 pr-10 text-white border-neutral-800 sm:text-sm sm:leading-6"
-                            defaultValue="Ubuntu 22.10 LTS"
                           >
                             <option>Ubuntu 22.10 LTS</option>
                             <option>Alpine Linux</option>
@@ -56,12 +83,18 @@ const SpawnTerminal = ({ open, setOpen }) => {
                           </select>
                         </div>
 
-                        <div className='border-l-4 border-blue-600 px-4 py-3 bg-neutral-800 mt-4'>
-                          <h1>You need CTFGuide Pro to use this operating system.</h1>
-                          <button className='text-sm bg-blue-600 hover:bg-blue-500 px-2 py-1 mt-2 rounded-lg'>
-                            Upgrade now for $5/month
-                          </button>
-                        </div>
+
+                        { 
+
+                          requiresUpgrade && (
+                            <div className='border-l-4 border-blue-600 px-4 py-3 bg-neutral-800 mt-4'>
+                              <h1>You need CTFGuide Pro to use this operating system.</h1>
+                              <button className='text-sm bg-blue-600 hover:bg-blue-500 px-2 py-1 mt-2 rounded-lg'>
+                                Upgrade now for $5/month
+                              </button>
+                            </div>
+                              )
+                        }
 
                         <h1 className="mt-6">Container Interaction</h1>
                         <div className="mt-2 flex w-full mx-auto text-center gap-x-4">

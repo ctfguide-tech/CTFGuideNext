@@ -57,9 +57,11 @@ export default function Pratice() {
       <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
-          <div className="mx-auto mt-10 hidden max-w-7xl">
-            <div className="  relative isolate overflow-hidden  rounded-lg bg-black/10 bg-neutral-900 py-10 shadow-2xl ring-1 ring-white/10 sm:py-12">
-              <div className="relative mx-auto hidden max-w-7xl px-6 lg:px-8">
+      
+          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto mt-10  max-w-7xl">
+            <div className="  relative isolate overflow-hidden  bg-black/10 bg-neutral-900 shadow-2xl ring-1 ring-white/10 py-4">
+              <div className="relative mx-auto  max-w-7xl px-6 lg:px-8">
                 <div
                   className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
                   aria-hidden="true"
@@ -72,31 +74,107 @@ export default function Pratice() {
                     }}
                   />
                 </div>
-                <div className="mx-auto  max-w-6xl lg:mx-0 lg:max-w-3xl">
-                  <p className="mt-2 text-xl font-semibold tracking-tight text-white">
-                    All of these practice problems are community created!
+                <div className="  flex">
+                  <div className=''>
+                  <p className="text-3xl font-semibold tracking-tight text-white flex">
+                      Are your preparing for a CTF competition?
                   </p>
-                  <p className="mt-4 text-lg leading-8 text-gray-300">
-                    As of March 2023, we are still migrating the data from our
-                    old site. Some challenges won't show below.
-                    <br></br>
-                    <br></br>
-                    Want to create your own challenges? Check out our{' '}
-                    <a href="../create" className="font-semibold">
-                      creator dashboard
-                    </a>
-                    .
+                  <p className='text-lg text-white max-w-4xl'>
+                      CTFGuide stores challenges from past competitions. We're updating our collection on a daily basis.
                   </p>
+
+          
+                  </div>
+
+                <img src="../icons8-leaderboard.svg" alt="flag" width="150" className="   text-white ml-auto absolute bottom-0 right-10 mb-[-50px]" />
+
+                 
                 </div>
               </div>
             </div>
           </div>
-          <div className="mx-auto max-w-7xl">
-            {/* <div> */}
-            {/* <PracticeNav /> */}
-            {/* </div> */}
             <div>
               <div className="w-full p-4 pt-8">
+                  <div className='mb-10'>
+                  <h1 className="text-3xl font-semibold text-white mb-2"> Featured Sets </h1>
+
+                      <div >
+                  <h1 className="text-lg uppercase  mb-1 text-neutral-400"> Competition Sets </h1>
+
+                        <div className='grid grid-cols-4 gap-x-4'>
+                    
+
+                        <div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+                            <img width="50" className="ml-4" src="https://avatars.githubusercontent.com/u/5315773?s=280&v=4"></img> 
+                     <div className='ml-4'>
+                  <p>PicoCTF 2023</p>
+                            52 challenges available
+                     </div>
+                          </div>
+
+
+                          <div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+                            <img width="50" className="ml-4 rounded-full" src="https://imaginaryctf.org/img/logo.png"></img> 
+                     <div className='ml-4'>
+                  <p>imaginaryCTF</p>
+                           <p>153 challenges available</p>
+                     </div>
+                          </div>
+
+
+                          <div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+                            <img width="50" className="ml-4" src="https://avatars.githubusercontent.com/u/5315773?s=280&v=4"></img> 
+                     <div className='ml-4'>
+                  <p>PicoCTF 2024</p>
+                            40 challenges available
+                     </div>
+                          </div>
+                        </div>
+
+
+                        <h1 className="text-lg uppercase  mb-1 text-neutral-400 mt-4"> Category Sets </h1>
+
+<div className='grid grid-cols-4 gap-x-4'>
+
+
+<div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+    <img width="50" className="ml-4" src="https://avatars.githubusercontent.com/u/5315773?s=280&v=4"></img> 
+<div className='ml-4'>
+<p>PicoCTF 2023</p>
+    52 challenges available
+</div>
+  </div>
+
+
+  <div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+    <img width="50" className="ml-4 rounded-full" src="https://imaginaryctf.org/img/logo.png"></img> 
+<div className='ml-4'>
+<p>imaginaryCTF</p>
+   <p>153 challenges available</p>
+</div>
+  </div>
+
+
+  <div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+    <img width="50" className="ml-4" src="https://avatars.githubusercontent.com/u/5315773?s=280&v=4"></img> 
+<div className='ml-4'>
+<p>PicoCTF 2024</p>
+    40 challenges available
+</div>
+  </div>
+
+  <div className='bg-neutral-800 px-2 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+    <img width="50" className="ml-4" src="https://avatars.githubusercontent.com/u/5315773?s=280&v=4"></img> 
+<div className='ml-4'>
+<p>PicoCTF 2024</p>
+    40 challenges available
+</div>
+  </div>
+</div>
+
+                        </div>
+
+                    </div>
                 <Community challenges={challenges} />
               </div>
             </div>
