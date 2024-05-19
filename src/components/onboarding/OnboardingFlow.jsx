@@ -20,12 +20,12 @@ export function OnboardingFlow(props) {
   }, [router.query.part]);
 
   if (flowState === '1') {
-    return <DataAsk email={props.email} password={props.password}/>;
+    return <DataAsk email={props.email} password={props.password} accountType={props.accountType}/>;
   } else if (flowState === '2') {
     return <DataAskPart2 />;
   } else if (flowState === '3') {
     return <Demo />;
   } else {
-    return <DataAsk email={props.email} password={props.password}/>;
+    return <DataAsk email={props.email} password={props.password} accountType={props.accountType}/>;
   }
 }

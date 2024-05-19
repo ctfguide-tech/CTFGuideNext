@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 function Register() {
   const [validationMessage, setValidationMessage] = useState('');
@@ -16,6 +17,29 @@ function Register() {
   const [cpassword, setCPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [accountType, setAccountType] = useState('EMAIL');
+
+  async function emailExists(emailData) {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/account/check-email`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: emailData
+          }),
+        }
+      );
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
+    }
+  }
 
   useEffect(() => {
     if (!userHasEdited) return; // Don't validate until the user edits the input
@@ -53,12 +77,21 @@ function Register() {
 
 
   async function registerUser(e) {
+    setAccountType('EMAIL');
     e.preventDefault();
+    if(email == "" || password == "" || cpassword == "") {
+      toast.error('Please fill in all fields.');
+      return;
+    }
+    if(password.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
+      return;
+    }
     if (document.getElementById('password').value !== document.getElementById('cpassword').value) {
       toast.error('Passwords do not match.');
       return;
     }
-    const exists = await emailExists();
+    const exists = await emailExists(email);
     if(!exists) {
       toast.error('Email already exists.');
       return;
@@ -67,35 +100,24 @@ function Register() {
     console.log('Registering user...');
   }
 
-  async function emailExists() {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/account/check-email`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      return data.success;
-    } catch (error) {
-      console.error('Error checking email:', error);
-      return false;
-    }
-  }
-
   async function handleSuccess(data) {
-    console.log(data);
+    console.log("Setting account by google");
+    setAccountType('GOOGLE');
+    const { credential } = data;
+    const decode = jwtDecode(credential);
+    setEmail(decode.email);
+    const exists = await emailExists(decode.email);
+    if(!exists) {
+      toast.error('Email already exists.');
+      return;
+    }
+    setPassword('');
+    setShowOnboarding(true);
   }
 
   async function handleError(data) {
     console.log(data);
+    toast.error('Account failed to create.');
   }
 
   return (
@@ -112,7 +134,7 @@ function Register() {
             </Head>
             <main>
               <div className="h-flex h-screen items-center justify-center">
-                <OnboardingFlow email={email} password={password} />
+                <OnboardingFlow email={email} password={password} accountType={accountType} />
               </div>
             </main>
           </>

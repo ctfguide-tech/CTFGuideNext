@@ -1,9 +1,9 @@
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import AuthFooter from '@/components/auth/AuthFooter';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 export function DataAsk(props) {
   const router = useRouter();
@@ -13,13 +13,7 @@ export function DataAsk(props) {
   const [userHasEdited, setUserHasEdited] = useState(false); // New state to track if the user has edited the input
 
   function logout() {
-    signOut(auth)
-      .then(() => {
-        window.location.replace('/login');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    router.push('/login');
   }
   
   useEffect(() => {
@@ -123,16 +117,18 @@ export function DataAsk(props) {
         birthday,
         firstName: firstname,
         lastName: lastname,
-        location: "???"
+        location: "???",
+        accountType: props.accountType
       }
 
       try {
         const url = `${process.env.NEXT_PUBLIC_API_URL}/account/register`;
-        const requestOptions = { 
+        const requestOptions = {
           method: 'POST', 
           headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify(body) 
         };
+
         const response = await fetch(url, requestOptions);
         const data = await response.json();
 

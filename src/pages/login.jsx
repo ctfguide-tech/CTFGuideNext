@@ -7,26 +7,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthFooter from '@/components/auth/AuthFooter';
 import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  async function handleLoginRequest(requestOptions) {
     setIsLoading(true);
-
-    const requestOptions = { 
-      method: 'POST', 
-      body: JSON.stringify({ email, password }), 
-      headers: { 'Content-Type': 'application/json' } 
-    };
-
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/login`, requestOptions);
-      const { success, token, body } = await response.json();
-      console.log(success, token, body);
+      let data = await response.json();
+      let { success, token, body } = data;
       if (success) {
         document.cookie = `idToken=${token}; SameSite=None; Secure; Path=/`;
 
@@ -35,16 +28,9 @@ export default function Login() {
         localStorage.setItem('lastname', body.lastName);
         localStorage.setItem('birthday', body.birthday);
 
-        /*
-        localStorage.setItem('userLikesUrl', body.userLikesUrl);
-        localStorage.setItem('userChallengesUrl', body.userChallengesUrl);
-        localStorage.setItem('userBadgesUrl', body.userBadgesUrl);
-        localStorage.setItem('notificationsUrl', body.notificationsUrl);
-        */
-
         router.push('/dashboard');
       } else {
-        toast.error('Invalid credentials');
+        toast.error(data.message);
       }
     } catch(error) {
       console.log(error);
@@ -52,13 +38,33 @@ export default function Login() {
     setIsLoading(false);
   }
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const requestOptions = { 
+      method: 'POST', 
+      body: JSON.stringify({ email, password, accountType: 'EMAIL'}), 
+      headers: { 'Content-Type': 'application/json' } 
+    };
+    await handleLoginRequest(requestOptions);
+  }
+
   // do the same for google auth login
   async function handleSuccess(data) {
-    console.log(data);
+    console.log("Setting account by google");
+    const { credential } = data;
+    const decode = jwtDecode(credential);
+    const { email } = decode;
+    const requestOptions = { 
+      method: 'POST', 
+      body: JSON.stringify({ email, password: null, accountType: 'GOOGLE'}), 
+      headers: { 'Content-Type': 'application/json' } 
+    };
+    await handleLoginRequest(requestOptions);
   }
 
   async function handleError(data) {
     console.log(data);
+    toast.error('Google login failed. Please try again later.');
   }
 
   return (
