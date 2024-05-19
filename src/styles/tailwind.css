@@ -364,3 +364,11 @@ ul {
 .fastanimate {
   --animate-duration: 0.3s;
 }
+
+.spin-on-hover {
+  transition: transform 0.5s;
+}
+
+.spin-on-hover:hover {
+  transform: rotate(360deg);
+}

@@ -221,8 +221,13 @@ function WriteUpPage({ cache, setCache }) {
   })
   return (
     <>
+    <div className="flex">
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-        <h2 className="text-2xl font-semibold pt-2">Write Up Page</h2>
+        <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
+      </div>
+      <div className="ml-auto">
+        <button className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-3 mr-2">Create a Write up</button>
+      </div>
       </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>

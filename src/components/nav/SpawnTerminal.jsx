@@ -52,7 +52,7 @@ const SpawnTerminal = ({ open, setOpen }) => {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-xl text-white">
-                            <i className="fas fa-terminal"></i> Spawn a terminal
+                            <i className="fas fa-terminal"></i> Launch a machine
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button

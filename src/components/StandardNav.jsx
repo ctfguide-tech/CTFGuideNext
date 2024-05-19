@@ -381,7 +381,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   <div className="flex items-center ">
                     <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
                             onClick={() => setTerminalIsOpen(true)}
-                            >Open Terminal</button>
+                            ><i className="fas fa-terminal"></i> Launch a machine</button>
 
 <button
         className='ml-4 bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 text-sm rounded-md'
