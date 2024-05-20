@@ -4,6 +4,35 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 export default function Preferences(){
+  function loadPreferences() {
+    // WARNING: For GET requests, body is set to null by browsers.
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('readystatechange', function() {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+        console.log('PREFFF');
+        try {
+          if (JSON.parse(this.responseText)[0].value == true) {
+            document.getElementById('friend-notif').checked = true;
+          }
+
+          if (JSON.parse(this.responseText)[1].value == true) {
+            document.getElementById('challenge-notif').checked = true;
+          }
+        } catch (error) {
+          // .alert(error)
+        }
+      }
+    });
+
+    xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.withCredentials = true;
+    xhr.send();
+  }
 
     function savePreferences() {
         document.getElementById('savePreferences').innerHTML = 'Saving...';

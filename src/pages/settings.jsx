@@ -158,31 +158,6 @@ export default function Dashboard() {
     }
   }
 
-  function savePreferences() {
-    document.getElementById('savePreferences').innerHTML = 'Saving...';
-
-    var data = JSON.stringify({
-      FRIEND_ACCEPT: document.getElementById('friend-notif').checked,
-      CHALLENGE_VERIFY: document.getElementById('challenge-notif').checked,
-    });
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.addEventListener('readystatechange', function() {
-      if (this.readyState === 4) {
-        document.getElementById('savePreferences').innerHTML = 'Save';
-      }
-    });
-
-    xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
-
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    let token = getCookie();
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-    xhr.withCredentials = true;
-
-    xhr.send(data);
-  }
   
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.

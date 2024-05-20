@@ -26,7 +26,9 @@ export default function General(){
   const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
   const [open, setOpen] = useState(true);
 
-
+  var pfpString = '';
+  var pfpChanged = false;
+  
   function pfpChange() {
     pfpChanged = true;
   }
