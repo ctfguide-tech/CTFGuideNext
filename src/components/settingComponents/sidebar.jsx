@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router'
 
 export default function Sidebar(){
-  
+  const router = useRouter()
     return(
          <div
               className="  mt-10 flex-none border-r pl-10 pr-10 text-gray-900"
@@ -9,38 +10,30 @@ export default function Sidebar(){
             >
               <ul className="mr-2 py-2">
                 <li className="py-1">
-                  <Link
-                    href="../settings"
-                    className="px-2 py-2 text-lg  font-medium text-white"
-                    
-                  >
-                    {' '}
+                <button className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400" 
+                  onClick={() =>router.push('../settings',null, { shallow: true })}>
                     General
-                  </Link>
+                </button>
                 </li>
                 <li className="py-1 ">
-                  <Link
-                    href="../settings?loc=security"
-                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
-                  >
+                  
+                <button className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400" 
+                  onClick={() =>router.push('../settings/security',null, { shallow: true })}>
                     Security
-                  </Link>
+                </button>
                 </li>
                 <li className="py-1 ">
-                  <Link
-                    href="../settings?loc=preferences"
-                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
-                  >
+                <button className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400" 
+                  onClick={() =>router.push('../settings/preferences',null, { shallow: true })}>
                     Email Preferences
-                  </Link>
+                </button>
+    
                 </li>
                 <li className="py-1 ">
-                  <Link
-                    href="../settings?loc=billing"
-                    className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400"
-                  >
+                <button className="px-2 py-1  text-lg font-medium text-white hover:text-gray-400" 
+                  onClick={() =>router.push('../settings/billing',null, { shallow: true })}>
                     Billing
-                  </Link>
+                </button>
                 </li>
               </ul>
             </div>

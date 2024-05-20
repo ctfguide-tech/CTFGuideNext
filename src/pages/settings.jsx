@@ -5,10 +5,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { getCookie } from '@/utils/request';
 import General from '@/components/settingComponents/generalPage';
-import Security from '@/components/settingComponents/securityPage';
 import Sidebar from '@/components/settingComponents/sidebar';
-import Billing from '@/components/settingComponents/billingPage';
-import Preferences from '@/components/settingComponents/preferencesPage';
+
 import {
   updatePassword,
   getAuth,
@@ -37,11 +35,6 @@ export default function Dashboard() {
   const [preferences, setPreferences] = useState(false);
   const [billing, setbilling] = useState(false);
   const [username, setUsername] = useState('');
-
-
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
 
   var pfpString = '';
   var pfpChanged = false;
@@ -165,7 +158,32 @@ export default function Dashboard() {
     }
   }
 
+  function savePreferences() {
+    document.getElementById('savePreferences').innerHTML = 'Saving...';
 
+    var data = JSON.stringify({
+      FRIEND_ACCEPT: document.getElementById('friend-notif').checked,
+      CHALLENGE_VERIFY: document.getElementById('challenge-notif').checked,
+    });
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('readystatechange', function() {
+      if (this.readyState === 4) {
+        document.getElementById('savePreferences').innerHTML = 'Save';
+      }
+    });
+
+    xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    let token = getCookie();
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.withCredentials = true;
+
+    xhr.send(data);
+  }
+  
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.
 
@@ -218,34 +236,12 @@ export default function Dashboard() {
           
           {general && (              
             <div id="general" className="">
-                {/*DIV CONTAINING THE BODY OF GENERAL SECTION*/}
+                {/*CONTAINING THE BODY OF GENERAL SECTION*/}
                 <General/>
             </div>
           )}
 
-          {billing && (
-            <div id="general" className="">
-                {/*DIV CONTAINING BODY OF THE BILLING SECTION*/}
-                <Billing/>
-            </div>
-          )}
-
-          {security && (
-            <div id="security" className="">
-                {/*DIV CONTAINING BODY OF THE SECURITY SECTION*/}
-                <Security/>
-            </div>
-          )}
-
-
-          {preferences && (
-            <div id="preferences" className="">
-              
-                {/*DIV CONTAINING BODY OF THE PREFERENCES SECTION*/}
-                <Preferences/>
-              
-            </div>
-          )}
+         
       </div>
 
       <Footer />

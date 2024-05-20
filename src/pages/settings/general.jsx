@@ -8,7 +8,10 @@ import { useRouter } from 'next/router';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getCookie } from '@/utils/request';
 import { useEffect } from 'react';
-
+import Head from 'next/head';
+import { Footer } from '@/components/Footer';
+import { StandardNav } from '@/components/StandardNav';
+import Sidebar from '@/components/settingComponents/sidebar';
 export default function General(){
   const router = useRouter();
   
@@ -178,7 +181,25 @@ export default function General(){
   }
   
     return(
-      <div className="flex-1 xl:overflow-y-auto">          
+        <>
+        <Head>
+          <title>User Settings</title>
+          <meta
+            name="description"
+            content="Cybersecurity made easy for everyone"
+          />
+          <style>
+            @import
+            url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+          </style>
+        </Head>
+  
+        <StandardNav />
+  
+        <div className="mx-auto flex max-w-6xl">
+            <Sidebar/>
+            
+            <div className="flex-1 xl:overflow-y-auto">          
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
         <h1 className="text-3xl font-bold tracking-tight text-white">
           General
@@ -493,5 +514,9 @@ export default function General(){
         </div>
       </div>
     </div>
+        </div>
+  
+        <Footer />
+      </>
     );
 }
