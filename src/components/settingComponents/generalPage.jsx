@@ -22,6 +22,10 @@ export default function General(){
   const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
   const [open, setOpen] = useState(true);
 
+
+  function pfpChange() {
+    pfpChanged = true;
+  }
   
   const handlePopupOpen = () => {
     setIsPopupOpen(true);
@@ -63,7 +67,6 @@ export default function General(){
     const file = event.target.files[0];
     setSelectedImage(file);
   }
-
 
   const handleSaveChanges = async () => {
     if (!selectedImage) {

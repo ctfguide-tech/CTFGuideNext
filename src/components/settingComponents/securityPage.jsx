@@ -1,39 +1,56 @@
+import { useState } from 'react';
+import {
+  updatePassword,
+  getAuth,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  confirmPasswordReset,
+} from 'firebase/auth';
 
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 
 export default function Security(){
+  const [inputText, setInputText] = useState('');
 
-    function saveSecurity() {
-        document.getElementById('saveSecurity').innerText = 'Saving...';
-        var oldPassword = document.getElementById('oldPassword').value;
-    
-        reauthenticateWithCredential(
-          user,
-          EmailAuthProvider.credential(user.email, oldPassword)
-        )
-          .then(() => {
-            var password = document.getElementById('password').value;
-            var confirmPassword = document.getElementById('confirm-password').value;
-    
-            if (password == confirmPassword) {
-              updatePassword(user, confirmPassword)
-                .then(() => {
-                  document.getElementById('saveSecurity').innerText = 'Save';
-    
-                  document.getElementById('password').value = '';
-                  document.getElementById('confirm-password').value = '';
-                })
-                .catch((error) => {
-                  document.getElementById('saveSecurity').innerText = 'Save';
-                  window.alert(error);
-                });
-            }
-          })
-          .catch((error) => {
-            document.getElementById('saveSecurity').innerText = 'Save';
-            window.alert(error);
-          });
-      }
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  const handleInputChange = (event) => {
+    setInputText(event.target.value);
+  };
+
+  function saveSecurity() {
+      document.getElementById('saveSecurity').innerText = 'Saving...';
+      var oldPassword = document.getElementById('oldPassword').value;
+  
+      reauthenticateWithCredential(
+        user,
+        EmailAuthProvider.credential(user.email, oldPassword)
+      )
+        .then(() => {
+          var password = document.getElementById('password').value;
+          var confirmPassword = document.getElementById('confirm-password').value;
+  
+          if (password == confirmPassword) {
+            updatePassword(user, confirmPassword)
+              .then(() => {
+                document.getElementById('saveSecurity').innerText = 'Save';
+  
+                document.getElementById('password').value = '';
+                document.getElementById('confirm-password').value = '';
+              })
+              .catch((error) => {
+                document.getElementById('saveSecurity').innerText = 'Save';
+                window.alert(error);
+              });
+          }
+        })
+        .catch((error) => {
+          document.getElementById('saveSecurity').innerText = 'Save';
+          window.alert(error);
+        });
+    }
 
     return(
         <div className="flex-1 xl:overflow-y-auto">
