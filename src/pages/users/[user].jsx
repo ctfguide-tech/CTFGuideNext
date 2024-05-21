@@ -2,7 +2,7 @@ import Markdown from 'react-markdown';
 // Kshitij
 import { Tooltip } from 'react-tooltip';
 
-import 'firebase/storage';
+// import 'firebase/storage';
 import Head from 'next/head';
 
 import React from 'react';

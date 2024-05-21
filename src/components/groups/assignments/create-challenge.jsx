@@ -7,8 +7,8 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import  fileApi  from '@/utils/file-api';
-import { getAuth } from 'firebase/auth';
-import request from '@/utils/request';
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
 
 const styles = {
   h1: { fontSize: '2.4rem' },
@@ -18,8 +18,6 @@ const styles = {
   h5: { fontSize: '1.4rem' },
   h6: { fontSize: '1.2rem' },
 };
-
-const auth = getAuth();
 
 export default function Createchall(props) {
 
@@ -87,7 +85,10 @@ export default function Createchall(props) {
         await uploadChallenge('');
         return;
       } else {
-        const token = await auth.currentUser.accessToken;
+        const cookie = getCookie('idToken');
+        const data = jwtDecode(cookie);
+
+        const token = data.id;
         const fileId = await fileApi(token, selectedFile);
         if(fileId !== null) {
           await uploadChallenge(fileId);

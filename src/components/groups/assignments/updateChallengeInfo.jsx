@@ -5,14 +5,12 @@ import { StandardNav } from '@/components/StandardNav';
 import ClassroomNav from '@/components/groups/classroomNav';
 import CreateAssignment from '@/components/groups/assignments/createAssignment';
 import { useState, useEffect } from 'react';
-import request from '@/utils/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import fileApi, { deleteFiles, getFileName, getFile } from '@/utils/file-api';
-import { getAuth } from 'firebase/auth';
 
-const auth = getAuth();
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
 
 const Editor = (props) => {
   const [contentPreview, setContentPreview] = useState('');
@@ -55,8 +53,9 @@ const Editor = (props) => {
     if(!validateNewChallege()) {
       return;
     }
-
-    const token = await auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const data = jwtDecode(cookie);
+    const token = data.id;
     setIsCreating(true);
     let fileIds = [];
     let idsToDelete = [];

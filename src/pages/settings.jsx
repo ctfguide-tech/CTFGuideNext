@@ -3,12 +3,13 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+// import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getCookie } from '@/utils/request';
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
 import request from "@/utils/request";
 
+/*
 import {
   updatePassword,
   getAuth,
@@ -16,6 +17,8 @@ import {
   EmailAuthProvider,
   confirmPasswordReset,
 } from 'firebase/auth';
+*/
+
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
@@ -48,8 +51,8 @@ export default function Dashboard() {
   var pfpString = '';
   var pfpChanged = false;
 
-  const auth = getAuth();
-  const user = auth.currentUser;
+  //const auth = getAuth();
+  // const user = auth.currentUser;
 
   const handlePopupOpen = () => {
     setIsPopupOpen(true);
@@ -71,7 +74,6 @@ export default function Dashboard() {
       setIsPopupOpen(false)
       return;
     }
-
 
     // upload to firebase storage
     try {
@@ -115,7 +117,7 @@ export default function Dashboard() {
         async () => {
           const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
           console.log(imageUrl)
-          console.log(user);
+          //console.log(user);
           const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/updatePfp';
           const body = { imageUrl }
           const response = await request(endPoint, "POST", body);
@@ -177,6 +179,7 @@ export default function Dashboard() {
   function pfpChange() {
     pfpChanged = true;
   }
+
   useEffect(() => {
     console.log(router.query.loc);
     if (router.query.loc == 'general' || router.query.loc == undefined) {
@@ -383,7 +386,6 @@ export default function Dashboard() {
     xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     xhr.withCredentials = true;
     xhr.send(data);
-
   }
 
   function savePreferences() {
@@ -442,37 +444,30 @@ export default function Dashboard() {
     xhr.send();
   }
 
-  function saveSecurity() {
+  async function saveSecurity() {
     document.getElementById('saveSecurity').innerText = 'Saving...';
     var oldPassword = document.getElementById('oldPassword').value;
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirm-password').value;
 
-    reauthenticateWithCredential(
-      user,
-      EmailAuthProvider.credential(user.email, oldPassword)
-    )
-      .then(() => {
-        var password = document.getElementById('password').value;
-        var confirmPassword = document.getElementById('confirm-password').value;
+    if(password !== confirmPassword) {
+      console.log("Passwords do not match")
+      return;
+    }
 
-        if (password == confirmPassword) {
-          updatePassword(user, confirmPassword)
-            .then(() => {
-              document.getElementById('saveSecurity').innerText = 'Save';
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/account/change-password`;
+      const body = { oldPassword, password };
+      const response = await request(url, "POST", body);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
 
-              document.getElementById('password').value = '';
-              document.getElementById('confirm-password').value = '';
-            })
-            .catch((error) => {
-              document.getElementById('saveSecurity').innerText = 'Save';
-
-              window.alert(error);
-            });
-        }
-      })
-      .catch((error) => {
-        document.getElementById('saveSecurity').innerText = 'Save';
-        window.alert(error);
-      });
+    document.getElementById('saveSecurity').innerText = 'Save';
+    document.getElementById('oldPassword').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('confirm-password').value = '';
   }
 
   return (
