@@ -1,14 +1,14 @@
 import countryList from "react-select-country-list";
 
-export function Locations(){
-    return (
-     
- <select
+export function Locations() {
+  return (
+
+    <select
       id="location"
       name="country"
       autoComplete="country-name"
       className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
-      >
+    >
 
       <option value="Afghanistan">Afghanistan</option>
       <option value="Åland Islands">Åland Islands</option>
@@ -342,23 +342,7 @@ export function Locations(){
       <option value="Yemen">Yemen</option>
       <option value="Zambia">Zambia</option>
       <option value="Zimbabwe">Zimbabwe</option>
-      </select>
-    );
+    </select>
+  );
 
 }   
-
-/*
-
- <select
-        id="location"
-        name="country"
-        autoComplete="country-name"
-        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6">
-        {countryList().getData().map((country) => (
-          <option value={country.value}>
-            {country.label}
-          </option>
-        ))}
-      </select>
-
-*/

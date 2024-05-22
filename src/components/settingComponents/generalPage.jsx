@@ -9,9 +9,9 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/
 import { getCookie } from '@/utils/request';
 import { useEffect } from 'react';
 
-export default function General(){
+export default function General() {
   const router = useRouter();
-  
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -27,7 +27,7 @@ export default function General(){
   function pfpChange() {
     pfpChanged = true;
   }
-  
+
   const handlePopupOpen = () => {
     setIsPopupOpen(true);
   }
@@ -38,7 +38,7 @@ export default function General(){
     // set username
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function() {
+    xhr.addEventListener('readystatechange', function () {
       if (this.readyState === 4) {
         console.log(this.responseText);
         try {
@@ -140,8 +140,8 @@ export default function General(){
     }
   }
 
-  const handleClick = () => {}
- 
+  const handleClick = () => { }
+
   function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
@@ -161,7 +161,7 @@ export default function General(){
 
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function() {
+    xhr.addEventListener('readystatechange', function () {
       if (this.readyState === 4) {
         console.log(this.responseText);
         document.getElementById('save').innerHTML = 'Save';
@@ -176,9 +176,9 @@ export default function General(){
     xhr.send(data);
 
   }
-  
-    return(
-      <div className="flex-1 xl:overflow-y-auto">          
+
+  return (
+    <div className="flex-1 xl:overflow-y-auto">
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
         <h1 className="text-3xl font-bold tracking-tight text-white">
           General
@@ -353,7 +353,7 @@ export default function General(){
             </div>
 
             {/* LOCATION OPTIONS */}
-            <div className="sm:col-span-3">  
+            <div className="sm:col-span-3">
               <label
                 htmlFor="country"
                 className="block text-sm font-medium leading-6 text-white"
@@ -493,5 +493,5 @@ export default function General(){
         </div>
       </div>
     </div>
-    );
+  );
 }

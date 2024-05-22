@@ -85,17 +85,15 @@ function MobileNavigation() {
   );
 }
 
-
-export function Header({propToChangeLogo}) {
+export function Header() {
   return (
     <header className="py-4 " style={{ fontFamily: 'Poppins, sans-serif' }}>
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            {propToChangeLogo ? (<p className=' text-2xl text-white '>{propToChangeLogo}</p>):
-            (<Link href="../" aria-label="Home">
+            <Link href="../" aria-label="Home">
               <Logo className="h-10 w-auto" />
-            </Link>)}
+            </Link>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div>
