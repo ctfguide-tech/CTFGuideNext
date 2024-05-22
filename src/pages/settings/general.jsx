@@ -13,6 +13,8 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 export default function General(){
+
+
   const router = useRouter();
   
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function General(){
   useEffect(() => {
     const fileInput = document.getElementById('fileInput');
 
-    // set username
+    
     var xhr = new XMLHttpRequest();
 
     xhr.addEventListener('readystatechange', function() {
@@ -133,7 +135,7 @@ export default function General(){
             console.log("Failed to upload profile picture");
           }
           window.location.reload();
-
+          console.log('test');
         }
       );
       setIsPopupOpen(false);
