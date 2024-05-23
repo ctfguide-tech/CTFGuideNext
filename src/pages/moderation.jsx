@@ -34,7 +34,7 @@ export default function Competitions() {
   useEffect(() => {
     const fetchPendingChallenges = async () => {
       try {
-        const response = await request('http://localhost:3001/pending', "GET");
+        const response = await request(NEXT_PUBLIC_API_URL + '/pending', "GET");
         console.log(response)
         setPendingChallenges(response);
       } catch (error) {
