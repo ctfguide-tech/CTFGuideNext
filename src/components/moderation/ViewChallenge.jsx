@@ -16,7 +16,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
     useEffect(() => {
         const fetchChallengeData = async () => {
           try {
-            const response = await request(`http://localhost:3001/challenges/${selected}`, "GET");
+            const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${selected}`, "GET");
             console.log("run");
             console.log(response);
             setChallenge(response.body);
