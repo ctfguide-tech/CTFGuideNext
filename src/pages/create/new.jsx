@@ -6,7 +6,8 @@ import { MarkdownViewer } from '@/components/MarkdownViewer';
 import  fileApi  from '@/utils/file-api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import request from '@/utils/request';
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
 
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
@@ -16,9 +17,6 @@ const pages = [
     current: true,
   },
 ];
-
-import { getAuth } from 'firebase/auth';
-const auth = getAuth();
 
 const styles = {
   h1: { fontSize: '2.4rem' },
@@ -68,7 +66,10 @@ export default function Createchall() {
         await uploadChallenge('');
         return;
       } else {
-        const token = await auth.currentUser.accessToken;
+        const cookie = getCookie('idToken');
+        const data = jwtDecode(cookie);
+
+        const token = data.id;
         const fileId = await fileApi(token, selectedFile);
         if(fileId !== null) {
           await uploadChallenge(fileId);

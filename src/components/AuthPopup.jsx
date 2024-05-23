@@ -1,24 +1,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+//import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export function AuthPopup() {
   // check if firebase logged in
   const [user, setUser] = useState(false);
-  const auth = getAuth();
-  useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        setUser(false);
-      } else {
-        setUser(false);
-      }
-    });
-  });
   if (user) {
     return <div>{/*User logged in*/}</div>;
   } else {

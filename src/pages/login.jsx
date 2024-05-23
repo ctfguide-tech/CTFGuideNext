@@ -1,262 +1,71 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@/components/Button';
-import { TextField } from '@/components/Fields';
-import { Logo } from '@/components/Logo';
-import { Alert } from '@/components/Alert';
-import { useState, useEffect } from 'react';
-import { app } from '../config/firebaseConfig';
+import { useState } from 'react';
 import router from 'next/router';
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  OAuthProvider,
-  signInWithPopup,
-} from 'firebase/auth';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthFooter from '@/components/auth/AuthFooter';
-
-const provider = new GoogleAuthProvider();
-
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Login() {
-  const auth = getAuth();
-  const [session, setSession] = useState();
-  const [logoutUrl, setLogoutUrl] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      // removing the cookie
-      document.cookie = "idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    });
-  }, []);
-
-  async function loginUser() {
-    const email = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
+  async function handleLoginRequest(requestOptions) {
     setIsLoading(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/login`, requestOptions);
+      let data = await response.json();
+      let { success, token, body } = data;
+      if (success) {
+        document.cookie = `idToken=${token}; SameSite=None; Secure; Path=/`;
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Fetch ID Token
-        userCredential.user.getIdToken().then((idToken) => {
+        localStorage.setItem('username', body.username);
+        localStorage.setItem('firstname', body.firstName);
+        localStorage.setItem('lastname', body.lastName);
+        localStorage.setItem('birthday', body.birthday);
 
-          // Send token to backend via HTTPS
-          var data = new FormData();
-          var xhr = new XMLHttpRequest();
-
-          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
-
-          xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-              var parsed = JSON.parse(this.responseText);
-
-              // Sotre username
-              localStorage.setItem('username', parsed.username);
-
-              if (!parsed.email) {
-                window.location.replace('/onboarding');
-                return;
-              }
-
-              // Store related API endpoints in local storage.
-              localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
-              localStorage.setItem(
-                'userChallengesUrl',
-                parsed.userChallengesUrl
-              );
-
-              localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
-              localStorage.setItem('notificationsUrl', parsed.notificationsUrl);
-              localStorage.setItem('role', parsed.role);
-
-              localStorage.setItem('username', parsed.username);
-
-              router.push('/dashboard');
-            }
-          });
-          xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
-          xhr.send(data);
-        });
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-     
-        let userFriendlyMessage;
-        switch (errorCode) {
-          case 'auth/user-not-found':
-            userFriendlyMessage = 'No user found with this email.';
-            break;
-          case 'auth/wrong-password':
-            userFriendlyMessage = 'Incorrect password. Please try again.';
-            break;
-          case 'auth/too-many-requests':
-            userFriendlyMessage = 'Too many attempts. Please try again later.';
-            break;
-          default:
-            userFriendlyMessage = 'An error occurred. Please try again.';
-        }
-        toast.error(userFriendlyMessage);
-
-      });
+        router.push('/dashboard');
+      } else {
+        toast.error(data.message);
+      }
+    } catch(error) {
+      console.log(error);
+    }
+    setIsLoading(false);
   }
 
-  async function loginGoogle() {
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // Fetch ID Token
-        result.user.getIdToken().then((idToken) => {
-
-          // Send token to backend via HTTPS
-          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
-
-          var data = new FormData();
-          var xhr = new XMLHttpRequest();
-
-          xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-              try {
-                var parsed = JSON.parse(this.responseText);
-
-                if (!parsed.email) {
-                  // User hasn't finished onboarding.
-                  window.location.replace('/onboarding');
-                  return;
-                }
-
-                // Store related API endpoints in local storage.
-                localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
-                localStorage.setItem(
-                  'userChallengesUrl',
-                  parsed.userChallengesUrl
-                );
-                localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
-                localStorage.setItem(
-                  'notificationsUrl',
-                  parsed.notificationsUrl
-                );
-
-                localStorage.setItem('role', parsed.role);
-                localStorage.setItem('username', parsed.username);
-
-                // addthing the token to cookies
-
-                router.push('/dashboard');
-
-              } catch (error) {
-                console.log('Error parsing JSON data:', error);
-              }
-            }
-          });
-          xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
-          xhr.send(data);
-        });
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // basic cleaned errormeSSAGE to send back
-
-        let userFriendlyMessage;
-        switch (errorCode) {
-          case 'auth/user-not-found':
-            userFriendlyMessage = 'No user found with this email.';
-            break;
-          case 'auth/wrong-password':
-            userFriendlyMessage = 'Incorrect password. Please try again.';
-            break;
-          case 'auth/too-many-requests':
-            userFriendlyMessage = 'Too many attempts. Please try again later.';
-            break;
-          default:
-            userFriendlyMessage = 'An error occurred. Please try again.';
-        }
-        toast.error(userFriendlyMessage);
-
-      });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const requestOptions = { 
+      method: 'POST', 
+      body: JSON.stringify({ email, password, accountType: 'EMAIL'}), 
+      headers: { 'Content-Type': 'application/json' } 
+    };
+    await handleLoginRequest(requestOptions);
   }
 
-  const loginMicrosoft = () => {
-    // Microsoft login logic here
-    const provider2 = new OAuthProvider('microsoft.com');
-    signInWithPopup(auth, provider2)
-      .then((result) => {
-        result.user.getIdToken().then((idToken) => {
+  // do the same for google auth login
+  async function handleSuccess(data) {
+    console.log("Setting account by google");
+    const { credential } = data;
+    const decode = jwtDecode(credential);
+    const { email } = decode;
+    const requestOptions = { 
+      method: 'POST', 
+      body: JSON.stringify({ email, password: null, accountType: 'GOOGLE'}), 
+      headers: { 'Content-Type': 'application/json' } 
+    };
+    await handleLoginRequest(requestOptions);
+  }
 
-          // Send token to backend via HTTPS
-          document.cookie = `idToken=${idToken}; SameSite=None; Secure; Path=/`;
-
-          var data = new FormData();
-          var xhr = new XMLHttpRequest();
-
-          xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-          xhr.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-              try {
-                var parsed = JSON.parse(this.responseText);
-
-                if (!parsed.email) {
-                  // User hasn't finished onboarding.
-                  window.location.replace('/onboarding');
-                  return;
-                }
-
-                // Store related API endpoints in local storage.
-                localStorage.setItem('userLikesUrl', parsed.userLikesUrl);
-                localStorage.setItem(
-                  'userChallengesUrl',
-                  parsed.userChallengesUrl
-                );
-                localStorage.setItem('userBadgesUrl', parsed.userBadgesUrl);
-                localStorage.setItem(
-                  'notificationsUrl',
-                  parsed.notificationsUrl
-                );
-
-                localStorage.setItem('role', parsed.role);
-                localStorage.setItem('username', parsed.username);
-
-                // addthing the token to cookies
-
-                router.push('/dashboard');
-
-              } catch (error) {
-                console.log('Error parsing JSON data:', error);
-              }
-            }
-          });
-          xhr.setRequestHeader('Authorization', 'Bearer ' + idToken);
-          xhr.send(data);
-        });
-      }).catch((error) => {
-        // Handle Errors here.
-        console.log(error)
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The MicrosoftAuthProvider credential to access the Microsoft API.
-        const credential = error.credential;
-        // Display error message
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('errorMessage').innerHTML = errorMessage;
-      });
-  };
+  async function handleError(data) {
+    console.log(data);
+    toast.error('Google login failed. Please try again later.');
+  }
 
   return (
     <>
@@ -277,6 +86,8 @@ export default function Login() {
             style={{ fontFamily: 'Poppins, sans-serif' }}
             className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
             >
+          <form onSubmit={handleLogin}>
+
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
            
             </div>
@@ -328,6 +139,7 @@ export default function Login() {
                         style={{ backgroundColor: '#161716', borderWidth: '0px' }}
                         id="username"
                         name="email"
+                        onChange={(e) => setEmail(e.target.value)}
                         type="text"
                         autoComplete="email"
                         required
@@ -348,6 +160,7 @@ export default function Login() {
                         style={{ backgroundColor: '#161716', borderWidth: '0px' }}
                         id="password"
                         name="password"
+                        onChange={(e) => setPassword(e.target.value)}
                         type="password"
                         autoComplete="current-password"
                         required
@@ -370,7 +183,7 @@ export default function Login() {
                     <div>
                     <button
                         type="submit"
-                        onClick={loginUser}
+                        onClick={handleLogin}
                         className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 hover:bg-blue-700/90 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                         {
@@ -387,63 +200,37 @@ export default function Login() {
                 <div className="mt-6 ">
                     <div className="mt-6  gap-3 ">
                     <div>
-                        <a
-                      
-                        href="#"
-                        className="inline-flex w-full bg-neutral-900 justify-center rounded-sm   py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
-                        onClick={loginGoogle}
-                        >
-                        <span className="sr-only">Sign in with Google</span>
-                        <svg
-                            className="h-6 w-6"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 48 48"
-                            width="48px"
-                            height="48px"
-                        >
-                            <path
-                            fill="#FFC107"
-                            d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-                            />
-                            <path
-                            fill="#FF3D00"
-                            d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-                            />
-                            <path
-                            fill="#4CAF50"
-                            d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-                            />
-                            <path
-                            fill="#1976D2"
-                            d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-                            />
-                        </svg>
-                        <p className="ml-2">Login with Google</p>
-                        </a>
+                        <GoogleLogin
+                          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+                          onSuccess={(data) => handleSuccess(data)}
+                          onFailure={(data) => handleError(data)}
+                          text="continue_with" // Custom button text
+                          theme="filled_black" // Optional: Choose between "default", "dark", or "light" themes
+                          width="370" // Optional: Custom button width
+                        />
                     </div>
                     <div className='mt-2 bg-neutral-900 hidden'>
                     <a
-  href="#"
-  className="inline-flex items-center w-full justify-center rounded-sm py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
-  onClick={loginMicrosoft} // Remember to update this to your Microsoft login function
->
-  <span className="sr-only">Sign in with Microsoft</span>
-  <img className='w-5 h-5 mr-2' src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png" alt="Microsoft"/>
-  <p>Login with Microsoft</p>
-</a>
-</div>
-</div>
+                          href="#"
+                          className="inline-flex items-center w-full justify-center rounded-sm py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
+                        >
+                        <span className="sr-only">Sign in with Microsoft</span>
+                        <img className='w-5 h-5 mr-2' src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png" alt="Microsoft"/>
+                        <p>Login with Microsoft</p>
+                      </a>
+                    </div>
+                  </div>
                 </div>
 
             
                 </div>
 
+
             <AuthFooter/>
 
               </div>
-
-
             </div>
+          </form>
             </div>
         </div>
 

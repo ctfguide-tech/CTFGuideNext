@@ -1,19 +1,8 @@
-import firebase from 'firebase/app';
-// import { storage } from '../../config/firebaseConfig.js';
-import {
-    getStorage,
-    ref,
-    uploadBytesResumable,
-    getDownloadURL,
-} from 'firebase/storage';
-import { app } from '../../config/firebaseConfig.js';
-
 import Markdown from 'react-markdown';
-
 // Kshitij
 import { Tooltip } from 'react-tooltip';
 
-import 'firebase/storage';
+// import 'firebase/storage';
 import Head from 'next/head';
 
 import React from 'react';
@@ -27,8 +16,6 @@ import PieChart from '@/components/profile/PieChart.jsx';
 import Badge from '@/components/profile/Badge.jsx';
 
 import Skeleton from 'react-loading-skeleton';
-import { Router } from 'react-router-dom';
-import { useRouter } from 'next/router';
 
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
@@ -88,9 +75,7 @@ export default function Users() {
     const [openBio, setOpenBio] = useState(false);
     const [bioBanner, bannerState] = useState(false);
     const [tempBio, setTempBio] = useState('');
-
     const [badges, setbadges] = useState(null);
-
     const [selectedBanner, setSelectedBanner] = useState(null);
     const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
     const [banner, setBanner] = useState(
@@ -297,33 +282,6 @@ export default function Users() {
         };
         fetchData();
     }, [user]);
-
-    // check to see if user is logged in
-    useEffect(() => {
-        try {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/account`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-                },
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.error || !data.username) {
-                        console.log('debug| user not logged in :(');
-                        setIsLoggedIn(false);
-                    } else {
-                        setIsLoggedIn(true);
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                    console.log('debug| user not logged in :(');
-                    setIsLoggedIn(false);
-                });
-        } catch { }
-    }, []);
 
     // Follower useEffect
     useEffect(() => {

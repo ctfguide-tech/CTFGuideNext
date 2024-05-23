@@ -1,19 +1,18 @@
 import React from 'react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useState, useEffect } from 'react';
-import request from '@/utils/request';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useRouter } from 'next/router';
-import { getAuth } from 'firebase/auth';
+//import { useRouter } from 'next/router';
 import fileApi, {getNewFileIds, getFileName, getFile } from '@/utils/file-api';
 
-const auth = getAuth();
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
 
 const Editor = (props) => {
-  const router = useRouter();
+  //const router = useRouter();
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
   const [hints, setHints] = useState([
@@ -50,7 +49,11 @@ const Editor = (props) => {
     if(!validateNewChallege()) {
       return;
     }
-    const token = await auth.currentUser.accessToken;
+
+    const cookie = getCookie('idToken');
+    const data = jwtDecode(cookie);
+    const token = data.id;
+
     setIsCreating(true);
     let fileIds = [];
     const originalFileIds = existingFiles.filter((file) => file.using).map((file) => file.fileId);

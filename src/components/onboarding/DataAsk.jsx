@@ -1,33 +1,20 @@
-import { Container } from '@/components/Container';
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getCookie } from '@/utils/request';
 import AuthFooter from '@/components/auth/AuthFooter';
-import Link from 'next/link';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-
-
-export function DataAsk({ props }) {
+export function DataAsk(props) {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [validationMessage, setValidationMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userHasEdited, setUserHasEdited] = useState(false); // New state to track if the user has edited the input
-  function logout() {
-    signOut(auth)
-      .then(() => {
-        window.location.replace('/login');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  const auth = getAuth();
 
+  function logout() {
+    router.push('/login');
+  }
   
   useEffect(() => {
     if (router.query.part == '1') {
@@ -37,6 +24,7 @@ export function DataAsk({ props }) {
       }
     }
   });
+
   useEffect(() => {
     if (!userHasEdited) return; // Don't validate until the user edits the input
   
@@ -56,7 +44,7 @@ export function DataAsk({ props }) {
     }
   }, [username, userHasEdited]);
 
-  function submitData() {
+  async function submitData() {
     setIsLoading(true);
     // Generate JSON to send
     var username = document.getElementById('username').value;
@@ -122,55 +110,43 @@ export function DataAsk({ props }) {
         return;
       }
   
-      // send http request
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', `${process.env.NEXT_PUBLIC_API_URL}/users`);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-
-      let token = getCookie();
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-
-      xhr.withCredentials = true;
-
-      xhr.addEventListener('readystatechange', function () {
-        if (this.readyState === 4 && this.readyState === 201) {
-          var parsed = JSON.parse(this.responseText);
-          if (parsed.username) {
-            // Sign out
-            // Redirect to login
-            window.location.href = '/dashboard';
-          }
-        }
-
-        if (this.readyState === 4 && this.readyState != 201) {
-          var parsed = JSON.parse(this.responseText);
-
-          if (parsed.error === 'undefined' || parsed.error) {
-
-
-            setIsLoading(false);
-            toast.error(parsed.error);
-
-          } else {
-            window.location.href = "./dashboard";
-            //       window.location.replace('./onboarding?part=1&error=' + parsed.error);
-         //   document.getElementById('error').classList.remove('hidden');
-         //   document.getElementById('error').innerHTML = parsed.error;
-          }
-        }
-      });
-
-      xhr.send(
-        JSON.stringify({
-          username: localStorage.getItem('username'),
-          birthday: localStorage.getItem('birthday'),
-          firstName: localStorage.getItem('firstname'),
-          lastName: localStorage.getItem('lastname'),
-          location: "????",
-        })
-      );
+      const body = {
+        email: props.email,
+        password: props.password,
+        username,
+        birthday,
+        firstName: firstname,
+        lastName: lastname,
+        location: "???",
+        accountType: props.accountType
       }
-    
+
+      try {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/account/register`;
+        const requestOptions = {
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify(body) 
+        };
+
+        const response = await fetch(url, requestOptions);
+        const data = await response.json();
+
+        if(data.success) {
+          const { token } = data;
+          setIsLoading(false);
+          document.cookie = `idToken=${token}; SameSite=None; Secure; Path=/`;
+          router.push('/dashboard');
+        } else {
+          setIsLoading(false);
+          toast.error(data.error);
+        }
+
+      } catch (error) {
+        console.log(error);
+        toast.error("An error occurred. Please try again later.");
+      }
+    }
   } 
   
 
@@ -180,39 +156,25 @@ export function DataAsk({ props }) {
       backgroundRepeat: 'repeat',
       width: '100%',
       height: '100%',
-  }}>
+    }}>
 
+      <div
+        style={{ fontFamily: 'Poppins, sans-serif' }}
+        className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8"
+      >
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
           <div
-                      style={{ fontFamily: 'Poppins, sans-serif' }}
-                      className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8"
-                      >
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
-
-
-
-
-            <div
-                
-                className=" pb-10 pt-4 px-4 shadow sm:px-10 border-t-4 border-blue-600 bg-neutral-800"
-                >
-
-
-
-            <div
-          
-            >
+            className=" pb-10 pt-4 px-4 shadow sm:px-10 border-t-4 border-blue-600 bg-neutral-800"
+          >
+            <div>
               <div className="  ">
-         
+                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
+                  <h1 className="text-xl text-white  ">
+                    {' '}
+                    Finish creating your account
+                  </h1>
 
-              <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
-                <h1 className="text-xl text-white  ">
-                  {' '}
-                  Finish creating your account
-                </h1>
-     
                 </div>
-
-            
 
                 <div
                   id="error"
@@ -222,7 +184,7 @@ export function DataAsk({ props }) {
                 </div>
                 <div className=" mt-4">
                   <div className="isolate -space-y-px rounded-md sh
-                adow-sm">
+                    adow-sm">
                     <div
                       style={{ borderColor: '#212121' }}
                       className="relative rounded-md rounded-b-none   py-2 focus-within:z-10 "
@@ -236,31 +198,31 @@ export function DataAsk({ props }) {
                       </label>
 
                       <input
-      type="text"
-      name="name"
-      id="username"
-      value={username}
-      onChange={(e) => {
-        setUsername(e.target.value);
-        if (!userHasEdited) setUserHasEdited(true); // Set to true on first edit
-      }}
-      className="bg-neutral-900 mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
-      placeholder="This is what people on CTFGuide will know you as."
-    />
-    {userHasEdited && validationMessage && (
-      <div className="text-red-500 text-sm mt-2">
-        {validationMessage}
-      </div>
-    )}
+                        type="text"
+                        name="name"
+                        id="username"
+                        value={username}
+                        onChange={(e) => {
+                          setUsername(e.target.value);
+                          if (!userHasEdited) setUserHasEdited(true); // Set to true on first edit
+                        }}
+                        className="bg-neutral-900 mt-2 block w-full rounded border-0 p-0 py-1 px-4 text-white placeholder-gray-500 focus:ring-0 sm:text-sm"
+                        placeholder="This is what people on CTFGuide will know you as."
+                      />
+                      {userHasEdited && validationMessage && (
+                        <div className="text-red-500 text-sm mt-2">
+                          {validationMessage}
+                        </div>
+                      )}
                     </div>
 
                     <div
                       style={{ borderColor: '#212121' }}
                       className="relative rounded-md rounded-t-none rounded-b-none  gap-x-4   py-2 focus-within:z-10 "
                     >       <label
-                      htmlFor="job-title"
-                      className="block text-xs font-medium text-white"
-                    >
+                        htmlFor="job-title"
+                        className="block text-xs font-medium text-white"
+                      >
                         Full Name
                       </label>
                       <div className='flex gap-x-4'>
@@ -319,13 +281,13 @@ export function DataAsk({ props }) {
                         submitData();
                       }}
                       className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 hover:bg-blue-700/90 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      >
+                    >
                       {
                         isLoading ? (
                           <i className="fas fa-spinner text-lg fa-spin"></i>
                         ) : (
-                          <span>Start Hacking</span>
-                        )
+                            <span>Start Hacking</span>
+                          )
                       }
                     </button>
 
@@ -336,8 +298,8 @@ export function DataAsk({ props }) {
             </div>
           </div>
 
-                <AuthFooter />
-</div>
+          <AuthFooter />
+        </div>
 
       </div>
 

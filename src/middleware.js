@@ -15,8 +15,6 @@ export function middleware(req) {
   // ensure token is valid 
   // basic request to server to ensure that the token is valid
 
-  
-
   if (!idToken) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';
