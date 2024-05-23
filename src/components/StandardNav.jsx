@@ -11,6 +11,7 @@ import {
   UserCircleIcon,
   ArrowRightIcon,
   EllipsisVerticalIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
@@ -47,7 +48,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
@@ -64,19 +65,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     router.push('/login');
   }
 
-  // if user signed out redirect
-  // if env is NEXT_PUBLIC_APP_AUTH_DOMAIN=ctfguide-dev.firebaseapp.com the logo should say CTFGuide Developer not CTFGuide Beta
 
+ 
   useEffect(() => {
     if (!localStorage.getItem('dismissStatus')) {
       setShowBanner(true);
     }
-
-    if (
-      process.env.NEXT_PUBLIC_APP_AUTH_DOMAIN === 'ctfguide-dev.firebaseapp.com'
-    ) {
-      //  setIsAdmin(true)
-    }
+    
   }, []);
     // Function to close the modal
     const closeModal = () => {
@@ -253,7 +248,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   </div>
                   <div className="flex flex-shrink-0 items-center">
                     <Link href='/dashboard' aria-label="Dashboard">
-                      {isAdmin ? <LogoAdmin /> : <Logo />}
+                     <Logo/>
                     </Link>
                   </div>
                   <div className=" md:ml-6 md:flex vertical-align  ">
@@ -340,7 +335,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
         className="w-full px-16 py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800 hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center"
         onClick={() => setShowSearchModal(true)}
       >
-        <FontAwesomeIcon icon={faSearch} className="w-3 h-3 md:mt-1.5 mr-1" />
+        <FontAwesomeIcon icon={faSearch} className="w-3 h-3  mr-1" />
         <span className="hidden md:inline">Search for anything</span>
       </div>
     </div>
@@ -357,18 +352,12 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     {/* > */}
                     {/*   EDU */}
                     {/* </Link> */}
-                    {isAdmin && (
-                      <p
-                        href={`${baseUrl}/live`}
-                        className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all"
-                      >
-                        CTFGUIDE INTERNAL
-                      </p>
-                    )}
+              
                   </div>
                 </div>
                 {!guestAllowed &&
                   <div className="flex items-center ">
+
                     <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
                             onClick={() => setTerminalIsOpen(true)}
                             ><i className="fas fa-terminal"></i> Launch a machine</button>
@@ -380,13 +369,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
         <i className="fas fa-crown"></i> Upgrade to Pro
       </button>
 
-                   <div  className="ml-2 mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
-                     style={{ backgroundColor: '#212121', borderWidth: '0px' }} 
-                     > 
-                     <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500"> 
-                   <i class="far fa-check-circle"></i> {points} 
-                  </h1> 
-                   </div> 
+      <div className="ml-4 mb-0 flex items-center space-x-2 rounded-lg px-4 py-1 tooltip cursor-pointer" 
+     style={{ backgroundColor: '#212121', borderWidth: '0px' }}>
+    <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-blue-500"> 
+        <i className="far fa-check-circle"></i> {points}
+    </h1>
+    <span className="tooltiptext">{points} points</span>
+</div>
                     {/* <div */}
                     {/*   className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1" */}
                     {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
@@ -395,7 +384,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     {/*     <i class="fas fa-fire"></i> 0 */}
                     {/*   </h1> */}
                     {/* </div> */}
-                    <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
+                    <div className="hidden  md:flex md:flex-shrink-0 md:items-center px-2">
                       {/* Profile dropdown */}
                       <Popover as="div" className="relative ml-3" >
                         <div>
@@ -471,6 +460,20 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               />
                               Report
                             </Link>
+
+                            <Link
+                              href="/moderation"
+                              className={classNames(
+                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
+                              )}
+                            >
+                              <ShieldCheckIcon
+                                className="block mr-4 h-6 w-6"
+                                aria-hidden="true"
+                              />
+                              Moderation
+                            </Link>
+                          
                             <button
                               onClick={logout}
                               className={classNames(
@@ -548,6 +551,8 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   >
                     Settings
                   </Disclosure.Button>
+
+                  
                   <Disclosure.Button
                     as="a"
                     onClick={logout}
@@ -567,17 +572,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
              <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
  
-      {isAdmin && (
-        <div className="bg-neutral-800 py-1 text-center text-sm text-white ">
-          <h1>CTFGuide is running in development mode. </h1>
-        </div>
-      )
-      }
+    
+      
 
       {
         !['/groups', '/assignments', '/submissions'].some(path => router.pathname.includes(path) || !showBanner) && (
-          <div className="bg-neutral-800 py-1 text-center text-sm text-white  mx-auto ">
-            <h1 className='max-w-6xl mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
+          <div className="bg-neutral-800 py-1 text-center text-sm text-white  mx-auto w-full ">
+            <h1 className='px-4  mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
           </div>
         )
       }
