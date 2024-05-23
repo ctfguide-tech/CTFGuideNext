@@ -40,7 +40,7 @@ export default function Pratice() {
         }
       })
       .catch((error) => {
-        window.alert(error);
+        //window.alert(error);
       });
   }
   loadChallenges();

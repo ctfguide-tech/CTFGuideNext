@@ -32,8 +32,7 @@ export default function Dashboard() {
   var pfpString = '';
   var pfpChanged = false;
 
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const user = {};
 
 
   const handleClick = () => {}

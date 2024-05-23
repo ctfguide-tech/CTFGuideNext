@@ -56,6 +56,7 @@ export default function Practice() {
               difficultyColor = 'border-red-500';
             }
 
+            /*
             if(!document) return;
             document.getElementById('starter').insertAdjacentHTML(
               'afterend',
@@ -73,6 +74,7 @@ export default function Practice() {
                 </div>
             </div>`
             );
+            */
           }
         })
         .catch((error) => {
@@ -144,11 +146,12 @@ export default function Practice() {
           const resp = await fetch(url);
           const data2 = await resp.json();
 
-          if(!document) return;
-          document.getElementById('insight').innerHTML =
-            "Heads up! If you haven't solved a challenge - this response will be incorrect. " +
-            data2;
+          //if(!document) return;
+          //document.getElementById('insight').innerHTML =
+            //"Heads up! If you haven't solved a challenge - this response will be incorrect. " +
+            //data2;
         } catch {}
+
       };
       fetchData();
     } catch {}
