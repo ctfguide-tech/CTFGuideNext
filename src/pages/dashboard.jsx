@@ -131,7 +131,7 @@ export default function Dashboard() {
         <main className="animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
             <div className='w-full'>
-              <div className='w-full rounded-sm'>
+              <div className='w-full  rounded-sm'>
                 <div className='w-full p-4'>
                   <h1 className='text-3xl mb-6 font-semibold'>Recommended Challenges</h1>
                   <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
