@@ -7,13 +7,6 @@ import { getCookie } from '@/utils/request';
 import General from '@/components/settingComponents/generalPage';
 import Sidebar from '@/components/settingComponents/sidebar';
 
-import {
-  updatePassword,
-  getAuth,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  confirmPasswordReset,
-} from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';

@@ -3,13 +3,6 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import { useState } from 'react';
-import {
-  updatePassword,
-  getAuth,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  confirmPasswordReset,
-} from 'firebase/auth';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
@@ -17,8 +10,7 @@ const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 export default function Security(){
   const [inputText, setInputText] = useState('');
 
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const user = {};
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);

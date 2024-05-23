@@ -1,14 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { app } from '../config/firebaseConfig';
-
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-
-
 
 export default function Forgot() {
-  const auth = getAuth();
   const [session, setSession] = useState();
   const [logoutUrl, setLogoutUrl] = useState();
 

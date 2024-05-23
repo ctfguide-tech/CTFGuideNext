@@ -5,7 +5,6 @@ import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
 import { Locations } from '@/components/settingComponents/locations';
 import { useRouter } from 'next/router';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getCookie } from '@/utils/request';
 import { useEffect } from 'react';
 

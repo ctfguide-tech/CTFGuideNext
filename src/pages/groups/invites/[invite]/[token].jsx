@@ -3,7 +3,6 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth';
 import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;

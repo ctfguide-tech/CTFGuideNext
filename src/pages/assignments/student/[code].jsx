@@ -10,9 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { getAuth } from 'firebase/auth';
 import api from '@/utils/terminal-api';
-const auth = getAuth();
+
 import io from 'socket.io-client';
 import request from '@/utils/request';
 

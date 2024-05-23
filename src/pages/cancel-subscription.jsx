@@ -3,11 +3,8 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
-import { getAuth } from 'firebase/auth';
 import { loadStripe } from '@stripe/stripe-js';
 import { Menu } from '@headlessui/react';
-
-const auth = getAuth();
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;

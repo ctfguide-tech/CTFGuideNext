@@ -10,12 +10,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
-import { getAuth } from 'firebase/auth';
 import Loader from '@/components/Loader';
 import api from '@/utils/terminal-api';
 import request from '@/utils/request';
-
-const auth = getAuth();
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function id() {
