@@ -131,9 +131,15 @@ export default function Dashboard() {
         <main className="animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
             <div className='w-full'>
-              <div className='w-full mb-12 rounded-sm'>
+              <div className='w-full rounded-sm'>
                 <div className='w-full p-4'>
-                  <h1 className='text-3xl mb-6 font-semibold'>Learning Path</h1>
+                  <h1 className='text-3xl mb-6 font-semibold'>Recommended Challenges</h1>
+                  <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
+
+                  {likes?.length > 0 ?
+                      likes.map((challenge, index) => <ChallengeCard challenge={challenge.challenge} key={challenge.challenge.challengeId} />)
+                      : <><ChallengeCard /><ChallengeCard /></>}
+                      </div>
                 </div>
               </div>
               <div className='w-full rounded-sm'>
@@ -149,17 +155,8 @@ export default function Dashboard() {
               </div>
             </div>
             <div className='relative flex flex-col lg:w-[400px] bg-neutral-800 rounded-md shrink-0 gap-6'>
-              <div className='flex flex-col p-6 rounded-sm w-full'>
-                <h1 className='text-2xl font-semibold mb-4'>
-                  <RocketLaunchIcon className='w-10 my-auto mr-4 inline-flex' />
-                  Start here
-                </h1>
-                <div className='border-b border-neutral-700 mb-4'></div>
-                <p className='text-left rounded-sm leading-8'>If you want to begin your <span className='font-bold text-blue-100'>cybersecurity</span> journey, but don't know where to begin,
-                  take the learning assessment. We will give you a <b>custom</b> learning path tailored to your specific needs.</p>
-                <button className='mt-8 bg-blue-600 mx-auto w-full hover:bg-blue-500 hover:shadow-md active:shadow-sm active:bg-blue-700 transition-colors py-3 px-8 text-lg font-semibold tracking-wide rounded-sm text-blue-50'>Begin Assessment</button>
-              </div>
-              <div className='w-full p-4 relative'>
+         
+              <div  className='flex flex-col p-6 rounded-sm w-full' >
                 <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold mb-4'>
                   <TrophyIcon className='w-10 my-auto mr-4 inline-flex' />
                   Daily Objectives
@@ -191,6 +188,23 @@ export default function Dashboard() {
                   <li className=''><b>Pranav</b> completed a challenge with an even longer name this one has no right to be this long</li>
                 </ul>
               </div>
+
+              <div className='w-full p-4 relative'>
+                <h1 className='text-2xl font-semibold mb-4'>
+                  <RocketLaunchIcon className='w-10 my-auto mr-4 inline-flex' />
+                  Upgrade to CTFGuide Pro 
+                </h1>
+                <div className='border-b border-neutral-700 mb-4'></div>
+                <p className='text-left rounded-sm leading-8'>
+                  Get access to all terminal OS's
+                  <br />
+                  Access to all writeups
+                  <br />
+                </p>
+                <button className='mt-8 bg-blue-600 mx-auto w-full hover:bg-blue-500 hover:shadow-md active:shadow-sm active:bg-blue-700 transition-colors py-3 px-8 text-lg font-semibold tracking-wide rounded-sm text-blue-50'>Upgrade now</button>
+              </div>
+
+
             </div>
           </div >
         </main >

@@ -1,5 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Popover, Transition } from '@headlessui/react';
+import { Dialog } from '@headlessui/react'
+
 import {
   Bars3Icon,
   XMarkIcon,
@@ -18,11 +20,13 @@ import { faEllipsis, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
 
 import 'reactjs-popup/dist/index.css';
+import Upgrade from './nav/Upgrade';
+
 import { useRouter } from 'next/router';
 import { LogoAdmin } from './LogoAdmin';
 import { CSSTransition } from 'react-transition-group';
-
-
+import SearchModal from './nav/SearchModal';
+import SpawnTerminal from './nav/SpawnTerminal';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -39,12 +43,19 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav({ guestAllowed, alignCenter = true }) {
+  const [terminaIsOpen, setTerminalIsOpen] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const [open, setOpen] = useState(true)
+  
 
   const router = useRouter();
 
@@ -213,7 +224,11 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
             <br></br>
             </div>
     )}
-      <Disclosure as="nav" className=" shadow border-b border-white/10">
+
+
+
+
+      <Disclosure as="nav" className=" shadow border-b border-neutral-800">
         {({ open }) => (
           <>
             <div className={`px-2 ${alignCenter ? 'mx-auto' : ''}`}>
@@ -257,12 +272,26 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Link>
                     <Link
                       href='/leaderboards'
-                      className={linkClass('/leaderboards')}
+                      className={linkClass('/leaderboards') + " hidden lg:inline-flex"}
                     >
                       Leaderboards
                     </Link>
+                    <Link
+                      href='/create'
+                      className={linkClass('/create') + " hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex"}
+                    >
+                      Create
+                                         </Link>
+
+                    <Link
+                      href='/groups'
+                      className={linkClass('/groups') + " hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex"}
+                    >
+                      Classrooms
+                    </Link>
+
                     {/* Ellipsis dropdown */}
-                    <Popover className="relative">
+                    <Popover className="relative  md:block lg:block xl:block 2xl:hidden">
                       {({ open }) => (
                         <>
                           <Popover.Button className="inline-flex items-center p-2 text-gray-400 hover:text-white ring-none outline-none " >
@@ -305,17 +334,16 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Popover>
 
                       {/*search bar*/}
-                      <div className="mt-3 ml-4 flex-grow ">
-                      
-                          <div
-                          type="text" 
-                          className="w-full px-16 vertical-align flex  py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800   hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          onClick={() => setShowSearchModal(true)}
-                        >
-                          <FontAwesomeIcon icon={faSearch} className="w-3 h-3 mt-1.5 mr-1" /> Search for anything
-                          </div>
-                        
-                        </div>
+                      <div className="mt-3 ml-4 flex-grow">
+      <div
+        type="text"
+        className="w-full px-16 py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800 hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center"
+        onClick={() => setShowSearchModal(true)}
+      >
+        <FontAwesomeIcon icon={faSearch} className="w-3 h-3 md:mt-1.5 mr-1" />
+        <span className="hidden md:inline">Search for anything</span>
+      </div>
+    </div>
                     {/* <Link */}
                     {/*   href={`${baseUrl}/live`} */}
                     {/*   className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all" */}
@@ -341,8 +369,18 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                 </div>
                 {!guestAllowed &&
                   <div className="flex items-center ">
-               
-                   <div  className="mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
+                    <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
+                            onClick={() => setTerminalIsOpen(true)}
+                            ><i className="fas fa-terminal"></i> Launch a machine</button>
+
+<button
+        className='ml-4 bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 text-sm rounded-md'
+        onClick={() => setUpgradeModalOpen(true)}
+      >
+        <i className="fas fa-crown"></i> Upgrade to Pro
+      </button>
+
+                   <div  className="ml-2 mb-0 flex items-center space-x-2 rounded-lg px-4 py-1" 
                      style={{ backgroundColor: '#212121', borderWidth: '0px' }} 
                      > 
                      <h1 className="mx-auto mb-0 mt-0 text-center font-semibold  text-blue-500"> 
@@ -524,61 +562,11 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
         )}
       </Disclosure >
 
-      {showSearchModal && (
-          <div
-          onEnter={() => setShowSearchModal(true)}
-      
-        >
-        <div 
-      className="fastanimate  fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 animate__animated animate__faster animate__fadeIn"
-      style={{ 
-        backdropFilter: 'blur(2px)',
-       }}
-      onClick={() => setShowSearchModal(false)}
-    >
-         <div 
-        className="relative transform overflow-hidden rounded-lg bg-neutral-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 sm:max-w-3xl sm:mx-auto sm:rounded-xl sm:shadow-2xl sm:ring-1 sm:ring-white/10"
-        onClick={(e) => e.stopPropagation()}
-      >
-            <div className="px-4 py-5 sm:px-6 mx-auto">
-              <div className='flex items-center mx-auto'>
-                <FontAwesomeIcon icon={faSearch} className="w-5 h-5  mr-1 text-white" />
-                <input placeholder="Search for challenges, users, or competitions" className='w-full border-0 text-xl focus:ring-0 bg-transparent text-white' autoFocus></input>
-              </div>
-              <h1 className='mt-10 text-xl text-white font-semibold mb-4'>Search by Category</h1>
-              <div className="flex flex-wrap gap-2">
-                <button className="px-4 py-2 rounded bg-blue-500 bg-opacity-50 border border-blue-800 hover:brightness-110 text-white flex items-center gap-2">
-                  <FontAwesomeIcon icon={faBug} className='w-4 h-4' />
-                  <span>Web Exploitation</span>
-                </button>
-                <button className="px-4 py-2 rounded bg-green-500 bg-opacity-50 border border-green-800 hover:brightness-110 text-white flex items-center gap-2">
-                  <FontAwesomeIcon icon={faLock} className='w-4 h-4' />
-                  <span>Cryptography</span>
-                </button>
-                <button className="px-4 py-2 rounded bg-red-500 bg-opacity-50 border border-red-800 hover:brightness-110 text-white flex items-center gap-2">
-                  <FontAwesomeIcon icon={faUserSecret} className='w-4 h-4' />
-                  <span>Reverse Engineering</span>
-                </button>
-                <button className="px-4 py-2 rounded bg-yellow-500 bg-opacity-50 border border-yellow-800  hover:brightness-110 text-white flex items-center gap-2">
-                  <FontAwesomeIcon icon={faNetworkWired} className='w-4 h-4' />
-                  <span>Networking</span>
-                </button>
-                <button className="px-4 py-2 rounded bg-purple-500 bg-opacity-50 border border-purple-800 hover:brightness-110  text-white flex items-center gap-2">
-                  <FontAwesomeIcon icon={faBrain} className='w-4 h-4' />
-                  <span>Forensics</span>
-                </button>
-                <button className="px-4 py-2 rounded bg-pink-500 bg-opacity-50 border border-pink-800 hover:brightness-110  text-white flex items-center gap-2">
-                  <FontAwesomeIcon icon={faTerminal} className='w-4 h-4' />
-                  <span>Binary Exploitation</span>
-                </button>
-              </div>
-            </div>
-            <div className="px-4 py-5 sm:p-6">{/* Content goes here */}</div>
-          </div>
-        </div>
-        </div>
-      )}
 
+             <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />
+             <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
+
+ 
       {isAdmin && (
         <div className="bg-neutral-800 py-1 text-center text-sm text-white ">
           <h1>CTFGuide is running in development mode. </h1>
@@ -593,6 +581,9 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
           </div>
         )
       }
+
+
+      <SpawnTerminal open={terminaIsOpen} setOpen={setTerminalIsOpen} />
     </>
   );
 }

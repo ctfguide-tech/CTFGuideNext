@@ -19,7 +19,7 @@ export default function Create() {
   const [hasChallenges, setHasChallenges] = useState(false);
   const [username, setUsername] = useState('');
   const [date, setDate] = useState('');
-  const [title, setTitle] = useState('Unverified');
+  const [title, setTitle] = useState('Unverified Challenges');
   const [infoText, setInfoText] = useState(
     'You cannot edit unverified challenges. Please wait for admins to approve these!'
   );
@@ -38,7 +38,12 @@ export default function Create() {
       }
   }, [])
   
-  ;
+  const writeups = [
+    { challengeName: 'sss', writeupName: 'test', views: '0' },
+    // More people...
+  ]
+
+  
   useEffect(() => {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, "GET", null) 
@@ -99,19 +104,19 @@ export default function Create() {
     try {
       switch (selection) {
         case 'unverified':
-          setTitle('Unverified');
+          setTitle('Your Challenges');
           setInfoText(
             'Please wait for admins to approve unverified challenges!'
           );
           response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, "GET", null);
           break;
         case 'pending':
-          setTitle('Pending Changes');
+          setTitle('Your Challenges');
           setInfoText('These challenges are awaiting changes!');
           response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, "GET", null);
           break;
         case 'published':
-          setTitle('Published');
+          setTitle('Your Challenges');
           setInfoText(
             'These challenges are live! Share them with your friends!'
           );
@@ -168,7 +173,7 @@ export default function Create() {
               }}
             >
               <Typography
-                className="bg-[#212121] text-xs text-white"
+                className="bg-[#212121] text-xs text-white hidden"
                 sx={{ p: 1, fontFamily: 'Poppins, sans-serif' }}
               >
                 {infoText}
@@ -219,7 +224,7 @@ export default function Create() {
 
 
           <div className='mx-auto max-w-7xl'>
-          <div className="  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
+          <div className="hidden  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div
           className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
@@ -252,13 +257,15 @@ export default function Create() {
        </dl>
      </div>
    </div></div>
-       
-                <div className="mt-10  pb-4 xl:border-t-0 ">
+
+
+
+                <div className="  pb-4 xl:border-t-0 ">
                   <div className="flex items-center">
                     <h1 className="flex-1 text-2xl font-medium  text-white">
                       <div className="">
                         {title} <br></br>
-                     <div className='text-sm flex-none w-2/3'>
+                     <div className='text-sm flex-none w-2/3 hidden'>
                       <p>
                           {infoText}
                       </p>
@@ -266,7 +273,7 @@ export default function Create() {
                       </div>
                     </h1>
 
-                    <a href="/create/new" className='bg-blue-700 shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
+                    <a href="/create/new" className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
                     <div className="relative">
                       <button
                         type="button"
@@ -368,7 +375,7 @@ export default function Create() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="mx-auto mt-6 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
+                      <div className="mx-auto mt-2 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
                         <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
                         <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
                           <p>Looks like you have no {title.toLowerCase().split(" ")[0]} challenges yet.</p>
@@ -380,31 +387,107 @@ export default function Create() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                        <hr className='mt-4 border-neutral-700'></hr>
+                <div className=" mt-4  pb-4  ">
+                  <div className="flex items-center">
+                    <h1 className="flex-1 text-2xl font-medium  text-white">
+                      <div className="">
+                        Your Writeups <br></br>
+            
+
+
+             
+                      </div>
+
+
+     
+      <div className="mt-2 flow-root">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
+              <thead>
+                <tr>
+                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
+                    Challenge Name
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                    Writeup Name
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                    Views
+                  </th>
+                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                    <span className="sr-only">Edit</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-neutral-800">
+                {writeups.map((writeup) => (
+                  <tr key={writeup.writeupName} className="even:bg-neutral-900">
+                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
+                      {writeup.challengeName}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.writeupName}</td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.views}</td>
+                    
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                      <a href="#" className="text-blue-600 hover:text-blue-900">
+                        Edit<span className="sr-only">, {writeup.writeupName}</span>
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+    
+      </div>
+    </div>
+                    </h1>
+
+               
+                  </div>
+                </div>
+
+
+
               </div>
             </div>
 
-            <div className=" hidden pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0">
+            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0">
               <div className="pl-6 lg:w-80">
                 <div className="pt-6 pb-2">
-                  <h2 className="text-sm font-semibold">Activity</h2>
+                  <h2 className="text-2xl text-white ">Notifications</h2>
                 </div>
                 <div>
-                  <ul role="list" className="hidden divide-y divide-gray-200">
+                  <ul role="list" className=" divide-y divide-neutral-800">
                     <li className="py-4">
                       <div className="flex space-x-3">
-                        <img
-                          className="h-6 w-6 rounded-full"
-                          src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&h=256&q=80"
-                          alt=""
-                        ></img>
+                      <i className="fas fa-check-circle text-green-500 mt-4"></i>
                         <div className="flex-1 space-y-1">
                           <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-medium">You</h3>
-                            <p className="text-sm text-white">1h</p>
+                            <h3 className="text-sm font-medium text-blue-500">CTFGuide Admin</h3>
+                            <p className="text-xs text-white">01/12/24 1:45 PM EST</p>
                           </div>
                           <p className="text-sm text-white">
-                            Deployed Workcation (2d89f0c8 in master) to
-                            production
+                         Approved your challenge "FUNSIZE 2". Congrats!
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <li className="py-4">
+                      <div className="flex space-x-3">
+                      <i className="fas fa-exclamation-circle text-yellow-500 mt-4"></i>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-medium text-blue-500">CTFGuide Admin</h3>
+                            <p className="text-xs text-white">01/12/24 1:45 PM EST</p>
+                          </div>
+                          <p className="text-sm text-white">
+                         Your challenge "Eggnog 12" requires changes.
                           </p>
                         </div>
                       </div>
@@ -415,7 +498,7 @@ export default function Create() {
                       href="#"
                       className="font-semibold text-blue-600 hover:text-blue-900"
                     >
-                      View all activity
+                      View all notifications
                       <span aria-hidden="true"> &rarr;</span>
                     </a>
                   </div>
