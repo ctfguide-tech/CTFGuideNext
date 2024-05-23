@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
+
 import { useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
@@ -12,10 +13,13 @@ import ClassroomNav from '@/components/groups/classroomNav';
 import { useRouter } from 'next/router';
 import Loader from '@/components/Loader';
 import api from '@/utils/terminal-api';
-import request from '@/utils/request';
+
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-export default function id() {
+
+export default function Id() {
 
   // challenge desc minmize 
   const [isCodeVisible, setIsCodeVisible] = useState(true);
@@ -150,7 +154,9 @@ export default function id() {
     setLoadingMessage('Creating terminal ');
     if(!challenge) return;
     setFetchingTerminal(true);
-    const token = auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const data = jwtDecode(cookie);
+    const token = data.id;
     const [created, termId] = await api.buildTerminal(challenge, token);
     console.log('Pengiouns here:', created, termId);
     if(created) {
@@ -172,7 +178,9 @@ export default function id() {
     setLoadingMessage('Fetching terminal ');
     setFetchingTerminal(true);
     if(!challenge) return;
-    const token = auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const decode = jwtDecode(cookie);
+    const token = decode.id;
     setFetchingTerminal(true);
     const data = await api.checkUserTerminal(token, challenge.id);
     if(data !== null) {
@@ -279,7 +287,9 @@ export default function id() {
 
   const checkIfTerminalExists = async () => {
     setFetchingTerminal(true);
-    const token = auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const decode = jwtDecode(cookie);
+    const token = decode.id;
     if(!challenge || !token) return;
     const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {

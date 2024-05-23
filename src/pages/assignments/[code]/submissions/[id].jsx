@@ -9,11 +9,12 @@ import { Dialog, Transition } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import request from '@/utils/request';
 import { useRouter } from 'next/router';
+
 import ClassroomNav from '@/components/groups/classroomNav';
 import { getCookie } from '@/utils/request';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export default function id() {
+export default function Id() {
   const [open, setOpen] = useState(false);
   
   const router = useRouter();

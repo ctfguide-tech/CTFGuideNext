@@ -68,7 +68,6 @@ export default function Createchall() {
       } else {
         const cookie = getCookie('idToken');
         const data = jwtDecode(cookie);
-
         const token = data.id;
         const fileId = await fileApi(token, selectedFile);
         if(fileId !== null) {

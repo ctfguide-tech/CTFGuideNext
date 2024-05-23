@@ -10,10 +10,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import api from '@/utils/terminal-api';
 
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
+
+import api from '@/utils/terminal-api';
 import io from 'socket.io-client';
-import request from '@/utils/request';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -142,7 +144,9 @@ export default function Slug() {
     if (!challenge) return;
     setLoadingMessage('Creating terminal ');
     setFetchingTerminal(true);
-    const token = auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const data = jwtDecode(cookie);
+    const token = data.id;
     const [created, termId] = await api.buildTerminal(challenge, token);
     console.log('Pengiouns here:', created, termId);
     if (created) {
@@ -164,7 +168,9 @@ export default function Slug() {
     setFetchingTerminal(true);
     if (!challenge) return;
     setLoadingMessage('Fetching terminal ');
-    const token = auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const decode = jwtDecode(cookie);
+    const token = decode.id;
     setFetchingTerminal(true);
     const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {
@@ -325,7 +331,9 @@ export default function Slug() {
 
   const checkIfTerminalExists = async () => {
     setFetchingTerminal(true);
-    const token = auth.currentUser.accessToken;
+    const cookie = getCookie('idToken');
+    const decode = jwtDecode(cookie);
+    const token = decode.id;
     if (!challenge || !token) return;
     const data = await api.checkUserTerminal(token, challenge.id);
     if (data !== null) {
