@@ -9,12 +9,11 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
-import request from '@/utils/request';
 import { MyTable } from '@/components/Table';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 
-export default function Competitions() {
 
+export default function Competitions() {
 
   return (
     <>
