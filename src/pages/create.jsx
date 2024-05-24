@@ -392,9 +392,12 @@ export default function Create() {
                 <div className=" mt-4  pb-4  ">
                   <div className="flex items-center">
                     <h1 className="flex-1 text-2xl font-medium  text-white">
-                      <div className="">
-                        Your Writeups <br></br>
-            
+                      <div className="flex">
+                        Your Writeups 
+<div className='ml-auto'>
+<a href="/create/new" className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Draft</a>
+
+</div>
 
 
              
@@ -402,7 +405,7 @@ export default function Create() {
 
 
      
-      <div className="mt-2 flow-root">
+      <div className="mt-4 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
@@ -426,9 +429,9 @@ export default function Create() {
                 {writeups.map((writeup) => (
                   <tr key={writeup.writeupName} className="even:bg-neutral-900">
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
-                      {writeup.challengeName}
+                      {writeup.challengeName}  <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full ml-2'>draft</span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.writeupName}</td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.writeupName} </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.views}</td>
                     
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">

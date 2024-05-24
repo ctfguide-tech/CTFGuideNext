@@ -29,6 +29,8 @@ export default function Challenge() {
   const tabs = {
     'description': { text: 'Description', element: DescriptionPage, },
     'write-up': { text: 'Write Up', element: WriteUpPage, },
+    'hints': { text: 'Hints', element: WriteUpPage, },
+
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
 
