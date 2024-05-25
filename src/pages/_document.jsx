@@ -6,6 +6,7 @@ export default function Document(props) {
 
   return (
     <Html
+      data-color-mode="dark"
       style={{ backgroundColor: '#161716' }}
       className="h-full scroll-smooth bg-white antialiased [font-feature-settings:'ss01']"
       lang="en"
