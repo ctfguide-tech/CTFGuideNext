@@ -1,13 +1,15 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import request from '@/utils/request';
+import {useRouter} from 'next/router';
 
 const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
   const [search, setSearch] = useState('');
-  const [results, setResults] = useState([]);
-  const debouncedSearchTerm = useDebounce(search, 300); // 300ms delay
+  const [results, setResults] = useState(null);
+  const router = useRouter();
+  const debouncedSearchTerm = useDebounce(search, 100); // 300ms delay
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -15,11 +17,14 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
       const url = `${endpoint}/search/${debouncedSearchTerm}`;
       console.log(url);
       request(url, "GET", null).then((res) => { 
-        setResults(res); 
-        console.log(res)
+        setResults(res.results); 
+        console.log(res);
       }).catch((err) => { console.log(err); });
     }
   }, [debouncedSearchTerm]);
+
+  const routeToChallenge = (id) => router.push("/challenges/"+id);
+  const routeToUser = (username) => router.push("/users/"+username);
 
   return (
     <>
@@ -37,8 +42,31 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
               <div className="px-4 py-5 sm:px-6 mx-auto">
                 <div className='flex items-center mx-auto'>
                   <FontAwesomeIcon icon={faSearch} className="w-5 h-5 mr-1 text-white" />
-                  <input onChange={e => setSearch(e.target.value)} placeholder="Search for challenges, users, or competitions" className='w-full border-0 text-xl focus:ring-0 bg-transparent text-white' autoFocus />
+                  <input onChange={e => {
+                    setSearch(e.target.value)
+                    if(e.target.value === '') setResults(null);
+                  }} placeholder="Search for challenges, users, or competitions" className='w-full border-0 text-xl focus:ring-0 bg-transparent text-white' autoFocus />
                 </div>
+
+                {
+                  results && search && (
+                    <div className='mt-5'>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                        {results.challenges.map((result, index) => (
+                          <div style={{cursor: "pointer"}} key={index} className='p-3 bg-neutral-700 rounded-lg' onClick={() => routeToChallenge(result.id)}>
+                            <h1 className='text-md text-white font-semibold'>{result.title}</h1>
+                          </div>
+                        ))}
+                        {results.users.map((result, index) => (
+                          <div style={{cursor: "pointer"}} key={index} className='p-3 bg-neutral-700 rounded-lg' onClick={() => routeToUser(result.username)}>
+                            <h1 className='text-md text-white font-semibold'>{result.username}</h1>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                }
+
                 <h1 className='mt-10 text-xl text-white font-semibold mb-4'>Search by Category</h1>
                 <div className="flex flex-wrap gap-2">
                   <button className="px-4 py-2 rounded bg-blue-500 bg-opacity-50 border border-blue-800 hover:brightness-110 text-white flex items-center gap-2">

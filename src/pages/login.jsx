@@ -50,7 +50,6 @@ export default function Login() {
 
   // do the same for google auth login
   async function handleSuccess(data) {
-    console.log("Setting account by google");
     const { credential } = data;
     const decode = jwtDecode(credential);
     const { email } = decode;
