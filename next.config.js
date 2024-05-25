@@ -1,3 +1,5 @@
+const removeImports = require("next-remove-imports")();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { dev }) => {
@@ -15,8 +17,10 @@ const nextConfig = {
   },
   experimental: {
     scrollRestoration: true,
+    esmExternals: true, // Add this to ensure esmExternals is true
   },
-  ignoreDuringBuilds: true
-}
+  ignoreDuringBuilds: true,
+  transpilePackages: ['react-md-editor']
+};
 
-module.exports = nextConfig
+module.exports = removeImports(nextConfig);

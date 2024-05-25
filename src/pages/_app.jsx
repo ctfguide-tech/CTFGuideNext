@@ -1,6 +1,9 @@
 import 'focus-visible';
 import '@/styles/tailwind.css';
 import '@tremor/react/dist/esm/tremor.css';
+import '@/styles/markdown.css'; 
+
+
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export default function App({ Component, pageProps }) {

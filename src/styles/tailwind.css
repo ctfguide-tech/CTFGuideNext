@@ -3,7 +3,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid;
+}
+.loader::before {
+  content: "";
+  position: absolute;
+  inset: -48px;
+  --c:conic-gradient(from 180deg at 50% calc(100% - 2px),#ffffff 90deg, #ffffff00 0);
+  background: var(--c),var(--c);
+  background-position: 0 0,8px 0;
+  background-size: 16px 9.6px;
+  animation: l16 2s infinite;
+}
+@keyframes l16 {
+  50%  {background-position: 0 -9.6px ,8px 9.6px; transform:rotate(90deg)}
+  100% {background-position: 0 -19.2px,8px 19.2px;transform:rotate(180deg)}
+}
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import "~@uiw/react-markdown-editor/markdown-editor.css";
 
 @layer utilities {
   .markdown {
