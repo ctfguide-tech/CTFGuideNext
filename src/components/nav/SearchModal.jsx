@@ -1,8 +1,26 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect, useRef } from 'react';
+import request from '@/utils/request';
 
 const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState([]);
+  const debouncedSearchTerm = useDebounce(search, 300); // 300ms delay
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      const endpoint = process.env.NEXT_PUBLIC_API_URL;
+      const url = `${endpoint}/search/${debouncedSearchTerm}`;
+      console.log(url);
+      request(url, "GET", null).then((res) => { 
+        setResults(res); 
+        console.log(res)
+      }).catch((err) => { console.log(err); });
+    }
+  }, [debouncedSearchTerm]);
+
   return (
     <>
       {showSearchModal && (
@@ -19,7 +37,7 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
               <div className="px-4 py-5 sm:px-6 mx-auto">
                 <div className='flex items-center mx-auto'>
                   <FontAwesomeIcon icon={faSearch} className="w-5 h-5 mr-1 text-white" />
-                  <input placeholder="Search for challenges, users, or competitions" className='w-full border-0 text-xl focus:ring-0 bg-transparent text-white' autoFocus />
+                  <input onChange={e => setSearch(e.target.value)} placeholder="Search for challenges, users, or competitions" className='w-full border-0 text-xl focus:ring-0 bg-transparent text-white' autoFocus />
                 </div>
                 <h1 className='mt-10 text-xl text-white font-semibold mb-4'>Search by Category</h1>
                 <div className="flex flex-wrap gap-2">
@@ -57,5 +75,21 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
     </>
   );
 };
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export default SearchModal;
