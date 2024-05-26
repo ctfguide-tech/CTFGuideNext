@@ -3,13 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
 import request from '@/utils/request';
-import {useRouter} from 'next/router';
+import router from 'next/router';
 
 const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState(null);
-  const router = useRouter();
-  const debouncedSearchTerm = useDebounce(search, 100); // 300ms delay
+  const debouncedSearchTerm = useDebounce(search, 100); // We may want to slow this down in prod
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -121,3 +120,4 @@ function useDebounce(value, delay) {
 }
 
 export default SearchModal;
+
