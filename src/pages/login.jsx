@@ -9,8 +9,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import AuthFooter from '@/components/auth/AuthFooter';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import { Context } from '@/context';
+import { useContext } from 'react';
 
 export default function Login() {
+  const state = useContext(Context);
+
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +40,10 @@ export default function Login() {
         localStorage.setItem('firstname', body.firstName);
         localStorage.setItem('lastname', body.lastName);
         localStorage.setItem('birthday', body.birthday);
+
+        state.setUsername(body.username);
+        state.setRole(body.role);
+        state.setUid(body.uid);
 
         router.push('/dashboard');
       } else {

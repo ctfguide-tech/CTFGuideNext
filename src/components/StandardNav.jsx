@@ -28,6 +28,9 @@ import { LogoAdmin } from './LogoAdmin';
 import { CSSTransition } from 'react-transition-group';
 import SearchModal from './nav/SearchModal';
 import SpawnTerminal from './nav/SpawnTerminal';
+import { Context } from '@/context';
+import { useContext } from 'react';
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -44,9 +47,10 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav({ guestAllowed, alignCenter = true }) {
+  const { role } = useContext(Context);
+
   const [terminaIsOpen, setTerminalIsOpen] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
-
 
   const [isAdmin, setIsAdmin] = useState(true);
   const [points, setPoints] = useState('0');
@@ -461,18 +465,22 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               Report
                             </Link>
 
-                            <Link
-                              href="/moderation"
-                              className={classNames(
-                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
-                              )}
-                            >
-                              <ShieldCheckIcon
-                                className="block mr-4 h-6 w-6"
-                                aria-hidden="true"
-                              />
-                              Moderation
-                            </Link>
+                            {
+                              role === 'ADMIN' && (
+                                <Link
+                                  href="/moderation"
+                                  className={classNames(
+                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
+                                  )}
+                                >
+                                  <ShieldCheckIcon
+                                    className="block mr-4 h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                  Moderation
+                                </Link>
+                              )
+                            }
                           
                             <button
                               onClick={logout}
