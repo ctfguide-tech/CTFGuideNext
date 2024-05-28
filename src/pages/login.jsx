@@ -24,7 +24,8 @@ export default function Login() {
   async function handleLoginRequest(requestOptions, isGoogle) {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/login`, requestOptions);
+      const url = process.env.NEXT_PUBLIC_API_URL + '/account/login';
+      const response = await fetch(url, requestOptions);
       if(response.status === 404) {
         if(isGoogle) {
           setShowOnboarding(true);

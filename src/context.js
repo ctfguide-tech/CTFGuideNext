@@ -4,9 +4,6 @@ export const defaultState = {
   username: "",
   setUsername: () => {},
 
-  uid: "",
-  setUid: () => {},
-
   profilePic: "",
   setProfilePic: () => {},
 

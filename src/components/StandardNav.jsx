@@ -68,8 +68,6 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     document.cookie = 'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     router.push('/login');
   }
-
-
  
   useEffect(() => {
     if (!localStorage.getItem('dismissStatus')) {
