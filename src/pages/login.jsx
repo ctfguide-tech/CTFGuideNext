@@ -44,7 +44,6 @@ export default function Login() {
 
         state.setUsername(body.username);
         state.setRole(body.role);
-        state.setUid(body.uid);
 
         router.push('/dashboard');
       } else {
