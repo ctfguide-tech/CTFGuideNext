@@ -1,7 +1,10 @@
 import request from "@/utils/request";
+import { useRouter } from 'next/router';
 
 export default function Menu({ open, setOpen, solvedChallenges }) {
     
+
+    const router = useRouter();
 
     const hideModal = () => setOpen(false);
 
@@ -12,7 +15,7 @@ export default function Menu({ open, setOpen, solvedChallenges }) {
         tags: "Writeup Tags",
         challengeId: document.querySelector('select').value,
       }).then(res => {
-        console.log(res)
+        router.push(`/create/editor?cid=${res.writeUp.id}`)
       }
       )
     };

@@ -41,10 +41,8 @@ export default function Create() {
     }
   }, [])
 
-  const writeups = [
-    { challengeName: 'sss', writeupName: 'test', views: '0' },
-    // More people...
-  ]
+  const [writeups, setWriteups] = useState([]);
+
 
 
   useEffect(() => {
@@ -93,15 +91,16 @@ export default function Create() {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
           setUsername(data.username);
+          fetchWriteups(data.username);
           setDate(data.createdAt);
           request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
-              console.log("cow") 
+            console.log("cow")
             console.log(challenges)
             challenges.forEach((challenge) => (
               console.log(challenge.slug)
             ))
-              setSolvedChallenges(challenges)
-      
+            setSolvedChallenges(challenges)
+
           })
         })
         .catch((err) => {
@@ -109,8 +108,21 @@ export default function Create() {
         });
 
       fetchChallenges("unverified");
+
     } catch (error) { }
   }, [activeTab]);
+
+  const fetchWriteups = async (username) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/writeups`, "GET", null);
+      if (Array.isArray(response) && response.length > 0) {
+        setWriteups(response);
+        console.log(response)
+      } else {
+        setWriteups([]);
+      }
+    } catch (error) { }
+  };
 
   const fetchChallenges = async (selection) => {
     let response = [];
@@ -211,7 +223,7 @@ export default function Create() {
       <main>
         {/*<CreatorDashboard />*/}
         <br></br>
-        <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges}/>
+        <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
 
         <div
           className="fixed top-0 left-0 mt-10 h-full w-1/2 "
@@ -424,14 +436,15 @@ export default function Create() {
                             <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
                               <thead>
                                 <tr>
-                                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
-                                    Challenge Name
-                                  </th>
                                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
                                     Writeup Name
                                   </th>
+                                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
+                                    Challenge Name
+                                  </th>
+
                                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Views
+                                    Last Updated
                                   </th>
                                   <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                                     <span className="sr-only">Edit</span>
@@ -440,16 +453,26 @@ export default function Create() {
                               </thead>
                               <tbody className="bg-neutral-800">
                                 {writeups.map((writeup) => (
-                                  <tr key={writeup.writeupName} className="even:bg-neutral-900">
+                                  <tr key={writeup.title} className="even:bg-neutral-900">
+
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
+                                      {writeup.draft &&
+                                        <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
+                                      }
+
+                                      {!writeup.draft &&
+                                        <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
+                                      }
+
+                                      {writeup.title} </td>
                                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
-                                      {writeup.challengeName}  <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full ml-2'>draft</span>
+                                      {writeup.challenge.title}
                                     </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.writeupName} </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{writeup.views}</td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
 
                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                      <a href="#" className="text-blue-600 hover:text-blue-900">
-                                        Edit<span className="sr-only">, {writeup.writeupName}</span>
+                                      <a href={`/create/editor?cid=${writeup.id}`} className="text-blue-600 hover:text-blue-900">
+                                        Edit<span className="sr-only">, {writeup.title}</span>
                                       </a>
                                     </td>
                                   </tr>
