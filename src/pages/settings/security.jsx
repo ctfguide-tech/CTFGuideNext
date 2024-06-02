@@ -3,11 +3,12 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import { useState } from 'react';
-
+import { request } from '@/utils/request';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 
 export default function Security(){
+  
   const [inputText, setInputText] = useState('');
 
   const user = {};
@@ -15,6 +16,7 @@ export default function Security(){
   const handleInputChange = (event) => {
     setInputText(event.target.value);
   };
+
 
   function saveSecurity() {
       document.getElementById('saveSecurity').innerText = 'Saving...';

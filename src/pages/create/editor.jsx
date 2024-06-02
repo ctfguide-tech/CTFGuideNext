@@ -5,16 +5,19 @@ import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import request from "@/utils/request";
 import { MarkdownViewer } from '@/components/MarkdownViewer';
-
+import { useRouter } from 'next/router';
 export default function Create() {
   const [isOpen, setIsOpen] = useState(false);
   const [contentPreview, setContentPreview] = useState('');
   const [title, setTitle] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [editorFailure, setEditorFailure] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
-          // Handle data
+        handleLoad();
         })
         .catch((err) => {
           console.log(err);
@@ -22,33 +25,33 @@ export default function Create() {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [router.query]);
 
   const handleLoad = (event) => {
-  //  let cid = router.query.id; // Challenge ID
-    
+    let cid = router.query.cid; // Challenge ID
+
+
+    request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${cid}`, "GET", null) // Fetch the writeup
+      .then((data) => {
+
+
+        console.log(data)
+        setTitle(data.title);
+        setContentPreview(data.content);
+        
+
+ 
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+
 
   }
 
-  const initWriteup = (event) => {
-    // Fetch the data from the form
-    try {
-        request(`${process.env.NEXT_PUBLIC_API_URL}/writeups`, "POST", {
-            title: "Untitled Writeup",
-            content: "",
-            })
-            .then((data) => {
-               // hide loader
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-
-    } catch (error) {
-        console.error(error);
-    }
-
-  };
 
 
   const insertText = (text) => {
@@ -70,40 +73,58 @@ export default function Create() {
         </style>
       </Head>
       <StandardNav />
+
+{ isLoading && 
       <main className='flex items-center justify-center min-h-screen text-center'>
         <div className='center text-center mx-auto'>
-            <h1><i className="fas fa-spinner text-white fa-spin text-4xl mb-5"></i></h1>
+          <h1><i className="fas fa-spinner text-white fa-spin text-4xl mb-5"></i></h1>
           <h1 className='text-white text-xl'>Setting up CTFGuide Editor</h1>
         </div>
       </main>
-      <main className='hidden'>
+
+}
 
 
-      <div className='text-white text-xl px-6 py-4 w-full bg-neutral-800 flex'>
-        <div>
-<h1>CTFGuide Editor <span className='bg-blue-600 px-2 rounded-lg text-sm'>BETA</span></h1>
-</div>
 
-<div className='ml-auto text-sm '>
-<button className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
+{ editorFailure && 
+      <main className='flex items-center justify-center min-h-screen text-center'>
+        <div className='center text-center mx-auto'>
+          <h1><i className="fas fa-exclamation-circle text-white  text-4xl mb-5"></i></h1>
+          <h1 className='text-white text-xl'>CTFGuide Editor failed to load.</h1>
+        </div>
+      </main>
 
-    <button className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
-    <button className='bg-green-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-rocket fa-fw"></i> Publish</button>
-</div>
-      </div>
+}
+
+      { (!isLoading && !editorFailure )&& 
+      <main className=''>
+
+
+        <div className='text-white text-xl px-6 py-4 w-full bg-neutral-800 flex'>
+          <div>
+            <h1>CTFGuide Editor <span className='bg-blue-600 px-2 rounded-lg text-sm'>BETA</span></h1>
+          </div>
+
+          <div className='ml-auto text-sm '>
+            <button className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
+
+            <button className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
+            <button className='bg-green-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-rocket fa-fw"></i> Publish</button>
+          </div>
+        </div>
 
         <div className='px-6 mx-auto'>
           <input
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-  className='px-0 mt-2 bg-transparent border-none w-full text-white text-4xl placeholder-neutral-700 focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none'
-  placeholder='Enter your title here'
-  autoFocus
-/>
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            className='px-0 mt-2 bg-transparent border-none w-full text-white text-4xl placeholder-neutral-700 focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none'
+            placeholder='Enter your title here'
+            autoFocus
+          />
           <div className='grid grid-cols-2 gap-x-10 border-t border-neutral-800 '>
             <div className='mt-3'>
               <div className="toolbar py-1 ">
-              <button onClick={() => insertText('**bold**')} className="toolbar-button text-white pr-2 mr-1">
+                <button onClick={() => insertText('**bold**')} className="toolbar-button text-white pr-2 mr-1">
                   <i className="fas fa-bold"></i>
                 </button>
                 <button onClick={() => insertText('*italic*')} className="toolbar-button text-white px-2 mr-1" >
@@ -139,18 +160,19 @@ export default function Create() {
         </div>
       </main>
 
+              }
 
 
       <div className="hidden center fixed bottom-6 right-6 rounded-md bg-neutral-800/50 text-sm text-white p-2 opacity-40">
-          Automatically saved at 12:22AM.
-        </div>
-      
-      
+        Automatically saved at 12:22AM.
+      </div>
 
 
 
 
-      <div className='hidden flex w-full h-full grow basis-0'></div>
+
+
+      <div className=' flex w-full h-full grow basis-0'></div>
       <Footer />
     </>
   );
