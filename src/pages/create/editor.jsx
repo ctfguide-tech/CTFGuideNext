@@ -11,6 +11,7 @@ export default function Create() {
   const [contentPreview, setContentPreview] = useState('');
   const [title, setTitle] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [editorFailure, setEditorFailure] = useState(false);
   const router = useRouter();
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function Create() {
         console.log(data)
         setTitle(data.title);
         setContentPreview(data.content);
-        
+
 
  
         setIsLoading(false);
@@ -62,6 +63,22 @@ export default function Create() {
     setContentPreview(newValue);
     textarea.focus();
     textarea.selectionEnd = startPos + text.length;
+  };
+
+  const handleSave = () => {
+    setIsSaving(true);
+    const cid = router.query.cid;
+    request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}`, "PUT", {
+      title: title,
+      content: contentPreview,
+    })
+      .then((data) => {
+        console.log(data);
+        setIsSaving(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -108,7 +125,7 @@ export default function Create() {
           <div className='ml-auto text-sm '>
             <button className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
 
-            <button className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
+            <button onClick={handleSave} className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
             <button className='bg-green-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-rocket fa-fw"></i> Publish</button>
           </div>
         </div>
@@ -163,9 +180,13 @@ export default function Create() {
               }
 
 
-      <div className="hidden center fixed bottom-6 right-6 rounded-md bg-neutral-800/50 text-sm text-white p-2 opacity-40">
-        Automatically saved at 12:22AM.
+{
+  isSaving && 
+  <div className="bg-blue-500 center fixed bottom-6 right-6 rounded-md bg-neutral-800/50 text-sm text-white p-2">
+      <i className="fas fa-spinner text-white fa-spin"></i>  Saving your work...
       </div>
+}
+      
 
 
 
