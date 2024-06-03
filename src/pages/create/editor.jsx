@@ -13,7 +13,11 @@ export default function Create() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [editorFailure, setEditorFailure] = useState(false);
+  const [publishView, setPublishView] = useState(false);
+  const [isPublishSaved, setPublishSaved] = useState(false);
   const router = useRouter();
+  const [isPublished, setIsPublished] = useState(false);
+
   useEffect(() => {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
@@ -31,6 +35,10 @@ export default function Create() {
   const handleLoad = (event) => {
     let cid = router.query.cid; // Challenge ID
 
+    if (router.query.publish == "done") {
+      setPublishSaved(true);
+    }
+
 
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${cid}`, "GET", null) // Fetch the writeup
       .then((data) => {
@@ -41,7 +49,10 @@ export default function Create() {
         setContentPreview(data.content);
 
 
- 
+        setIsPublished(data.draft);
+
+
+    //   insertText(' ');
         setIsLoading(false);
       })
       .catch((err) => {
@@ -54,7 +65,12 @@ export default function Create() {
   }
 
 
+  const magicSnippet = () => {
+    // creaate a random id
+    const id = Math.random().toString(36).substring(7);
 
+    insertText(`[Click to run: ${id}](https://ctfguide.com/magic/)`);
+  };
   const insertText = (text) => {
     const textarea = document.getElementById('content');
     const startPos = textarea.selectionStart;
@@ -64,7 +80,7 @@ export default function Create() {
     textarea.focus();
     textarea.selectionEnd = startPos + text.length;
   };
-
+ 
   const handleSave = () => {
     setIsSaving(true);
     const cid = router.query.cid;
@@ -81,6 +97,19 @@ export default function Create() {
       });
   };
 
+  const handlePublish = () => {
+
+
+    const cid = router.query.cid;
+    request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}/publish`, "PUT")
+      .then((data) => {
+       window.location.href = window.location.href + "?publish=done";
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       <Head>
@@ -91,6 +120,11 @@ export default function Create() {
       </Head>
       <StandardNav />
 
+      { isPublishSaved && 
+      <div className="bg-green-600 py-1 text-center text-sm text-white  mx-auto w-full ">
+            <h1 className='px-4 text-lg mx-auto text-left'>🎉 Congratulations! Your writeup has been published! </h1>
+          </div>
+}
 { isLoading && 
       <main className='flex items-center justify-center min-h-screen text-center'>
         <div className='center text-center mx-auto'>
@@ -126,11 +160,19 @@ export default function Create() {
             <button className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
 
             <button onClick={handleSave} className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
-            <button className='bg-green-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-rocket fa-fw"></i> Publish</button>
+
+            {  isPublished &&
+                        <button onClick={() => setPublishView(true)} className='bg-green-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-rocket fa-fw"></i> Publish</button>
+                        
+                      }
           </div>
         </div>
 
         <div className='px-6 mx-auto'>
+
+          <div className='flex w-full'>
+
+    <div className='w-full'>
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
@@ -138,6 +180,13 @@ export default function Create() {
             placeholder='Enter your title here'
             autoFocus
           />
+</div>
+<div className='ml-auto mt-8'>
+              { !isPublished &&
+<span className='text-green-400 bg-green-900 px-3 rounded-full mr-2'>published</span>
+}
+</div>
+</div>    
           <div className='grid grid-cols-2 gap-x-10 border-t border-neutral-800 '>
             <div className='mt-3'>
               <div className="toolbar py-1 ">
@@ -155,6 +204,9 @@ export default function Create() {
                 </button>
                 <button onClick={() => insertText('```Code```')} className="toolbar-button text-white px-2 mr-1">
                   <i className="fas fa-code"></i>
+                </button>
+                <button onClick={() => magicSnippet()} className="toolbar-button text-white px-2 mr-1">
+                <i class="fas fa-terminal"></i>
                 </button>
               </div>
               <textarea
@@ -191,8 +243,68 @@ export default function Create() {
 
 
 
+{ publishView &&
+<div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 `}
+        >
+        <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
+            <div className="bg-neutral-900 bg-opacity-70  w-full h-full py-24 sm:py-32">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8 ">
+                    <div className="mx-auto max-w-md ">
+                       
+                    <div
+
+className=" pb-10 pt-4 px-4 shadow sm:px-10  bg-neutral-800"
+
+>
+<div >
+<div>
 
 
+<i className="fas fa-globe text-3xl text-white mt-10"></i>
+
+
+  <h1 className='text-white text-xl font-semibold mt-2'>Publish your writeup</h1>
+  </div>
+
+
+
+
+  <p className='text-white'>Ready to publish your hard work? <br></br><br></br>Before publishing make sure you're following these rules:</p>
+
+  <ul className='text-white ml-10 text-sm mb-10 mt-3'>
+    <li>No profanity or offensive language.</li>
+    <li>No content that violates DMCA regulations.</li>
+    <li>No content that breaks any laws.</li>
+    <li>Ensure your writeup is clear and easy to understand.</li>
+    <li>Do not plagiarize. All writeups should be your own work.</li>
+    <li>Respect the privacy of others. Do not share personal information without consent.</li>
+  </ul>
+
+  <button onClick={handlePublish} className='px-4 py-1 mb-10 bg-green-600 hover:bg-green-500 text-white'>Let's do it!</button> <button onClick={() => setPublishView(false)} className='ml-2 px-4 py-1 bg-yellow-600 hover:bg-yellow-500 text-white'>Nevermind.</button>
+
+
+  
+  <div>
+
+  
+
+  </div>
+
+
+</div>
+
+
+
+</div>
+
+                        </div>
+                  
+                    </div>
+                </div>
+            </div>
+        </div>
+
+}
       <div className=' flex w-full h-full grow basis-0'></div>
       <Footer />
     </>

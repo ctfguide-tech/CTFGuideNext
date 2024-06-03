@@ -10,11 +10,17 @@ import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import ReactMarkdown from "react-markdown";
+import Menu from '@/components/editor/Menu';
+
+
 
 export default function Challenge() {
   const router = useRouter();
+
+
   // I hate this
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
 
   // Very primitive cache system
   const [cache, _setCache] = useState({});
@@ -128,7 +134,7 @@ export default function Challenge() {
 }
 
 function FlagDialog({ color, title, message }) {
-  let [isOpen, setIsOpen] = useState(true)
+  let [isOpen, setIsOpen] = useState(false)
 
   return (
     <Dialog
@@ -213,6 +219,11 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
 }
 
 function WriteUpPage({ cache, setCache }) {
+
+  const router = useRouter();
+  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
+
   useEffect(() => {
     (async () => {
       if (cache['write-page']) {
@@ -221,6 +232,53 @@ function WriteUpPage({ cache, setCache }) {
       setCache('write-page', {});
     })();
   })
+
+
+
+  // START OF CREATE FUNCTIONALITY
+  const [isCreating, setIsCreating] = useState(false);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
+  useEffect(() => {
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
+        .then((data) => {
+          
+          request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
+            console.log("cow")
+            console.log(challenges)
+            challenges.forEach((challenge) => (
+              console.log(challenge.slug)
+            ))
+            setSolvedChallenges(challenges)
+
+          })
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    } catch (error) { }
+  }, []);
+  // END OF CREATE FUNCTIONALITY
+
+  // START OF FETCH WRITEUP FUNCTIONALITY
+  const [writeUp, setWriteUp] = useState([]);
+  useEffect(() => {
+    console.log(`Fetching writeup data for challenge ${urlChallengeId}`)
+
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/writeups`, "GET", null)
+        .then((data) => {
+          console.log(`Writeup data: ${JSON.stringify(data)}`)
+          setWriteUp(data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) { }
+  }, []);
+
   return (
     <>
     <div className="flex">
@@ -228,10 +286,39 @@ function WriteUpPage({ cache, setCache }) {
         <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
       </div>
       <div className="ml-auto">
-        <button className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-3 mr-2">Create a Write up</button>
+        <button onClick={() => { setIsCreating(true) }} className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-5  text-sm mr-4">New Draft</button>
       </div>
+
+
+      </div>
+
+
+    <div className="px-4">
+      {writeUp.map((writeup, index) => (
+        <div key={index} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+          <div className='w-full flex'>
+           <div className=""> 
+           
+           <h3 className="text-2xl">{writeup.title}</h3>
+           <p className="text-sm">Authored by {writeup.user.username}</p>
+
+           </div>
+            <div className="ml-auto">
+            <p className="text-sm text-right">452 views</p>
+
+            <div className=" space-x-2 text-right text-xl">
+              <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> 0
+              <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i> 0
+            </div>
+            
+            </div>
+          </div>
+        </div>
+      ))}
       </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+      <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
+
     </>
   )
 }

@@ -19,10 +19,17 @@ export default function Menu({ open, setOpen, solvedChallenges }) {
       }
       )
     };
+    const handleBackgroundClick = () => {
+     
+          hideModal();
+    
+  };
+
 
 
     return (
-        <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`}>
+        <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`} 
+        >
         <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
             <div className="bg-neutral-900 bg-opacity-70  w-full h-full py-24 sm:py-32">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 ">
