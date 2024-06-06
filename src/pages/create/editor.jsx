@@ -23,6 +23,10 @@ export default function Create() {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
         handleLoad();
+        if (router.query.publish == "done") {
+          setPublishSaved(true);
+        }
+    
         })
         .catch((err) => {
           console.log(err);
@@ -35,10 +39,7 @@ export default function Create() {
   const handleLoad = (event) => {
     let cid = router.query.cid; // Challenge ID
 
-    if (router.query.publish == "done") {
-      setPublishSaved(true);
-    }
-
+   
 
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${cid}`, "GET", null) // Fetch the writeup
       .then((data) => {
@@ -64,6 +65,14 @@ export default function Create() {
 
   }
 
+  /*
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleSave();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+  */
 
   const magicSnippet = () => {
     // creaate a random id
@@ -82,6 +91,8 @@ export default function Create() {
   };
  
   const handleSave = () => {
+
+
     setIsSaving(true);
     const cid = router.query.cid;
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}`, "PUT", {
@@ -89,8 +100,10 @@ export default function Create() {
       content: contentPreview,
     })
       .then((data) => {
-        console.log(data);
-        setIsSaving(false);
+        
+        setTimeout(() => {
+            setIsSaving(false);
+        }, 2000);
       })
       .catch((err) => {
         console.log(err);
@@ -99,11 +112,13 @@ export default function Create() {
 
   const handlePublish = () => {
 
+    // first save
+    handleSave();
 
     const cid = router.query.cid;
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}/publish`, "PUT")
       .then((data) => {
-       window.location.href = window.location.href + "?publish=done";
+       window.location.href = window.location.href + "&publish=done";
       })
       .catch((err) => {
         console.log(err);
@@ -210,6 +225,7 @@ export default function Create() {
                 </button>
               </div>
               <textarea
+                
                 value={contentPreview}
                 id="content"
                 placeholder="You can use Markdown here!"
@@ -217,6 +233,7 @@ export default function Create() {
                 className="px-0 h-full w-full rounded-lg border-none placeholder-neutral-700 bg-neutral-900 px-5 py-4 text-white focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none"
                 onChange={(event) => {
                   setContentPreview(event.target.value);
+                  handleSave();
                 }}
               />
             </div>

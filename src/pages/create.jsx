@@ -13,7 +13,7 @@ import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import request from "@/utils/request";
 import Menu from '@/components/editor/Menu';
-
+import Skeleton from 'react-loading-skeleton';
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
   const [challenges, setChallenges] = useState([]);
@@ -476,7 +476,8 @@ export default function Create() {
                                       </a>
                                     </td>
                                   </tr>
-                                ))}
+                                )) || <Skeleton containerClassName='tbody' className='mb-4' baseColor='#999' count={2} />
+                                }
                               </tbody>
                             </table>
                           </div>
@@ -494,7 +495,7 @@ export default function Create() {
               </div>
             </div>
 
-            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0">
+            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0 hidden">
               <div className="pl-6 lg:w-80">
                 <div className="pt-6 pb-2">
                   <h2 className="text-2xl text-white ">Notifications</h2>

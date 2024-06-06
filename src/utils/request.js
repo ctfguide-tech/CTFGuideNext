@@ -22,6 +22,7 @@ const request = async (url, req_method, body) => {
         credentials: 'include',
         body: JSON.stringify(body)
       }
+      console.log(requestOptions)
       const response = await fetch(url, requestOptions);
       const data = await response.json();
 

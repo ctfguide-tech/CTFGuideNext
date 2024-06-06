@@ -220,7 +220,11 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
 
 function WriteUpPage({ cache, setCache }) {
 
+  
+
   const router = useRouter();
+  const [selectedWriteup, setSelectedWriteup] = useState(null);
+
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
 
 
@@ -242,7 +246,7 @@ function WriteUpPage({ cache, setCache }) {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
-          
+
           request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
             console.log("cow")
             console.log(challenges)
@@ -281,44 +285,127 @@ function WriteUpPage({ cache, setCache }) {
 
   return (
     <>
-    <div className="flex">
-      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-        <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
-      </div>
-      <div className="ml-auto">
-        <button onClick={() => { setIsCreating(true) }} className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-5  text-sm mr-4">New Draft</button>
-      </div>
-
-
-      </div>
-
-
-    <div className="px-4">
-      {writeUp.map((writeup, index) => (
-        <div key={index} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
-          <div className='w-full flex'>
-           <div className=""> 
-           
-           <h3 className="text-2xl">{writeup.title}</h3>
-           <p className="text-sm">Authored by {writeup.user.username}</p>
-
-           </div>
-            <div className="ml-auto">
-            <p className="text-sm text-right">452 views</p>
-
-            <div className=" space-x-2 text-right text-xl">
-              <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> 0
-              <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i> 0
+      <div className="flex">
+        {!selectedWriteup && (
+          <>
+            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+              <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
             </div>
-            
+            <div className="ml-auto">
+              <button onClick={() => { setIsCreating(true) }} className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-5  text-sm mr-4">New Draft</button>
+            </div>
+          </>
+        )}
+
+      </div>
+      {selectedWriteup ? (
+        <WriteupView writeup={selectedWriteup} onBack={() => setSelectedWriteup(null)} />
+      ) : (
+      
+
+      <div className="px-4">
+        {writeUp.map((writeup, index) => (
+          <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+            <div className='w-full flex'>
+              <div className="">
+
+                <h3 className="text-2xl">{writeup.title}</h3>
+                <p className="text-sm">Authored by {writeup.user.username}</p>
+
+              </div>
+              <div className="ml-auto">
+                <p className="text-sm text-right">452 views</p>
+
+                <div className=" space-x-2 text-right text-xl">
+                  <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> 0
+                  <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i> 0
+                </div>
+
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
       </div>
+        )}
+      
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
-
-    </>
+</>
   )
+}
+
+function WriteupView({ writeup, onBack }) {
+  const [upvotes, setUpvotes] = useState(writeup.upvotes);
+  const [downvotes, setDownvotes] = useState(writeup.downvotes);
+
+  async function upvoteWriteup(writeupId) {
+    try {
+      const upvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/upvote`;
+      const response = await request(upvoteEndpoint, 'POST', {
+        "message": "Upvoted writeup"
+      });
+      if (response.success) {
+        console.log("Upvoted successfully");
+        setUpvotes(response.upvotes)
+        setDownvotes(response.downvotes)
+    
+      } else {
+        console.error("Failed to upvote:", response.message);
+      }
+    } catch (error) {
+      console.error("Error upvoting writeup:", error);
+    }
+  }
+  
+  async function downvoteWriteup(writeupId) {
+    try {
+      const downvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`;
+      const response = await request(downvoteEndpoint, 'POST', {
+        "message": "Downvoted writeup"
+      });
+      if (response.success) {
+        console.log("Downvoted successfully");
+        setUpvotes(response.upvotes)
+        setDownvotes(response.downvotes)
+      } else {
+        console.error("Failed to downvote:", response.message);
+      }
+    } catch (error) {
+      console.error("Error downvoting writeup:", error);
+    }
+  }
+
+
+  return (
+    <div className="px-4 mt-4">
+
+      <div className="flex">
+        <div>
+        <h1 className="text-3xl">{writeup.title}</h1>
+        <p>Authored by {writeup.user.username}</p>
+
+        </div>
+        <div className="ml-auto mt-3 text-right" >
+  <button className="hover:text-neutral-200 mb-2" onClick={onBack}><i className="fas fa-long-arrow-alt-left"></i> View all writeups</button> <br></br>
+  <button
+    className="px-2 rounded-full bg-green-700 hover:bg-green-600"
+    onClick={() => upvoteWriteup(writeup.id)}
+  >
+    <i className="fas fa-arrow-up"></i> {upvotes}
+  </button>
+  <button
+    className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
+    onClick={() => downvoteWriteup(writeup.id)}
+  >
+    <i className="fas fa-arrow-down"></i> {downvotes}
+  </button>    
+</div>
+      </div>
+      
+
+<br></br>
+      <MarkdownViewer content={writeup.content} />
+
+    </div>
+  );
 }
