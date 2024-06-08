@@ -65,14 +65,14 @@ export default function Create() {
 
   }
 
-  /*
+
   useEffect(() => {
     const interval = setInterval(() => {
       handleSave();
     }, 10000);
     return () => clearInterval(interval);
   }, []);
-  */
+
 
   const magicSnippet = () => {
     // creaate a random id
@@ -118,7 +118,14 @@ export default function Create() {
     const cid = router.query.cid;
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}/publish`, "PUT")
       .then((data) => {
-       window.location.href = window.location.href + "&publish=done";
+
+        if (data.message == "Writeup published successfully") {
+          window.location.href = window.location.href + "&publish=done";
+        } else {
+          console.log(data)
+          setEditorFailure(true);
+        }
+
       })
       .catch((err) => {
         console.log(err);
@@ -233,7 +240,6 @@ export default function Create() {
                 className="px-0 h-full w-full rounded-lg border-none placeholder-neutral-700 bg-neutral-900 px-5 py-4 text-white focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none"
                 onChange={(event) => {
                   setContentPreview(event.target.value);
-                  handleSave();
                 }}
               />
             </div>

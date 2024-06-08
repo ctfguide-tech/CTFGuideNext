@@ -303,7 +303,7 @@ function WriteUpPage({ cache, setCache }) {
       ) : (
       
 
-      <div className="px-4">
+      <div className="px-4 overflow-auto">
         {writeUp.map((writeup, index) => (
           <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
             <div className='w-full flex'>
@@ -313,12 +313,12 @@ function WriteUpPage({ cache, setCache }) {
                 <p className="text-sm">Authored by {writeup.user.username}</p>
 
               </div>
-              <div className="ml-auto">
+              <div className="ml-auto mt-2">
                 <p className="text-sm text-right">452 views</p>
 
-                <div className=" space-x-2 text-right text-xl">
-                  <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> 0
-                  <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i> 0
+                <div className=" space-x-2 text-right text-lg">
+                  <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
+                  <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
                 </div>
 
               </div>
