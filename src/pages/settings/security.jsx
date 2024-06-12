@@ -3,49 +3,62 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import { useState } from 'react';
+import  request  from '@/utils/request';
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 
 export default function Security(){
-  const [inputText, setInputText] = useState('');
+  const [unsavedNotif, setOpenBio] = useState(false);
+  const [bioBanner, bannerState] = useState(false);
 
+
+function closeUnsavedNotif() {
+    bannerState(false);
+}
+  const [inputText, setInputText] = useState('');
+  
   const user = {};
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
+    if (event.target.value !== '') {
+      bannerState(true);
+    } else {
+      bannerState(false)
+    }
   };
 
-  function saveSecurity() {
+
+
+  
+  function saveSecurity(req) {
       document.getElementById('saveSecurity').innerText = 'Saving...';
       var oldPassword = document.getElementById('oldPassword').value;
-  
-      reauthenticateWithCredential(
-        user,
-        EmailAuthProvider.credential(user.email, oldPassword)
-      )
-        .then(() => {
-          var password = document.getElementById('password').value;
-          var confirmPassword = document.getElementById('confirm-password').value;
-  
-          if (password == confirmPassword) {
-            updatePassword(user, confirmPassword)
-              .then(() => {
-                document.getElementById('saveSecurity').innerText = 'Save';
+      var newPassword = document.getElementById('password').value;
+      var confirmPassword = document.getElementById('confirm-password').value;
+      
+        request(`${process.env.NEXT_PUBLIC_API_URL}/account/change-password`, 'POST', {oldPassword, password: newPassword})
+        .then((response) => {
+          console.log(response)
+          if (newPassword == confirmPassword) {      
+            try {
+              document.getElementById('saveSecurity').innerText = 'Save';
   
                 document.getElementById('password').value = '';
                 document.getElementById('confirm-password').value = '';
-              })
-              .catch((error) => {
-                document.getElementById('saveSecurity').innerText = 'Save';
+                document.getElementById('oldPassword').value = '';
+            } catch (error) {
+              document.getElementById('saveSecurity').innerText = 'Save';
                 window.alert(error);
-              });
+            }
+                         
           }
-        })
-        .catch((error) => {
+        }).catch((error) => {
           document.getElementById('saveSecurity').innerText = 'Save';
           window.alert(error);
         });
+        closeUnsavedNotif();
     }
 
     return(
@@ -97,6 +110,8 @@ export default function Security(){
                         id="password"
                         autoComplete="given-name"
                         className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                       
+                        onChange={handleInputChange}
                       />
                     </div>
 
@@ -113,6 +128,7 @@ export default function Security(){
                         id="confirm-password"
                         autoComplete="family-name"
                         className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                        onChange={handleInputChange}
                       />
                     </div>
 
@@ -129,6 +145,8 @@ export default function Security(){
                         id="oldPassword"
                         autoComplete="given-name"
                         className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                
+                        onChange={handleInputChange}
                       />
                     </div>
                   </div>
@@ -146,6 +164,32 @@ export default function Security(){
         </div>
   
         <Footer />
+
+        
+
+        {bioBanner && (
+                <div
+                    style={{ backgroundColor: '#212121' }}
+                    id="savebanner"
+                    className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                    hidden={!unsavedNotif}
+                >
+                    <p className="max-w-4xl text-2xl leading-6 text-white">
+                        You have unsaved changes.
+                    </p>
+                    <div className="flex flex-none items-center gap-x-5">
+                       
+                        <button
+                            onClick={closeUnsavedNotif}
+                            type="button"
+                            className="text-xl font-semibold leading-6 text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
       </>
     );
 }
+
