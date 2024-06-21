@@ -36,6 +36,7 @@ export default function Challenge() {
     'description': { text: 'Description', element: DescriptionPage, },
     'write-up': { text: 'Write Up', element: WriteUpPage, },
     'hints': { text: 'Hints', element: WriteUpPage, },
+    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
 
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
@@ -408,4 +409,110 @@ function WriteupView({ writeup, onBack }) {
 
     </div>
   );
+}
+
+function LeaderboardPage({ cache, setCache }) {
+
+  
+
+  const router = useRouter();
+  const [selectedWriteup, setSelectedWriteup] = useState(null);
+
+  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
+
+  useEffect(() => {
+    (async () => {
+      if (cache['leaderboard-page']) {
+        return;
+      }
+      setCache('leaderboard-page', {});
+    })();
+  })
+
+
+
+  // START OF CREATE FUNCTIONALITY
+  const [isCreating, setIsCreating] = useState(false);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
+  useEffect(() => {
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
+        .then((data) => {
+
+          request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
+            console.log("cow")
+            console.log(challenges)
+            challenges.forEach((challenge) => (
+              console.log(challenge.slug)
+            ))
+            setSolvedChallenges(challenges)
+
+          })
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    } catch (error) { }
+  }, []);
+  // END OF CREATE FUNCTIONALITY
+
+  // START OF FETCH WRITEUP FUNCTIONALITY
+  const [leaderboard, setLeaderboardData] = useState([]);
+  useEffect(() => {
+    console.log(`Fetching writeup data for challenge ${urlChallengeId}`)
+
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/leaderboard`, "GET", null)
+        .then((data) => {
+          console.log(`Leaderboard Data: ${JSON.stringify(data)}`)
+          try {
+          setLeaderboardData(data)
+          } catch(err) {
+            console.log("Error loading leaderboard data.")
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) { }
+  }, []);
+
+  return (
+    <>
+      <div className="flex">
+
+       
+            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+              <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
+            </div>
+
+      
+
+      
+       
+
+      </div>
+    
+    <div className="grid grid-cols-3">
+      <div className="">
+
+      </div>
+    </div>
+
+      {leaderboard.map((entry, index) => (
+            <div key={index} className="flex justify-between items-center py-2 px-4">
+              <div className="flex items-center">
+                <span className="text-lg font-semibold">{index + 1}.</span>
+                <span className="ml-2 text-l  g text-white">{entry.user.username}</span>
+              </div>
+              <div className="text-lg">{entry.points}</div>
+            </div>
+          ))}
+      
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+</>
+  )
 }

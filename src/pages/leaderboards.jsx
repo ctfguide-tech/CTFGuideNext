@@ -11,10 +11,26 @@ import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
 import { MyTable } from '@/components/Table';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
+import axios from 'axios'
+import request from '@/utils/request';
 
 
-export default function Competitions() {
+export default function Leaderboard() {
+  const [leaderboardData, setLeaderboardData] = useState([]);
 
+  useEffect(() => {
+    // replace 'http://localhost:5000' with your backend URL
+  
+      request('http://localhost:3001/leaderboard/', 'GET', null).then(response => {
+        setLeaderboardData(response.leaderboard);
+        console.log("leaderboards: ", response.leaderboard)
+      })
+      .catch(error => {
+        console.error('Error fetching leaderboard data: ', error);
+      });
+
+
+  }, []);
   return (
     <>
       <Head>
@@ -104,129 +120,29 @@ export default function Competitions() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">1</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        alt="Avatar"
-                        className="rounded-full"
-                        height="32"
-                        src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        style={{
-                          aspectRatio: "32/32",
-                          objectFit: "cover",
-                        }}
-                        width="32"
-                      />
-                      <span>John</span>
-                    </div>
-                  </TableCell>
-            
-                  <TableCell className="text-right">1500</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">2</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        alt="Avatar"
-                        className="rounded-full"
-                        height="32"
-                        src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        style={{
-                          aspectRatio: "32/32",
-                          objectFit: "cover",
-                        }}
-                        width="32"
-                      />
-                      <span>Abhi</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">1200</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">3</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        alt="Avatar"
-                        className="rounded-full"
-                        height="32"
-                        src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        style={{
-                          aspectRatio: "32/32",
-                          objectFit: "cover",
-                        }}
-                        width="32"
-                      />
-                      <span>Kshitij</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">1000</TableCell>
-                </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">4</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <span>AmiCOOKED</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">900</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">5</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <span>APPLEADAYDOCTORAWAY</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">850</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">6</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <span>sigmatime100</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">800</TableCell>
-              </TableRow>
-           
-              </TableBody>
+        {leaderboardData.map((entry, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-medium">{index + 1}</TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <img
+                  alt="Avatar"
+                  className="rounded-full"
+                  height="32"
+                  src={entry.user.avatarUrl}
+                  style={{
+                    aspectRatio: "32/32",
+                    objectFit: "cover",
+                  }}
+                  width="32"
+                />
+                <span>{entry.user.username}</span>
+              </div>
+            </TableCell>
+            <TableCell className="text-right">{entry.totalPoints}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
             </Table>
           </div>
  
