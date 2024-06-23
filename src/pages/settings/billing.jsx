@@ -128,18 +128,9 @@ export default function Billing() {
             <div className="max-2xl:mb-8 2xl:mr-8">
               <FreeBox />
             </div>
-            <div className="max-2xl:mb-8 2xl:mr-8">
+            <div className="2xl:mr-8">
               <UpgradeBox />
             </div>
-          </div>
-          <div className="w-[1332px] max-2xl:w-[650px]">
-            <p className="mt-8 rounded-xl bg-neutral-800 p-3 text-xl text-white drop-shadow-lg max-2xl:w-auto max-2xl:text-lg">
-              CTFGuide currently has a very generous grant from Google Cloud
-              Platform, which allows us to provide free compute to our users.
-              However, this grant is limited, and we may have to start charging
-              for compute in the future. If we do, we will give you a 30 day
-              notice before we start charging for compute.
-            </p>
           </div>
 
           <div className="hidden items-center justify-between text-white">

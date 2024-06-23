@@ -6,22 +6,21 @@ export default function FreeBox() {
   return (
     <>
       <div className="h-[575px] w-[650px] rounded-xl bg-neutral-800 shadow-md max-md:w-full">
-        <div className="flex w-full justify-between rounded-t-xl bg-blue-600 py-8 text-black">
-          <p className="mx-4 text-4xl font-bold">Standard Account</p>
-          <p className="mx-12 text-right text-4xl font-bold">Free</p>
+        <div className="w-full justify-between rounded-t-xl bg-blue-600 py-8 text-center text-black">
+          <h3 className="mx-4 text-4xl font-bold">Standard Account</h3>
         </div>
 
         <div className="flex-col">
           <div className="grid grid-cols-2">
-            <div className="w-full pl-4 pt-8 text-lg text-white max-md:pl-5">
-              <p className="pt-8">Limited terminal time</p>
-              <p className="pt-12">Limited terminal resources</p>
-              <p className="pt-12">Limited customization options</p>
-            </div>
+            <ul className="w-full list-none pl-8 pt-8 text-lg text-white max-md:pl-5">
+              <li className="pt-8">Limited terminal time</li>
+              <li className="pt-12">Limited terminal resources</li>
+              <li className="pt-12">Limited customization options</li>
+            </ul>
 
             <div className="w-full rounded-sm bg-neutral-800 px-4 pb-12 pt-8">
               <div className="ml-auto"></div>
-              <h1 className="mt-4 font-semibold text-white">Usage Limits</h1>
+              <h4 className="mt-4 font-semibold text-white">Usage Limits</h4>
               <div className="mt-4 flex justify-between">
                 <span className="text-sm font-medium text-white">
                   Terminal Usage
@@ -52,7 +51,7 @@ export default function FreeBox() {
             </div>
           </div>
         </div>
-        <div className="flex justify-end pt-[46px]">
+        <div className="mt-14 flex justify-end">
           <div className="m-6 w-3/5 max-w-full items-center justify-center rounded-[45px] bg-stone-600 bg-opacity-30 py-3.5 text-center text-white/80 shadow-sm max-md:mr-2.5 max-md:mt-10 max-md:px-5">
             Current Plan
           </div>
