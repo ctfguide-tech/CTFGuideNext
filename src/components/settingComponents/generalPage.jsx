@@ -7,17 +7,41 @@ import { Locations } from '@/components/settingComponents/locations';
 import { useRouter } from 'next/router';
 import { getCookie } from '@/utils/request';
 import { useEffect } from 'react';
+import  request  from '@/utils/request';
 
 export default function General() {
+
+  const [unsavedNotif, setOpenBio] = useState(false);
+  const [banner, bannerState] = useState(false);
+
+  const [bio, setBio] = useState(null);
+
+  const [firstName, setFname] = useState(null);
+  const [lastName, setLname] = useState(null);
+  const [githubLink, setGithub] = useState(null);
+
+
+function closeUnsavedNotif() {
+    bannerState(false);
+}
+  const [inputText, setInputText] = useState('');
+  
+  const user = {};
+
+ 
   const router = useRouter();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const [inputText, setInputText] = useState('');
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
+    if (event.target.value !== '') {
+      bannerState(true);
+    } else {
+      bannerState(false)
+    }
   };
   const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
   const [open, setOpen] = useState(true);
@@ -141,20 +165,59 @@ export default function General() {
 
   const handleClick = () => { }
 
-  function saveGeneral() {
+  async function saveGithubUser(){
+    setGithub(document.getElementById('url').value);
+    var url = {
+      gitHubURL: document.getElementById('url').value
+    }
+
+    const data = await request(
+      `${process.env.NEXT_PUBLIC_API_URL}/account`,
+       'PUT',
+        url
+   );
+   if (!data) {
+       console.log('Failed to save github');
+       console.log(document.getElementById('url').value)
+   }
+   setGithub(url.gitHubURL);
+  }
+
+  async function saveInformation() {
+    setBio(document.getElementById('bio').value);
+    setFname(document.getElementById('first-name').value);
+    setLname(document.getElementById('last-name').value);
+    
+    var body = {
+        bio: document.getElementById('bio').value,
+        firstName: document.getElementById('first-name').value,
+        lastName: document.getElementById('last-name').value
+    };
+    const data = await request(
+       `${process.env.NEXT_PUBLIC_API_URL}/account`,
+        'PUT',
+         body
+    ).then((response) => {
+      console.log(response)
+      document.getElementById('save').innerHTML = 'Save';
+
+    });
+    if (!data) {
+        console.log('Failed to save');
+    }
+    setBio(body.bio);
+    setFname(body.firstName);
+    setLname(body.lastName)
+}
+
+   async function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
-    var firstName = document.getElementById('first-name').value;
-    var lastName = document.getElementById('last-name').value;
-    var bio = document.getElementById('bio').value;
     var github = document.getElementById('url').value;
     var location = document.getElementById('location').value;
 
     var data = JSON.stringify({
-      bio: bio,
       githubUrl: github,
-      firstName: firstName,
-      lastName: lastName,
       location: location,
     });
 
@@ -167,12 +230,12 @@ export default function General() {
       }
     });
 
-    xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    let token = getCookie();
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-    xhr.withCredentials = true;
-    xhr.send(data);
+    
+
+    saveInformation();
+    saveGithubUser();
+    closeUnsavedNotif();
+
 
   }
 
@@ -208,6 +271,8 @@ export default function General() {
                 id="first-name"
                 autoComplete="given-name"
                 className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                onChange={handleInputChange}
+
               />
             </div>
 
@@ -224,6 +289,7 @@ export default function General() {
                 id="last-name"
                 autoComplete="family-name"
                 className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                onChange={handleInputChange}
               />
             </div>
 
@@ -292,6 +358,7 @@ export default function General() {
                   rows={4}
                   className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
                   defaultValue={'No bio set yet!'}
+                  onChange={handleInputChange}
                 />
               </div>
               <p className="mt-3 text-sm text-white">
@@ -309,16 +376,15 @@ export default function General() {
               </label>
               <input
                 type="text"
-                onChange={handleInputChange}
-                name="url"
                 id="url"
+                onChange={handleInputChange}
                 className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
               />
               <label
                 htmlFor="url"
                 className="mt-0.5 block text-xs font-medium leading-6 text-white"
               >
-                Your GitHub link: github.com/{inputText}
+                Your GitHub link: github.com/{githubLink}
               </label>
             </div>
           </div>
@@ -359,7 +425,7 @@ export default function General() {
               >
                 Location
               </label>
-              <Locations />
+              <Locations id="location" />
             </div>
           </div>
 
@@ -491,6 +557,31 @@ export default function General() {
           </div>
         </div>
       </div>
+
+      {banner && (
+                <div
+                    style={{ backgroundColor: '#212121' }}
+                    id="savebanner"
+                    className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                    hidden={!unsavedNotif}
+                >
+                    <p className="max-w-4xl text-2xl leading-6 text-white">
+                        You have unsaved changes.
+                    </p>
+                    <div className="flex flex-none items-center gap-x-5">
+                       
+                        <button
+                            onClick={closeUnsavedNotif}
+                            type="button"
+                            className="text-xl font-semibold leading-6 text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
     </div>
+
+    
   );
 }

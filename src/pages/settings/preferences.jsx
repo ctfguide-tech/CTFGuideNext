@@ -3,9 +3,22 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
+import  request  from '@/utils/request';
+import React, { useEffect, useState } from "react";
+
+
+
 export default function Preferences(){
+  const [friends, setFriendNotif] = useState(false);
+  const [creator, setCreatorNotif] = useState(false);
+
+  
+
+
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.
+
+   
 
     var xhr = new XMLHttpRequest();
 
@@ -34,7 +47,43 @@ export default function Preferences(){
     xhr.send();
   }
 
-    function savePreferences() {
+  
+  function handleCheckBox(e){
+    const checkState = e.target.value;
+    setFriendNotif(true)
+    setCreatorNotif(true)
+    
+  }
+
+  async function saveCheckBoxData() {
+    setFriendNotif(document.getElementById('friend-notif').checked);
+    setCreatorNotif(document.getElementById('challenge-notif').checked);
+    
+    var body =  {
+      FRIEND_ACCEPT: document.getElementById('friend-notif').checked,
+      CHALLENGE_VERIFY: document.getElementById('challenge-notif').checked,
+      LESSON_COMPLETION: true,
+    };
+    const data = await request(
+       `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`,
+        'PUT',
+         body
+    ).then((response) => {
+      console.log(response)
+      document.getElementById('savePreferences').innerHTML = 'Save';
+
+    });
+    if (!data) {
+        console.log('Failed to save');
+        console.log(document.getElementById('friend-notif').checked)
+    }
+     
+    
+    setFriendNotif(body.FRIEND_ACCEPT);
+    setCreatorNotif(body.CREATOR_VERIFY);
+}
+
+    async function savePreferences() {
         document.getElementById('savePreferences').innerHTML = 'Saving...';
     
         var data = JSON.stringify({
@@ -43,13 +92,17 @@ export default function Preferences(){
         });
     
         var xhr = new XMLHttpRequest();
+
+        loadPreferences();
+        saveCheckBoxData();
     
         xhr.addEventListener('readystatechange', function() {
           if (this.readyState === 4) {
             document.getElementById('savePreferences').innerHTML = 'Save';
           }
-        });
-    
+        });    
+       
+        /*
         xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
     
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -58,6 +111,7 @@ export default function Preferences(){
         xhr.withCredentials = true;
     
         xhr.send(data);
+        */
       }
     
       
@@ -98,11 +152,12 @@ export default function Preferences(){
                                 name="comments"
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+
                               />
                             </div>
                             <div className="ml-3 text-sm leading-6">
                               <label
-                                htmlFor="comments"
+                                htmlFor="friend-notif"
                                 className="font-medium text-white"
                               >
                                 Friend Requests
@@ -128,7 +183,7 @@ export default function Preferences(){
                             </div>
                             <div className="ml-3 text-sm leading-6">
                               <label
-                                htmlFor="candidates"
+                                htmlFor="challenge-notif"
                                 className="font-medium text-white"
                               >
                                 Creator Notifications

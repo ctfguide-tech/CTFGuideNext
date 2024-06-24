@@ -201,12 +201,10 @@ export default function Dashboard() {
       <div className="mx-auto flex max-w-6xl">
           <Sidebar/>
           
-          {general && (              
             <div id="general" className="">
                 {/*CONTAINING THE BODY OF GENERAL SECTION*/}
                 <General/>
             </div>
-          )}
 
          
       </div>

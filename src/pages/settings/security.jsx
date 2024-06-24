@@ -10,7 +10,7 @@ const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function Security(){
   const [unsavedNotif, setOpenBio] = useState(false);
-  const [bioBanner, bannerState] = useState(false);
+  const [banner, bannerState] = useState(false);
 
 
 function closeUnsavedNotif() {
@@ -167,7 +167,7 @@ function closeUnsavedNotif() {
 
         
 
-        {bioBanner && (
+        {banner && (
                 <div
                     style={{ backgroundColor: '#212121' }}
                     id="savebanner"
