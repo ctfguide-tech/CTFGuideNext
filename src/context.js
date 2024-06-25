@@ -2,13 +2,13 @@ import { createContext } from "react";
 
 export const defaultState = {
   username: "",
-  setUsername: () => {},
+  setUsername: () => { },
 
   profilePic: "",
-  setProfilePic: () => {},
+  setProfilePic: () => { },
 
   role: "",
-  setRole: () => {},
+  setRole: () => { },
 };
 
 export const Context = createContext(defaultState);
