@@ -79,8 +79,8 @@ export default function Dashboard() {
 
       
     request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
-      console.log("activities: ", response.activities)
-      setActivities(response.activities);})
+      console.log("activities: ", response.activityFeed.activities)
+      setActivities(response.activityFeed.activities);})
     .catch(error => {
       console.error('Error fetching leaderboard data: ', error);
     });
@@ -202,7 +202,7 @@ export default function Dashboard() {
                     activities.map((user) =>
                       <>
                      
-                        <li className=''><b>{user.userName}</b> completed {activity.challengeName}</li>
+                        <li className=''><b>{user.userName}</b> completed {activity.challengeName}9999999999</li>
                       </>
                     )
                     || <>

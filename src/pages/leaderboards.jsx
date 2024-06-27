@@ -45,60 +45,46 @@ export default function Leaderboard() {
         <main>
       
 
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-                        <div  className=" overflow-hidden shadow rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500">
-                            <div className="px-4 py-5 sm:p-6">
-                                <dl>
+        <div className="mt-20 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+    <div className=" overflow-hidden shadow bg-gradient-to-r from-yellow-500 to-orange-500">
+        <div className="px-4 py-5 sm:p-6">
+            <dl>
+                <dd className="mt-1 text-3xl font-semibold text-white text-center">
+                    <span className="text-3xl">#1</span> { leaderboardData[0]?.user?.username }
+                </dd>
+                <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
+                    { leaderboardData[0]?.totalPoints } points
+                </dd>
+            </dl>
+        </div>
+    </div>
 
-                                    <dd className="mt-1 text-3xl font-semibold text-white text-center">
-                                    <span className="text-3xl">#1</span>  John 🇺🇸</dd>
+    <div className="overflow-hidden  shadow bg-gradient-to-r from-gray-500 to-white">
+        <div className="px-4 py-5 sm:p-6">
+            <dl>
+                <dd className="mt-1 text-3xl font-semibold text-gray-100 text-center">
+                    <span className="text-3xl">#2</span> { leaderboardData[1]?.user?.username }
+                </dd>
+                <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
+                    { leaderboardData[1]?.totalPoints } points
+                </dd>
+            </dl>
+        </div>
+    </div>
 
-                                    <dd className="mt-1 text-lg  text-white text-center border border-white w-1/3 rounded-lg mx-auto">
-                                    2500 points</dd>
-
-                                
-
-                                </dl>
-                            </div>
-
-                            
-                        </div>
-
-                        <div  className="overflow-hidden shadow rounded-lg bg-gradient-to-r from-gray-500 to-white">
-                            <div className="px-4 py-5 sm:p-6">
-                                <dl>
-                                
-                                    <dd className="mt-1 text-3xl font-semibold text-gray-100 text-center">
-                                    <span className="text-3xl">#2</span>  Abhi 🇮🇳</dd>
-
-
-                                    <dd className="mt-1 text-lg  text-white text-center border border-white w-1/3 rounded-lg mx-auto">
-                                    2300 points</dd>
-            
-                                </dl>
-                            </div>
-
-                            
-                        </div>
-
-                        <div  className=" overflow-hidden shadow rounded-lg bg-gradient-to-r from-orange-900 to-yellow-700">
-                            <div className="px-4 py-5 sm:p-6">
-                                <dl>
-                                
-                                    <dd className="mt-1 text-3xl  font-semibold text-white text-center">
-                                    <span className="text-3xl">#3</span> Kshitij 🇺🇸
-                                    </dd>
-
-                                          <dd className="mt-1 text-lg  text-white text-center border border-white w-1/3 rounded-lg mx-auto">
-                                    2100 points</dd>
-
-
-                                </dl>
-                            </div>
-
-                            
-                        </div>
-                            </div>
+    <div className="overflow-hidden shadow  bg-gradient-to-r from-orange-900 to-yellow-700">
+        <div className="px-4 py-5 sm:p-6">
+            <dl>
+                <dd className="mt-1 text-3xl font-semibold text-white text-center">
+                    <span className="text-3xl">#3</span> { leaderboardData[2]?.user?.username }
+                </dd>
+                <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
+                    { leaderboardData[2]?.totalPoints } points
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
 
 
           <div className="mx-auto max-w-7xl">
@@ -115,34 +101,36 @@ export default function Leaderboard() {
                   <TableHead className="w-[50px]">Rank</TableHead>
                   <TableHead>Player</TableHead>
           
-                  <TableHead className="text-right">Points</TableHead>
+                  <TableHead className="text-center">Points</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
         {leaderboardData.map((entry, index) => (
-          <TableRow key={index}>
-            <TableCell className="font-medium">{index + 1}</TableCell>
+          <TableRow key={index} className="hover:bg-neutral-700 hover:cursor-pointer" onClick={() => {window.location.href = "../users/" + entry.user.username}}>
+            <TableCell className="font-medium text-lg text-center">{index + 1}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
                 <img
                   alt="Avatar"
                   className="rounded-full"
                   height="32"
-                  src={entry.user.avatarUrl}
+                  src={`https://robohash.org/${entry.user.username}`}
                   style={{
                     aspectRatio: "32/32",
                     objectFit: "cover",
                   }}
                   width="32"
                 />
-                <span>{entry.user.username}</span>
+                <a className="text-lg" href={"../users/" + entry.user.username}>{entry.user.username}</a>
               </div>
             </TableCell>
-            <TableCell className="text-right">{entry.totalPoints}</TableCell>
+            <TableCell className="text-center">{entry.totalPoints}</TableCell>
           </TableRow>
         ))}
+
       </TableBody>
             </Table>
+
           </div>
  
               </div>
