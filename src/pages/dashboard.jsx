@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [badges, setbadges] = useState([]);
   const [challenges, setchallenges] = useState([]);
   const [objectives, setObjectives] = useState(null);
+  const [activities, setActivities] = useState([]);
 
   const exampleObjectives = [
     {
@@ -73,6 +74,19 @@ export default function Dashboard() {
       }
     }
     fetchObjectives();
+
+
+
+      
+    request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
+      console.log("activities: ", response.activities)
+      setActivities(response.activities);})
+    .catch(error => {
+      console.error('Error fetching leaderboard data: ', error);
+    });
+
+
+
   }, []);
 
   return (
@@ -183,9 +197,19 @@ export default function Dashboard() {
                 </h1>
                 <div className='border-b border-neutral-700 mb-4'></div>
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
-                  <li className=''><b>Pranav</b> completed some challenge idk</li>
-                  <li className=''><b>Pranav</b> completed some really long challenge name for absolutely no reason</li>
-                  <li className=''><b>Pranav</b> completed a challenge with an even longer name this one has no right to be this long</li>
+             
+                  {activities &&
+                    activities.map((user) =>
+                      <>
+                     
+                        <li className=''><b>{user.userName}</b> completed {activity.challengeName}</li>
+                      </>
+                    )
+                    || <>
+                      <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
+                    </>}
+
+
                 </ul>
               </div>
 

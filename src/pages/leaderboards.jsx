@@ -19,8 +19,8 @@ export default function Leaderboard() {
 
   useEffect(() => {
     // replace 'http://localhost:5000' with your backend URL
-
-      request('http://localhost:3001/leaderboard/', 'GET', null).then(response => {
+  
+      request(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard/`, 'GET', null).then(response => {
         setLeaderboardData(response.leaderboard);
         console.log("leaderboards: ", response.leaderboard)
       })
@@ -43,7 +43,7 @@ export default function Leaderboard() {
       <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
-
+      
 
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
                         <div  className=" overflow-hidden shadow rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500">
@@ -56,35 +56,35 @@ export default function Leaderboard() {
                                     <dd className="mt-1 text-lg  text-white text-center border border-white w-1/3 rounded-lg mx-auto">
                                     2500 points</dd>
 
-
+                                
 
                                 </dl>
                             </div>
 
-
+                            
                         </div>
 
                         <div  className="overflow-hidden shadow rounded-lg bg-gradient-to-r from-gray-500 to-white">
                             <div className="px-4 py-5 sm:p-6">
                                 <dl>
-
+                                
                                     <dd className="mt-1 text-3xl font-semibold text-gray-100 text-center">
                                     <span className="text-3xl">#2</span>  Abhi 🇮🇳</dd>
 
 
                                     <dd className="mt-1 text-lg  text-white text-center border border-white w-1/3 rounded-lg mx-auto">
                                     2300 points</dd>
-
+            
                                 </dl>
                             </div>
 
-
+                            
                         </div>
 
                         <div  className=" overflow-hidden shadow rounded-lg bg-gradient-to-r from-orange-900 to-yellow-700">
                             <div className="px-4 py-5 sm:p-6">
                                 <dl>
-
+                                
                                     <dd className="mt-1 text-3xl  font-semibold text-white text-center">
                                     <span className="text-3xl">#3</span> Kshitij 🇺🇸
                                     </dd>
@@ -96,7 +96,7 @@ export default function Leaderboard() {
                                 </dl>
                             </div>
 
-
+                            
                         </div>
                             </div>
 
@@ -107,14 +107,14 @@ export default function Leaderboard() {
             {/* </div> */}
             <div>
               <div className="w-full pt-8">
-
+   
           <div className="relative w-full overflow-auto">
             <Table className="text-white">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px]">Rank</TableHead>
                   <TableHead>Player</TableHead>
-
+          
                   <TableHead className="text-right">Points</TableHead>
                 </TableRow>
               </TableHeader>
@@ -144,7 +144,7 @@ export default function Leaderboard() {
       </TableBody>
             </Table>
           </div>
-
+ 
               </div>
             </div>
           </div>
