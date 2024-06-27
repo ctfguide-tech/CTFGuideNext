@@ -9,11 +9,26 @@ import React, { useEffect, useState } from "react";
 
 
 export default function Preferences(){
+  const [unsavedNotif, setOpenBio] = useState(false);
+  const [banner, bannerState] = useState(false);
+
   const [friends, setFriendNotif] = useState(false);
   const [creator, setCreatorNotif] = useState(false);
 
-  
 
+  const [checkboxStates, setUnsavedNotif] = useState(false);
+
+  function closeUnsavedNotif() {
+    bannerState(false);
+}
+  const handleInputChange = (event) => {
+    setUnsavedNotif(event.target.value);
+    if (event.target.value) {
+      bannerState(true);
+    } else {
+      bannerState(false)
+    }
+  };
 
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.
@@ -94,15 +109,18 @@ export default function Preferences(){
         var xhr = new XMLHttpRequest();
 
         loadPreferences();
+        closeUnsavedNotif();
         saveCheckBoxData();
+
     
+        /*
         xhr.addEventListener('readystatechange', function() {
           if (this.readyState === 4) {
             document.getElementById('savePreferences').innerHTML = 'Save';
           }
         });    
        
-        /*
+        
         xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
     
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -152,7 +170,7 @@ export default function Preferences(){
                                 name="comments"
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-
+                                onChange={handleInputChange}
                               />
                             </div>
                             <div className="ml-3 text-sm leading-6">
@@ -179,6 +197,8 @@ export default function Preferences(){
                                 name="candidates"
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                                onChange={handleInputChange}
+
                               />
                             </div>
                             <div className="ml-3 text-sm leading-6">
@@ -215,6 +235,29 @@ export default function Preferences(){
         </div>
   
         <Footer />
+        {banner && (
+                <div
+                    style={{ backgroundColor: '#212121' }}
+                    id="savebanner"
+                    className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                    hidden={!unsavedNotif}
+                >
+                    <p className="max-w-4xl text-2xl leading-6 text-white">
+                        You have unsaved changes.
+                    </p>
+                    <div className="flex flex-none items-center gap-x-5">
+                       
+                        <button
+                            onClick={closeUnsavedNotif}
+                            type="button"
+                            className="text-xl font-semibold leading-6 text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
       </>
     );
 }

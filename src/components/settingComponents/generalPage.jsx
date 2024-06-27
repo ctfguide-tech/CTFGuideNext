@@ -8,9 +8,13 @@ import { useRouter } from 'next/router';
 import { getCookie } from '@/utils/request';
 import { useEffect } from 'react';
 import  request  from '@/utils/request';
+import {Context} from '@/context';
+import { useContext } from 'react';
 
 export default function General() {
-
+  
+  const {profilePic} = useContext(Context);
+  
   const [unsavedNotif, setOpenBio] = useState(false);
   const [banner, bannerState] = useState(false);
 
@@ -49,6 +53,7 @@ function closeUnsavedNotif() {
 
   function pfpChange() {
     pfpChanged = true;
+    
   }
 
   const handlePopupOpen = () => {
@@ -99,63 +104,13 @@ function closeUnsavedNotif() {
       return;
     }
 
+    setPfp(URL.createObjectURL(selectedImage));
 
     // upload to firebase storage
     try {
-      const storage = getStorage();
-      const metadata = {
-        contentType: 'image/jpeg',
-      };
 
-      const storageRef = ref(storage, `${email}/pictures/pfp`);
-      const uploadTask = uploadBytesResumable(storageRef, selectedImage, metadata)
-
-      uploadTask.on('state_changed',
-        (snapshot) => {
-          // progress function
-          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          console.log('Upload is ' + progress + '% done');
-          switch (snapshot.state) {
-            case 'paused':
-              console.log('Upload is paused');
-              break;
-            case 'running':
-              console.log('Upload is running');
-              break;
-          }
-        },
-        (error) => {
-          switch (error.code) {
-            case 'storage/unauthorized':
-              console.log('User does not have permission to access the object');
-              break;
-            case 'storage/canceled':
-              console.log('User canceled the upload');
-              break;
-            case 'storage/unknown':
-              console.log('Unknown error occurred, inspect error.serverResponse');
-              break;
-          }
-        },
-        async () => {
-          const imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
-          console.log(imageUrl)
-          console.log(user);
-          const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/updatePfp';
-          const body = { imageUrl }
-          const response = await request(endPoint, "POST", body);
-          console.log("Here is the result: ", response)
-          if (response.success) {
-            console.log("profile picture uploaded successfully");
-          } else {
-            console.log("Failed to upload profile picture");
-          }
-          window.location.reload();
-
-        }
-      );
+      profilePic.setProfilePic(URL.createObjectURL(selectedImage))
       setIsPopupOpen(false);
-
 
     } catch (err) {
       console.log(err);
@@ -165,23 +120,7 @@ function closeUnsavedNotif() {
 
   const handleClick = () => { }
 
-  async function saveGithubUser(){
-    setGithub(document.getElementById('url').value);
-    var url = {
-      gitHubURL: document.getElementById('url').value
-    }
 
-    const data = await request(
-      `${process.env.NEXT_PUBLIC_API_URL}/account`,
-       'PUT',
-        url
-   );
-   if (!data) {
-       console.log('Failed to save github');
-       console.log(document.getElementById('url').value)
-   }
-   setGithub(url.gitHubURL);
-  }
 
   async function saveInformation() {
     setBio(document.getElementById('bio').value);
@@ -207,9 +146,9 @@ function closeUnsavedNotif() {
     }
     setBio(body.bio);
     setFname(body.firstName);
-    setLname(body.lastName)
+    setLname(body.lastName);
+    console.log( document.getElementById('bio').value)
 }
-
    async function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
@@ -233,7 +172,6 @@ function closeUnsavedNotif() {
     
 
     saveInformation();
-    saveGithubUser();
     closeUnsavedNotif();
 
 
@@ -384,7 +322,7 @@ function closeUnsavedNotif() {
                 htmlFor="url"
                 className="mt-0.5 block text-xs font-medium leading-6 text-white"
               >
-                Your GitHub link: github.com/{githubLink}
+                Your GitHub link: github.com/{inputText}
               </label>
             </div>
           </div>
@@ -491,6 +429,7 @@ function closeUnsavedNotif() {
                                     src={URL.createObjectURL(selectedImage)}
                                     alt="Selected Profile Picture"
                                     className="mx-auto h-48 w-48 object-cover rounded-full"
+                                    id='profilePicture'
                                   />
                                   <h1 className="text-white text-xl text-center font-bold -mx-6 mt-7">
                                     New Profile Picture
