@@ -11,7 +11,7 @@ import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
 import { MyTable } from '@/components/Table';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
-import axios from 'axios'
+//import axios from 'axios'
 import request from '@/utils/request';
 
 
