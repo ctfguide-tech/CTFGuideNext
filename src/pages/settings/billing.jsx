@@ -9,47 +9,7 @@ import UpgradeBox from '@/components/billing/UpgradeBox';
 import PaidBox from '@/components/billing/PaidBox';
 
 export default function Billing() {
-  const redirectToCheckout = async (event) => {
-    try {
-      const stripe = await loadStripe(STRIPE_KEY);
-      const subscriptionType = document.getElementById('paymentType').value;
-      console.log(subscriptionType);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            subType: subscriptionType,
-            quantity: 1,
-            operation: 'subscription',
-            data: {},
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        }
-      );
-
-      const session = await response.json();
-      if (session.error) {
-        console.log('Creating the stripe session failed');
-        return;
-      }
-
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.sessionId,
-      });
-
-      if (result.error) {
-        console.log(result.error.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    g;
-  };
 
   const updateCardInfo = async () => {
     try {
@@ -137,7 +97,7 @@ export default function Billing() {
             <hr className="mb-2 mt-2 border-neutral-600 text-white" />
             <h1 className="mt-4 text-center text-4xl">
               Upgrade to{' '}
-              <span className="font-bold text-blue-500">CTFGuide Pro</span>
+             $<span className="font-bold text-blue-500">CTFGuide Pro</span>
             </h1>
             <div className="grid grid-cols-2 gap-4">
               <div
@@ -179,7 +139,6 @@ export default function Billing() {
             </p>
           </div>
 
-          <div className="hidden">
             <hr className="mt-4 border-neutral-500"></hr>
             <h1 className="mt-4 text-white"> Dev Testing</h1>
 
@@ -195,29 +154,8 @@ export default function Billing() {
             </select>
 
             <br></br>
-            <button
-              onClick={redirectToCheckout}
-              className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
-            >
-              Stripe Checkout Demo
-            </button>
-            <br></br>
-
-            <button
-              onClick={updateCardInfo}
-              className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
-            >
-              Update card infomation
-            </button>
-            <button
-              onClick={cancelSubscription}
-              className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
-            >
-              cancel subscription
-            </button>
           </div>
         </div>
-      </div>
 
       <Footer />
     </>

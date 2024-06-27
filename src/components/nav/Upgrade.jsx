@@ -1,4 +1,5 @@
-import { CheckIcon } from '@heroicons/react/20/solid'
+import { CheckIcon } from '@heroicons/react/20/solid';
+import request from "@/utils/request";
 
 const includedFeatures = [
     'Priority machine access',
@@ -6,15 +7,48 @@ const includedFeatures = [
     'Access to more operating systems',
     'Longer machine times',
     'CTFGuide Pro flair on your profile, comments, and created content'
+];
 
-]
+import { loadStripe } from '@stripe/stripe-js';
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function Upgrade({ open, setOpen }) {
-    const hideModal = () => setOpen(false);
+  const hideModal = () => setOpen(false);
 
-    return (
-        <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`}>
-        <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
+  const redirectToCheckout = async (isYearly) => {
+    try {
+
+      const stripe = await loadStripe(STRIPE_KEY);
+
+      const body = {
+        subType: isYearly ? "CTFGuideProYearly" : "CTFGuidePro",
+        quantity: 1,
+        operation: 'subscription',
+        data: {},
+      }
+
+      const session = await request(`${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`, "POST", body);
+
+      if (session.error) {
+        console.log('Creating the stripe session failed');
+        return;
+      }
+
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`}>
+    <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
             <div className="bg-neutral-900 bg-opacity-70  w-full h-full py-24 sm:py-32">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 animate__animated animate__slideInDown">
                     <div className="mx-auto max-w-3xl sm:text-center">
@@ -58,6 +92,7 @@ export default function Upgrade({ open, setOpen }) {
                   <span className="text-sm font-semibold leading-6 tracking-wide text-white">USD</span>
                 </p>
                 <a
+                  onClick={() => redirectToCheckout(false)}
                   href="#"
                   className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
@@ -66,16 +101,10 @@ export default function Upgrade({ open, setOpen }) {
                 <p className="mt-6 text-xs leading-5 text-white">
                   Invoices and receipts available for easy company reimbursement
                 </p>
-
-
-
               </div>
-
-
             </div>
           </div>
                         </div>
-                  
                     </div>
                 </div>
             </div>

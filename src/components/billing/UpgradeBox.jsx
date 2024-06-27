@@ -1,7 +1,44 @@
 import * as React from 'react';
 
+import { loadStripe } from '@stripe/stripe-js';
+import request from "@/utils/request";
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+
+
 export default function UpgradeBox() {
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+  const redirectToCheckout = async (isYearly) => {
+    try {
+
+      const stripe = await loadStripe(STRIPE_KEY);
+
+      const body = {
+        subType: isYearly ? "CTFGuideProYearly" : "CTFGuidePro",
+        quantity: 1,
+        operation: 'subscription',
+        data: {},
+      }
+
+      const session = await request(`${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`, "POST", body);
+
+      if (session.error) {
+        console.log('Creating the stripe session failed');
+        return;
+      }
+
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="h-[575px] w-[650px] rounded-xl bg-neutral-800 shadow-md max-md:w-full">
       <div className="w-full justify-between rounded-t-xl bg-gradient-to-r from-amber-500 via-yellow-300 via-60% to-amber-500 py-8 text-black">
@@ -45,10 +82,18 @@ export default function UpgradeBox() {
         <a className="mr-20 mt-10 text-white/70" href={`${baseUrl}/subscribe`}>
           Learn more
         </a>
-        <div className="m-6 w-3/5 items-center justify-center rounded-[45px] bg-black py-3.5 text-center text-white shadow-sm max-md:mx-5 max-md:mr-2.5">
-          Upgrade • $4.99/month
-        </div>
-      </div>
+
+    <div onClick={() => redirectToCheckout(true)} 
+    className="m-6 w-3/5 items-center justify-center rounded-[45px] bg-black py-3.5 text-center text-white shadow-sm max-md:mx-5 max-md:mr-2.5">
+    Upgrade • $54.99/year
+    </div>
+
+    <div onClick={() => redirectToCheckout(false)}
+    className="m-6 w-3/5 items-center justify-center rounded-[45px] bg-black py-3.5 text-center text-white shadow-sm max-md:mx-5 max-md:mr-2.5">
+
+    Upgrade • $4.99/month
+    </div>
+    </div>
     </div>
   );
 }
