@@ -119,7 +119,18 @@ export default function Challenge() {
             {<selectedTab.element cache={cache} setCache={setCache} />}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
-            <div className="grow bg-neutral-950 w-full">
+            <div className="grow bg-neutral-950 w-full overflow-hidden">
+              <div className="h-full">
+                <div className="flex">
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: 0:00</h1>
+                 <div className="ml-auto flex px-2">
+                 <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
+              </div>
+
+                </div>
+                <iframe src="https://82.ctfguide.com" className="pl-2 pb-10 w-full h-full overflow-hidden "   />
+              </div>
             </div>
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
               <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
