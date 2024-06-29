@@ -11,9 +11,31 @@ import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
 import { MyTable } from '@/components/Table';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
+import request from "@/utils/request";
 
 
 export default function Competitions() {
+
+  const [leaderboard, setLeaderboard] = useState([{
+    user: {
+      id: "test",
+      username: "test",
+      avatar: "test",
+    },
+    totalPoints: 0,
+  }]);
+
+  const getLeaderboard = async () => {
+    const url = process.env.NEXT_PUBLIC_API_URL + "/leaderboard/";
+    const response = await request(url, "GET", null);
+    console.log("response: ", response.leaderboard);
+    setLeaderboard(response.leaderboard);
+  };
+
+  useEffect(() => {
+    getLeaderboard();
+    console.log("leaderboard: " + leaderboard);
+  },[])
 
   return (
     <>
@@ -104,128 +126,39 @@ export default function Competitions() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">1</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        alt="Avatar"
-                        className="rounded-full"
-                        height="32"
-                        src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        style={{
-                          aspectRatio: "32/32",
-                          objectFit: "cover",
-                        }}
-                        width="32"
-                      />
-                      <span>John</span>
-                    </div>
-                  </TableCell>
-            
-                  <TableCell className="text-right">1500</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">2</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        alt="Avatar"
-                        className="rounded-full"
-                        height="32"
-                        src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        style={{
-                          aspectRatio: "32/32",
-                          objectFit: "cover",
-                        }}
-                        width="32"
-                      />
-                      <span>Abhi</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">1200</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">3</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        alt="Avatar"
-                        className="rounded-full"
-                        height="32"
-                        src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        style={{
-                          aspectRatio: "32/32",
-                          objectFit: "cover",
-                        }}
-                        width="32"
-                      />
-                      <span>Kshitij</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">1000</TableCell>
-                </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">4</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <span>AmiCOOKED</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">900</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">5</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <span>APPLEADAYDOCTORAWAY</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">850</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">6</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <span>sigmatime100</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">800</TableCell>
-              </TableRow>
-           
+
+                {
+                  leaderboard.slice(3).map((index, entry) => {
+                    //check if user does not have a profile image
+                    let profileImage = entry.profileImage;
+                    if (entry.profileImage === ""){
+                      profileImage = "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
+                    }
+                    return (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">1</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <img
+                              alt="Avatar"
+                              className="rounded-full"
+                              height="32"
+                              src={profileImage}
+                              style={{
+                                aspectRatio: '32/32',
+                                objectFit: 'cover',
+                              }}
+                              width="32"
+                            />
+                            <span>{entry.uid}</span>
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="text-right">{entry.totalPoints}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                }
               </TableBody>
             </Table>
           </div>
