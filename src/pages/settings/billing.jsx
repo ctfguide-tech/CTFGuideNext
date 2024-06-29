@@ -50,7 +50,7 @@ export default function Billing(){
           }
         } catch (error) {
           console.log(error);
-        }g
+        }
       };
     
       const updateCardInfo = async () => {

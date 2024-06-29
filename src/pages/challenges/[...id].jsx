@@ -35,7 +35,8 @@ export default function Challenge() {
   const tabs = {
     'description': { text: 'Description', element: DescriptionPage, },
     'write-up': { text: 'Write Up', element: WriteUpPage, },
-    'hints': { text: 'Hints', element: WriteUpPage, },
+    'hints': { text: 'Hints', element: HintsPage, },
+    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
 
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
@@ -118,7 +119,18 @@ export default function Challenge() {
             {<selectedTab.element cache={cache} setCache={setCache} />}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
-            <div className="grow bg-neutral-950 w-full">
+            <div className="grow bg-neutral-950 w-full overflow-hidden">
+              <div className="h-full">
+                <div className="flex">
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: 0:00</h1>
+                 <div className="ml-auto flex px-2">
+                 <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
+              </div>
+
+                </div>
+                <iframe src="https://82.ctfguide.com" className="pl-2 pb-10 w-full h-full overflow-hidden "   />
+              </div>
             </div>
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
               <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
@@ -171,6 +183,22 @@ function TabLink({ tabName, selected, url }) {
   )
 }
 
+function HintsPage({ cache }) {
+  const { challenge } = cache;
+
+  return (
+    <>
+      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+        <h1 className="text-2xl font-semibold py-2 line-clamp-1">
+         Hints
+        </h1>
+    </div>
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+    </>
+  )
+}
+
+
 function DescriptionPage({ cache }) {
   const { challenge } = cache;
   const colorText = {
@@ -213,6 +241,8 @@ function DescriptionPage({ cache }) {
     </>
   )
 }
+
+
 
 function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', children }) {
   return <p className={`${bgColor} ${textColor} capitalize rounded-sm px-2`}>{children}</p>
@@ -327,6 +357,21 @@ function WriteUpPage({ cache, setCache }) {
         ))}
       </div>
         )}
+
+        {
+          !writeUp.length && (
+            <div className="px-3">
+                       <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
+            <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+              <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
+              <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
+              <p className="text-sm">Maybe you could create one?</p>
+
+            </div>
+          </div>
+            </div>
+          )
+        }
       
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
@@ -408,4 +453,127 @@ function WriteupView({ writeup, onBack }) {
 
     </div>
   );
+}
+
+function LeaderboardPage({ cache, setCache }) {
+
+  
+
+  const router = useRouter();
+  const [selectedWriteup, setSelectedWriteup] = useState(null);
+
+  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
+
+  useEffect(() => {
+    (async () => {
+      if (cache['leaderboard-page']) {
+        return;
+      }
+      setCache('leaderboard-page', {});
+    })();
+  })
+
+
+
+  // START OF CREATE FUNCTIONALITY
+  const [isCreating, setIsCreating] = useState(false);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
+  useEffect(() => {
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
+        .then((data) => {
+
+          request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
+            console.log("cow")
+            console.log(challenges)
+            challenges.forEach((challenge) => (
+              console.log(challenge.slug)
+            ))
+            setSolvedChallenges(challenges)
+
+          })
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    } catch (error) { }
+  }, []);
+  // END OF CREATE FUNCTIONALITY
+
+  // START OF FETCH WRITEUP FUNCTIONALITY
+  const [leaderboard, setLeaderboardData] = useState([]);
+  useEffect(() => {
+    console.log(`Fetching writeup data for challenge ${urlChallengeId}`)
+
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/leaderboard`, "GET", null)
+        .then((data) => {
+          console.log(`Leaderboard Data: ${JSON.stringify(data)}`)
+          try {
+          setLeaderboardData(data)
+          } catch(err) {
+            console.log("Error loading leaderboard data.")
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) { }
+  }, []);
+
+  return (
+    <>
+      <div className="flex">
+
+       
+            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+              <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
+            </div>
+
+      
+
+      
+       
+
+      </div>
+    
+    <div className="grid grid-cols-3">
+      <div className="">
+
+      </div>
+    </div>
+
+      {leaderboard.slice(0, 3).map((entry, index) => {
+        let color;
+        switch(index) {
+          case 0:
+            color = "from-yellow-500 to-yellow-700"; // gold
+            break;
+          case 1:
+            color = "from-gray-500 to-gray-700"; // silver
+            break;
+          case 2:
+            color = "from-orange-500 to-orange-700"; // bronze
+            break;
+          default:
+            color = "from-green-500 to-blue-700"; // default color for others
+        }
+        return (
+        <div className="px-3">
+            <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
+            <div className="flex items-center">
+              <span className="text-2xl font-bold">{index + 1}.</span>
+              <span className="ml-2 text-xl font-semibold text-white">{entry.user.username}</span>
+            </div>
+            <div className="text-xl font-semibold">{entry.points} points</div>
+          </div>
+        </div>
+        )
+      })}
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+</>
+  )
 }

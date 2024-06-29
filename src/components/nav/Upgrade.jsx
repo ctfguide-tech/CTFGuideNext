@@ -9,11 +9,45 @@ const includedFeatures = [
 
 ]
 
-export default function Upgrade({ open, setOpen }) {
-    const hideModal = () => setOpen(false);
+import { loadStripe } from '@stripe/stripe-js';
+import request from "@/utils/request"
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
-    return (
-        <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`}>
+export default function Upgrade({ open, setOpen }) {
+  const hideModal = () => setOpen(false);
+
+  const activateCheckout = async () => {
+    try {
+      const stripe = await loadStripe(STRIPE_KEY);
+      const subscriptionType = "CTFGuidePro"
+
+      const body = {
+        subType: subscriptionType,
+        quantity: 1,
+        operation: 'subscription',
+        data: {},
+      }
+
+      const session = await request(`${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`, "POST", body);
+      if (session.error) {
+        console.log('Creating the stripe session failed');
+        return;
+      }
+
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`}>
         <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
             <div className="bg-neutral-900 bg-opacity-70  w-full h-full py-24 sm:py-32">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 animate__animated animate__slideInDown">
@@ -59,6 +93,7 @@ export default function Upgrade({ open, setOpen }) {
                 </p>
                 <a
                   href="#"
+      onClick={activateCheckout}
                   className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
                   Subscribe
