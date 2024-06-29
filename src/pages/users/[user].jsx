@@ -924,14 +924,14 @@ Cybersecurity made easy for everyone"
                             )}
                         </div>
                         {/* BOTTOM LINE */}
-                        <div className="flex flex-col items-center sm:flex-row sm:gap-x-3">
+                        <div className=" ">
                             {location && (
-                                <div className="flex">
-                                    <p className="text-lg text-white">
-                                        <i class="fas fa-map-marker-alt mt-2"> </i>{' '}
-                                        {location}
+                              
+                                    <p className="text-sm text-white">
+                                        <i class="fas fa-map-marker-alt mt-2"> </i>
+                                       &nbsp; {location}
                                     </p>
-                                </div>
+                             
                             )}
                         </div>
                     </div>
