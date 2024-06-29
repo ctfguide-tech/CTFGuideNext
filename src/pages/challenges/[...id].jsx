@@ -35,7 +35,7 @@ export default function Challenge() {
   const tabs = {
     'description': { text: 'Description', element: DescriptionPage, },
     'write-up': { text: 'Write Up', element: WriteUpPage, },
-    'hints': { text: 'Hints', element: WriteUpPage, },
+    'hints': { text: 'Hints', element: HintsPage, },
     'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
 
   }
@@ -172,6 +172,22 @@ function TabLink({ tabName, selected, url }) {
   )
 }
 
+function HintsPage({ cache }) {
+  const { challenge } = cache;
+
+  return (
+    <>
+      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+        <h1 className="text-2xl font-semibold py-2 line-clamp-1">
+         Hints
+        </h1>
+    </div>
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+    </>
+  )
+}
+
+
 function DescriptionPage({ cache }) {
   const { challenge } = cache;
   const colorText = {
@@ -214,6 +230,8 @@ function DescriptionPage({ cache }) {
     </>
   )
 }
+
+
 
 function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', children }) {
   return <p className={`${bgColor} ${textColor} capitalize rounded-sm px-2`}>{children}</p>
@@ -328,6 +346,21 @@ function WriteUpPage({ cache, setCache }) {
         ))}
       </div>
         )}
+
+        {
+          !writeUp.length && (
+            <div className="px-3">
+                       <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
+            <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+              <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
+              <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
+              <p className="text-sm">Maybe you could create one?</p>
+
+            </div>
+          </div>
+            </div>
+          )
+        }
       
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
@@ -502,16 +535,33 @@ function LeaderboardPage({ cache, setCache }) {
       </div>
     </div>
 
-      {leaderboard.map((entry, index) => (
-            <div key={index} className="flex justify-between items-center py-2 px-4">
-              <div className="flex items-center">
-                <span className="text-lg font-semibold">{index + 1}.</span>
-                <span className="ml-2 text-l  g text-white">{entry.user.username}</span>
-              </div>
-              <div className="text-lg">{entry.points}</div>
+      {leaderboard.slice(0, 3).map((entry, index) => {
+        let color;
+        switch(index) {
+          case 0:
+            color = "from-yellow-500 to-yellow-700"; // gold
+            break;
+          case 1:
+            color = "from-gray-500 to-gray-700"; // silver
+            break;
+          case 2:
+            color = "from-orange-500 to-orange-700"; // bronze
+            break;
+          default:
+            color = "from-green-500 to-blue-700"; // default color for others
+        }
+        return (
+        <div className="px-3">
+            <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
+            <div className="flex items-center">
+              <span className="text-2xl font-bold">{index + 1}.</span>
+              <span className="ml-2 text-xl font-semibold text-white">{entry.user.username}</span>
             </div>
-          ))}
-      
+            <div className="text-xl font-semibold">{entry.points} points</div>
+          </div>
+        </div>
+        )
+      })}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
 </>
   )
