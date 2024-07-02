@@ -19,9 +19,10 @@ export default function General() {
   const [banner, bannerState] = useState(false);
 
   const [bio, setBio] = useState(null);
-
   const [firstName, setFname] = useState(null);
   const [lastName, setLname] = useState(null);
+  const [location, setLocation] = useState(null);
+
   const [githubLink, setGithub] = useState(null);
 
 
@@ -126,11 +127,12 @@ function closeUnsavedNotif() {
     setBio(document.getElementById('bio').value);
     setFname(document.getElementById('first-name').value);
     setLname(document.getElementById('last-name').value);
-    
+    setLocation(document.getElementById('location').value);
     var body = {
         bio: document.getElementById('bio').value,
         firstName: document.getElementById('first-name').value,
-        lastName: document.getElementById('last-name').value
+        lastName: document.getElementById('last-name').value,
+        location: document.getElementById('location').value
     };
     const data = await request(
        `${process.env.NEXT_PUBLIC_API_URL}/account`,
@@ -138,39 +140,35 @@ function closeUnsavedNotif() {
          body
     ).then((response) => {
       console.log(response)
+      console.log('above message should be response')
       document.getElementById('save').innerHTML = 'Save';
 
     });
-    if (!data) {
-        console.log('Failed to save');
-    }
+   
     setBio(body.bio);
     setFname(body.firstName);
     setLname(body.lastName);
-    console.log( document.getElementById('bio').value)
+    setLocation(body.location)
 }
    async function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
     var github = document.getElementById('url').value;
-    var location = document.getElementById('location').value;
 
     var data = JSON.stringify({
       githubUrl: github,
-      location: location,
     });
 
     var xhr = new XMLHttpRequest();
-
+/*
     xhr.addEventListener('readystatechange', function () {
       if (this.readyState === 4) {
         console.log(this.responseText);
         document.getElementById('save').innerHTML = 'Save';
       }
     });
-
+*/
     
-
     saveInformation();
     closeUnsavedNotif();
 
