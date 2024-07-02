@@ -37,6 +37,7 @@ export default function Challenge() {
     'write-up': { text: 'Write Up', element: WriteUpPage, },
     'hints': { text: 'Hints', element: HintsPage, },
     'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
+    'comments': { text: 'Comments', element: CommentsPage, },
 
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
@@ -575,5 +576,99 @@ function LeaderboardPage({ cache, setCache }) {
       })}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
 </>
+  )
+}
+
+function CommentsPage({ cache }) {
+  const { challenge } = cache;
+  const [newComment, setNewComment] = useState('');
+  const [reply, setReply] = useState({});
+
+
+  useEffect(() => {
+    if (!challenge) {
+      return;
+    }
+    (async () => {
+      try {
+        const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+          challenge[`comments`] =  getCommentsResult.result;
+          console.log(challenge.comments)
+          setNewComment()
+
+          
+
+      } catch (error) { console.error("Failed to fetch comments: " + error); }
+    })();
+  }, [challenge]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    // Implement API call to submit comment
+    console.log('Submit comment:', newComment);
+    setNewComment('');
+  };
+
+  const handleReplySubmit = async (commentId, replyText) => {
+    // Implement API call to submit reply
+    console.log(`Reply to ${commentId}:`, replyText);
+    setReply({ ...reply, [commentId]: '' });
+  };
+
+
+  
+  return (
+    <>
+      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+        <h1 className="text-2xl font-semibold py-2 line-clamp-1">
+          Comments
+        </h1>
+    
+<form onSubmit={handleCommentSubmit} className="mb-4">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+            className="text-black p-2 rounded-sm w-full bg-neutral-700 border-none text-white placeholder-text-white"
+          />
+          <button type="submit" className="mt-2 bg-blue-600 hover:bg-blue-500 text-white px-2 text-sm py-1">Post Comment</button>
+        </form>
+        {challenge && challenge.comments && challenge.comments.map((comment, index) => {
+          return (
+            <div key={index} className="my-2 p-2 bg-neutral-700 ">
+              <div className="flex justify-between">
+                <div className="flex items-center">
+                  <span className="text-lg font-semibold text-white">{comment.username}</span>
+                </div>
+                <button onClick={() => setReply({ ...reply, [comment.id]: !reply[comment.id] })} className="text-sm text-blue-500">Reply</button>
+              </div>
+              <p className="mt-2 text-neutral-200">{comment.content}</p>
+              {reply[comment.id] && (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  handleReplySubmit(comment.id, reply[comment.id]);
+                }} className="mt-2">
+                  <input
+                    type="text"
+                    value={reply[comment.id] || ''}
+                    onChange={(e) => setReply({ ...reply, [comment.id]: e.target.value })}
+                    placeholder="Type your reply..."
+                    className="text-white bg-neutral-800 border-none p-2 rounded-sm w-full"
+                  />
+                  <button type="submit" className="bg-blue-600 mt-2 hover:bg-blue-500 text-white px-2 py-1 text-sm">Post Reply</button>
+                  <button type="submit" className="ml-2 bg-neutral-600 mt-2 hover:bg-neutral-500 text-white px-2 py-1 text-sm">Cancel</button>
+
+                </form>
+              )}
+            </div>
+          )
+        })}
+
+
+
+      </div >
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+    </>
   )
 }
