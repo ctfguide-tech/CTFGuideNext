@@ -262,12 +262,6 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       Practice
                     </Link>
                     <Link
-                      href='/competitions'
-                      className={linkClass('/competitions')}
-                    >
-                      Competitions
-                    </Link>
-                    <Link
                       href='/leaderboards'
                       className={linkClass('/leaderboards') + " hidden lg:inline-flex"}
                     >
@@ -376,7 +370,6 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-blue-500"> 
         <i className="far fa-check-circle"></i> {points}
     </h1>
-    <span className="tooltiptext">{points} points</span>
 </div>
                     {/* <div */}
                     {/*   className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1" */}

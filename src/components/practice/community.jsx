@@ -150,7 +150,7 @@ export function Community({ challenges }) {
     <>
 
       <div className="mt-6 max-w-7xl text-left">
-        <h1 className="text-3xl font-semibold text-white mb-4"> Community Challenges </h1>
+        <h1 className="text-3xl font-semibold text-white mb-4"> Practice Problems </h1>
         <div className="flex flex-col md:flex-row max-w-7xl gap-4">
 
           <div className="w-full">

@@ -10,11 +10,17 @@ import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import ReactMarkdown from "react-markdown";
+import Menu from '@/components/editor/Menu';
+
+
 
 export default function Challenge() {
   const router = useRouter();
+
+
   // I hate this
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
 
   // Very primitive cache system
   const [cache, _setCache] = useState({});
@@ -29,7 +35,9 @@ export default function Challenge() {
   const tabs = {
     'description': { text: 'Description', element: DescriptionPage, },
     'write-up': { text: 'Write Up', element: WriteUpPage, },
-    'hints': { text: 'Hints', element: WriteUpPage, },
+    'hints': { text: 'Hints', element: HintsPage, },
+    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
+    'comments': { text: 'Comments', element: CommentsPage, },
 
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
@@ -112,7 +120,18 @@ export default function Challenge() {
             {<selectedTab.element cache={cache} setCache={setCache} />}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
-            <div className="grow bg-neutral-950 w-full">
+            <div className="grow bg-neutral-950 w-full overflow-hidden">
+              <div className="h-full">
+                <div className="flex">
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: 0:00</h1>
+                 <div className="ml-auto flex px-2">
+                 <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
+              </div>
+
+                </div>
+                <iframe src="https://82.ctfguide.com" className="pl-2 pb-10 w-full h-full overflow-hidden "   />
+              </div>
             </div>
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
               <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
@@ -128,7 +147,7 @@ export default function Challenge() {
 }
 
 function FlagDialog({ color, title, message }) {
-  let [isOpen, setIsOpen] = useState(true)
+  let [isOpen, setIsOpen] = useState(false)
 
   return (
     <Dialog
@@ -164,6 +183,22 @@ function TabLink({ tabName, selected, url }) {
     </Link>
   )
 }
+
+function HintsPage({ cache }) {
+  const { challenge } = cache;
+
+  return (
+    <>
+      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+        <h1 className="text-2xl font-semibold py-2 line-clamp-1">
+         Hints
+        </h1>
+    </div>
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+    </>
+  )
+}
+
 
 function DescriptionPage({ cache }) {
   const { challenge } = cache;
@@ -208,11 +243,22 @@ function DescriptionPage({ cache }) {
   )
 }
 
+
+
 function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', children }) {
   return <p className={`${bgColor} ${textColor} capitalize rounded-sm px-2`}>{children}</p>
 }
 
 function WriteUpPage({ cache, setCache }) {
+
+  
+
+  const router = useRouter();
+  const [selectedWriteup, setSelectedWriteup] = useState(null);
+
+  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
+
   useEffect(() => {
     (async () => {
       if (cache['write-page']) {
@@ -221,16 +267,407 @@ function WriteUpPage({ cache, setCache }) {
       setCache('write-page', {});
     })();
   })
+
+
+
+  // START OF CREATE FUNCTIONALITY
+  const [isCreating, setIsCreating] = useState(false);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
+  useEffect(() => {
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
+        .then((data) => {
+
+          request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
+            console.log("cow")
+            console.log(challenges)
+            challenges.forEach((challenge) => (
+              console.log(challenge.slug)
+            ))
+            setSolvedChallenges(challenges)
+
+          })
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    } catch (error) { }
+  }, []);
+  // END OF CREATE FUNCTIONALITY
+
+  // START OF FETCH WRITEUP FUNCTIONALITY
+  const [writeUp, setWriteUp] = useState([]);
+  useEffect(() => {
+    console.log(`Fetching writeup data for challenge ${urlChallengeId}`)
+
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/writeups`, "GET", null)
+        .then((data) => {
+          console.log(`Writeup data: ${JSON.stringify(data)}`)
+          setWriteUp(data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) { }
+  }, []);
+
   return (
     <>
-    <div className="flex">
+      <div className="flex">
+        {!selectedWriteup && (
+          <>
+            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+              <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
+            </div>
+            <div className="ml-auto">
+              <button onClick={() => { setIsCreating(true) }} className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-5  text-sm mr-4">New Draft</button>
+            </div>
+          </>
+        )}
+
+      </div>
+      {selectedWriteup ? (
+        <WriteupView writeup={selectedWriteup} onBack={() => setSelectedWriteup(null)} />
+      ) : (
+      
+
+      <div className="px-4 overflow-auto">
+        {writeUp.map((writeup, index) => (
+          <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+            <div className='w-full flex'>
+              <div className="">
+
+                <h3 className="text-2xl">{writeup.title}</h3>
+                <p className="text-sm">Authored by {writeup.user.username}</p>
+
+              </div>
+              <div className="ml-auto mt-2">
+                <p className="text-sm text-right">452 views</p>
+
+                <div className=" space-x-2 text-right text-lg">
+                  <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
+                  <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
+                </div>
+
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+        )}
+
+        {
+          !writeUp.length && (
+            <div className="px-3">
+                       <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
+            <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+              <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
+              <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
+              <p className="text-sm">Maybe you could create one?</p>
+
+            </div>
+          </div>
+            </div>
+          )
+        }
+      
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+      <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
+</>
+  )
+}
+
+function WriteupView({ writeup, onBack }) {
+  const [upvotes, setUpvotes] = useState(writeup.upvotes);
+  const [downvotes, setDownvotes] = useState(writeup.downvotes);
+
+  async function upvoteWriteup(writeupId) {
+    try {
+      const upvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/upvote`;
+      const response = await request(upvoteEndpoint, 'POST', {
+        "message": "Upvoted writeup"
+      });
+      if (response.success) {
+        console.log("Upvoted successfully");
+        setUpvotes(response.upvotes)
+        setDownvotes(response.downvotes)
+    
+      } else {
+        console.error("Failed to upvote:", response.message);
+      }
+    } catch (error) {
+      console.error("Error upvoting writeup:", error);
+    }
+  }
+  
+  async function downvoteWriteup(writeupId) {
+    try {
+      const downvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`;
+      const response = await request(downvoteEndpoint, 'POST', {
+        "message": "Downvoted writeup"
+      });
+      if (response.success) {
+        console.log("Downvoted successfully");
+        setUpvotes(response.upvotes)
+        setDownvotes(response.downvotes)
+      } else {
+        console.error("Failed to downvote:", response.message);
+      }
+    } catch (error) {
+      console.error("Error downvoting writeup:", error);
+    }
+  }
+
+
+  return (
+    <div className="px-4 mt-4">
+
+      <div className="flex">
+        <div>
+        <h1 className="text-3xl">{writeup.title}</h1>
+        <p>Authored by {writeup.user.username}</p>
+
+        </div>
+        <div className="ml-auto mt-3 text-right" >
+  <button className="hover:text-neutral-200 mb-2" onClick={onBack}><i className="fas fa-long-arrow-alt-left"></i> View all writeups</button> <br></br>
+  <button
+    className="px-2 rounded-full bg-green-700 hover:bg-green-600"
+    onClick={() => upvoteWriteup(writeup.id)}
+  >
+    <i className="fas fa-arrow-up"></i> {upvotes}
+  </button>
+  <button
+    className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
+    onClick={() => downvoteWriteup(writeup.id)}
+  >
+    <i className="fas fa-arrow-down"></i> {downvotes}
+  </button>    
+</div>
+      </div>
+      
+
+<br></br>
+      <MarkdownViewer content={writeup.content} />
+
+    </div>
+  );
+}
+
+function LeaderboardPage({ cache, setCache }) {
+
+  
+
+  const router = useRouter();
+  const [selectedWriteup, setSelectedWriteup] = useState(null);
+
+  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+
+
+  useEffect(() => {
+    (async () => {
+      if (cache['leaderboard-page']) {
+        return;
+      }
+      setCache('leaderboard-page', {});
+    })();
+  })
+
+
+
+  // START OF CREATE FUNCTIONALITY
+  const [isCreating, setIsCreating] = useState(false);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
+  useEffect(() => {
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
+        .then((data) => {
+
+          request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
+            console.log("cow")
+            console.log(challenges)
+            challenges.forEach((challenge) => (
+              console.log(challenge.slug)
+            ))
+            setSolvedChallenges(challenges)
+
+          })
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    } catch (error) { }
+  }, []);
+  // END OF CREATE FUNCTIONALITY
+
+  // START OF FETCH WRITEUP FUNCTIONALITY
+  const [leaderboard, setLeaderboardData] = useState([]);
+  useEffect(() => {
+    console.log(`Fetching writeup data for challenge ${urlChallengeId}`)
+
+    try {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/leaderboard`, "GET", null)
+        .then((data) => {
+          console.log(`Leaderboard Data: ${JSON.stringify(data)}`)
+          try {
+          setLeaderboardData(data)
+          } catch(err) {
+            console.log("Error loading leaderboard data.")
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) { }
+  }, []);
+
+  return (
+    <>
+      <div className="flex">
+
+       
+            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+              <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
+            </div>
+
+      
+
+      
+       
+
+      </div>
+    
+    <div className="grid grid-cols-3">
+      <div className="">
+
+      </div>
+    </div>
+
+      {leaderboard.slice(0, 3).map((entry, index) => {
+        let color;
+        switch(index) {
+          case 0:
+            color = "from-yellow-500 to-yellow-700"; // gold
+            break;
+          case 1:
+            color = "from-gray-500 to-gray-700"; // silver
+            break;
+          case 2:
+            color = "from-orange-500 to-orange-700"; // bronze
+            break;
+          default:
+            color = "from-green-500 to-blue-700"; // default color for others
+        }
+        return (
+        <div className="px-3">
+            <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
+            <div className="flex items-center">
+              <span className="text-2xl font-bold">{index + 1}.</span>
+              <span className="ml-2 text-xl font-semibold text-white">{entry.user.username}</span>
+            </div>
+            <div className="text-xl font-semibold">{entry.points} points</div>
+          </div>
+        </div>
+        )
+      })}
+      <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+</>
+  )
+}
+
+function CommentsPage({ cache }) {
+  const { challenge } = cache;
+  const [newComment, setNewComment] = useState('');
+  const [reply, setReply] = useState({});
+
+
+  useEffect(() => {
+    if (!challenge) {
+      return;
+    }
+    (async () => {
+      try {
+        const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+          challenge[`comments`] =  getCommentsResult.result;
+          console.log(challenge.comments)
+          setNewComment()
+
+          
+
+      } catch (error) { console.error("Failed to fetch comments: " + error); }
+    })();
+  }, [challenge]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    // Implement API call to submit comment
+    console.log('Submit comment:', newComment);
+    setNewComment('');
+  };
+
+  const handleReplySubmit = async (commentId, replyText) => {
+    // Implement API call to submit reply
+    console.log(`Reply to ${commentId}:`, replyText);
+    setReply({ ...reply, [commentId]: '' });
+  };
+
+
+  
+  return (
+    <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-        <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
-      </div>
-      <div className="ml-auto">
-        <button className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-3 mr-2">Create a Write up</button>
-      </div>
-      </div>
+        <h1 className="text-2xl font-semibold py-2 line-clamp-1">
+          Comments
+        </h1>
+    
+<form onSubmit={handleCommentSubmit} className="mb-4">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+            className="text-black p-2 rounded-sm w-full bg-neutral-700 border-none text-white placeholder-text-white"
+          />
+          <button type="submit" className="mt-2 bg-blue-600 hover:bg-blue-500 text-white px-2 text-sm py-1">Post Comment</button>
+        </form>
+        {challenge && challenge.comments && challenge.comments.map((comment, index) => {
+          return (
+            <div key={index} className="my-2 p-2 bg-neutral-700 ">
+              <div className="flex justify-between">
+                <div className="flex items-center">
+                  <span className="text-lg font-semibold text-white">{comment.username}</span>
+                </div>
+                <button onClick={() => setReply({ ...reply, [comment.id]: !reply[comment.id] })} className="text-sm text-blue-500">Reply</button>
+              </div>
+              <p className="mt-2 text-neutral-200">{comment.content}</p>
+              {reply[comment.id] && (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  handleReplySubmit(comment.id, reply[comment.id]);
+                }} className="mt-2">
+                  <input
+                    type="text"
+                    value={reply[comment.id] || ''}
+                    onChange={(e) => setReply({ ...reply, [comment.id]: e.target.value })}
+                    placeholder="Type your reply..."
+                    className="text-white bg-neutral-800 border-none p-2 rounded-sm w-full"
+                  />
+                  <button type="submit" className="bg-blue-600 mt-2 hover:bg-blue-500 text-white px-2 py-1 text-sm">Post Reply</button>
+                  <button type="submit" className="ml-2 bg-neutral-600 mt-2 hover:bg-neutral-500 text-white px-2 py-1 text-sm">Cancel</button>
+
+                </form>
+              )}
+            </div>
+          )
+        })}
+
+
+
+      </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
   )

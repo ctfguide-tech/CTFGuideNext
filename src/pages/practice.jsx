@@ -59,46 +59,13 @@ export default function Pratice() {
         <main>
       
           <div className="mx-auto max-w-7xl">
-          <div className="mx-auto mt-10  max-w-7xl">
-            <div className="  relative isolate overflow-hidden  bg-black/10 bg-neutral-900 shadow-2xl ring-1 ring-white/10 py-4">
-              <div className="relative mx-auto  max-w-7xl px-6 lg:px-8">
-                <div
-                  className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
-                  aria-hidden="true"
-                >
-                  <div
-                    className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
-                    style={{
-                      clipPath:
-                        'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-                    }}
-                  />
-                </div>
-                <div className="  flex">
-                  <div className=''>
-                  <p className="text-3xl font-semibold tracking-tight text-white flex">
-                      Are your preparing for a CTF competition?
-                  </p>
-                  <p className='text-lg text-white max-w-4xl'>
-                      CTFGuide stores challenges from past competitions. We're updating our collection on a daily basis.
-                  </p>
-
-          
-                  </div>
-
-                <img src="../icons8-leaderboard.svg" alt="flag" width="150" className="   text-white ml-auto absolute bottom-0 right-10 mb-[-50px]" />
-
-                 
-                </div>
-              </div>
-            </div>
-          </div>
+     
             <div>
               <div className="w-full p-4 pt-8">
-                  <div className='mb-10'>
+                  <div className='mb-10 hidden'>
                   <h1 className="text-3xl font-semibold text-white mb-2"> Featured Sets </h1>
 
-                      <div >
+                      <div className=''>
                   <h1 className="text-lg uppercase  mb-1 text-neutral-400"> Competition Sets </h1>
 
                         <div className='grid grid-cols-4 gap-x-4'>
