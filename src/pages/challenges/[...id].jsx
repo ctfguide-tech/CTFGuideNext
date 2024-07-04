@@ -604,9 +604,22 @@ function CommentsPage({ cache }) {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    // Implement API call to submit comment
-    console.log('Submit comment:', newComment);
-    setNewComment('');
+  if (!newComment.trim()) return; // Prevent empty comments
+
+  try {
+    const payload = { content: newComment };
+    const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "POST", payload);
+
+    if (response.success) {
+      console.log('Comment submitted:', response);
+      setNewComment(''); // Clear the input after successful submission
+      // Optionally refresh comments or update UI here
+    } else {
+      console.error('Failed to submit comment:', response.error);
+    }
+  } catch (error) {
+    console.error('Error submitting comment:', error);
+  }
   };
 
   const handleReplySubmit = async (commentId, replyText) => {
