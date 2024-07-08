@@ -185,8 +185,42 @@ function TabLink({ tabName, selected, url }) {
   )
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 function HintsPage({ cache }) {
   const { challenge } = cache;
+  const [hints, setHints] = useState([]);
+
+  async function fetchHints() {
+    const url = `${baseUrl}/challenges/${challenge.id}/getHints`;
+    const data = await request(url, "GET", null);
+    //console.log(data)
+    if(data && data.success) {
+      setHints(data.hintArray);
+    }
+  }
+
+  useEffect(() => {
+    if(challenge) fetchHints()
+  }, [challenge])
+
+  const showHint = async (i) => {
+    const url = `${baseUrl}/challenges/hints-update`;
+
+    const body = {
+      hintsUsed: i,
+      challengeId: challenge.id,
+    };
+
+    const data = await request(url, "POST", body);
+    //console.log(data);
+    if (data && data.success) {
+      let tmp = [...hints];
+      tmp[i].message = data.hintMessage;
+      setHints(tmp);
+    } else {
+      console.log('problem when feching hints');
+    }
+  };
 
   return (
     <>
@@ -194,6 +228,34 @@ function HintsPage({ cache }) {
         <h1 className="text-2xl font-semibold py-2 line-clamp-1">
          Hints
         </h1>
+      <div style={{padding: "5px", margin: "5px"}}>
+              {hints.map((hint, idx) => {
+                return (
+                  <div
+                    className="mb-2 mt-3 w-full border-l-2 border-yellow-600 bg-[#212121] px-4 text-lg opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                    onClick={() => showHint(idx)}
+                    style={{
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      wordWrap: 'break-word',
+                    }}
+                  >
+                    <div style={{ maxWidth: '90%' }}>
+                      <p className="text-white">
+                        <span className="text-sm ">
+                          {hint.message}
+                        </span>
+                      </p>
+                    </div>
+                    <span className="mt-1 text-sm text-white">
+                      {hint.penalty } points
+                    </span>
+                  </div>
+                );
+              })}
+      </div>
     </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
