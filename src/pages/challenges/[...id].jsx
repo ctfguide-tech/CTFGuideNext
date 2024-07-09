@@ -678,7 +678,9 @@ function CommentsPage({ cache }) {
     const rootComments = [];
     comments.forEach(comment => {
       if (comment.parentId) {
+        if (commentMap[comment.parentId]) {
         commentMap[comment.parentId].replies.push(comment);
+        } 
       } else {
         rootComments.push(comment);
       }
