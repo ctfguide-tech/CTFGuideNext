@@ -10,6 +10,7 @@ import Badge from '@/components/profile/Badge.jsx';
 import Skeleton from 'react-loading-skeleton';
 import { Transition, Dialog } from '@headlessui/react';
 import request from '@/utils/request';
+import { useRouter } from 'next/router';
 
 const shades = [
     'ml-1 h-5 w-5 bg-neutral-900',
@@ -26,12 +27,7 @@ const shades = [
 
 export default function Users() {
     let invalidUser = null;
-    let user = '';
-    try {
-        user = localStorage.getItem('username');
-    } catch (err) {
-        console.log('Something went wrong...');
-    }
+  
 
     const [ownUser, setOwnUser] = useState(false);
     const [proUser, setproUser] = useState(false);
@@ -64,6 +60,9 @@ export default function Users() {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [pfp, setPfp] = useState(process.env.NEXT_PUBLIC_FRONTEND_URL + `ConfusedKana.png`);
     const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const [user, setUser] = useState(false);
+    const router = useRouter();
+    const { user: urlUser } = router.query;
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -535,6 +534,19 @@ export default function Users() {
             getActivity();
         }
     }, [userData]);
+
+    useEffect(() => {
+        if (urlUser) {
+            setUser(urlUser);
+            // Additional logic to check if the logged-in user is the same as the profile being viewed
+            const loggedInUser = localStorage.getItem('username'); // Assuming you store the logged-in username in localStorage
+            if (urlUser === loggedInUser) {
+                setOwnUser(true);
+            } else {
+                setOwnUser(false);
+            }
+        }
+    }, [urlUser]);
 
     return (
         <>
