@@ -106,15 +106,17 @@ export default function Dashboard() {
     fetchRecommendedChallenges();
     fetchPopularChallenges();
 
-    request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
-      console.log(response)
-      setActivities(response.activityFeed);
-      
-    })
-    .catch(error => {
-      console.error('Error fetching leaderboard data: ', error);
-    });
-
+    const intervalId = setInterval(() => {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
+        console.log(response)
+        setActivities(response.activityFeed);
+      })
+      .catch(error => {
+        console.error('Error fetching feed data: ', error);
+      });
+    }, 5000); // 5000 milliseconds = 5 seconds
+  
+    return () => clearInterval(intervalId); //
 
   }, []);
 
@@ -227,16 +229,19 @@ export default function Dashboard() {
                 </h1>
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
              
-                  {activities &&
-                    activities.map((data) =>
-                      < div className="text-lg">
-                     
-                        <li className=''><a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold ' href={"../users/" + data.userName}>{data.userName}</a> completed <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}>{data.challengeName}</a></li>
-                      </div>
-                    )
-                    || <>
-                      <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
-                    </>}
+                {activities && activities.length > 0 ?
+  activities.map((data) =>
+    <div className="text-lg">
+      <li>
+        <a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold' href={"../users/" + data.userName}>{data.userName}</a> completed 
+        <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}>{data.challengeName}</a>
+      </li>
+    </div>
+  ) :
+  <>
+    <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
+  </>
+}
 
 
                 </ul>

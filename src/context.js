@@ -9,6 +9,10 @@ export const defaultState = {
 
   role: "",
   setRole: () => { },
+
+  points: "",
+  setPoints: () => { }
+
 };
 
 export const Context = createContext(defaultState);

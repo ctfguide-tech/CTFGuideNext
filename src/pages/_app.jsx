@@ -11,11 +11,12 @@ export default function App({ Component, pageProps }) {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
   const [profilePic, setProfilePic] = useState('');
-
+  const [points, setPoints] = useState(0);
   const appState = {
     role, setRole,
     username, setUsername,
     profilePic, setProfilePic,
+    points, setPoints
   };
 
   const fetchUser = async () => {
@@ -25,6 +26,7 @@ export default function App({ Component, pageProps }) {
       setRole(user.role);
       setUsername(user.username);
       setProfilePic(user.profileImage);
+      setPoints(user.points);
     }
   }
 

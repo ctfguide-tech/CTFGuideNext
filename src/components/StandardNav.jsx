@@ -47,13 +47,12 @@ const DEFAULT_NOTIFICATION = {
 };
 
 export function StandardNav({ guestAllowed, alignCenter = true }) {
-  const { role } = useContext(Context);
+  const { role, points } = useContext(Context);
 
   const [terminaIsOpen, setTerminalIsOpen] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
   const [isAdmin, setIsAdmin] = useState(true);
-  const [points, setPoints] = useState('0');
   const [notifications, setNotifications] = useState([]);
   const [showBanner, setShowBanner] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
