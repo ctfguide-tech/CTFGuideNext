@@ -605,7 +605,7 @@ Cybersecurity made easy for everyone"
                                             fontFamily: 'Poppins, sans-serif',
                                             backgroundColor: '#161716',
                                         }}
-                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom shadow-xl transition-all sm:my-8 sm:align-middle "
+                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom  transition-all sm:my-8 sm:align-middle "
                                     >
                                         <div>
                                             <div className="mt-3 sm:mt-5">
@@ -741,7 +741,7 @@ Cybersecurity made easy for everyone"
                                             fontFamily: 'Poppins, sans-serif',
                                             backgroundColor: '#161716',
                                         }}
-                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom shadow-xl transition-all sm:my-8 sm:align-middle "
+                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom  transition-all sm:my-8 sm:align-middle "
                                     >
                                         <div className="mt-3 sm:mt-5">
                                             <h1 className="pb-10 text-center text-4xl text-white">
@@ -876,7 +876,7 @@ Cybersecurity made easy for everyone"
                     </div>
                 </div>
                 {/* NAME CARD */}
-                <div className="mx-auto max-w-7xl rounded-sm shadow-md">
+                <div className="mx-auto max-w-7xl rounded-sm ">
     <div className="mx-auto -mt-16 mb-2 max-w-6xl p-4">
         <div className="flex flex-col items-center sm:flex-row sm:items-start">
             {/* Profile Picture */}
@@ -1080,7 +1080,10 @@ Cybersecurity made easy for everyone"
                     </div>
                     {/* Created Challenges */}
                     <div className="mt-4 rounded-sm">
+                    { createdChallenges && 
+
                         <div className="rounded-sm">
+
                             <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Created Challenges</h1>
                             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 rounded-sm bg-neutral-800 p-4 border-t-4 border-blue-500">
                                 {createdChallenges ? (
@@ -1098,7 +1101,9 @@ Cybersecurity made easy for everyone"
                                     </div>
                                 )}
                             </div>
+                       
                         </div>
+}
                     </div>
                     {/* Pinned Challenges */}
                     <div className="mt-4 rounded-sm">
