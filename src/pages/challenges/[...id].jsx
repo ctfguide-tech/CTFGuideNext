@@ -129,11 +129,19 @@ export default function Challenge() {
                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
                   <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
               </div>
+              
+
+                </div>
+                <div className="flex bg-yellow-900">
+                  <h1 className="text-sm font-semibold line-clamp-1 pl-2">Our terminal infrastructure is experiencing heavy load. Terminals may feel slow.</h1>
+              
+              
 
                 </div>
                 <iframe src="https://82.ctfguide.com" className="pl-2 pb-10 w-full h-full overflow-hidden "   />
               </div>
             </div>
+            
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
               <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
                 <input name="flag" type="text" required placeholder="Flag..." className="text-black h-full p-0 rounded-sm grow px-2 w-1/2" />

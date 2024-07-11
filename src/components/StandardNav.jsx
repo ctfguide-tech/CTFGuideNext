@@ -256,7 +256,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
              
                     <Link
                       href='/practice'
-                      className={linkClass('/practice')}
+                      className={linkClass('/practice') + " hidden lg:inline-flex"}
                     >
                       Practice
                     </Link>
@@ -281,7 +281,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Link>
 
                     {/* Ellipsis dropdown */}
-                    <Popover className="relative  md:block lg:block xl:block 2xl:hidden">
+                    <Popover className="relative  md:block lg:block xl:block 2xl:hidden  hidden lg:inline-flex">
                       {({ open }) => (
                         <>
                           <Popover.Button className="inline-flex items-center p-2 text-gray-400 hover:text-white ring-none outline-none " >
@@ -324,10 +324,10 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Popover>
 
                       {/*search bar*/}
-                      <div className="mt-3 ml-4 flex-grow">
+                      <div className="mt-3 ml-4 flex-grow ">
       <div
         type="text"
-        className="w-full px-16 py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800 hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center"
+        className="hidden lg:inline-flex w-full px-16 py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800 hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center"
         onClick={() => setShowSearchModal(true)}
       >
         <FontAwesomeIcon icon={faSearch} className="w-3 h-3  mr-1" />
@@ -351,7 +351,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   </div>
                 </div>
                 {!guestAllowed &&
-                  <div className="flex items-center ">
+                  <div className="flex items-center hidden lg:inline-flex ">
 
                     <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
                             onClick={() => setTerminalIsOpen(true)}

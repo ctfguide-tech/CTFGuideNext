@@ -234,7 +234,7 @@ export default function Dashboard() {
     <div className="text-lg">
       <li>
         <a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold' href={"../users/" + data.userName}>{data.userName}</a> completed 
-        <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}>{data.challengeName}</a>
+        <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}> {data.challengeName}</a>
       </li>
     </div>
   ) :
