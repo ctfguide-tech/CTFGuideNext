@@ -812,7 +812,7 @@ function CommentsPage({ cache }) {
               alt={`${comment.username}'s profile`}
             />
             <span className="ml-2 text-lg font-semibold text-white">
-              <a href={`/users/${comment.username}`} className="hover:text-neutral-200">
+              <a href={`/users/${comment.username}`} className="hover:text-neutral-10">
                 {comment.username}
               </a>
               {comment.username === 'laphatize' && (
