@@ -633,7 +633,11 @@ function LeaderboardPage({ cache, setCache }) {
             <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
             <div className="flex items-center">
               <span className="text-2xl font-bold">{index + 1}.</span>
-              <span className="ml-2 text-xl font-semibold text-white">{entry.user.username}</span>
+              <span className="ml-2 text-xl font-semibold text-white">
+                <Link href={`/users/${entry.user.username}`}>
+                  {entry.user.username}
+                </Link>
+              </span>
             </div>
             <div className="text-xl font-semibold">{entry.points} points</div>
           </div>
@@ -807,7 +811,10 @@ function CommentsPage({ cache }) {
               className="w-8 h-8 rounded-full"
               alt={`${comment.username}'s profile`}
             />
-            <span className="ml-2 text-lg font-semibold text-white">{comment.username}
+            <span className="ml-2 text-lg font-semibold text-white">
+              <a href={`/users/${comment.username}`} className="hover:text-neutral-200">
+                {comment.username}
+              </a>
               {comment.username === 'laphatize' && (
                 <>
                   <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>

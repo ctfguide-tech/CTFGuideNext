@@ -51,7 +51,7 @@ export default function General() {
       console.log('donee', { croppedImage });
       setCroppedImage(croppedImage);
     } catch (e) {
-      console.error(e);
+      console.log(e)
     }
   };
 
@@ -434,7 +434,7 @@ export default function General() {
                         </label>
                       </div>
                       {imageUrl && (
-                        <div className="mt-4">
+                        <div className="mt-4 mx-auto" style={{ height: '300px', width: '300px', position: 'relative' }}>
                           <Cropper
                             image={imageUrl}
                             crop={crop}
@@ -445,6 +445,7 @@ export default function General() {
                             onRotationChange={setRotation}
                             onZoomChange={setZoom}
                             onCropComplete={onCropComplete}
+                            style={{ containerStyle: { height: '100%', width: '100%' } }}
                           />
                         </div>
                       )}
