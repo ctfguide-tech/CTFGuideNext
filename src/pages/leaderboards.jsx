@@ -106,7 +106,7 @@ export default function Leaderboard() {
                           }}
                         >
                           <TableCell className="font-medium text-lg text-center">
-                            {index + 1}
+                            {index + 4}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
