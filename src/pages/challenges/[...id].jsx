@@ -767,18 +767,21 @@ function CommentsPage({ cache }) {
               <br />
               <button className="hover:text-neutral-600"><i className="fas fa-arrow-down"></i> <span>2</span></button>
             </div>
-            <img src={`https://ui-avatars.com/api/?name=${comment.username}.svg`} className="w-8 h-8 rounded-full" />
+            <img
+              src={comment.profilePicture || `https://robohash.org/${comment.username}.png?set=set1&size=150x150`}
+              className="w-8 h-8 rounded-full"
+              alt={`${comment.username}'s profile`}
+            />
             <span className="ml-2 text-lg font-semibold text-white">{comment.username}
               {comment.username === 'laphatize' && (
                 <>
-                  <span className="bg-red-600 px-1 text-sm ml-2"><i class="fas fa-code fa-fw"></i> developer</span>
-                  <span className="ml-2 bg-orange-600 px-1 text-sm "><i class="fas fa-crown fa-fw"></i> pro</span>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                  <span className="ml-2 bg-orange-600 px-1 text-sm "><i className="fas fa-crown fa-fw"></i> pro</span>
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
             </span>
           </div>
-        
         </div>
         <p className="text-neutral-200 pl-12">{comment.content}</p>
         {showReplies && comment.replies.length > 0 && (
@@ -788,7 +791,7 @@ function CommentsPage({ cache }) {
         )}
 
         <div className="ml-12">
-        <button onClick={() => replyingTo(comment.id, comment.username)} className="text-sm text-blue-500">Reply</button>
+          <button onClick={() => replyingTo(comment.id, comment.username)} className="text-sm text-blue-500">Reply</button>
           {comment.replies.length > 0 && (
             <button onClick={() => setShowReplies(!showReplies)} className="ml-2 text-sm text-blue-500">
               {showReplies ? 'Hide Replies' : 'Show Replies'}
@@ -835,11 +838,11 @@ function CommentsPage({ cache }) {
           />
 
           {hasReply &&
-          <div className=" flex w-full  text-left  px-2 bg-neutral-500/10 border-none   py-1"> Replying to  <span className="text-yellow-500 ml-1">{replyingPerson}</span><button className="ml-auto text-right" onClick={cancelReply}><i class="fas fa-times"></i></button></div>
+          <div className=" flex w-full  text-left  px-2 bg-neutral-500/10 border-none   py-1"> Replying to  <span className="text-yellow-500 ml-1">{replyingPerson}</span><button className="ml-auto text-right" onClick={cancelReply}><i className="fas fa-times"></i></button></div>
   }
   </div>
-          <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i class="fas fa-paper-plane"></i></button>
-          <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i class="fas fa-trash"></i></button>
+          <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-paper-plane"></i></button>
+          <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-trash"></i></button>
 
           </div>
         </form>
