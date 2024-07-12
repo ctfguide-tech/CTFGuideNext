@@ -71,7 +71,7 @@ export default function Dashboard() {
     console.log(router.query.loc);
     if (router.query.loc == 'general' || router.query.loc == undefined) {
       setGeneral(true);
-      loadGeneral();
+ //     loadGeneral();
     } else {
       setGeneral(false);
     }
@@ -96,59 +96,7 @@ export default function Dashboard() {
     }
   }, [router.query]);
 
-  function loadGeneral() {
-    if (router.query.loc == 'general' || router.query.loc == undefined) {
-      var xhr = new XMLHttpRequest();
 
-      xhr.addEventListener('readystatechange', function() {
-        if (this.readyState === 4) {
-          console.log(this.responseText);
-          try {
-            if (document.getElementById('first-name')) {
-              document.getElementById('first-name').value = JSON.parse(
-                this.responseText
-              ).firstName;
-              document.getElementById('last-name').value = JSON.parse(
-                this.responseText
-              ).lastName;
-              document.getElementById('bio').value = JSON.parse(
-                this.responseText
-              ).bio;
-              document.getElementById('url').value = JSON.parse(
-                this.responseText
-              ).githubUrl;
-              document.getElementById('location').value = JSON.parse(
-                this.responseText
-              ).location;
-              document.getElementById('username').value = JSON.parse(
-                this.responseText
-              ).username;
-              document.getElementById('email').value = JSON.parse(
-                this.responseText
-              ).email;
-            }
-
-            if (pfpString == '') {
-            } else {
-              //  document.getElementById('pfp').src = pfpString;
-            }
-
-
-
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      });
-
-      xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
-      let token = getCookie();
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-      xhr.withCredentials = true;
-      xhr.send();
-
-    }
-  }
 
   
   function loadPreferences() {
