@@ -18,6 +18,8 @@ export default function Dashboard() {
   const [challenges, setchallenges] = useState([]);
   const [objectives, setObjectives] = useState(null);
   const [activities, setActivities] = useState([]);
+  const [popular, setPopular] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const exampleObjectives = [
     {
@@ -59,7 +61,7 @@ export default function Dashboard() {
       try {
         const pinnedChallengeEndPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + user + '/likes';
         const pinnedChallengeResult = await request(pinnedChallengeEndPoint, "GET", null);
-        setLikes(pinnedChallengeResult);
+    //    setLikes(pinnedChallengeResult);
       } catch (error) {
         console.error("Failed to fetch pinnedChallengeResults: ", error)
       }
@@ -75,19 +77,46 @@ export default function Dashboard() {
     }
     fetchObjectives();
 
+    const fetchRecommendedChallenges = async () => {
+      setLoading(true);
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/dash/recommended`, 'GET', null);
+        setLikes(response); // Assuming the response directly contains the array of challenges
+      } catch (error) {
+        console.error('Failed to fetch recommended challenges: ', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
 
-      
-    request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
-      console.log(response)
-      setActivities(response.activityFeed);
-      
-    })
-    .catch(error => {
-      console.error('Error fetching leaderboard data: ', error);
-    });
+    const fetchPopularChallenges = async () => {
+      setLoading(true);
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/dash/popular`, 'GET', null);
+        setPopular(response); // Assuming the response directly contains the array of challenges
+      } catch (error) {
+        console.error('Failed to fetch recommended challenges: ', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
 
+    fetchRecommendedChallenges();
+    fetchPopularChallenges();
+
+    const intervalId = setInterval(() => {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
+        console.log(response)
+        setActivities(response.activityFeed);
+      })
+      .catch(error => {
+        console.error('Error fetching feed data: ', error);
+      });
+    }, 5000); // 5000 milliseconds = 5 seconds
+  
+    return () => clearInterval(intervalId); //
 
   }, []);
 
@@ -151,21 +180,23 @@ export default function Dashboard() {
                 <div className='w-full p-4'>
                   <h1 className='text-2xl mb-6 font-semibold'>Recommended Challenges</h1>
                   <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
-
-                  {likes?.length > 0 ?
-                      likes.map((challenge, index) => <ChallengeCard challenge={challenge.challenge} key={challenge.challenge.challengeId} />)
-                      : <><ChallengeCard /><ChallengeCard /></>}
-                      </div>
+                    {loading ? <><ChallengeCard /><ChallengeCard /></> : (
+                      likes?.length > 0 ?
+                        likes.map((challenge, index) => <ChallengeCard challenge={challenge} />)
+                        : <><ChallengeCard /><ChallengeCard /></>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className='w-full rounded-sm'>
                 <div className='w-full p-4'>
                   <h1 className='text-2xl mb-3 font-semibold'>Popular Challenges</h1>
                   <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
-
-                    {likes?.length > 0 ?
-                      likes.map((challenge, index) => <ChallengeCard challenge={challenge.challenge} key={challenge.challenge.challengeId} />)
-                      : <><ChallengeCard /><ChallengeCard /></>}
+                  {loading ? <><ChallengeCard /><ChallengeCard /></> : (
+                      popular?.length > 0 ?
+                        popular.map((challenge, index) => <ChallengeCard challenge={challenge} />)
+                        : <><ChallengeCard /><ChallengeCard /></>
+                    )}
                   </div>
                 </div>
               </div>
@@ -198,16 +229,19 @@ export default function Dashboard() {
                 </h1>
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
              
-                  {activities &&
-                    activities.map((data) =>
-                      < div className="text-lg">
-                     
-                        <li className=''><a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold ' href={"../users/" + data.userName}>{data.userName}</a> completed <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}>{data.challengeName}</a></li>
-                      </div>
-                    )
-                    || <>
-                      <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
-                    </>}
+                {activities && activities.length > 0 ?
+  activities.map((data) =>
+    <div className="text-lg">
+      <li>
+        <a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold' href={"../users/" + data.userName}>{data.userName}</a> completed 
+        <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}> {data.challengeName}</a>
+      </li>
+    </div>
+  ) :
+  <>
+    <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
+  </>
+}
 
 
                 </ul>

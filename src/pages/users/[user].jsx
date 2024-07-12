@@ -10,6 +10,7 @@ import Badge from '@/components/profile/Badge.jsx';
 import Skeleton from 'react-loading-skeleton';
 import { Transition, Dialog } from '@headlessui/react';
 import request from '@/utils/request';
+import { useRouter } from 'next/router';
 
 const shades = [
     'ml-1 h-5 w-5 bg-neutral-900',
@@ -26,12 +27,7 @@ const shades = [
 
 export default function Users() {
     let invalidUser = null;
-    let user = '';
-    try {
-        user = localStorage.getItem('username');
-    } catch (err) {
-        console.log('Something went wrong...');
-    }
+  
 
     const [ownUser, setOwnUser] = useState(false);
     const [proUser, setproUser] = useState(false);
@@ -64,6 +60,9 @@ export default function Users() {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [pfp, setPfp] = useState(process.env.NEXT_PUBLIC_FRONTEND_URL + `ConfusedKana.png`);
     const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const [user, setUser] = useState(false);
+    const router = useRouter();
+    const { user: urlUser } = router.query;
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -536,6 +535,19 @@ export default function Users() {
         }
     }, [userData]);
 
+    useEffect(() => {
+        if (urlUser) {
+            setUser(urlUser);
+            // Additional logic to check if the logged-in user is the same as the profile being viewed
+            const loggedInUser = localStorage.getItem('username'); // Assuming you store the logged-in username in localStorage
+            if (urlUser === loggedInUser) {
+                setOwnUser(true);
+            } else {
+                setOwnUser(false);
+            }
+        }
+    }, [urlUser]);
+
     return (
         <>
             <Head>
@@ -593,7 +605,7 @@ Cybersecurity made easy for everyone"
                                             fontFamily: 'Poppins, sans-serif',
                                             backgroundColor: '#161716',
                                         }}
-                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom shadow-xl transition-all sm:my-8 sm:align-middle "
+                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom  transition-all sm:my-8 sm:align-middle "
                                     >
                                         <div>
                                             <div className="mt-3 sm:mt-5">
@@ -729,7 +741,7 @@ Cybersecurity made easy for everyone"
                                             fontFamily: 'Poppins, sans-serif',
                                             backgroundColor: '#161716',
                                         }}
-                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom shadow-xl transition-all sm:my-8 sm:align-middle "
+                                        className="relative inline-block w-5/6 max-w-6xl transform overflow-hidden rounded-sm border border-gray-700 bg-gray-900 px-20 pb-10 pb-4 pt-10 pt-5 text-left align-bottom  transition-all sm:my-8 sm:align-middle "
                                     >
                                         <div className="mt-3 sm:mt-5">
                                             <h1 className="pb-10 text-center text-4xl text-white">
@@ -864,7 +876,7 @@ Cybersecurity made easy for everyone"
                     </div>
                 </div>
                 {/* NAME CARD */}
-                <div className="mx-auto max-w-7xl rounded-sm shadow-md">
+                <div className="mx-auto max-w-7xl rounded-sm ">
     <div className="mx-auto -mt-16 mb-2 max-w-6xl p-4">
         <div className="flex flex-col items-center sm:flex-row sm:items-start">
             {/* Profile Picture */}
@@ -1068,7 +1080,10 @@ Cybersecurity made easy for everyone"
                     </div>
                     {/* Created Challenges */}
                     <div className="mt-4 rounded-sm">
+                    { createdChallenges && 
+
                         <div className="rounded-sm">
+
                             <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Created Challenges</h1>
                             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 rounded-sm bg-neutral-800 p-4 border-t-4 border-blue-500">
                                 {createdChallenges ? (
@@ -1086,7 +1101,9 @@ Cybersecurity made easy for everyone"
                                     </div>
                                 )}
                             </div>
+                       
                         </div>
+}
                     </div>
                     {/* Pinned Challenges */}
                     <div className="mt-4 rounded-sm">

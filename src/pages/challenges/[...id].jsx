@@ -11,6 +11,7 @@ import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import ReactMarkdown from "react-markdown";
 import Menu from '@/components/editor/Menu';
+import { comment } from "postcss";
 
 
 
@@ -128,11 +129,19 @@ export default function Challenge() {
                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
                   <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
               </div>
+              
+
+                </div>
+                <div className="flex bg-yellow-900">
+                  <h1 className="text-sm font-semibold line-clamp-1 pl-2">Our terminal infrastructure is experiencing heavy load. Terminals may feel slow.</h1>
+              
+              
 
                 </div>
                 <iframe src="https://82.ctfguide.com" className="pl-2 pb-10 w-full h-full overflow-hidden "   />
               </div>
             </div>
+            
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
               <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
                 <input name="flag" type="text" required placeholder="Flag..." className="text-black h-full p-0 rounded-sm grow px-2 w-1/2" />
@@ -184,8 +193,42 @@ function TabLink({ tabName, selected, url }) {
   )
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 function HintsPage({ cache }) {
   const { challenge } = cache;
+  const [hints, setHints] = useState([]);
+
+  async function fetchHints() {
+    const url = `${baseUrl}/challenges/${challenge.id}/getHints`;
+    const data = await request(url, "GET", null);
+    //console.log(data)
+    if(data && data.success) {
+      setHints(data.hintArray);
+    }
+  }
+
+  useEffect(() => {
+    if(challenge) fetchHints()
+  }, [challenge])
+
+  const showHint = async (i) => {
+    const url = `${baseUrl}/challenges/hints-update`;
+
+    const body = {
+      hintsUsed: i,
+      challengeId: challenge.id,
+    };
+
+    const data = await request(url, "POST", body);
+    //console.log(data);
+    if (data && data.success) {
+      let tmp = [...hints];
+      tmp[i].message = data.hintMessage;
+      setHints(tmp);
+    } else {
+      console.log('problem when feching hints');
+    }
+  };
 
   return (
     <>
@@ -193,6 +236,29 @@ function HintsPage({ cache }) {
         <h1 className="text-2xl font-semibold py-2 line-clamp-1">
          Hints
         </h1>
+      <div style={{padding: "5px", margin: "5px"}}>
+              {hints.map((hint, idx) => {
+                return (
+                  <div
+                    className="mb-2 mt-3 w-full border-l-2 border-yellow-600 hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                    onClick={() => showHint(idx)}
+                  >
+                    <div style={{ maxWidth: '90%' }}>
+                      
+                      <p className="text-white">
+                        <span className=" ">
+                          {hint.message}
+                        </span>
+             
+                      </p>
+                    </div>
+                    <span className="mt-1 text-sm text-white">
+                      { Math.abs(hint.penalty) } point penalty
+                    </span>
+                  </div>
+                );
+              })}
+      </div>
     </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
@@ -582,7 +648,10 @@ function LeaderboardPage({ cache, setCache }) {
 function CommentsPage({ cache }) {
   const { challenge } = cache;
   const [newComment, setNewComment] = useState('');
+  const [hasReply, configReply] = useState(false);
   const [reply, setReply] = useState({});
+  const [replyingPerson, setReplyingTo] = useState('');
+  const [replyingId, setReplyingId] = useState('');
 
 
   useEffect(() => {
@@ -603,10 +672,45 @@ function CommentsPage({ cache }) {
   }, [challenge]);
 
   const handleCommentSubmit = async (e) => {
+
+    if(!newComment) return;
     e.preventDefault();
-    // Implement API call to submit comment
-    console.log('Submit comment:', newComment);
+  if (!newComment.trim()) return; // Prevent empty comments
+    
+  try {
+    let payload = { content: newComment  };
+    console.log("debug: " + hasReply);
+    console.log(replyingId);
+
+    if (hasReply) {
+      payload =  { content: newComment, parent: replyingId}
+    }
+
+
+
+    const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "POST", payload);
     setNewComment('');
+    (async () => {
+      try {
+        const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+          challenge[`comments`] =  getCommentsResult.result;
+          console.log(challenge.comments)
+          setNewComment()
+
+          
+
+      } catch (error) { console.error("Failed to fetch comments: " + error); }
+    })();
+    if (response.success) {
+      console.log('Comment submitted:', response);
+      setNewComment(''); // Clear the input after successful submission
+      // Optionally refresh comments or update UI here
+    } else {
+      console.error('Failed to submit comment:', response.error); 
+    }
+  } catch (error) {
+    console.error('Error submitting comment:', error);
+  }
   };
 
   const handleReplySubmit = async (commentId, replyText) => {
@@ -615,6 +719,97 @@ function CommentsPage({ cache }) {
     setReply({ ...reply, [commentId]: '' });
   };
 
+  const replyingTo = async (commentId, username) => {
+    configReply(true);
+    setReplyingTo(username)
+    setReplyingId(commentId);
+  }
+
+  const cancelReply = async () => {
+    configReply(false);
+  }
+
+  // Helper function to organize comments into a tree structure
+  const organizeComments = (comments) => {
+    const commentMap = {};
+
+    // Initialize map with all comments
+    comments.forEach(comment => {
+      comment.replies = [];
+      commentMap[comment.id] = comment;
+    });
+
+    // Populate replies
+    const rootComments = [];
+    comments.forEach(comment => {
+      if (comment.parentId) {
+        if (commentMap[comment.parentId]) {
+        commentMap[comment.parentId].replies.push(comment);
+        } 
+      } else {
+        rootComments.push(comment);
+      }
+    });
+
+    return rootComments;
+  };
+
+  // Recursive component to render comments and their replies
+  const Comment = ({ comment }) => {
+    const [showReplies, setShowReplies] = useState(false); // State to toggle replies visibility
+
+    return (
+      <div className="my-2 p-2 bg-neutral-800 ">
+        <div className="flex ">
+          <div className="flex items-center">
+            <div className="mr-2 text-md text-center  text-neutral-400 bg-neutral-700/50 px-1 rounded-md">
+              <button className="hover:text-neutral-600"><i className="fas fa-arrow-up"></i> <span>1</span></button>
+              <br />
+              <button className="hover:text-neutral-600"><i className="fas fa-arrow-down"></i> <span>2</span></button>
+            </div>
+            <img src={`https://ui-avatars.com/api/?name=${comment.username}.svg`} className="w-8 h-8 rounded-full" />
+            <span className="ml-2 text-lg font-semibold text-white">{comment.username}
+              {comment.username === 'laphatize' && (
+                <>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i class="fas fa-code fa-fw"></i> developer</span>
+                  <span className="ml-2 bg-orange-600 px-1 text-sm "><i class="fas fa-crown fa-fw"></i> pro</span>
+                </>
+              )}
+              <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
+            </span>
+          </div>
+        
+        </div>
+        <p className="text-neutral-200 pl-12">{comment.content}</p>
+        {showReplies && comment.replies.length > 0 && (
+          <div className="pl-4 border-l-2 border-neutral-700">
+            {comment.replies.map((reply) => <Comment key={reply.id} comment={reply} />)}
+          </div>
+        )}
+
+        <div className="ml-12">
+        <button onClick={() => replyingTo(comment.id, comment.username)} className="text-sm text-blue-500">Reply</button>
+          {comment.replies.length > 0 && (
+            <button onClick={() => setShowReplies(!showReplies)} className="ml-2 text-sm text-blue-500">
+              {showReplies ? 'Hide Replies' : 'Show Replies'}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const CommentsSection = ({ comments }) => {
+    const organizedComments = organizeComments(comments);
+
+    return (
+      <div>
+        {organizedComments.map((comment, index) => (
+          <Comment key={index} comment={comment} />
+        ))}
+      </div>
+    );
+  };
 
   
   return (
@@ -625,45 +820,30 @@ function CommentsPage({ cache }) {
         </h1>
     
 <form onSubmit={handleCommentSubmit} className="mb-4">
+<p className="text-red-500 hidden">Hmm, that doesn't seem very nice. Please read our terms of service. </p>
+
+  <div className="flex w-full">
+    
+    <div className="w-full">
+      
           <input
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="text-black p-2 rounded-sm w-full bg-neutral-700 border-none text-white placeholder-text-white"
+            className="text-black p-2  w-full bg-neutral-700 border-none text-white placeholder-white"
           />
-          <button type="submit" className="mt-2 bg-blue-600 hover:bg-blue-500 text-white px-2 text-sm py-1">Post Comment</button>
-        </form>
-        {challenge && challenge.comments && challenge.comments.map((comment, index) => {
-          return (
-            <div key={index} className="my-2 p-2 bg-neutral-700 ">
-              <div className="flex justify-between">
-                <div className="flex items-center">
-                  <span className="text-lg font-semibold text-white">{comment.username}</span>
-                </div>
-                <button onClick={() => setReply({ ...reply, [comment.id]: !reply[comment.id] })} className="text-sm text-blue-500">Reply</button>
-              </div>
-              <p className="mt-2 text-neutral-200">{comment.content}</p>
-              {reply[comment.id] && (
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  handleReplySubmit(comment.id, reply[comment.id]);
-                }} className="mt-2">
-                  <input
-                    type="text"
-                    value={reply[comment.id] || ''}
-                    onChange={(e) => setReply({ ...reply, [comment.id]: e.target.value })}
-                    placeholder="Type your reply..."
-                    className="text-white bg-neutral-800 border-none p-2 rounded-sm w-full"
-                  />
-                  <button type="submit" className="bg-blue-600 mt-2 hover:bg-blue-500 text-white px-2 py-1 text-sm">Post Reply</button>
-                  <button type="submit" className="ml-2 bg-neutral-600 mt-2 hover:bg-neutral-500 text-white px-2 py-1 text-sm">Cancel</button>
 
-                </form>
-              )}
-            </div>
-          )
-        })}
+          {hasReply &&
+          <div className=" flex w-full  text-left  px-2 bg-neutral-500/10 border-none   py-1"> Replying to  <span className="text-yellow-500 ml-1">{replyingPerson}</span><button className="ml-auto text-right" onClick={cancelReply}><i class="fas fa-times"></i></button></div>
+  }
+  </div>
+          <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i class="fas fa-paper-plane"></i></button>
+          <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i class="fas fa-trash"></i></button>
+
+          </div>
+        </form>
+        {challenge && challenge.comments && <CommentsSection comments={challenge.comments} />}
 
 
 
