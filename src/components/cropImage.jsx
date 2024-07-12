@@ -93,10 +93,14 @@ export const createImage = (url) =>
     // return croppedCanvas.toDataURL('image/jpeg');
   
     // As a blob
+    try{
     return new Promise((resolve, reject) => {
       croppedCanvas.toBlob((file) => {
         resolve(URL.createObjectURL(file))
       }, 'image/jpeg')
     })
+} catch(err) {
+    console.log(err)
+}
   }
   
