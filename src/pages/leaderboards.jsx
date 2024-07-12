@@ -114,7 +114,7 @@ export default function Leaderboard() {
                                 alt="Avatar"
                                 className="rounded-full"
                                 height="32"
-                                src={entry.profileImage === "" ? "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" : `${entry.profileImage}`}
+                                src={entry.user.profileImage === "" ? "https://robohash.org/" + entry.user.username : `${entry.user.profileImage}`}
                                 style={{
                                   aspectRatio: "32/32",
                                   objectFit: "cover",
