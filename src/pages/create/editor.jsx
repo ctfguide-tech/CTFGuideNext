@@ -22,11 +22,10 @@ export default function Create() {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
-        handleLoad();
-        if (router.query.publish == "done") {
-          setPublishSaved(true);
-        }
-    
+          handleLoad();
+          if (router.query.publish == "done") {
+            setPublishSaved(true);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -34,35 +33,28 @@ export default function Create() {
     } catch (error) {
       console.error(error);
     }
-  }, [router.query]);
+  }, [router.query.cid]);
 
   const handleLoad = (event) => {
     let cid = router.query.cid; // Challenge ID
 
-   
+    if (!cid) {
+      console.log("CID is undefined");
+      setIsLoading(false);
+      return;
+    }
 
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${cid}`, "GET", null) // Fetch the writeup
       .then((data) => {
-
-
-        console.log(data)
+        console.log(data);
         setTitle(data.title);
         setContentPreview(data.content);
-
-
         setIsPublished(data.draft);
-
-
-    //   insertText(' ');
         setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
-
-
-
-
   }
 
 
@@ -91,7 +83,7 @@ export default function Create() {
   };
  
   const handleSave = () => {
-
+    console.log(`Saving ${router.query.cid}...`)
 
     setIsSaving(true);
     const cid = router.query.cid;

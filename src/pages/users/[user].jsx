@@ -884,7 +884,7 @@ Cybersecurity made easy for everyone"
                 {username ? (
                     <img
                         style={{ borderColor: '#ffbf00' }}
-                        onClick={() => handlePopupOpen()}
+             
                         className="sm:h-30 sm:w-30 h-40 w-40 rounded-full hover:bg-[#212121]"
                         src={pfp}
                         alt=""
