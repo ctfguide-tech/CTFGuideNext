@@ -76,14 +76,14 @@ export default function Create() {
                                 <h1 className='ml-4 text-3xl mr-2 font-bold'>{user.username}</h1>
                             </>
                         )}
-                        <div className='ml-4 mr-2 bg-yellow-600 px-4 rounded-full text-sm mt-2 md:mt-0'>
+                        <div className='ml-4 mr-2 bg-yellow-500 px-4  py-1 font-bold text-sm mt-2 md:mt-0'>
                             <p>
-                                pro
+                             <i className='fas fa-crown'></i>   pro
                             </p>
                         </div>
-                        <div className='ml-4 bg-red-600 px-4 rounded-full text-sm mt-2 md:mt-0'>
+                        <div className='bg-red-600 px-4  py-1 font-bold text-sm mt-2 md:mt-0'>
                             <p>
-                                developer
+                                <i className='fas fa-code'></i>   dev
                             </p>
                         </div>
                     </div>
