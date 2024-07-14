@@ -159,8 +159,19 @@ export default function Create() {
                         
                     </div>
                     <div className='col-span-3'>
+                        <div className='bg-neutral-800 px-4 py-4'>
 
-                        <div className='grid grid-cols-1 gap-y-4 '>
+                                {user && (
+                                    <h1 className='text-2xl text-neutral-400 font-bold uppercase'>ABOUT {user.username}</h1>
+                                )}
+
+                                <p className='text-neutral-400'>
+                                    {user && user.bio}
+                                </p>
+
+                            </div>
+
+                        <div className='grid grid-cols-1 gap-y-4 pt-4 '>
                             <div>
                                 <div className='pb-2'>
                                     <ul className='hidden md:flex w-full list-none text-neutral-500'>
@@ -192,17 +203,7 @@ export default function Create() {
                                     {renderContent()}
                                 </div>
                             </div>
-                            <div className='bg-neutral-800 px-4 py-4'>
-
-                                {user && (
-                                    <h1 className='text-2xl text-neutral-400 font-bold uppercase'>ABOUT {user.username}</h1>
-                                )}
-
-                                <p className='text-neutral-400'>
-                                    {user && user.bio}
-                                </p>
-
-                            </div>
+                            
                         </div>
                     </div>
                     <div className='col-span-2 '>
