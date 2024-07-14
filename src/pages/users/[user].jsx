@@ -27,7 +27,7 @@ const shades = [
 
 export default function Users() {
     let invalidUser = null;
-  
+
 
     const [ownUser, setOwnUser] = useState(false);
     const [proUser, setproUser] = useState(false);
@@ -249,7 +249,7 @@ export default function Users() {
 
     // Follower
 
- useEffect
+    useEffect
     useEffect(() => {
         if (!user) {
             return;
@@ -409,7 +409,7 @@ export default function Users() {
                 if (result) {
                     setPfp(result);
                 } else {
-                    setPfp(`https://robohash.org/${localStorage.getItem('username')}.png?set=set1&size=150x150`);
+                    setPfp(`https://robohash.org/${user}.png?set=set1&size=150x150`);
                 }
             } catch (err) {
                 console.log('failed to get profile picture');
@@ -802,7 +802,7 @@ Cybersecurity made easy for everyone"
                                                                         strokeLinejoin="round"
                                                                         strokeWidth
 
-="2"
+                                                                        ="2"
                                                                         d="M12 4v16m8-8H4"
                                                                     />
                                                                 </svg>
@@ -854,7 +854,7 @@ Cybersecurity made easy for everyone"
                         backgroundImage: `url(${banner})`,
                         backgroundPosition: 'center',
                     }}
-                    className="h-56 w-full object-cover"
+                    className="h-32 w-full object-cover"
                     alt=""
                 >
                     <div className="flex grid grid-cols-5 p-2">
@@ -877,100 +877,100 @@ Cybersecurity made easy for everyone"
                 </div>
                 {/* NAME CARD */}
                 <div className="mx-auto max-w-7xl rounded-sm ">
-    <div className="mx-auto -mt-16 mb-2 max-w-6xl p-4">
-        <div className="flex flex-col items-center sm:flex-row sm:items-start">
-            {/* Profile Picture */}
-            <div className="flex mb-4 sm:mb-0 sm:mr-4">
-                {username ? (
-                    <img
-                        style={{ borderColor: '#ffbf00' }}
-             
-                        className="sm:h-30 sm:w-30 h-40 w-40 rounded-full hover:bg-[#212121]"
-                        src={pfp}
-                        alt=""
-                    />
-                ) : (
-                    <Skeleton
-                        circle={true}
-                        height={75}
-                        width={75}
-                        baseColor="#262626"
-                        highlightColor="#262626"
-                    />
-                )}
-            </div>
-            <div className="flex flex-col items-center sm:items-start -ml-3 pt-6 sm:flex-1 sm:justify-end sm:space-x-6 sm:pb-1">
-                <div className="ml-8 w-32 flex-auto md:block">
-                    <div className="mt-14 flex flex-col items-center sm:items-start">
-                        {/* TOP LINE */}
-                        <div className="flex flex-col items-center sm:flex-row sm:items-center">
-                            {proUser ? (
-                                <h1 className="truncate bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 bg-clip-text text-3xl text-transparent">
-                                    {username || <Skeleton baseColor="#262626" highlightColor="#262626" />}
-                                </h1>
-                            ) : (
-                                <h1 className="truncate text-3xl font-bold text-white">
-                                    {username || <Skeleton baseColor="#262626" highlightColor="#262626" />}
-                                </h1>
-                            )}
-                            {proUser && (
-                                <img
-                                    style={{ borderColor: '#ffbf00' }}
-                                    className="ml-2 mt-2 h-8 w-8 rounded-md"
-                                    src="https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&"
-                                    alt=""
-                                />
-                            )}
-                            {!ownUser && (
-                                !followedUser ? (
-                                    <button className="ml-3" data-tooltip-id="follow-user" data-tooltip-content="Follow User" data-tooltip-place="top" onClick={() => followUser()}>
-                                        <i class="fas fa-user-plus text-xl text-white hover:text-gray-400"></i>{' '}
-                                        <Tooltip id="follow-user" />
-                                    </button>
+                    <div className="mx-auto -mt-16 mb-2 max-w-6xl p-4">
+                        <div className="flex flex-col items-center sm:flex-row sm:items-start">
+                            {/* Profile Picture */}
+                            <div className="flex mb-4 sm:mb-0 sm:mr-4">
+                                {username ? (
+                                    <img
+                                        style={{ borderColor: '#ffbf00' }}
+
+                                        className="sm:h-30 sm:w-30 h-40 w-40 rounded-full hover:bg-[#212121]"
+                                        src={pfp}
+                                        alt=""
+                                    />
                                 ) : (
-                                    <button className="ml-3" data-tooltip-id="unFollow-user" data-tooltip-content="Unfollow User" data-tooltip-place="top" onClick={() => unfollowUser()}>
-                                        <i class="fas fa-user-slash text-xl text-white hover:text-gray-400"></i>{' '}
-                                        <Tooltip id="unFollow-user" />
-                                    </button>
-                                )
-                            )}
-                        </div>
-                        {/* BOTTOM LINE */}
-                        <div className=" ">
-                            {location && (
-                              
-                                    <p className="text-sm text-white">
-                                        <i class="fas fa-map-marker-alt mt-2"> </i>
-                                       &nbsp; {location}
-                                    </p>
-                             
-                            )}
+                                    <Skeleton
+                                        circle={true}
+                                        height={75}
+                                        width={75}
+                                        baseColor="#262626"
+                                        highlightColor="#262626"
+                                    />
+                                )}
+                            </div>
+                            <div className="flex flex-col items-center sm:items-start -ml-3 pt-6 sm:flex-1 sm:justify-end sm:space-x-6 sm:pb-1">
+                                <div className="ml-8 w-32 flex-auto md:block">
+                                    <div className="mt-14 flex flex-col items-center sm:items-start">
+                                        {/* TOP LINE */}
+                                        <div className="flex flex-col items-center sm:flex-row sm:items-center">
+                                            {proUser ? (
+                                                <h1 className="truncate bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-700 bg-clip-text text-3xl text-transparent">
+                                                    {username || <Skeleton baseColor="#262626" highlightColor="#262626" />}
+                                                </h1>
+                                            ) : (
+                                                <h1 className="truncate text-3xl font-bold text-white">
+                                                    {username || <Skeleton baseColor="#262626" highlightColor="#262626" />}
+                                                </h1>
+                                            )}
+                                            {proUser && (
+                                                <img
+                                                    style={{ borderColor: '#ffbf00' }}
+                                                    className="ml-2 mt-2 h-8 w-8 rounded-md"
+                                                    src="https://cdn.discordapp.com/attachments/1153450172056096798/1225922833222336522/CTFGuideGold.png?ex=6622e49b&is=66106f9b&hm=b05807871ea7aa8e2de06f8525b69e5244269a20314511cfeed44d4a4ae73f4e&"
+                                                    alt=""
+                                                />
+                                            )}
+                                            {!ownUser && (
+                                                !followedUser ? (
+                                                    <button className="ml-3" data-tooltip-id="follow-user" data-tooltip-content="Follow User" data-tooltip-place="top" onClick={() => followUser()}>
+                                                        <i class="fas fa-user-plus text-xl text-white hover:text-gray-400"></i>{' '}
+                                                        <Tooltip id="follow-user" />
+                                                    </button>
+                                                ) : (
+                                                    <button className="ml-3" data-tooltip-id="unFollow-user" data-tooltip-content="Unfollow User" data-tooltip-place="top" onClick={() => unfollowUser()}>
+                                                        <i class="fas fa-user-slash text-xl text-white hover:text-gray-400"></i>{' '}
+                                                        <Tooltip id="unFollow-user" />
+                                                    </button>
+                                                )
+                                            )}
+                                        </div>
+                                        {/* BOTTOM LINE */}
+                                        <div className=" ">
+                                            {location && (
+
+                                                <p className="text-sm text-white">
+                                                    <i class="fas fa-map-marker-alt mt-2"> </i>
+                                                    &nbsp; {location}
+                                                </p>
+
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex mt-4 sm:mt-0 sm:pr-16 sm:pt-6 w-full sm:w-auto">
+                                <div className="mt-10 flex flex-auto items-center justify-center sm:justify-end w-full">
+                                    {/* Social Stats */}
+                                    <div className="flex items-center justify-center w-full sm:w-auto">
+                                        <div className="mx-4 flex items-center">
+                                            <h1 className="text-lg text-white">Followers:</h1>
+                                            <h1 className="ml-2 text-lg font-bold text-white">
+                                                {followerCount}
+                                            </h1>
+                                        </div>
+                                        <div className="mx-4 flex items-center">
+                                            <h1 className="text-lg text-white">Following:</h1>
+                                            <h1 className="ml-2 text-lg font-bold text-white">
+                                                {followingCount}
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex mt-4 sm:mt-0 sm:pr-16 sm:pt-6 w-full sm:w-auto">
-                <div className="mt-10 flex flex-auto items-center justify-center sm:justify-end w-full">
-                    {/* Social Stats */}
-                    <div className="flex items-center justify-center w-full sm:w-auto">
-                        <div className="mx-4 flex items-center">
-                            <h1 className="text-lg text-white">Followers:</h1>
-                            <h1 className="ml-2 text-lg font-bold text-white">
-                                {followerCount}
-                            </h1>
-                        </div>
-                        <div className="mx-4 flex items-center">
-                            <h1 className="text-lg text-white">Following:</h1>
-                            <h1 className="ml-2 text-lg font-bold text-white">
-                                {followingCount}
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
                 {/* ACTUAL CONTENT AREA */}
                 <div className="container mx-auto mt-5 h-full max-w-6xl justify-center">
@@ -1021,7 +1021,7 @@ Cybersecurity made easy for everyone"
                                             <div className="flex justify-end">
                                                 <button className="pointer-events-none flex justify-end"
 
- onClick={closeBannerAndBio} hidden={!openBio} data-tooltip-id="cancel-edit" data-tooltip-content="Cancel Edits" data-tooltip-place="top-end">
+                                                    onClick={closeBannerAndBio} hidden={!openBio} data-tooltip-id="cancel-edit" data-tooltip-content="Cancel Edits" data-tooltip-place="top-end">
                                                     <i class="fas fa-times pointer-events-auto mr-3 text-2xl text-red-700 hover:text-red-400"></i>{' '}
                                                     <Tooltip className="" id="cancel-edit" />
                                                 </button>
@@ -1080,30 +1080,30 @@ Cybersecurity made easy for everyone"
                     </div>
                     {/* Created Challenges */}
                     <div className="mt-4 rounded-sm">
-                    { createdChallenges && 
+                        {createdChallenges &&
 
-                        <div className="rounded-sm">
+                            <div className="rounded-sm">
 
-                            <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Created Challenges</h1>
-                            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 rounded-sm bg-neutral-800 p-4 border-t-4 border-blue-500">
-                                {createdChallenges ? (
-                                    createdChallenges.map((challenge) => (
-                                        <ChallengeCard
-                                            challenge={challenge.challenge}
-                                            key={challenge.challengeId}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="align-center duration-4000 col-span-5 mx-auto min-h-[190px] w-full min-w-[200px] rounded-sm border border-2 border-neutral-700 bg-neutral-800 px-4 py-4 text-center transition ease-in-out hover:bg-neutral-700/40" data-tooltip-content="Create some challenges and they'll appear here!" data-tooltip-id="cChal-tooltip" data-tooltip-place="top">
-                                        {ownUser && <Tooltip id="cChal-tooltip" />}
-                                        <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
-                                        <h1 className="mx-auto mt-2 text-center text-xl text-white">No Challenges Created Yet...</h1>
-                                    </div>
-                                )}
+                                <h1 className="ml-2 mt-4 py-2 text-3xl font-semibold text-gray-300">Created Challenges</h1>
+                                <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 rounded-sm bg-neutral-800 p-4 border-t-4 border-blue-500">
+                                    {createdChallenges ? (
+                                        createdChallenges.map((challenge) => (
+                                            <ChallengeCard
+                                                challenge={challenge.challenge}
+                                                key={challenge.challengeId}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="align-center duration-4000 col-span-5 mx-auto min-h-[190px] w-full min-w-[200px] rounded-sm border border-2 border-neutral-700 bg-neutral-800 px-4 py-4 text-center transition ease-in-out hover:bg-neutral-700/40" data-tooltip-content="Create some challenges and they'll appear here!" data-tooltip-id="cChal-tooltip" data-tooltip-place="top">
+                                            {ownUser && <Tooltip id="cChal-tooltip" />}
+                                            <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
+                                            <h1 className="mx-auto mt-2 text-center text-xl text-white">No Challenges Created Yet...</h1>
+                                        </div>
+                                    )}
+                                </div>
+
                             </div>
-                       
-                        </div>
-}
+                        }
                     </div>
                     {/* Pinned Challenges */}
                     <div className="mt-4 rounded-sm">
@@ -1152,3 +1152,4 @@ Cybersecurity made easy for everyone"
         </>
     );
 }
+

@@ -102,7 +102,7 @@ export default function Challenge() {
   // ========================================= STEVES TERMINAL STUFF NO TOUCHING ====================================== 
   const [password, setPassword] = useState("N/A");
   const [containerId, setContainerId] = useState("");
-  const [userName, setUserName] = useState(localStorage.getItem("username") || "");
+  const [userName, setUserName] = useState("");
   const [minutesRemaining, setMinutesRemaining] = useState(60);
   const [fetchingTerminal, setFetchingTerminal] = useState(true);
   const [foundTerminal, setFoundTerminal] = useState(false);
