@@ -26,7 +26,9 @@ export default function Create() {
             case 'LIKED CHALLENGES':
                 return <>
                 <h1 className='text-2xl font-bold text-neutral-400'>LIKED CHALLENGES</h1>
-                <LikedChallenges />
+                {user && (
+                    <LikedChallenges user={user.username} />
+                )}
                 </>
                 ;
             case 'WRITEUPS':
