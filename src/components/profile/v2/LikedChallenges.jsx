@@ -9,7 +9,7 @@ const LikedChallenges = ({ user }) => {
     useEffect(() => {
         const fetchLikedChallenges = async () => {
             try {
-                const response = await request(`/api/users/${user}/likes`, 'GET', null);
+                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user}/likes`, 'GET', null);
                 setLikedChallenges(response);
             } catch (err) {
                 setError(err.message);
@@ -19,9 +19,10 @@ const LikedChallenges = ({ user }) => {
         };
 
         fetchLikedChallenges();
+        console.log("challenges: " , likedChallenges);
     }, [user]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className='text-neutral-400'>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
@@ -33,7 +34,10 @@ const LikedChallenges = ({ user }) => {
                     ))}
                 </ul>
             ) : (
-                <p className='text-neutral-400'>No challenges liked yet.</p>
+                <div className="align-center duration-4000 col-span-5 mx-auto min-h-[190px] w-full min-w-[200px] rounded-sm border border-2 border-neutral-700 bg-neutral-800 px-4 py-4 text-center transition ease-in-out hover:bg-neutral-700/40">
+            <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
+            <h1 className="mx-auto mt-2 text-center text-xl text-white">No Challenges Liked Yet...</h1>
+          </div>
             )}
         </div>
     );
