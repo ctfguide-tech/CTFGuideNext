@@ -9,9 +9,16 @@ const LikedChallenges = ({ user }) => {
     useEffect(() => {
         const fetchLikedChallenges = async () => {
             try {
+                console.log("udata", user)
                 console.log("username", user.username);
-                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/likes`, 'GET', null);
-                setLikedChallenges(response);
+                if (user.username) {
+                    const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/likes`, 'GET', null);
+                
+                    setLikedChallenges(response.data);
+                
+                        } else {
+                            setError("User failure. Got back username of " + user.username);
+                        }
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -24,7 +31,7 @@ const LikedChallenges = ({ user }) => {
     }, [user]);
 
     if (loading) return <div className='text-neutral-400'>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div className='text-red-400'>API Error: {error}</div>;
 
     return (
         <div>

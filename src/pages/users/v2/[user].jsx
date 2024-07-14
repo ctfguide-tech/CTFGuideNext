@@ -205,10 +205,8 @@ export default function Create() {
                                     </select>
                                 </div>
                                 <div className='bg-neutral-800 px-4 py-4'>
-
-
-                                    {renderContent()}
-                                </div>
+                            {user && renderContent()}
+                        </div>
                             </div>
                             
                         </div>
