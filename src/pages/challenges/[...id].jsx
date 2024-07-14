@@ -13,6 +13,9 @@ import ReactMarkdown from "react-markdown";
 import Menu from '@/components/editor/Menu';
 import { comment } from "postcss";
 
+import { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
+import api from '@/utils/terminal-api';
 
 
 export default function Challenge() {
@@ -96,6 +99,73 @@ export default function Challenge() {
     })();
   }
 
+  // ========================================= STEVES TERMINAL STUFF NO TOUCHING ====================================== 
+  const [password, setPassword] = useState("N/A");
+  const [containerId, setContainerId] = useState("");
+  const [userName, setUserName] = useState(localStorage.getItem("username") || "");
+  const [minutesRemaining, setMinutesRemaining] = useState(60);
+  const [fetchingTerminal, setFetchingTerminal] = useState(true);
+  const [foundTerminal, setFoundTerminal] = useState(false);
+  const [terminalUrl, setTerminalUrl] = useState("");
+
+  const createTerminal = async (skipToCheckStatus) => {
+    const challenge = cache.challenge;
+    const cookie = getCookie('idToken');
+
+    const data = await api.buildDocketTerminal(challenge.id, cookie );
+    //console.log(data)
+    if (data) {
+
+      setPassword(data.terminalUserPassword);
+      setTerminalUrl(data.url);
+      setUserName(data.terminalUserName);
+      setContainerId(data.containerId);
+      setFoundTerminal(true);
+      setMinutesRemaining(60);
+      setFetchingTerminal(false);
+
+    } else {
+      toast.error("Unable to create the terminal, please try again");
+      setFetchingTerminal(false);
+    }
+
+    return;
+  };
+
+  const checkIfTerminalExists = async () => {
+    const challenge = cache.challenge;
+    //console.log(challenge);
+
+    const cookie = getCookie('idToken');
+    if (!challenge) return;
+    const data = await api.checkUserTerminal(cookie, challenge.id, 1); // 1 if using docket 2 if not
+    if (data !== null) {
+      console.log('Found a terminal for the user');
+      if (data.challengeID !== challenge.id) {
+       // await createTerminal(false);
+      } else {
+        console.log('User has a terminal for this challenge');
+        setTerminalUrl(data.url);
+        setMinutesRemaining(data.minutesRemaining);
+        setPassword(data.password);
+        setUserName(data.userName);
+        setFoundTerminal(true);
+        setFetchingTerminal(false);
+
+      }
+    } else {
+      console.log("Didnt find a terminal for the user, creating a new one");
+      await createTerminal(false);
+    }
+  }
+
+  useEffect(() => {
+    if(cache.challenge) {
+      checkIfTerminalExists();
+    }
+  },[cache])
+
+
   return (
     <>
       <Head>
@@ -124,10 +194,14 @@ export default function Challenge() {
             <div className="grow bg-neutral-950 w-full overflow-hidden">
               <div className="h-full">
                 <div className="flex">
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: 0:00</h1>
+                 <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Username: {userName}</h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Password: {password}</h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: {minutesRemaining}</h1>
                  <div className="ml-auto flex px-2">
+
                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
                   <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
+
               </div>
               
 
@@ -138,7 +212,7 @@ export default function Challenge() {
               
 
                 </div>
-                <iframe src="https://82.ctfguide.com" className="pl-2 pb-10 w-full h-full overflow-hidden "   />
+                <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden "   />
               </div>
             </div>
             
