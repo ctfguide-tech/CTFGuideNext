@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import CreatedChallenges from '@/components/profile/v2/CreatedChallenges';
 import LikedChallenges from '@/components/profile/v2/LikedChallenges';
 import Badges from '@/components/profile/v2/Badges';
+import Writeups from '@/components/profile/v2/Writeups';
 
 export default function Create() {
 
@@ -32,7 +33,12 @@ export default function Create() {
                 </>
                 ;
             case 'WRITEUPS':
-                return <h1 className='text-2xl font-bold text-neutral-400'>WRITEUPS</h1>;
+                return   <>
+                <h1 className='text-2xl font-bold text-neutral-4000'>WRITEUPS</h1>
+                {user && (
+                    <Writeups user={user} />
+                )};
+                </>;
             case 'CREATED CHALLENGES':
                 return <>
                     <h1 className='text-2xl font-bold text-neutral-400'>CREATED CHALLENGES</h1>

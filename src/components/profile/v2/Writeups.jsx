@@ -23,7 +23,7 @@ const Writeups = ({ user }) => {
     }, [user]);
 
     if (loading) return <div className='text-neutral-400'>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div className='text-red-400'>API Error: {error}</div>;
 
     return(
         <div>
@@ -42,3 +42,5 @@ const Writeups = ({ user }) => {
         </div>
     );
 };
+
+export default Writeups;
