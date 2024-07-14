@@ -56,7 +56,7 @@ export default function Create() {
     return (
         <>
             <Head>
-                <title>Create - CTFGuide</title>
+                <title>{user && user.username}'s Profile - CTFGuide</title>
                 <style>
                     @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
                 </style>
