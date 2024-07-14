@@ -7,6 +7,7 @@ import request from "@/utils/request";
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useRouter } from 'next/router';
 import CreatedChallenges from '@/components/profile/v2/CreatedChallenges';
+import LikedChallenges from '@/components/profile/v2/LikedChallenges';
 import Badges from '@/components/profile/v2/Badges';
 
 export default function Create() {
@@ -23,7 +24,11 @@ export default function Create() {
     const renderContent = () => {
         switch (activeTab) {
             case 'LIKED CHALLENGES':
-                return <h1 className='text-2xl font-bold text-neutral-400'>LIKED CHALLENGES</h1>;
+                return <>
+                <h1 className='text-2xl font-bold text-neutral-400'>LIKED CHALLENGES</h1>
+                <LikedChallenges />
+                </>
+                ;
             case 'WRITEUPS':
                 return <h1 className='text-2xl font-bold text-neutral-400'>WRITEUPS</h1>;
             case 'CREATED CHALLENGES':
