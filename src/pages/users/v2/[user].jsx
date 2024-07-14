@@ -121,28 +121,32 @@ export default function Create() {
 
 
 
-                    <div className='w-full '>
+                    <div className='w-full bg-neutral-800'>
 
-                        <div className='col-span-2   bg-neutral-800 px-4 py-4' >
-                            <h1 className='text-2xl text-neutral-400 font-bold'>ACTIVITY FEED</h1>
+                        <div className='col-span-2 bg-neutral-800 px-4 pt-4 ' >
+                            <h1 className='text-2xl text-white font-bold'>ACTIVITY FEED</h1>
                             {user && (
-                                <h1 className='mx-auto my-auto text-neutral-600'>Looks like {user.username} hasn't been that active.</h1>
+                                <h1 className='mx-auto my-auto text-neutral-400'>Looks like {user.username} hasn't been that active.</h1>
                             )}
-
+                            <hr className='px-4 ml-2 mr-2 mt-4'>
+                            </hr>
                         </div>
+                       
 
-                        <div className='grid grid-cols-1 gap-y-4'>
-                            <div className='bg-neutral-800 px-4 py-4'>
-                                <h1 className='text-2xl text-neutral-400 font-bold'>SKILL CHART</h1>
+                        <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
+                            <div className='bg-neutral-800'>
+                                <h1 className='text-2xl text-white font-bold'>SKILL CHART</h1>
                                 {user && (
-                                    <h1 className='mx-auto my-auto text-neutral-600'>It seems that {user.username} hasn't solved any challenges yet.</h1>
+                                    <h1 className='mx-auto my-auto text-neutral-400'>It seems that {user.username} hasn't solved any challenges yet.</h1>
                                 )}
-                         
+                            </div>
+                            <hr className='px-4 ml-2 mr-2 mt-4'></hr>
+                            </div>
 
-                            <div className='bg-neutral-800 gap-y-4 mt-6'>
-                                <h1 className='text-2xl text-neutral-400 font-bold'>NERD STATS</h1>
+                            <div className='bg-neutral-800 gap-y-4 px-4 py-4'>
+                                <h1 className='text-2xl text-white font-bold'>NERD STATS</h1>
                                 {user && (
-                                    <div className='text-white text-xs'>
+                                    <div className='text-neutral-400 text-xs'>
                                         <p>Creation Date : {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', minute: 'numeric', hour: 'numeric' })}</p>
                                         <p>Total Challenges: {user.totalChallenges || '0'}</p>
                                         <p>Total Writeups: {user.totalWriteups || '0'}</p>
@@ -150,8 +154,9 @@ export default function Create() {
                                     </div>
                                 )}
                             </div>
-                            </div>
-                        </div>
+                            
+                            
+                        
                     </div>
                     <div className='col-span-3'>
 
