@@ -10,6 +10,8 @@ import { useEffect } from 'react';
 import  request  from '@/utils/request';
 import {Context} from '@/context';
 import { useContext } from 'react';
+import { MarkdownViewer } from '@/components/MarkdownViewer';
+import ReactMarkdown from 'react-markdown';
 
 export default function General() {
   
@@ -22,6 +24,7 @@ export default function General() {
   const [firstName, setFname] = useState(null);
   const [lastName, setLname] = useState(null);
   const [location, setLocation] = useState(null);
+  const [contentPreview, setContentPreview] = useState(bio);
 
   const [githubLink, setGithub] = useState(null);
 
@@ -47,7 +50,16 @@ function closeUnsavedNotif() {
     } else {
       bannerState(false)
     }
+
   };
+
+  const handleBioChange = (event) =>{
+    handleInputChange(event);
+    setBio(event.target.value);
+  }
+  
+  
+
   const [pfp, setPfp] = useState(`https://robohash.org/KshitijIsCool.png?set=set1&size=150x150`);
   const [open, setOpen] = useState(true);
 
@@ -128,6 +140,7 @@ function closeUnsavedNotif() {
     setFname(document.getElementById('first-name').value);
     setLname(document.getElementById('last-name').value);
     setLocation(document.getElementById('location').value);
+    
     var body = {
         bio: document.getElementById('bio').value,
         firstName: document.getElementById('first-name').value,
@@ -150,7 +163,7 @@ function closeUnsavedNotif() {
     setLname(body.lastName);
     setLocation(body.location)
 }
-   async function saveGeneral() {
+    function saveGeneral() {
     document.getElementById('save').innerHTML = 'Saving...';
 
     var github = document.getElementById('url').value;
@@ -174,9 +187,30 @@ function closeUnsavedNotif() {
 
 
   }
+  useEffect(() => {
+    localStorage.setItem('bio', bio);
+  }, [bio]);
+  
+  const magicSnippet = () => {
+    // creaate a random id
+    const id = Math.random().toString(36).substring(7);
 
-  return (
+    insertText(`[Click to run: ${id}](https://ctfguide.com/magic/)`);
+  };
+  const insertText = (text) => {
+    const textarea = document.getElementById('bio');
+    const startPos = textarea.selectionStart;
+    const endPos = textarea.selectionEnd;
+    const newValue = textarea.value.substring(0, startPos) + text + textarea.value.substring(endPos, textarea.value.length);
+    setBio(newValue);
+    textarea.focus();
+    textarea.selectionEnd = startPos + text.length;
+  };
+
+  return ( 
+    
     <div className="flex-1 xl:overflow-y-auto">
+      
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
         <h1 className="text-3xl font-bold tracking-tight text-white">
           General
@@ -288,14 +322,44 @@ function closeUnsavedNotif() {
                 Bio
               </label>
               <div className="mt-2">
+
+              <div className="toolbar py-1  flex items-center justify-left ml-0.5 ">
+                <button onClick={() => insertText('**bold**')} className="toolbar-button text-white pr-2 mr-1">
+                  <i className="fas fa-bold"></i>
+                </button>
+                <button onClick={() => insertText('*italic*')} className="toolbar-button text-white px-2 mr-1" >
+                  <i className="fas fa-italic"></i>
+                </button>
+                <button onClick={() => insertText('# Heading')} className="toolbar-button text-white px-2 mr-1">
+                  <i className="fas fa-heading"></i>
+                </button>
+                <button onClick={() => insertText('[link](url)')} className="toolbar-button text-white px-2 mr-1">
+                  <i className="fas fa-link"></i>
+                </button>
+                <button onClick={() => insertText('```Code```')} className="toolbar-button text-white px-2 mr-1">
+                  <i className="fas fa-code"></i>
+                </button>
+                <button onClick={() => magicSnippet()} className="toolbar-button text-white px-2 mr-1">
+                <i class="fas fa-terminal"></i>
+                </button>
+              </div>
+
                 <textarea
+                  value={bio}
                   id="bio"
                   name="bio"
                   rows={4}
                   className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm  placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
                   defaultValue={'No bio set yet!'}
-                  onChange={handleInputChange}
+                  onChange={handleBioChange}
                 />
+            <div className='border-l border-neutral-800  '>
+              <div contentEditable={false} className='text-white py-4 px-4' onLoad={(event) => {
+                  setContentPreview(event.target.value);
+                }}>
+                <MarkdownViewer className="h-28 overflow-y-scroll border-neutral-800" content={bio} />
+              </div>
+            </div>
               </div>
               <p className="mt-3 text-sm text-white">
                 Brief description for your profile. URLs are
@@ -320,7 +384,7 @@ function closeUnsavedNotif() {
                 htmlFor="url"
                 className="mt-0.5 block text-xs font-medium leading-6 text-white"
               >
-                Your GitHub link: github.com/{inputText}
+                Your GitHub link: github.com/{/*inputText*/}
               </label>
             </div>
           </div>
