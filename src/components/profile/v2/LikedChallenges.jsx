@@ -9,7 +9,8 @@ const LikedChallenges = ({ user }) => {
     useEffect(() => {
         const fetchLikedChallenges = async () => {
             try {
-                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user}/likes`, 'GET', null);
+                console.log("username", user.username);
+                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/likes`, 'GET', null);
                 setLikedChallenges(response);
             } catch (err) {
                 setError(err.message);

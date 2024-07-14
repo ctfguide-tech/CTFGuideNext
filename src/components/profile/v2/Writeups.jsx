@@ -9,7 +9,7 @@ const Writeups = ({ user }) => {
     useEffect(() => {
         const fetchWriteups = async() => {
             try {
-                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user}/writeups`, 'GET', null);
+                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/writeups`, 'GET', null);
                 setWriteups(response);
             }catch (err) {
                 setError(err.message);
