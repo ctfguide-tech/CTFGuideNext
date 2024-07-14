@@ -577,13 +577,13 @@ function WriteupView({ writeup, onBack }) {
     className="px-2 rounded-full bg-green-700 hover:bg-green-600"
     onClick={() => upvoteWriteup(writeup.id)}
   >
-    <i className="fas fa-arrow-up"></i> {upvotes}
+    <i className="fas fa-arrow-up"></i> {upvotes || 0}
   </button>
   <button
     className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
     onClick={() => downvoteWriteup(writeup.id)}
   >
-    <i className="fas fa-arrow-down"></i> {downvotes}
+    <i className="fas fa-arrow-down"></i> {downvotes || 0}
   </button>    
 </div>
       </div>
@@ -707,7 +707,11 @@ function LeaderboardPage({ cache, setCache }) {
             <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
             <div className="flex items-center">
               <span className="text-2xl font-bold">{index + 1}.</span>
-              <span className="ml-2 text-xl font-semibold text-white">{entry.user.username}</span>
+              <span className="ml-2 text-xl font-semibold text-white">
+                <Link href={`/users/${entry.user.username}`}>
+                  {entry.user.username}
+                </Link>
+              </span>
             </div>
             <div className="text-xl font-semibold">{entry.points} points</div>
           </div>
@@ -727,7 +731,6 @@ function CommentsPage({ cache }) {
   const [replyingPerson, setReplyingTo] = useState('');
   const [replyingId, setReplyingId] = useState('');
 
-
   useEffect(() => {
     if (!challenge) {
       return;
@@ -735,56 +738,51 @@ function CommentsPage({ cache }) {
     (async () => {
       try {
         const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
-          challenge[`comments`] =  getCommentsResult.result;
-          console.log(challenge.comments)
-          setNewComment()
-
-          
-
-      } catch (error) { console.error("Failed to fetch comments: " + error); }
+        challenge[`comments`] = getCommentsResult.result;
+        console.log(challenge.comments);
+        setNewComment();
+      } catch (error) {
+        console.error("Failed to fetch comments: " + error);
+      }
     })();
   }, [challenge]);
 
   const handleCommentSubmit = async (e) => {
-
-    if(!newComment) return;
+    if (!newComment) return;
     e.preventDefault();
-  if (!newComment.trim()) return; // Prevent empty comments
-    
-  try {
-    let payload = { content: newComment  };
-    console.log("debug: " + hasReply);
-    console.log(replyingId);
+    if (!newComment.trim()) return; // Prevent empty comments
 
-    if (hasReply) {
-      payload =  { content: newComment, parent: replyingId}
+    try {
+      let payload = { content: newComment };
+      console.log("debug: " + hasReply);
+      console.log(replyingId);
+
+      if (hasReply) {
+        payload = { content: newComment, parent: replyingId };
+      }
+
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "POST", payload);
+      setNewComment('');
+      (async () => {
+        try {
+          const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+          challenge[`comments`] = getCommentsResult.result;
+          console.log(challenge.comments);
+          setNewComment();
+        } catch (error) {
+          console.error("Failed to fetch comments: " + error);
+        }
+      })();
+      if (response.success) {
+        console.log('Comment submitted:', response);
+        setNewComment(''); // Clear the input after successful submission
+        // Optionally refresh comments or update UI here
+      } else {
+        console.error('Failed to submit comment:', response.error);
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
     }
-
-
-
-    const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "POST", payload);
-    setNewComment('');
-    (async () => {
-      try {
-        const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
-          challenge[`comments`] =  getCommentsResult.result;
-          console.log(challenge.comments)
-          setNewComment()
-
-          
-
-      } catch (error) { console.error("Failed to fetch comments: " + error); }
-    })();
-    if (response.success) {
-      console.log('Comment submitted:', response);
-      setNewComment(''); // Clear the input after successful submission
-      // Optionally refresh comments or update UI here
-    } else {
-      console.error('Failed to submit comment:', response.error); 
-    }
-  } catch (error) {
-    console.error('Error submitting comment:', error);
-  }
   };
 
   const handleReplySubmit = async (commentId, replyText) => {
@@ -795,31 +793,68 @@ function CommentsPage({ cache }) {
 
   const replyingTo = async (commentId, username) => {
     configReply(true);
-    setReplyingTo(username)
+    setReplyingTo(username);
     setReplyingId(commentId);
-  }
+  };
 
   const cancelReply = async () => {
     configReply(false);
-  }
+  };
+
+  const handleUpvote = async (commentId) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}/upvote`, "POST", null);
+      if (response.success) {
+        // Update the comment's upvotes and downvotes
+        const updatedComments = challenge.comments.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, upvotes: response.upvotes, downvotes: response.downvotes };
+          }
+          return comment;
+        });
+        challenge.comments = updatedComments;
+      } else {
+        console.error('Failed to upvote comment:', response.message);
+      }
+    } catch (error) {
+      console.error('Error upvoting comment:', error);
+    }
+  };
+
+  const handleDownvote = async (commentId) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}/downvote`, "POST", null);
+      if (response.success) {
+        // Update the comment's upvotes and downvotes
+        const updatedComments = challenge.comments.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, upvotes: response.upvotes, downvotes: response.downvotes };
+          }
+          return comment;
+        });
+        challenge.comments = updatedComments;
+      } else {
+        console.error('Failed to downvote comment:', response.message);
+      }
+    } catch (error) {
+      console.error('Error downvoting comment:', error);
+    }
+  };
 
   // Helper function to organize comments into a tree structure
   const organizeComments = (comments) => {
     const commentMap = {};
-
-    // Initialize map with all comments
     comments.forEach(comment => {
       comment.replies = [];
       commentMap[comment.id] = comment;
     });
 
-    // Populate replies
     const rootComments = [];
     comments.forEach(comment => {
       if (comment.parentId) {
         if (commentMap[comment.parentId]) {
-        commentMap[comment.parentId].replies.push(comment);
-        } 
+          commentMap[comment.parentId].replies.push(comment);
+        }
       } else {
         rootComments.push(comment);
       }
@@ -830,29 +865,39 @@ function CommentsPage({ cache }) {
 
   // Recursive component to render comments and their replies
   const Comment = ({ comment }) => {
-    const [showReplies, setShowReplies] = useState(false); // State to toggle replies visibility
+    const [showReplies, setShowReplies] = useState(false);
 
     return (
-      <div className="my-2 p-2 bg-neutral-800 ">
-        <div className="flex ">
+      <div className="my-2 p-2 bg-neutral-800">
+        <div className="flex">
           <div className="flex items-center">
-            <div className="mr-2 text-md text-center  text-neutral-400 bg-neutral-700/50 px-1 rounded-md">
-              <button className="hover:text-neutral-600"><i className="fas fa-arrow-up"></i> <span>1</span></button>
+            <div className="mr-2 text-md text-center text-neutral-400 bg-neutral-700/50 px-1 rounded-md">
+              <button className="hover:text-neutral-600" onClick={() => handleUpvote(comment.id)}>
+                <i className="fas fa-arrow-up"></i> <span>{comment.upvotes}</span>
+              </button>
               <br />
-              <button className="hover:text-neutral-600"><i className="fas fa-arrow-down"></i> <span>2</span></button>
+              <button className="hover:text-neutral-600" onClick={() => handleDownvote(comment.id)}>
+                <i className="fas fa-arrow-down"></i> <span>{comment.downvotes}</span>
+              </button>
             </div>
-            <img src={`https://ui-avatars.com/api/?name=${comment.username}.svg`} className="w-8 h-8 rounded-full" />
-            <span className="ml-2 text-lg font-semibold text-white">{comment.username}
+            <img
+              src={comment.profilePicture || `https://robohash.org/${comment.username}.png?set=set1&size=150x150`}
+              className="w-8 h-8 rounded-full"
+              alt={`${comment.username}'s profile`}
+            />
+            <span className="ml-2 text-lg font-semibold text-white">
+              <a href={`/users/${comment.username}`} className="hover:text-neutral-10">
+                {comment.username}
+              </a>
               {comment.username === 'laphatize' && (
                 <>
-                  <span className="bg-red-600 px-1 text-sm ml-2"><i class="fas fa-code fa-fw"></i> developer</span>
-                  <span className="ml-2 bg-orange-600 px-1 text-sm "><i class="fas fa-crown fa-fw"></i> pro</span>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                  <span className="ml-2 bg-orange-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
             </span>
           </div>
-        
         </div>
         <p className="text-neutral-200 pl-12">{comment.content}</p>
         {showReplies && comment.replies.length > 0 && (
@@ -860,9 +905,8 @@ function CommentsPage({ cache }) {
             {comment.replies.map((reply) => <Comment key={reply.id} comment={reply} />)}
           </div>
         )}
-
         <div className="ml-12">
-        <button onClick={() => replyingTo(comment.id, comment.username)} className="text-sm text-blue-500">Reply</button>
+          <button onClick={() => replyingTo(comment.id, comment.username)} className="text-sm text-blue-500">Reply</button>
           {comment.replies.length > 0 && (
             <button onClick={() => setShowReplies(!showReplies)} className="ml-2 text-sm text-blue-500">
               {showReplies ? 'Hide Replies' : 'Show Replies'}
@@ -885,44 +929,38 @@ function CommentsPage({ cache }) {
     );
   };
 
-  
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
         <h1 className="text-2xl font-semibold py-2 line-clamp-1">
           Comments
         </h1>
-    
-<form onSubmit={handleCommentSubmit} className="mb-4">
-<p className="text-red-500 hidden">Hmm, that doesn't seem very nice. Please read our terms of service. </p>
-
-  <div className="flex w-full">
-    
-    <div className="w-full">
-      
-          <input
-            type="text"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
-            className="text-black p-2  w-full bg-neutral-700 border-none text-white placeholder-white"
-          />
-
-          {hasReply &&
-          <div className=" flex w-full  text-left  px-2 bg-neutral-500/10 border-none   py-1"> Replying to  <span className="text-yellow-500 ml-1">{replyingPerson}</span><button className="ml-auto text-right" onClick={cancelReply}><i class="fas fa-times"></i></button></div>
-  }
-  </div>
-          <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i class="fas fa-paper-plane"></i></button>
-          <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i class="fas fa-trash"></i></button>
-
+        <form onSubmit={handleCommentSubmit} className="mb-4">
+          <p className="text-red-500 hidden">Hmm, that doesn't seem very nice. Please read our terms of service. </p>
+          <div className="flex w-full">
+            <div className="w-full">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+                className="text-black p-2 w-full bg-neutral-700 border-none text-white placeholder-white"
+              />
+              {hasReply &&
+                <div className="flex w-full text-left px-2 bg-neutral-500/10 border-none py-1">
+                  Replying to <span className="text-yellow-500 ml-1">{replyingPerson}</span>
+                  <button className="ml-auto text-right" onClick={cancelReply}><i className="fas fa-times"></i></button>
+                </div>
+              }
+            </div>
+            <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-paper-plane"></i></button>
+            <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-trash"></i></button>
           </div>
         </form>
         {challenge && challenge.comments && <CommentsSection comments={challenge.comments} />}
-
-
-
-      </div >
+      </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
-  )
+  );
 }
+

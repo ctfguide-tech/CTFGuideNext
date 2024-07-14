@@ -100,8 +100,8 @@ export function DashboardHeader() {
                     circle={true}
                     height={128}
                     width={128}
-                    baseColor="#262626"
-                    highlightColor="#262626"
+                    baseColor='#262626'
+                    highlightColor='#3a3a3a'
                   />
                 )}
             </Link>
@@ -110,13 +110,13 @@ export function DashboardHeader() {
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
               <h1 className="mt-8 truncate text-2xl font-bold text-white">
                 {username || (
-                  <Skeleton baseColor="#262626" highlightColor="#262626" width='15rem' />
+                  <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
                 )}
               </h1>
               <p className="text-white">
                 <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                 {location || (
-                  <Skeleton width='25rem' baseColor="#262626" highlightColor="#262626" />
+                  <Skeleton width='25rem' baseColor='#262626' highlightColor='#3a3a3a' />
                 )}
               </p>
             </div>
@@ -169,7 +169,7 @@ export function DashboardHeader() {
         <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
           <h1 className="truncate text-2xl font-bold text-gray-900">
             {username || (
-              <Skeleton baseColor="#262626" highlightColor="#262626" />
+              <Skeleton baseColor='#262626' highlightColor='#3a3a3a' />
             )}
           </h1>
         </div>

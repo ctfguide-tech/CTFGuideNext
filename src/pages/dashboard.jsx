@@ -219,7 +219,7 @@ export default function Dashboard() {
                       </div>
                     )
                     || <>
-                      <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
+                      <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#262626' highlightColor='#3a3a3a' count={2} />
                     </>}
                 </ul>
               </div>
@@ -239,7 +239,7 @@ export default function Dashboard() {
     </div>
   ) :
   <>
-    <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#999' count={2} />
+    <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#262626' highlightColor='#3a3a3a' count={2} />
   </>
 }
 
