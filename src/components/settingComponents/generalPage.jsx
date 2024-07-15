@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
 import { Locations } from '@/components/settingComponents/locations';
@@ -15,6 +15,7 @@ import Markdown from 'react-markdown';
 
 export default function General() {
   const router = useRouter();
+  const bioRef = useRef(null);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -36,10 +37,10 @@ export default function General() {
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [tempBio, setTempBio] = useState(bio);
+  const [showBioPreview, setShowBioPreview] = useState(false);
 
-  // this for the toolkit
   const insertText = (text) => {
-    const textarea = document.getElementById('bio');
+    const textarea = bioRef.current;
     const startPos = textarea.selectionStart;
     const endPos = textarea.selectionEnd;
     const newValue =
@@ -101,6 +102,7 @@ export default function General() {
         setFirstName(userData.firstName || '');
         setLastName(userData.lastName || '');
         setBio(userData.bio || '');
+        setTempBio(userData.bio || '');
         setLocation(userData.location || '');
 
         const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${userData.username}/pfp`;
@@ -182,7 +184,7 @@ export default function General() {
     setIsSaving(true);
 
     const data = {
-      bio: bio || '',
+      bio: tempBio || '',
       githubUrl: inputText || '',
       firstName: firstName || '',
       lastName: lastName || '',
@@ -445,6 +447,12 @@ export default function General() {
                     >
                       <i className="fas fa-terminal"></i>
                     </button>
+                    <button
+                  onClick={() => setShowBioPreview(!showBioPreview)}
+                  className="ml-auto rounded-md text-sm px-2 text-white"
+                >
+                  {showBioPreview ? 'Hide Preview' : 'Preview Bio'}
+                </button>
                   </div>
                   <textarea
                     id="bio"
@@ -453,21 +461,25 @@ export default function General() {
                     value={tempBio}
                     onChange={(e) => setTempBio(e.target.value)}
                     className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
+                    ref={bioRef}
                   />
                 </div>
                 <p className="text-md mt-3 text-white">
                   Brief description for your profile. URLs are hyperlinked.
                 </p>
               </div>
-              {/* this is for the preview */}
-              <div className="mt-1 sm:col-span-full">
-                <label className="block text-sm font-medium leading-6 text-white">
-                  Bio Preview
-                </label>
-                <div className="mt-2 rounded-lg bg-neutral-800 p-4 text-white">
-                  <Markdown>{tempBio}</Markdown>
+
+            
+              {showBioPreview && (
+                <div className=" sm:col-span-full">
+                  <label className="block text-md font-medium leading-6 text-white">
+                    Bio Preview
+                  </label>
+                  <div className="mt-2 rounded-lg bg-neutral-800 p-4 text-white">
+                    <Markdown>{tempBio}</Markdown>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="sm:col-span-6">
                 <label
