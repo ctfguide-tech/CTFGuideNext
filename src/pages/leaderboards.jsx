@@ -43,46 +43,91 @@ export default function Leaderboard() {
       <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
-          <div className="mt-20 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-            <div className=" overflow-hidden shadow bg-gradient-to-r from-yellow-500 to-orange-500">
-              <div className="px-4 py-5 sm:p-6">
-                <dl>
-                  <dd className="mt-1 text-3xl font-semibold text-white text-center">
-                    <span className="text-3xl">#1</span> {leaderboardData[0]?.user?.username}
-                  </dd>
-                  <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
-                    {leaderboardData[0]?.totalPoints} points
-                  </dd>
-                </dl>
-              </div>
-            </div>
+        <div className="mt-20 flex flex-col md:flex-row max-w-7xl mx-auto items-end gap-5">
+  <div className="flex-1 relative shadow bg-gradient-to-r from-gray-600 to-gray-700 w-full md:w-auto">
+    <div className="flag-top"></div>
+    <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 hidden md:block">
+      <img
+        alt="Avatar"
+        className="rounded-full"
+        height="100"
+        src={leaderboardData[1]?.user?.profileImage === "" ? "https://robohash.org/" + leaderboardData[1]?.user?.username : `${leaderboardData[1]?.user?.profileImage}`}
+        style={{
+          aspectRatio: "64/64",
+          objectFit: "cover",
+        }}
+        width="100"
+      />
+    </div>
+    <div className="px-4 py-5 sm:p-6 pt-12">
+      <dl>
+        <dd className="mt-1 text-2xl font-semibold text-gray-100 text-center">
+          <span className="text-xl">#2</span> {leaderboardData[1]?.user?.username}
+        </dd>
+        <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
+          {leaderboardData[1]?.totalPoints} points
+        </dd>
+      </dl>
+    </div>
+  </div>
 
-            <div className="overflow-hidden  shadow bg-gradient-to-r from-gray-500 to-white">
-              <div className="px-4 py-5 sm:p-6">
-                <dl>
-                  <dd className="mt-1 text-3xl font-semibold text-gray-100 text-center">
-                    <span className="text-3xl">#2</span> {leaderboardData[1]?.user?.username}
-                  </dd>
-                  <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
-                    {leaderboardData[1]?.totalPoints} points
-                  </dd>
-                </dl>
-              </div>
-            </div>
+  <div className="flex-1 relative shadow bg-gradient-to-r from-yellow-600 to-yellow-700 w-full md:w-auto">
+    <div className="flag-top"></div>
+    <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 hidden md:block">
+      <img
+        alt="Avatar"
+        className="rounded-full"
+        height="100"
+        src={leaderboardData[0]?.user?.profileImage === "" ? "https://robohash.org/" + leaderboardData[0]?.user?.username : `${leaderboardData[0]?.user?.profileImage}`}
+        style={{
+          aspectRatio: "80/80",
+          objectFit: "cover",
+        }}
+        width="100"
+      />
+    </div>
+    <div className="px-4 py-8 sm:p-10 pt-16">
+      <dl>
+        <dd className="mt-1 text-3xl font-semibold text-gray-100 text-center">
+          <span className="text-2xl">#1</span> {leaderboardData[0]?.user?.username}
+        </dd>
+        <dd className="mt-1 text-xl text-white text-center border border-white w-1/2 rounded-lg mx-auto">
+          {leaderboardData[0]?.totalPoints} points
+        </dd>
+      </dl>
+    </div>
+  </div>
 
-            <div className="overflow-hidden shadow  bg-gradient-to-r from-orange-900 to-yellow-700">
-              <div className="px-4 py-5 sm:p-6">
-                <dl>
-                  <dd className="mt-1 text-3xl font-semibold text-white text-center">
-                    <span className="text-3xl">#3</span> {leaderboardData[2]?.user?.username}
-                  </dd>
-                  <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
-                    {leaderboardData[2]?.totalPoints} points
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
+  <div className="flex-1 relative shadow bg-gradient-to-r from-orange-900 to-orange-950 w-full md:w-auto">
+    <div className="flag-top"></div>
+    <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 hidden md:block">
+      <img
+        alt="Avatar"
+        className="rounded-full"
+        height="100"
+        src={leaderboardData[2]?.user?.profileImage === "" ? "https://robohash.org/" + leaderboardData[2]?.user?.username : `${leaderboardData[2]?.user?.profileImage}`}
+        style={{
+          aspectRatio: "64/64",
+          objectFit: "cover",
+        }}
+        width="100"
+      />
+    </div>
+    <div className="px-4 py-5 sm:p-6 pt-12">
+      <dl>
+        <dd className="mt-1 text-2xl font-semibold text-gray-100 text-center">
+          <span className="text-xl">#3</span> {leaderboardData[2]?.user?.username}
+        </dd>
+        <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
+          {leaderboardData[2]?.totalPoints} points
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+
+
 
           <div className="mx-auto max-w-7xl">
             <div>
@@ -106,7 +151,7 @@ export default function Leaderboard() {
                           }}
                         >
                           <TableCell className="font-medium text-lg text-center">
-                            {index + 4}
+                            #{index + 4}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
