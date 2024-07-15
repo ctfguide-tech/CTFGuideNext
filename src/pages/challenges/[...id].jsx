@@ -128,6 +128,10 @@ export default function Challenge() {
     //console.log(data)
     if (data) {
 
+      // do a quick http request to that url to see if it's up
+      
+
+
       setPassword(data.terminalUserPassword);
       setTerminalUrl(data.url);
       setUserName(data.terminalUserName);
@@ -177,6 +181,27 @@ export default function Challenge() {
     }
   }, [cache])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMinutesRemaining((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 60000); // 60000 ms = 1 minute
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Copied to clipboard!");
+    }).catch(err => {
+      toast.error("Failed to copy!");
+    });
+  };
+
+  function formatTime(minutes) {
+    const mins = Math.floor(minutes);
+    const secs = Math.floor((minutes - mins) * 60);
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
 
   return (
     <>
@@ -201,29 +226,41 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             <selectedTab.element cache={cache} setCache={setCache} />
+            <div className="shrink-0 bg-neutral-800 h-12 w-full">
+              <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
+                <input name="flag" type="text" required placeholder="Enter flag submission here" className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2" />
+                <input name="submitFlag" type="submit" value="Submit Flag" disabled={loadingFlagSubmit} className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm" />
+              </form>
+            </div>
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
               <div className="h-full">
+
+                {foundTerminal && (
                 <div className="flex">
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Username: {userName}</h1>
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Password: {password}</h1>
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: {minutesRemaining}</h1>
-                  <div className="ml-auto flex px-2">
-
-                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
-                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
-
-                  </div>
+                  
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
+                    Username: {userName} 
+                    <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
+                      <i className="fas fa-copy"></i>
+                    </button>
+                  </h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
+                    Password: {password} 
+                    <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
+                      <i className="fas fa-copy"></i>
+                    </button>
+                  </h1>
+                  <h1 className="text-sm ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
+                    Remaining Time: {formatTime(minutesRemaining)}
+                  </h1>
+            
 
 
                 </div>
-                <div className="flex bg-yellow-900">
-                  <h1 className="text-sm font-semibold line-clamp-1 pl-2">Our terminal infrastructure is experiencing heavy load. Terminals may feel slow.</h1>
-
-
-
-                </div>
+                )}
+           
                 {fetchingTerminal ? (
                   <div className="flex mx-auto text-center justify-center items-center h-full">
                     <div>
@@ -235,13 +272,6 @@ export default function Challenge() {
                   <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
                 )}
               </div>
-            </div>
-
-            <div className="shrink-0 bg-neutral-800 h-12 w-full">
-              <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
-                <input name="flag" type="text" required placeholder="Flag..." className="text-black h-full p-0 rounded-sm grow px-2 w-1/2" />
-                <input name="submitFlag" type="submit" value="Submit Flag" disabled={loadingFlagSubmit} className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm" />
-              </form>
             </div>
           </div>
         </main >
@@ -469,8 +499,21 @@ function DescriptionPage({ cache }) {
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-        <h1 className="text-4xl font-semibold py-2 line-clamp-1">
+        <h1 className="flex align-middle text-4xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
+          <div className="ml-auto  rounded-sm   text-right text-2xl flex items-center">
+
+            <div onClick={upvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
+              <i  className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
+               {challengeData && challengeData.upvotes}
+
+            </div>
+            <div onClick={downvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
+              <i  className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
+               {challengeData && challengeData.downvotes}
+            </div>
+           
+          </div>
         </h1>
         <h2 className="flex flex-wrap gap-2 pb-2">
           {challenge ? (
@@ -480,10 +523,11 @@ function DescriptionPage({ cache }) {
             </>)
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
         </h2>
+        
         <h2 className="flex gap-2 pb-8">
           {challenge ? <>
             <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline">{challenge.creator} </Link>
-            <p className="flex text-neutral-200 opacity-70 items-center text-sm">
+            <p className="flex  text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
               {challenge.views}
               <i className="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
@@ -491,21 +535,15 @@ function DescriptionPage({ cache }) {
             </p>
           </>
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
-        </h2>
 
+        </h2>
 
         <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
 
-    <div style={{ padding: "40px" }}>
-    <div className=" space-x-2 text-right text-lg">
-    <i onClick={upvote} className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {challengeData && challengeData.upvotes}
-    <i onClick={downvote} className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {challengeData && challengeData.downvotes}
-    </div>
-
-    </div>
+ 
     </>
   )
 }
