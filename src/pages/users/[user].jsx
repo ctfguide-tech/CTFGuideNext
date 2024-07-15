@@ -10,13 +10,45 @@ import CreatedChallenges from '@/components/profile/v2/CreatedChallenges';
 import LikedChallenges from '@/components/profile/v2/LikedChallenges';
 import Badges from '@/components/profile/v2/Badges';
 import Writeups from '@/components/profile/v2/Writeups';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import ActivityCalendar from 'react-activity-calendar';
+
+const mockActivityData = [
+  { date: '2024-01-01', count: 1, level: 4 },
+  { date: '2024-01-02', count: 0, level: 4 },
+  { date: '2024-01-03', count: 0, level: 4 },
+  { date: '2024-02-01', count: 0, level: 4 },
+  { date: '2024-02-02', count: 0, level: 4 },
+  { date: '2024-02-03', count: 1, level: 4 },
+  { date: '2024-03-01', count: 2, level: 3 },
+  { date: '2024-03-02', count: 1, level: 2 },
+  { date: '2024-03-03', count: 0, level: 1 },
+  { date: '2024-04-01', count: 3, level: 4 },
+  { date: '2024-04-02', count: 2, level: 3 },
+  { date: '2024-04-03', count: 1, level: 2 },
+  { date: '2024-05-01', count: 1, level: 2 },
+  { date: '2024-06-01', count: 1, level: 2 },
+  { date: '2024-07-01', count: 1, level: 2 },
+  { date: '2024-08-01', count: 1, level: 2 },
+  { date: '2024-09-01', count: 1, level: 2 },
+  { date: '2024-10-01', count: 1, level: 2 },
+  { date: '2024-11-01', count: 1, level: 2 },
+  { date: '2024-12-01', count: 1, level: 2 },
+  { date: '2024-12-21', count: 1, level: 2 },
+
+];
 
 export default function Create() {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('LIKED CHALLENGES');
     const [isBioExpanded, setIsBioExpanded] = useState(false);
+    const [followers, setFollowers] = useState(0);
+    const [following, setFollowing] = useState(0);
+    const [activityData, setActivityData] = useState(mockActivityData);
 
     const toggleBio = () => {
         setIsBioExpanded(!isBioExpanded);
@@ -59,12 +91,24 @@ export default function Create() {
             .then((data) => {
                 console.log(data)
                 setUser(data);
+                setFollowers(data.followers || 0);
+                setFollowing(data.following || 0);
             })
             .catch((err) => {
                 console.log(err);
             });
-    }, [router.query.user]);
 
+        const fetchActivityData = async () => {
+            try {
+                const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/activity`, 'GET', null);
+                setActivityData(response.data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchActivityData();
+    }, [router.query.user]);
 
     return (
         <>
@@ -75,77 +119,82 @@ export default function Create() {
                 </style>
             </Head>
             <StandardNav />
+            <div>
+                <div>
+                    <div
+                        style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
+                        className="h-20 w-full object-cover lg:h-20"
+                        alt=""
+                    >
+                    </div>
+                </div>
+                <div className="mx-auto max-w-7xl ">
+                    <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+                        <div className="flex w-40">
+                            <a href='../settings'>
+                                {(user && user.profileImage && (
+                                    <img
+                                        className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
+                                        src={user && user.profileImage}
+                                        alt=""
+                                    />
+                                )) || (
+                                    <Skeleton
+                                        circle={true}
+                                        height={128}
+                                        width={128}
+                                        baseColor='#262626'
+                                        highlightColor='#3a3a3a'
+                                    />
+                                )}
+                            </a>
+                        </div>
+                        <div className="mt-4 w-full">
+                            <div className="">
+                            <div className="mt-6 ">
+            <div className="mt-6  flex w-full">
+
+                <div>
+              <h1 className="mt-8 truncate text-2xl font-bold text-white f">
+                {user && user.username || (
+                  <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
+                )}
+              </h1>
+              <p className="text-white  ">
+                <i className="fas fa-map-marker-alt mt-2"></i>{' '}
+                {user && user.location || (
+                  <Skeleton width='25rem' baseColor='#262626' highlightColor='#3a3a3a' />
+                )}
+              </p>
+              </div>
+                    <div className='ml-auto  flex mt-14'>
+                        <h1 className='text-white mr-2'>Following: {following}</h1>
+                        <h1 className='text-white'>Followers: {followers}</h1>
+                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                
+            </div>
            
-            <div className=' text-white text-xl px-10 py-10 w-full bg-neutral-800 flex flex-col md:flex-row items-center'>
-
-
-<div className='flex flex-col md:flex-row items-center'>
-
-    {user && (
-        <>
-            <img src={user.profileImage || ''} alt="Profile Image" className='w-20 h-20 rounded-full' />
-            <h1 className='ml-4 text-3xl mr-2 font-bold'>{user.username}</h1>
-        </>
-    )}
-    <div className='ml-4 mr-2 bg-yellow-500 px-4  py-1 font-bold text-sm mt-2 md:mt-0'>
-        <p>
-         <i className='fas fa-crown'></i>   pro
-        </p>
-    </div>
-    <div className='bg-red-600 px-4  py-1 font-bold text-sm mt-2 md:mt-0'>
-        <p>
-            <i className='fas fa-code'></i>   dev
-        </p>
-    </div>
-</div>
-
-
-
-<div className='lg:ml-auto mt-4 md:mt-0 flex flex-col md:flex-row items-center'>
-
-    {/*followers following*/}
-    <div className='px-2 text-lg flex flex-col md:flex-row items-center gap-x-4'>
-        <p>
-            {user && (
-                <>
-                    <span className='font-bold'> Followers</span> {user.followers || '0'}
-                    <span className='font-bold ml-4'> Following</span> {user.following || '0'}
-                </>
-            )}
-        </p>
-
-        <div className='flex items-center gap-x-2 mt-2 md:mt-0'>
-            <button className='bg-blue-600 px-4 rounded-full text-sm'>
-                <i class="fas fa-user-plus"></i>
-            </button>
-            <button className='bg-red-600 px-4 rounded-full text-sm'>
-                <i class="fas fa-flag"></i>
-            </button>
-        </div>
-
-    </div>
-</div>
-</div>
+      
 
             <main className='max-w-7xl mx-auto mt-10'>
-
-
                 <div className='mt-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 gap-y-4 ' >
-
-
-
-                    <div className='w-full bg-neutral-800 border-t-4 border-blue-600'>
-
+                    <div className='w-full bg-neutral-800 border-t-4 border-blue-600 h-40'>
                         <div className='col-span-2 bg-neutral-800 px-4 pt-4 ' >
                             <h1 className='text-2xl text-white font-bold'>ACTIVITY FEED</h1>
                             {user && (
                                 <h1 className='mx-auto my-auto text-neutral-400'>Looks like {user.username} hasn't been that active.</h1>
                             )}
-                            <hr className='px-4 ml-2 mr-2 mt-4'>
+                            <hr className='px-4 border-neutral-700 mt-4'>
                             </hr>
                         </div>
                        
-
                         <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
                             <div className='bg-neutral-800'>
                                 <h1 className='text-2xl text-white font-bold'>SKILL CHART</h1>
@@ -153,36 +202,30 @@ export default function Create() {
                                     <h1 className='mx-auto my-auto text-neutral-400'>It seems that {user.username} hasn't solved any challenges yet.</h1>
                                 )}
                             </div>
-                            <hr className='px-4 ml-2 mr-2 mt-4'></hr>
-                            </div>
+                            <hr className='px-4 border-neutral-700 mt-4'></hr>
+                        </div>
 
-                            <div className='bg-neutral-800 gap-y-4 px-4 py-4'>
-                                <h1 className='text-2xl text-white font-bold'>NERD STATS</h1>
-                                {user && (
-                                    <div className='text-neutral-400 text-xs'>
-                                        <p>Creation Date : {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', minute: 'numeric', hour: 'numeric' })}</p>
-                                        <p>Total Challenges: {user.totalChallenges || '0'}</p>
-                                        <p>Total Writeups: {user.totalWriteups || '0'}</p>
-                                        <p>Total Badges: {user.totalBadges || '0'}</p>
-                                    </div>
-                                )}
-                            </div>
-                            
-                            
-                        
+                        <div className='bg-neutral-800 gap-y-4 px-4 py-4 h-full' >
+                            <h1 className='text-2xl text-white font-bold'>NERD STATS</h1>
+                            {user && (
+                                <div className='text-neutral-400 text-xs'>
+                                    <p>Creation Date : {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', minute: 'numeric', hour: 'numeric' })}</p>
+                                    <p>Total Challenges: {user.totalChallenges || '0'}</p>
+                                    <p>Total Writeups: {user.totalWriteups || '0'}</p>
+                                    <p>Total Badges: {user.totalBadges || '0'}</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className='col-span-3 border-t-4 border-blue-600'>
                         <div className='bg-neutral-800 px-4 py-4'>
-
-                                {user && (
-                                    <h1 className='text-2xl text-white font-bold uppercase mb-4'>ABOUT {user.username}</h1>
-                                )}
-
-                                <p className='text-neutral-400'>
-                                    {user && user.bio}
-                                </p>
-
-                            </div>
+                            {user && (
+                                <h1 className='text-2xl text-white font-bold uppercase mb-4'>ABOUT {user.username}</h1>
+                            )}
+                            <p className='text-neutral-400'>
+                                {user && user.bio}
+                            </p>
+                        </div>
 
                         <div className='grid grid-cols-1 gap-y-4 pt-4 '>
                             <div>
@@ -211,28 +254,32 @@ export default function Create() {
                                     </select>
                                 </div>
                                 <div className='bg-neutral-800 px-4 py-4 border-t-4 border-blue-600'>
-                            {user && renderContent()}
-                        </div>
+                                    {user && renderContent()}
+                                </div>
+
+                                <div className='w-full'>
+                    <div className='text-white'>
+                <div className='w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4 mt-4'>
+                <h2 className="text-2xl font-bold text-white mb-4">STREAK CHART</h2>
+<div className='flex justify-center'>
+                <ActivityCalendar 
+    data={mockActivityData} 
+    showMonthLabels={true} // Ensure month labels are shown
+    theme={{
+        light: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
+        dark: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
+        level4: '#3a8fff'
+    }}
+    />      </div>  </div> </div>
+                    </div>
                             </div>
-                            
                         </div>
                     </div>
-                    <div className='col-span-2 '>
-
-
-                    </div>
-
-
-
+                 
                 </div>
-
             </main>
 
-
-
-
-
-            <div className=' flex w-full h-full grow basis-0'></div>
+         
             <Footer />
         </>
     );
