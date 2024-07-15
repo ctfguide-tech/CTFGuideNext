@@ -26,7 +26,10 @@ const SpawnTerminal = ({ open, setOpen }) => {
 
   }
 
-
+  function deployMachine() {
+    window.location.href = '/terminal';
+   // setOpen(false);
+  }
 
   return (
 
@@ -52,7 +55,7 @@ const SpawnTerminal = ({ open, setOpen }) => {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-xl text-white">
-                            <i className="fas fa-terminal"></i> Launch a machine
+                            <i className="fas fa-terminal"></i> Launch a machine BETA
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -76,10 +79,9 @@ const SpawnTerminal = ({ open, setOpen }) => {
                             onChange={e => hasPermission(e.target.value)}
                             value={activeSub}
                             className="mt-2 block w-full bg-neutral-800 rounded-md py-1.5 pl-3 pr-10 text-white border-neutral-800 sm:text-sm sm:leading-6"
+                            
                           >
                             <option>Ubuntu 22.10 LTS</option>
-                            <option>Alpine Linux</option>
-                            <option>Kali Linux (CTFGuide Pro)</option>
                           </select>
                         </div>
 
@@ -96,18 +98,18 @@ const SpawnTerminal = ({ open, setOpen }) => {
                               )
                         }
 
-                        <h1 className="mt-6">Container Interaction</h1>
-                        <div className="mt-2 flex w-full mx-auto text-center gap-x-4">
-                          <div className='border rounded-lg w-full py-4 cursor-pointer hover:bg-neutral-600/50'>
-                            <h1>WebVNC</h1>
+                        <h1 className="mt-6">Container Interaction (coming soon)</h1>
+                        <div className="mt-2 flex w-full mx-auto text-center gap-x-4 blur-sm">
+                          <div className='border rounded-lg w-full py-4 cursor-pointer bg-neutral-600/50'>
+                            <h1>WebVNC (Disabled)</h1>
                           </div>
                           <div className='border rounded-lg w-full py-4 cursor-pointer hover:bg-neutral-600/50'>
                             <h1>ShellInABox</h1>
                           </div>
                         </div>
 
-                        <h1 className="mt-6">Import Files</h1>
-                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
+                        <h1 className="mt-6">Import Files (coming soon)</h1>
+                        <div className="mt-2 flex justify-center rounded-lg blur-sm border border-dashed border-white/25 px-6 py-10 bg-neutral-800">
                           <div className="text-center">
                             <i className="text-4xl text-neutral-200 fas fa-file-archive"></i>
                             <div className="mt-4 flex text-sm leading-6 text-gray-400">
@@ -116,7 +118,7 @@ const SpawnTerminal = ({ open, setOpen }) => {
                                 className="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-blue-500"
                               >
                                 <span>Upload a file</span>
-                                <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                <input id="file-upload" name="file-upload" type="file" className="sr-only" disabled />
                               </label>
                               <p className="pl-1">or drag and drop</p>
                             </div>
@@ -134,8 +136,9 @@ const SpawnTerminal = ({ open, setOpen }) => {
                         Cancel
                       </button>
                       <button
-                        type="submit"
+                        type="button"
                         className="ml-4 inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                        onClick={deployMachine}
                       >
                         Deploy machine
                       </button>
