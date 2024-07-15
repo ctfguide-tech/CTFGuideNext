@@ -15,27 +15,27 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
 
 const mockActivityData = [
-  { date: '2024-01-01', count: 1, level: 4 },
-  { date: '2024-01-02', count: 0, level: 4 },
-  { date: '2024-01-03', count: 0, level: 4 },
-  { date: '2024-02-01', count: 0, level: 4 },
-  { date: '2024-02-02', count: 0, level: 4 },
-  { date: '2024-02-03', count: 1, level: 4 },
-  { date: '2024-03-01', count: 2, level: 3 },
-  { date: '2024-03-02', count: 1, level: 2 },
-  { date: '2024-03-03', count: 0, level: 1 },
-  { date: '2024-04-01', count: 3, level: 4 },
-  { date: '2024-04-02', count: 2, level: 3 },
-  { date: '2024-04-03', count: 1, level: 2 },
-  { date: '2024-05-01', count: 1, level: 2 },
-  { date: '2024-06-01', count: 1, level: 2 },
-  { date: '2024-07-01', count: 1, level: 2 },
-  { date: '2024-08-01', count: 1, level: 2 },
-  { date: '2024-09-01', count: 1, level: 2 },
-  { date: '2024-10-01', count: 1, level: 2 },
-  { date: '2024-11-01', count: 1, level: 2 },
-  { date: '2024-12-01', count: 1, level: 2 },
-  { date: '2024-12-21', count: 1, level: 2 },
+    { date: '2024-01-01', count: 1, level: 4 },
+    { date: '2024-01-02', count: 0, level: 4 },
+    { date: '2024-01-03', count: 0, level: 4 },
+    { date: '2024-02-01', count: 0, level: 4 },
+    { date: '2024-02-02', count: 0, level: 4 },
+    { date: '2024-02-03', count: 1, level: 4 },
+    { date: '2024-03-01', count: 2, level: 3 },
+    { date: '2024-03-02', count: 1, level: 2 },
+    { date: '2024-03-03', count: 0, level: 1 },
+    { date: '2024-04-01', count: 3, level: 4 },
+    { date: '2024-04-02', count: 2, level: 3 },
+    { date: '2024-04-03', count: 1, level: 2 },
+    { date: '2024-05-01', count: 1, level: 2 },
+    { date: '2024-06-01', count: 1, level: 2 },
+    { date: '2024-07-01', count: 1, level: 2 },
+    { date: '2024-08-01', count: 1, level: 2 },
+    { date: '2024-09-01', count: 1, level: 2 },
+    { date: '2024-10-01', count: 1, level: 2 },
+    { date: '2024-11-01', count: 1, level: 2 },
+    { date: '2024-12-01', count: 1, level: 2 },
+    { date: '2024-12-21', count: 1, level: 2 },
 
 ];
 
@@ -58,18 +58,18 @@ export default function Create() {
         switch (activeTab) {
             case 'LIKED CHALLENGES':
                 return <>
-                <h1 className='text-2xl font-bold text-white'>LIKED CHALLENGES</h1>
-                {user && (
-                    <LikedChallenges user={user} />
-                )}
+                    <h1 className='text-2xl font-bold text-white'>LIKED CHALLENGES</h1>
+                    {user && (
+                        <LikedChallenges user={user} />
+                    )}
                 </>
-                ;
+                    ;
             case 'WRITEUPS':
-                return   <>
-                <h1 className='text-2xl font-bold text-white'>WRITEUPS</h1>
-                {user && (
-                    <Writeups user={user} />
-                )}
+                return <>
+                    <h1 className='text-2xl font-bold text-white'>WRITEUPS</h1>
+                    {user && (
+                        <Writeups user={user} />
+                    )}
                 </>
             case 'CREATED CHALLENGES':
                 return <>
@@ -139,49 +139,49 @@ export default function Create() {
                                         alt=""
                                     />
                                 )) || (
-                                    <Skeleton
-                                        circle={true}
-                                        height={128}
-                                        width={128}
-                                        baseColor='#262626'
-                                        highlightColor='#3a3a3a'
-                                    />
-                                )}
+                                        <Skeleton
+                                            circle={true}
+                                            height={128}
+                                            width={128}
+                                            baseColor='#262626'
+                                            highlightColor='#3a3a3a'
+                                        />
+                                    )}
                             </a>
                         </div>
                         <div className="mt-4 w-full">
                             <div className="">
-                            <div className="mt-6 ">
-            <div className="mt-6  flex w-full">
+                                <div className="mt-6 ">
+                                    <div className="mt-6  flex w-full">
 
-                <div>
-              <h1 className="mt-8 truncate text-2xl font-bold text-white f">
-                {user && user.username || (
-                  <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
-                )}
-              </h1>
-              <p className="text-white  ">
-                <i className="fas fa-map-marker-alt mt-2"></i>{' '}
-                {user && user.location || (
-                  <Skeleton width='25rem' baseColor='#262626' highlightColor='#3a3a3a' />
-                )}
-              </p>
-              </div>
-                    <div className='ml-auto  flex mt-14'>
-                        <h1 className='text-white mr-2'>Following: {following}</h1>
-                        <h1 className='text-white'>Followers: {followers}</h1>
-                    </div>
+                                        <div>
+                                            <h1 className="mt-8 truncate text-2xl font-bold text-white f">
+                                                {user && user.username || (
+                                                    <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
+                                                )}
+                                            </h1>
+                                            <p className="text-white  ">
+                                                <i className="fas fa-map-marker-alt mt-2"></i>{' '}
+                                                {user && user.location || (
+                                                    <Skeleton width='25rem' baseColor='#262626' highlightColor='#3a3a3a' />
+                                                )}
+                                            </p>
+                                        </div>
+                                        <div className='ml-auto  flex mt-14'>
+                                            <h1 className='text-white mr-2'>Following: {following}</h1>
+                                            <h1 className='text-white'>Followers: {followers}</h1>
+                                        </div>
 
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
-                </div>
-                
+
             </div>
-           
-      
+
+
 
             <main className='max-w-7xl mx-auto mt-10'>
                 <div className='mt-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 gap-y-4 ' >
@@ -194,7 +194,7 @@ export default function Create() {
                             <hr className='px-4 border-neutral-700 mt-4'>
                             </hr>
                         </div>
-                       
+
                         <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
                             <div className='bg-neutral-800'>
                                 <h1 className='text-2xl text-white font-bold'>SKILL CHART</h1>
@@ -258,28 +258,28 @@ export default function Create() {
                                 </div>
 
                                 <div className='w-full'>
-                    <div className='text-white'>
-                <div className='w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4 mt-4'>
-                <h2 className="text-2xl font-bold text-white mb-4">STREAK CHART</h2>
-<div className='flex justify-center'>
-                <ActivityCalendar 
-    data={mockActivityData} 
-    showMonthLabels={true} // Ensure month labels are shown
-    theme={{
-        light: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
-        dark: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
-        level4: '#3a8fff'
-    }}
-    />      </div>  </div> </div>
-                    </div>
+                                    <div className='text-white'>
+                                        <div className='w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4 mt-4'>
+                                            <h2 className="text-2xl font-bold text-white mb-4">STREAK CHART</h2>
+                                            <div className='flex justify-center'>
+                                                <ActivityCalendar
+                                                    data={mockActivityData}
+                                                    showMonthLabels={true} // Ensure month labels are shown
+                                                    theme={{
+                                                        light: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
+                                                        dark: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
+                                                        level4: '#3a8fff'
+                                                    }}
+                                                />      </div>  </div> </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                 
+
                 </div>
             </main>
 
-         
+
             <Footer />
         </>
     );
