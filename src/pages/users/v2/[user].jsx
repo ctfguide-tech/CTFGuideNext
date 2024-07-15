@@ -175,7 +175,7 @@ export default function Create() {
                         <div className='bg-neutral-800 px-4 py-4'>
 
                                 {user && (
-                                    <h1 className='text-2xl text-neutral-400 font-bold uppercase'>ABOUT {user.username}</h1>
+                                    <h1 className='text-2xl text-white font-bold uppercase mb-4'>ABOUT {user.username}</h1>
                                 )}
 
                                 <p className='text-neutral-400'>
