@@ -118,7 +118,7 @@ export default function Challenge() {
   const [fetchingTerminal, setFetchingTerminal] = useState(true);
   const [foundTerminal, setFoundTerminal] = useState(false);
   const [terminalUrl, setTerminalUrl] = useState("");
-  const [loadingMessage, setLoadingMessage] = useState('Loading terminal...');
+  const [loadingMessage, setLoadingMessage] = useState('Connecting to terminal service...');
 
   const createTerminal = async (skipToCheckStatus) => {
     const challenge = cache.challenge;
@@ -200,13 +200,7 @@ export default function Challenge() {
             <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full">
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
-            {fetchingTerminal ? (
-              <div className="flex justify-center items-center h-full">
-                <span className="text-white">{loadingMessage}</span>
-              </div>
-            ) : (
-              <selectedTab.element cache={cache} setCache={setCache} />
-            )}
+            <selectedTab.element cache={cache} setCache={setCache} />
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
@@ -230,7 +224,16 @@ export default function Challenge() {
 
 
                 </div>
-                <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                {fetchingTerminal ? (
+                  <div className="flex mx-auto text-center justify-center items-center h-full">
+                    <div>
+                    <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
+                    <span className="text-white text-xl">{loadingMessage}</span>
+                  </div>
+                    </div>
+                ) : (
+                  <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                )}
               </div>
             </div>
 
