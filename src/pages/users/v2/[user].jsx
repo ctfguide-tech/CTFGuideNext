@@ -134,7 +134,7 @@ export default function Create() {
 
 
 
-                    <div className='w-full bg-neutral-800'>
+                    <div className='w-full bg-neutral-800 border-t-4 border-blue-600'>
 
                         <div className='col-span-2 bg-neutral-800 px-4 pt-4 ' >
                             <h1 className='text-2xl text-white font-bold'>ACTIVITY FEED</h1>
@@ -171,7 +171,7 @@ export default function Create() {
                             
                         
                     </div>
-                    <div className='col-span-3'>
+                    <div className='col-span-3 border-t-4 border-blue-600'>
                         <div className='bg-neutral-800 px-4 py-4'>
 
                                 {user && (
@@ -186,7 +186,7 @@ export default function Create() {
 
                         <div className='grid grid-cols-1 gap-y-4 pt-4 '>
                             <div>
-                                <div className='pb-2'>
+                                <div className='pb-2 '>
                                     <ul className='hidden md:flex w-full list-none text-neutral-500'>
                                         {['LIKED CHALLENGES', 'WRITEUPS', 'CREATED CHALLENGES', 'BADGES'].map(tab => (
                                             <li
@@ -210,7 +210,7 @@ export default function Create() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className='bg-neutral-800 px-4 py-4'>
+                                <div className='bg-neutral-800 px-4 py-4 border-t-4 border-blue-600'>
                             {user && renderContent()}
                         </div>
                             </div>
