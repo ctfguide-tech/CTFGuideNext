@@ -12,10 +12,12 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import ReactMarkdown from "react-markdown";
 import Menu from '@/components/editor/Menu';
 import { comment } from "postcss";
-
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { getCookie } from '@/utils/request';
 import { jwtDecode } from 'jwt-decode';
 import api from '@/utils/terminal-api';
+import Confetti from 'react-confetti';
 
 
 export default function Challenge() {
@@ -65,6 +67,14 @@ export default function Challenge() {
   }, [urlChallengeId]);
 
   const [loadingFlagSubmit, setLoadingFlagSubmit] = useState(false);
+  const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
+  const [awardedPoints, setAwardedPoints] = useState(0);
+
+  const showPointsModal = (points) => {
+    setAwardedPoints(points);
+    setIsPointsModalOpen(true);
+  };
+
   const onSubmitFlag = (e) => {
     e.preventDefault();
     if (loadingFlagSubmit) {
@@ -78,21 +88,22 @@ export default function Challenge() {
         const submitChallengeEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/submissions`;
         const submitChallengeResult = await request(submitChallengeEndpoint, 'POST', { keyword: flag });
         console.log(submitChallengeResult)
-        const { success, incorrect, error } = submitChallengeResult ?? {};
+        const { success, incorrect, error, points } = submitChallengeResult ?? {};
         if (error || !submitChallengeResult) {
           // An error occurred >:(
-          alert(error);
+          toast.error(error);
           return;
         }
         if (incorrect) {
           // Incorrect
-          alert(incorrect);
+          toast.error(incorrect);
           return;
         }
         // Success
-        alert(success);
+        showPointsModal(points); // Show points modal
       } catch (error) {
         console.error(error);
+        toast.error("An unexpected error occurred.");
       } finally {
         setLoadingFlagSubmit(false);
       }
@@ -112,7 +123,7 @@ export default function Challenge() {
     const challenge = cache.challenge;
     const cookie = getCookie('idToken');
 
-    const data = await api.buildDocketTerminal(challenge.id, cookie );
+    const data = await api.buildDocketTerminal(challenge.id, cookie);
     //console.log(data)
     if (data) {
 
@@ -142,7 +153,7 @@ export default function Challenge() {
     if (data !== null) {
       console.log('Found a terminal for the user');
       if (data.challengeID !== challenge.id) {
-       // await createTerminal(false);
+        // await createTerminal(false);
       } else {
         console.log('User has a terminal for this challenge');
         setTerminalUrl(data.url);
@@ -160,10 +171,10 @@ export default function Challenge() {
   }
 
   useEffect(() => {
-    if(cache.challenge) {
+    if (cache.challenge) {
       checkIfTerminalExists();
     }
-  },[cache])
+  }, [cache])
 
 
   return (
@@ -180,6 +191,7 @@ export default function Challenge() {
         </style>
       </Head>
       <FlagDialog />
+      <PointsModal isOpen={isPointsModalOpen} setIsOpen={setIsPointsModalOpen} points={awardedPoints} />
       <div className='flex flex-col min-w-[64rem] text-white overflow-x-auto overflow-y-hidden min-h-0 h-screen'>
         <StandardNav alignCenter={false} />
         <main className="flex flex-grow p-2 gap-2 overflow-y-hidden">
@@ -194,28 +206,28 @@ export default function Challenge() {
             <div className="grow bg-neutral-950 w-full overflow-hidden">
               <div className="h-full">
                 <div className="flex">
-                 <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Username: {userName}</h1>
+                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Username: {userName}</h1>
                   <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Password: {password}</h1>
                   <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">Remaining Time: {minutesRemaining}</h1>
-                 <div className="ml-auto flex px-2">
+                  <div className="ml-auto flex px-2">
 
-                 <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
+                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-sync-alt"></i> Restart Terminal </h1>
+                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2"><i className="fas fa-power-off"></i> Shutdown Terminal </h1>
 
-              </div>
-              
+                  </div>
+
 
                 </div>
                 <div className="flex bg-yellow-900">
                   <h1 className="text-sm font-semibold line-clamp-1 pl-2">Our terminal infrastructure is experiencing heavy load. Terminals may feel slow.</h1>
-              
-              
+
+
 
                 </div>
-                <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden "   />
+                <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
               </div>
             </div>
-            
+
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
               <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
                 <input name="flag" type="text" required placeholder="Flag..." className="text-black h-full p-0 rounded-sm grow px-2 w-1/2" />
@@ -225,6 +237,18 @@ export default function Challenge() {
           </div>
         </main >
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   )
 }
@@ -257,6 +281,61 @@ function FlagDialog({ color, title, message }) {
   )
 }
 
+function PointsModal({ isOpen, setIsOpen, points }) {
+  const [visible, setVisible] = useState(false);
+  const [fade, setFade] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setVisible(true);
+      setTimeout(() => setFade(true), 10); // Small delay to trigger the transition
+    } else {
+      setFade(false);
+      // setTimeout(() => setVisible(false), 500); // Match the duration of the transition
+    }
+  }, [isOpen]);
+
+  return (
+    <>
+      {visible && (
+        <>
+
+          <Dialog open={isOpen} onClose={() => setIsOpen(false)} className={`relative z-50 transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+            <div className="fixed inset-0 w-screen overflow-y-auto">
+              <Confetti
+                width={window.innerWidth}
+                height={window.innerHeight}
+                recycle={false}
+                numberOfPieces={800}
+              />
+              <div className="flex min-h-full items-center justify-center p-4">
+                <Dialog.Panel className="mx-auto px-32 py-14 max-w-6xl rounded bg-neutral-900 text-white">
+                  <div className="flex gap-x-10">
+                    <div className=" ">
+                      <Dialog.Title className={'text-3xl font-semibold'}>Nice work!</Dialog.Title>
+                      <p className="text-xl">You have been awarded {points} points.</p>
+                      <button onClick={() => setIsOpen(false)} className="mt-4 bg-blue-600 hover:bg-blue-400 text-white px-4 py-2 rounded">
+                        Close
+                      </button>
+                    </div>
+                    <div className="border-l border-neutral-700 px-4">
+                      <h1 className="text-xl font-semibold">BADGES</h1>
+                      <p className="text-lg">You did not receive any new badges.</p>
+                      <h1 className="text-xl mt-2 font-semibold">REWARD SUMMARY</h1>
+                      <p className="text-lg"><span className="text-green-500">+{points}</span> points</p>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </div>
+            </div>
+          </Dialog>
+        </>
+      )}
+    </>
+  );
+}
+
 function TabLink({ tabName, selected, url }) {
   const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
   return (
@@ -276,13 +355,13 @@ function HintsPage({ cache }) {
     const url = `${baseUrl}/challenges/${challenge.id}/getHints`;
     const data = await request(url, "GET", null);
     //console.log(data)
-    if(data && data.success) {
+    if (data && data.success) {
       setHints(data.hintArray);
     }
   }
 
   useEffect(() => {
-    if(challenge) fetchHints()
+    if (challenge) fetchHints()
   }, [challenge])
 
   const showHint = async (i) => {
@@ -308,32 +387,32 @@ function HintsPage({ cache }) {
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
         <h1 className="text-2xl font-semibold py-2 line-clamp-1">
-         Hints
+          Hints
         </h1>
-      <div style={{padding: "5px", margin: "5px"}}>
-              {hints.map((hint, idx) => {
-                return (
-                  <div
-                    className="mb-2 mt-3 w-full border-l-2 border-yellow-600 hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
-                    onClick={() => showHint(idx)}
-                  >
-                    <div style={{ maxWidth: '90%' }}>
-                      
-                      <p className="text-white">
-                        <span className=" ">
-                          {hint.message}
-                        </span>
-             
-                      </p>
-                    </div>
-                    <span className="mt-1 text-sm text-white">
-                      { Math.abs(hint.penalty) } point penalty
+        <div style={{ padding: "5px", margin: "5px" }}>
+          {hints.map((hint, idx) => {
+            return (
+              <div
+                className="mb-2 mt-3 w-full border-l-2 border-yellow-600 hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                onClick={() => showHint(idx)}
+              >
+                <div style={{ maxWidth: '90%' }}>
+
+                  <p className="text-white">
+                    <span className=" ">
+                      {hint.message}
                     </span>
-                  </div>
-                );
-              })}
+
+                  </p>
+                </div>
+                <span className="mt-1 text-sm text-white">
+                  {Math.abs(hint.penalty)} point penalty
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
   )
@@ -391,7 +470,7 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
 
 function WriteUpPage({ cache, setCache }) {
 
-  
+
 
   const router = useRouter();
   const [selectedWriteup, setSelectedWriteup] = useState(null);
@@ -472,51 +551,51 @@ function WriteUpPage({ cache, setCache }) {
       {selectedWriteup ? (
         <WriteupView writeup={selectedWriteup} onBack={() => setSelectedWriteup(null)} />
       ) : (
-      
 
-      <div className="px-4 overflow-auto">
-        {writeUp.map((writeup, index) => (
-          <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
-            <div className='w-full flex'>
-              <div className="">
 
-                <h3 className="text-2xl">{writeup.title}</h3>
-                <p className="text-sm">Authored by {writeup.user.username}</p>
+        <div className="px-4 overflow-auto">
+          {writeUp.map((writeup, index) => (
+            <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+              <div className='w-full flex'>
+                <div className="">
 
-              </div>
-              <div className="ml-auto mt-2">
-                <p className="text-sm text-right">452 views</p>
+                  <h3 className="text-2xl">{writeup.title}</h3>
+                  <p className="text-sm">Authored by {writeup.user.username}</p>
 
-                <div className=" space-x-2 text-right text-lg">
-                  <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
-                  <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
                 </div>
+                <div className="ml-auto mt-2">
+                  <p className="text-sm text-right">452 views</p>
+
+                  <div className=" space-x-2 text-right text-lg">
+                    <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
+                    <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {
+        !writeUp.length && (
+          <div className="px-3">
+            <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
+              <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+                <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
+                <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
+                <p className="text-sm">Maybe you could create one?</p>
 
               </div>
             </div>
           </div>
-        ))}
-      </div>
-        )}
+        )
+      }
 
-        {
-          !writeUp.length && (
-            <div className="px-3">
-                       <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
-            <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
-              <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
-              <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
-              <p className="text-sm">Maybe you could create one?</p>
-
-            </div>
-          </div>
-            </div>
-          )
-        }
-      
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
-</>
+    </>
   )
 }
 
@@ -534,7 +613,7 @@ function WriteupView({ writeup, onBack }) {
         console.log("Upvoted successfully");
         setUpvotes(response.upvotes)
         setDownvotes(response.downvotes)
-    
+
       } else {
         console.error("Failed to upvote:", response.message);
       }
@@ -542,7 +621,7 @@ function WriteupView({ writeup, onBack }) {
       console.error("Error upvoting writeup:", error);
     }
   }
-  
+
   async function downvoteWriteup(writeupId) {
     try {
       const downvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`;
@@ -567,29 +646,29 @@ function WriteupView({ writeup, onBack }) {
 
       <div className="flex">
         <div>
-        <h1 className="text-3xl">{writeup.title}</h1>
-        <p>Authored by {writeup.user.username}</p>
+          <h1 className="text-3xl">{writeup.title}</h1>
+          <p>Authored by {writeup.user.username}</p>
 
         </div>
         <div className="ml-auto mt-3 text-right" >
-  <button className="hover:text-neutral-200 mb-2" onClick={onBack}><i className="fas fa-long-arrow-alt-left"></i> View all writeups</button> <br></br>
-  <button
-    className="px-2 rounded-full bg-green-700 hover:bg-green-600"
-    onClick={() => upvoteWriteup(writeup.id)}
-  >
-    <i className="fas fa-arrow-up"></i> {upvotes || 0}
-  </button>
-  <button
-    className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
-    onClick={() => downvoteWriteup(writeup.id)}
-  >
-    <i className="fas fa-arrow-down"></i> {downvotes || 0}
-  </button>    
-</div>
+          <button className="hover:text-neutral-200 mb-2" onClick={onBack}><i className="fas fa-long-arrow-alt-left"></i> View all writeups</button> <br></br>
+          <button
+            className="px-2 rounded-full bg-green-700 hover:bg-green-600"
+            onClick={() => upvoteWriteup(writeup.id)}
+          >
+            <i className="fas fa-arrow-up"></i> {upvotes || 0}
+          </button>
+          <button
+            className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
+            onClick={() => downvoteWriteup(writeup.id)}
+          >
+            <i className="fas fa-arrow-down"></i> {downvotes || 0}
+          </button>
+        </div>
       </div>
-      
 
-<br></br>
+
+      <br></br>
       <MarkdownViewer content={writeup.content} />
 
     </div>
@@ -598,7 +677,7 @@ function WriteupView({ writeup, onBack }) {
 
 function LeaderboardPage({ cache, setCache }) {
 
-  
+
 
   const router = useRouter();
   const [selectedWriteup, setSelectedWriteup] = useState(null);
@@ -654,8 +733,8 @@ function LeaderboardPage({ cache, setCache }) {
         .then((data) => {
           console.log(`Leaderboard Data: ${JSON.stringify(data)}`)
           try {
-          setLeaderboardData(data)
-          } catch(err) {
+            setLeaderboardData(data)
+          } catch (err) {
             console.log("Error loading leaderboard data.")
           }
         })
@@ -669,27 +748,27 @@ function LeaderboardPage({ cache, setCache }) {
     <>
       <div className="flex">
 
-       
-            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-              <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
-            </div>
 
-      
+        <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+          <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
+        </div>
 
-      
-       
 
-      </div>
-    
-    <div className="grid grid-cols-3">
-      <div className="">
+
+
+
 
       </div>
-    </div>
+
+      <div className="grid grid-cols-3">
+        <div className="">
+
+        </div>
+      </div>
 
       {leaderboard.slice(0, 3).map((entry, index) => {
         let color;
-        switch(index) {
+        switch (index) {
           case 0:
             color = "from-yellow-500 to-yellow-700"; // gold
             break;
@@ -703,23 +782,23 @@ function LeaderboardPage({ cache, setCache }) {
             color = "from-green-500 to-blue-700"; // default color for others
         }
         return (
-        <div className="px-3">
+          <div className="px-3">
             <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
-            <div className="flex items-center">
-              <span className="text-2xl font-bold">{index + 1}.</span>
-              <span className="ml-2 text-xl font-semibold text-white">
-                <Link href={`/users/${entry.user.username}`}>
-                  {entry.user.username}
-                </Link>
-              </span>
+              <div className="flex items-center">
+                <span className="text-2xl font-bold">{index + 1}.</span>
+                <span className="ml-2 text-xl font-semibold text-white">
+                  <Link href={`/users/${entry.user.username}`}>
+                    {entry.user.username}
+                  </Link>
+                </span>
+              </div>
+              <div className="text-xl font-semibold">{entry.points} points</div>
             </div>
-            <div className="text-xl font-semibold">{entry.points} points</div>
           </div>
-        </div>
         )
       })}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
-</>
+    </>
   )
 }
 
@@ -960,7 +1039,7 @@ function CommentsPage({ cache }) {
         {challenge && challenge.comments && <CommentsSection comments={challenge.comments} />}
       </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+
     </>
   );
 }
-
