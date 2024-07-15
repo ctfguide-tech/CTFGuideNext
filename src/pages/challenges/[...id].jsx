@@ -226,12 +226,15 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             <selectedTab.element cache={cache} setCache={setCache} />
+            <div className='flex w-full h-full grow basis-0'></div>
+
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
-              <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
+            <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
                 <input name="flag" type="text" required placeholder="Enter flag submission here" className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2" />
                 <input name="submitFlag" type="submit" value="Submit Flag" disabled={loadingFlagSubmit} className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm" />
               </form>
             </div>
+            
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
@@ -461,6 +464,7 @@ function HintsPage({ cache }) {
 function DescriptionPage({ cache }) {
   const { challenge } = cache;
   const [challengeData, setChallengeData] = useState(null);
+  const [authorPfp, setAuthorPfp] = useState(null);
 
   const colorText = {
     'BEGINNER': 'bg-blue-500 text-blue-50',
@@ -493,8 +497,23 @@ function DescriptionPage({ cache }) {
   useEffect(() => {
     if(challenge){
       setChallengeData(challenge);
+      fetchAuthorPfp(challenge.creator);
     }
-  },[challenge])
+  },[challenge]);
+
+  async function fetchAuthorPfp(username) {
+    try {
+      const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
+      const result = await request(endPoint, "GET", null);
+      if (result) {
+        setAuthorPfp(result);
+      } else {
+        setAuthorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
+      }
+    } catch (err) {
+      console.log('failed to get profile picture');
+    }
+  }
 
   return (
     <>
@@ -502,17 +521,14 @@ function DescriptionPage({ cache }) {
         <h1 className="flex align-middle text-4xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
           <div className="ml-auto  rounded-sm   text-right text-2xl flex items-center">
-
             <div onClick={upvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
               <i  className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
                {challengeData && challengeData.upvotes}
-
             </div>
             <div onClick={downvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
               <i  className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
                {challengeData && challengeData.downvotes}
             </div>
-           
           </div>
         </h1>
         <h2 className="flex flex-wrap gap-2 pb-2">
@@ -526,6 +542,7 @@ function DescriptionPage({ cache }) {
         
         <h2 className="flex gap-2 pb-8">
           {challenge ? <>
+            <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 rounded-full" />
             <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline">{challenge.creator} </Link>
             <p className="flex  text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
@@ -535,15 +552,12 @@ function DescriptionPage({ cache }) {
             </p>
           </>
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
-
         </h2>
 
         <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
-
- 
     </>
   )
 }
@@ -850,25 +864,31 @@ function LeaderboardPage({ cache, setCache }) {
         </div>
       </div>
 
-      {leaderboard.slice(0, 3).map((entry, index) => {
+      {leaderboard.slice(0, 10).map((entry, index) => {
         let color;
         switch (index) {
           case 0:
-            color = "from-yellow-500 to-yellow-700"; // gold
+            color = "from-yellow-700 to-yellow-800"; // gold
             break;
           case 1:
-            color = "from-gray-500 to-gray-700"; // silver
+            color = "from-gray-700 to-gray-800"; // silver
             break;
           case 2:
-            color = "from-orange-500 to-orange-700"; // bronze
+            color = "from-orange-800 to-orange-900"; // bronze
             break;
           default:
-            color = "from-green-500 to-blue-700"; // default color for others
+            color = "bg-neutral-700"; // default color for others
         }
         return (
           <div className="px-3">
-            <div key={index} className={`flex justify-between items-center py-2 px-10 bg-gradient-to-r ${color} rounded-lg my-2`}>
+            <div key={index} className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
               <div className="flex items-center">
+              <img
+                  src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
+                  className="w-8 h-8 mr-2 rounded-full"
+                  alt={`${entry.user.username}'s profile`}
+                />
+
                 <span className="text-2xl font-bold">{index + 1}.</span>
                 <span className="ml-2 text-xl font-semibold text-white">
                   <Link href={`/users/${entry.user.username}`}>
