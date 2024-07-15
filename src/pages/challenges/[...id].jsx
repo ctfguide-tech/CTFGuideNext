@@ -542,9 +542,11 @@ function DescriptionPage({ cache }) {
         
         <h2 className="flex gap-2 pb-8">
           {challenge ? <>
-            <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 rounded-full" />
-            <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline">{challenge.creator} </Link>
-            <p className="flex  text-neutral-200 opacity-70 items-center text-sm">
+            <div className="flex items-center">
+              <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 rounded-full" />
+              <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline ml-2">{challenge.creator}</Link>
+            </div>
+            <p className="flex text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
               {challenge.views}
               <i className="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
@@ -882,13 +884,12 @@ function LeaderboardPage({ cache, setCache }) {
         return (
           <div className="px-3">
             <div key={index} className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
-              <div className="flex items-center">
-              <img
+              <div className="flex items-center justify-between align-middle">
+                <img
                   src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
                   className="w-8 h-8 mr-2 rounded-full"
                   alt={`${entry.user.username}'s profile`}
                 />
-
                 <span className="text-2xl font-bold">{index + 1}.</span>
                 <span className="ml-2 text-xl font-semibold text-white">
                   <Link href={`/users/${entry.user.username}`}>

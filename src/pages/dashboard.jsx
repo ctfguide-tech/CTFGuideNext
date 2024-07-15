@@ -315,7 +315,75 @@ export default function Dashboard() {
             </svg>
             </button>
         </div>
+
+        
     </div>
+
+     <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold mt-10 mb-4'>
+                 Connect with CTFGuide
+                </h1>
+    <div class='break-inside relative overflow-hidden flex flex-col justify-between  text-sm rounded-xl max-w-[23rem] px-6 py-4 mb-4 bg-indigo-800 text-white'>
+       
+    <a href="https://discord.gg/q3hgRBvgkX">
+          <div class="mr-4 max-w-sm  flex items-center gap-x-8">
+            <i class="fab fa-discord  ml-5  h-10 w-10 text-4xl text-white"></i>
+
+            <div>
+            <h5 class=" text-xl font-semibold tracking-tight text-white">
+              Join our Discord!
+            </h5>
+            <p class="mb-3 font-normal text-white">
+              Talk to other CTF players and get help with challenges!
+            </p>
+            <p class="inline-flex  text-center mx-auto items-center bg-white px-2 rounded-lg text-indigo-500 font-bold py-1 hover:underline">
+              Invite Link
+              <svg
+                class="ml-2 h-5 w-5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
+              </svg>
+            </p>
+            </div>
+          </div>
+        </a>
+
+        </div>
+
+
+        <div class='break-inside relative overflow-hidden flex flex-col justify-between  text-sm rounded-xl max-w-[23rem] px-6 py-4 mb-4 bg-black border border-white/10 text-white'>
+       
+       <a href="https://discord.gg/q3hgRBvgkX">
+             <div class="mr-4 max-w-sm  flex items-center gap-x-8">
+               <p class="  ml-5  text-6xl text-white">𝕏</p>
+   
+               <div>
+               <h5 class=" text-xl font-semibold tracking-tight text-white">
+                 Follow us on X!
+               </h5>
+               <p class="mb-3 font-normal text-white">
+                 Stay updated with the latest CTFGuide news and updates!
+               </p>
+               <a href='https://x.com/intent/user?screen_name=ctfguideapp' class="inline-flex  text-center mx-auto items-center bg-white px-2 rounded-lg text-black  font-bold py-1 hover:underline">
+                 Follow @ctfguideapp
+                 <svg
+                   class="ml-2 h-5 w-5"
+                   fill="currentColor"
+                   viewBox="0 0 20 20"
+                   xmlns="http://www.w3.org/2000/svg"
+                 >
+                   <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                   <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
+                 </svg>
+               </a>
+               </div>
+             </div>
+           </a>
+   
+           </div>
           
              </div>
 

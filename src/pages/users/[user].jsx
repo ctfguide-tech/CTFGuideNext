@@ -75,8 +75,8 @@ export default function Create() {
                 </style>
             </Head>
             <StandardNav />
-
-            <div className='text-white text-xl px-10 py-10 w-full bg-neutral-800 flex flex-col md:flex-row items-center'>
+           
+            <div className=' text-white text-xl px-10 py-10 w-full bg-neutral-800 flex flex-col md:flex-row items-center'>
 
 
 <div className='flex flex-col md:flex-row items-center'>
