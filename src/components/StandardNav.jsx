@@ -201,7 +201,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     }
   }
 
-  const linkClass = (path) => `inline-flex items-center border-b-2 px-4 pt-1 text-md font-semibold transition-all ${
+  const linkClass = (path) => `inline-flex items-center border-b-2 px-4 pt-1 text-md transition-all ${
     router.pathname === path ? 'text-blue-500 border-blue-500' : 'text-gray-300 hover:text-gray-50 border-transparent'
   }`;
 
