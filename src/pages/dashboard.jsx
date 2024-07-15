@@ -356,9 +356,9 @@ export default function Dashboard() {
 
         <div class='break-inside relative overflow-hidden flex flex-col justify-between  text-sm rounded-xl max-w-[23rem] px-6 py-4 mb-4 bg-black border border-white/10 text-white'>
        
-       <a href="https://discord.gg/q3hgRBvgkX">
+       <div href="https://discord.gg/q3hgRBvgkX">
              <div class="mr-4 max-w-sm  flex items-center gap-x-8">
-               <p class="  ml-5  text-6xl text-white">𝕏</p>
+               <p class="  ml-5  text-xl text-white">𝕏</p>
    
                <div>
                <h5 class=" text-xl font-semibold tracking-tight text-white">
@@ -367,7 +367,9 @@ export default function Dashboard() {
                <p class="mb-3 font-normal text-white">
                  Stay updated with the latest CTFGuide news and updates!
                </p>
-               <a href='https://x.com/intent/user?screen_name=ctfguideapp' class="inline-flex  text-center mx-auto items-center bg-white px-2 rounded-lg text-black  font-bold py-1 hover:underline">
+               </div>
+               </div>
+               <div href='https://x.com/intent/user?screen_name=ctfguideapp' class="inline-flex  text-center mx-auto items-center bg-white px-2 rounded-lg text-black  font-bold py-1 hover:underline">
                  Follow @ctfguideapp
                  <svg
                    class="ml-2 h-5 w-5"
@@ -378,10 +380,10 @@ export default function Dashboard() {
                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
                  </svg>
-               </a>
                </div>
+          
              </div>
-           </a>
+       
    
            </div>
           
