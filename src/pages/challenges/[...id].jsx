@@ -342,6 +342,8 @@ function HintsPage({ cache }) {
 
 function DescriptionPage({ cache }) {
   const { challenge } = cache;
+  const [challengeData, setChallengeData] = useState(null);
+
   const colorText = {
     'BEGINNER': 'bg-blue-500 text-blue-50',
     'EASY': 'bg-green-500 text-green-50',
@@ -349,6 +351,33 @@ function DescriptionPage({ cache }) {
     'HARD': 'bg-red-500 text-red-50',
     'INSANE': 'bg-purple-500 text-purple-50',
   };
+
+  async function upvote() {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/upvote`;
+    const response = await request(url, "POST", {});
+    if(!response || !response.success) {
+      console.log("unable to upvote");
+      return;
+    }
+    setChallengeData({ ...challengeData, upvotes: response.upvotes, downvotes: response.downvotes });
+  }
+
+  async function downvote() {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/downvote`;
+    const response = await request(url, "POST", {});
+    if(!response || !response.success) {
+      console.log("unable to upvote");
+      return;
+    }
+    setChallengeData({ ...challengeData, upvotes: response.upvotes, downvotes: response.downvotes });
+  }
+
+  useEffect(() => {
+    if(challenge){
+      setChallengeData(challenge);
+    }
+  },[challenge])
+
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
@@ -375,10 +404,20 @@ function DescriptionPage({ cache }) {
           </>
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
         </h2>
+
+
         <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+
+    <div style={{ padding: "40px" }}>
+    <div className=" space-x-2 text-right text-lg">
+    <i onClick={upvote} className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {challengeData && challengeData.upvotes}
+    <i onClick={downvote} className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {challengeData && challengeData.downvotes}
+    </div>
+
+    </div>
     </>
   )
 }
@@ -472,8 +511,6 @@ function WriteUpPage({ cache, setCache }) {
       {selectedWriteup ? (
         <WriteupView writeup={selectedWriteup} onBack={() => setSelectedWriteup(null)} />
       ) : (
-      
-
       <div className="px-4 overflow-auto">
         {writeUp.map((writeup, index) => (
           <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
