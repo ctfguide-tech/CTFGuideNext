@@ -105,7 +105,13 @@ export default function Dashboard() {
 
     fetchRecommendedChallenges();
     fetchPopularChallenges();
-
+    request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
+      console.log(response)
+      setActivities(response.activityFeed);
+    })
+    .catch(error => {
+      console.error('Error fetching feed data: ', error);
+    });
     const intervalId = setInterval(() => {
       request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
         console.log(response)

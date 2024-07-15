@@ -118,6 +118,7 @@ export default function Challenge() {
   const [fetchingTerminal, setFetchingTerminal] = useState(true);
   const [foundTerminal, setFoundTerminal] = useState(false);
   const [terminalUrl, setTerminalUrl] = useState("");
+  const [loadingMessage, setLoadingMessage] = useState('Loading terminal...');
 
   const createTerminal = async (skipToCheckStatus) => {
     const challenge = cache.challenge;
@@ -199,8 +200,13 @@ export default function Challenge() {
             <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full">
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
-            {/* Only this element should rerender on tab switch */}
-            {<selectedTab.element cache={cache} setCache={setCache} />}
+            {fetchingTerminal ? (
+              <div className="flex justify-center items-center h-full">
+                <span className="text-white">{loadingMessage}</span>
+              </div>
+            ) : (
+              <selectedTab.element cache={cache} setCache={setCache} />
+            )}
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
