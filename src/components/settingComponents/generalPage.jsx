@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
@@ -12,6 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Markdown from 'react-markdown';
 
 export default function General() {
   const router = useRouter();
@@ -35,6 +35,26 @@ export default function General() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [tempBio, setTempBio] = useState(bio);
+
+  // this for the toolkit
+  const insertText = (text) => {
+    const textarea = document.getElementById('bio');
+    const startPos = textarea.selectionStart;
+    const endPos = textarea.selectionEnd;
+    const newValue =
+      textarea.value.substring(0, startPos) +
+      text +
+      textarea.value.substring(endPos, textarea.value.length);
+    setTempBio(newValue);
+    textarea.focus();
+    textarea.selectionEnd = startPos + text.length;
+  };
+
+  const magicSnippet = () => {
+    const id = Math.random().toString(36).substring(7);
+    insertText(`[Click to run: ${id}](https://ctfguide.com/magic/)`);
+  };
 
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -51,7 +71,7 @@ export default function General() {
       console.log('donee', { croppedImage });
       setCroppedImage(croppedImage);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
@@ -66,7 +86,11 @@ export default function General() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
+        const response = await request(
+          `${process.env.NEXT_PUBLIC_API_URL}/account`,
+          'GET',
+          null
+        );
         const userData = await response;
         console.log('User Data:', userData); // Debugging statement
 
@@ -85,7 +109,9 @@ export default function General() {
         if (result) {
           setPfp(result);
         } else {
-          setPfp(`https://robohash.org/${userData.username}.png?set=set1&size=150x150`);
+          setPfp(
+            `https://robohash.org/${userData.username}.png?set=set1&size=150x150`
+          );
         }
       } catch (err) {
         console.error('Failed to fetch user data', err);
@@ -117,7 +143,9 @@ export default function General() {
     try {
       const response = await fetch(croppedImage);
       const blob = await response.blob();
-      const file = new File([blob], 'profile_picture.png', { type: 'image/png' });
+      const file = new File([blob], 'profile_picture.png', {
+        type: 'image/png',
+      });
 
       const formData = new FormData();
       formData.append('profilePic', file);
@@ -162,7 +190,11 @@ export default function General() {
     };
 
     try {
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'PUT', data);
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/account`,
+        'PUT',
+        data
+      );
       console.log(response);
       toast.success('Changes saved successfully!');
     } catch (err) {
@@ -176,7 +208,9 @@ export default function General() {
   return (
     <div className="flex-1 xl:overflow-y-auto">
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-        <h1 className="text-3xl font-bold tracking-tight text-white">General</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          General
+        </h1>
 
         {isLoading ? (
           <div className="mt-6 space-y-8">
@@ -184,32 +218,56 @@ export default function General() {
               <div className="sm:col-span-6">
                 <h2 className="text-xl font-medium text-white">Profile</h2>
                 <p className="mt-1 text-sm text-white">
-                  This information will be displayed publicly so be careful what you share.
+                  This information will be displayed publicly so be careful what
+                  you share.
                 </p>
               </div>
 
               <div className="sm:col-span-3">
-                <Skeleton height={40} baseColor='#262626' highlightColor='#3a3a3a' />
+                <Skeleton
+                  height={40}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
               </div>
 
               <div className="sm:col-span-3">
-                <Skeleton height={40} baseColor='#262626' highlightColor='#3a3a3a' />
+                <Skeleton
+                  height={40}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
               </div>
 
               <div className="sm:col-span-6">
-                <Skeleton height={40} baseColor='#262626' highlightColor='#3a3a3a' />
+                <Skeleton
+                  height={40}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
               </div>
 
               <div className="sm:col-span-6">
-                <Skeleton height={100} baseColor='#262626' highlightColor='#3a3a3a' />
+                <Skeleton
+                  height={100}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
                 <p className="mt-3 text-sm text-white">
                   Brief description for your profile. URLs are hyperlinked.
                 </p>
               </div>
 
               <div className="sm:col-span-6">
-                <Skeleton height={40} baseColor='#262626' highlightColor='#3a3a3a' />
-                <label htmlFor="url" className="mt-0.5 block text-xs font-medium leading-6 text-white">
+                <Skeleton
+                  height={40}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
+                <label
+                  htmlFor="url"
+                  className="mt-0.5 block text-xs font-medium leading-6 text-white"
+                >
                   Your GitHub link: github.com/{inputText}
                 </label>
               </div>
@@ -217,18 +275,29 @@ export default function General() {
 
             <div className="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
               <div className="sm:col-span-6">
-                <h2 className="text-xl font-medium text-white">Personal Information</h2>
+                <h2 className="text-xl font-medium text-white">
+                  Personal Information
+                </h2>
                 <p className="mt-1 text-sm text-white">
-                  This information will be displayed publicly so be careful what you share.
+                  This information will be displayed publicly so be careful what
+                  you share.
                 </p>
               </div>
 
               <div className="sm:col-span-3">
-                <Skeleton height={40} baseColor='#262626' highlightColor='#3a3a3a' />
+                <Skeleton
+                  height={40}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
               </div>
 
               <div className="sm:col-span-3">
-                <Skeleton height={40} baseColor='#262626' highlightColor='#3a3a3a' />
+                <Skeleton
+                  height={40}
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
+                />
               </div>
             </div>
           </div>
@@ -238,12 +307,16 @@ export default function General() {
               <div className="sm:col-span-6">
                 <h2 className="text-xl font-medium text-white">Profile</h2>
                 <p className="mt-1 text-sm text-white">
-                  This information will be displayed publicly so be careful what you share.
+                  This information will be displayed publicly so be careful what
+                  you share.
                 </p>
               </div>
 
               <div className="sm:col-span-3">
-                <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="first-name"
+                  className="block text-sm font-medium leading-6 text-white"
+                >
                   First name
                 </label>
                 <input
@@ -258,7 +331,10 @@ export default function General() {
               </div>
 
               <div className="sm:col-span-3">
-                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="last-name"
+                  className="block text-sm font-medium leading-6 text-white"
+                >
                   Last name
                 </label>
                 <input
@@ -273,7 +349,10 @@ export default function General() {
               </div>
 
               <div className="sm:col-span-6">
-                <label htmlFor="username" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium leading-6 text-white"
+                >
                   Username
                 </label>
                 <div className="mt-2 flex rounded-md shadow-sm">
@@ -290,7 +369,10 @@ export default function General() {
               </div>
 
               <div className="sm:col-span-6">
-                <label htmlFor="photo" className="block flex text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="photo"
+                  className="block flex text-sm font-medium leading-6 text-white"
+                >
                   Profile Picture
                 </label>
                 <div className="mt-2 flex items-center">
@@ -311,7 +393,7 @@ export default function General() {
                   />
                   <button
                     onClick={handlePopupOpen}
-                    className="ml-4 bg-neutral cursor:pointer block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
+                    className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
                   >
                     Change
                   </button>
@@ -319,26 +401,79 @@ export default function General() {
               </div>
 
               <div className="sm:col-span-6">
-                <label htmlFor="description" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="description"
+                  className="text-md block font-medium leading-6 text-white"
+                >
                   Bio
                 </label>
                 <div className="mt-2">
+                  <div className="toolbar flex py-1">
+                    <button
+                      onClick={() => insertText('**Enter bold here**')}
+                      className="toolbar-button mr-1 pr-2 text-white"
+                    >
+                      <i className="fas fa-bold"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('*Enter italic here*')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-italic"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('# Enter Heading here')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-heading"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('[Name](url)')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-link"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('```Enter Code here```')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-code"></i>
+                    </button>
+                    <button
+                      onClick={() => magicSnippet()}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-terminal"></i>
+                    </button>
+                  </div>
                   <textarea
                     id="bio"
                     name="bio"
                     rows={4}
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
+                    value={tempBio}
+                    onChange={(e) => setTempBio(e.target.value)}
                     className="block w-full rounded-md border-0 border-none bg-neutral-800 text-white shadow-sm placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
                   />
                 </div>
-                <p className="mt-3 text-sm text-white">
+                <p className="text-md mt-3 text-white">
                   Brief description for your profile. URLs are hyperlinked.
                 </p>
               </div>
+              {/* this is for the preview */}
+              <div className="mt-1 sm:col-span-full">
+                <label className="block text-sm font-medium leading-6 text-white">
+                  Bio Preview
+                </label>
+                <div className="mt-2 rounded-lg bg-neutral-800 p-4 text-white">
+                  <Markdown>{tempBio}</Markdown>
+                </div>
+              </div>
 
               <div className="sm:col-span-6">
-                <label htmlFor="url" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="url"
+                  className="block text-sm font-medium leading-6 text-white"
+                >
                   Github Username
                 </label>
                 <input
@@ -349,7 +484,10 @@ export default function General() {
                   value={inputText}
                   className="mt-2 block w-full rounded-md border-none bg-neutral-800 py-1.5 text-white shadow-sm sm:text-sm sm:leading-6"
                 />
-                <label htmlFor="url" className="mt-0.5 block text-xs font-medium leading-6 text-white">
+                <label
+                  htmlFor="url"
+                  className="mt-0.5 block text-xs font-medium leading-6 text-white"
+                >
                   Your GitHub link: github.com/{inputText}
                 </label>
               </div>
@@ -357,14 +495,20 @@ export default function General() {
 
             <div className="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
               <div className="sm:col-span-6">
-                <h2 className="text-xl font-medium text-white">Personal Information</h2>
+                <h2 className="text-xl font-medium text-white">
+                  Personal Information
+                </h2>
                 <p className="mt-1 text-sm text-white">
-                  This information will be displayed publicly so be careful what you share.
+                  This information will be displayed publicly so be careful what
+                  you share.
                 </p>
               </div>
 
               <div className="sm:col-span-3">
-                <label htmlFor="email-address" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="email-address"
+                  className="block text-sm font-medium leading-6 text-white"
+                >
                   Email address
                 </label>
                 <input
@@ -379,7 +523,10 @@ export default function General() {
               </div>
 
               <div className="sm:col-span-3">
-                <label htmlFor="country" className="block text-sm font-medium leading-6 text-white">
+                <label
+                  htmlFor="country"
+                  className="block text-sm font-medium leading-6 text-white"
+                >
                   Location
                 </label>
                 <Locations
@@ -390,7 +537,11 @@ export default function General() {
             </div>
 
             <Transition.Root show={isPopupOpen} as={Fragment}>
-              <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={handlePopupClose}>
+              <Dialog
+                as="div"
+                className="fixed inset-0 z-10 overflow-y-auto"
+                onClose={handlePopupClose}
+              >
                 <Transition.Child
                   as={Fragment}
                   enter="ease-out duration-300"
@@ -408,7 +559,7 @@ export default function General() {
                     className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
                   />
                 </Transition.Child>
-                <div className="flex items-center justify-center min-h-screen pt-4 px-4 text-center sm:block sm:p-0 mt-20">
+                <div className="mt-20 flex min-h-screen items-center justify-center px-4 pt-4 text-center sm:block sm:p-0">
                   <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -418,23 +569,39 @@ export default function General() {
                     leaveFrom="opacity-0 translate-y-0 sm:scale-100"
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                   >
-                    <div className="max-w-xl relative inline-block align-middle w-full pb-10 pt-10 border-t-4 border-blue-500 bg-neutral-800 px-10 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle">
-                      <h1 className="text-white text-xl mt-4">Upload a profile picture</h1>
-                      <p className="text-white text-sm mt-2 pb-8">
-                        Your profile picture will be used as your avatar on the platform. So make sure it's a good
-                        representation of you! Make sure your profile picture follows CTFGuide's{' '}
-                        <a href="https://ctfguide.com/terms" className="text-blue-500 font-semibold">
+                    <div className="relative inline-block w-full max-w-xl transform overflow-hidden border-t-4 border-blue-500 bg-neutral-800 px-10 pb-10 pb-4 pt-10 pt-5 text-left align-middle shadow-xl transition-all sm:my-8 sm:align-middle">
+                      <h1 className="mt-4 text-xl text-white">
+                        Upload a profile picture
+                      </h1>
+                      <p className="mt-2 pb-8 text-sm text-white">
+                        Your profile picture will be used as your avatar on the
+                        platform. So make sure it's a good representation of
+                        you! Make sure your profile picture follows CTFGuide's{' '}
+                        <a
+                          href="https://ctfguide.com/terms"
+                          className="font-semibold text-blue-500"
+                        >
                           terms of service
                         </a>
                         .
                       </p>
-                      <div className="mx-auto text-center w-auto text-white mt-4">
-                        <label htmlFor="profileImageInput" className="cursor-pointer bg-neutral-600 px-3 py-2 text-white rounded-md">
+                      <div className="mx-auto mt-4 w-auto text-center text-white">
+                        <label
+                          htmlFor="profileImageInput"
+                          className="cursor-pointer rounded-md bg-neutral-600 px-3 py-2 text-white"
+                        >
                           Choose a file
                         </label>
                       </div>
                       {imageUrl && (
-                        <div className="mt-4 mx-auto" style={{ height: '300px', width: '300px', position: 'relative' }}>
+                        <div
+                          className="mx-auto mt-4"
+                          style={{
+                            height: '300px',
+                            width: '300px',
+                            position: 'relative',
+                          }}
+                        >
                           <Cropper
                             image={imageUrl}
                             crop={crop}
@@ -445,14 +612,16 @@ export default function General() {
                             onRotationChange={setRotation}
                             onZoomChange={setZoom}
                             onCropComplete={onCropComplete}
-                            style={{ containerStyle: { height: '100%', width: '100%' } }}
+                            style={{
+                              containerStyle: { height: '100%', width: '100%' },
+                            }}
                           />
                         </div>
                       )}
                       <div className="mt-4 flex justify-end">
                         <button
                           onClick={handleSaveChanges}
-                          className="bg-blue-500 px-4 py-2 text-white rounded-md"
+                          className="rounded-md bg-blue-500 px-4 py-2 text-white"
                         >
                           Save
                         </button>
@@ -466,7 +635,7 @@ export default function General() {
             <div className="flex justify-end">
               <button
                 onClick={saveGeneral}
-                className="bg-blue-500 px-4 py-2 text-white rounded-md"
+                className="rounded-md bg-blue-500 px-4 py-2 text-white"
                 disabled={isSaving}
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
@@ -491,5 +660,3 @@ export default function General() {
     </div>
   );
 }
-
-
