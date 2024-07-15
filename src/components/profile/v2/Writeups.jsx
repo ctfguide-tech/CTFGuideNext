@@ -26,7 +26,7 @@ const Writeups = ({ user }) => {
     if (error) return <div className='text-red-400'>API Error: {error}</div>;
 
     return(
-        <div>
+        <div className="mt-4 rounded-sm">
             {writeups.length > 0 ? (
                 <ul>
                     {writeups.map(writeup => (
@@ -35,9 +35,9 @@ const Writeups = ({ user }) => {
                 </ul>
             ) : (
                 <div className="align-center duration-4000 col-span-5 mx-auto min-h-[190px] w-full min-w-[200px] rounded-sm border border-2 border-neutral-700 bg-neutral-800 px-4 py-4 text-center transition ease-in-out hover:bg-neutral-700/40">
-                    <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
-                    <h1 className="mx-auto mt-2 text-center text-xl text-white">No Writeups Yet...</h1>
-                </div>
+                <img src={'/CuteKana.png'} width="100" className="mx-auto mt-2 px-1" />
+                <h1 className="mx-auto mt-2 text-center text-xl text-white">No Writeups Created Yet...</h1>
+              </div>
             )}
         </div>
     );

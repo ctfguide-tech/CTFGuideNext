@@ -34,7 +34,7 @@ const LikedChallenges = ({ user }) => {
     if (error) return <div className='text-red-400'>API Error: {error}</div>;
 
     return (
-        <div>
+        <div className="mt-4 rounded-sm">
             {likedChallenges ? (
             <ul>
                 {likedChallenges.map(challenge => (

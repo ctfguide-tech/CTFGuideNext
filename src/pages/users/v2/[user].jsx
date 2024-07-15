@@ -26,7 +26,7 @@ export default function Create() {
         switch (activeTab) {
             case 'LIKED CHALLENGES':
                 return <>
-                <h1 className='text-2xl font-bold text-neutral-400'>LIKED CHALLENGES</h1>
+                <h1 className='text-2xl font-bold text-white'>LIKED CHALLENGES</h1>
                 {user && (
                     <LikedChallenges user={user} />
                 )}
@@ -34,19 +34,19 @@ export default function Create() {
                 ;
             case 'WRITEUPS':
                 return   <>
-                <h1 className='text-2xl font-bold text-neutral-4000'>WRITEUPS</h1>
+                <h1 className='text-2xl font-bold text-white'>WRITEUPS</h1>
                 {user && (
                     <Writeups user={user} />
-                )};
-                </>;
+                )}
+                </>
             case 'CREATED CHALLENGES':
                 return <>
-                    <h1 className='text-2xl font-bold text-neutral-400'>CREATED CHALLENGES</h1>
+                    <h1 className='text-2xl font-bold text-white'>CREATED CHALLENGES</h1>
                     <CreatedChallenges />
                 </>
             case 'BADGES':
                 return <>
-                    <h1 className='text-2xl font-bold text-neutral-400'>BADGES</h1>
+                    <h1 className='text-2xl font-bold text-white'>BADGES</h1>
                     <Badges />
                 </>
             default:
@@ -199,7 +199,7 @@ export default function Create() {
                                         ))}
                                     </ul>
                                     <select
-                                        className='md:hidden w-full border-none px-4 w-1/2 bg-neutral-800 text-neutral-50  rounded'
+                                        className='md:hidden w-full border-none px-4 w-1/2 bg-neutral-800 text-neutral-50 rounded'
                                         value={activeTab}
                                         onChange={(e) => setActiveTab(e.target.value)}
                                     >
