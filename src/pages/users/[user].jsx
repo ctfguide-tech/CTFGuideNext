@@ -59,7 +59,7 @@ export default function Create() {
             case 'LIKED CHALLENGES':
                 return <>
                     <h1 className='text-2xl font-bold text-white'>LIKED CHALLENGES</h1>
-                    {user && (
+                    {user != undefined && (
                         <LikedChallenges user={user} />
                     )}
                 </>
@@ -223,7 +223,7 @@ export default function Create() {
                                 <h1 className='text-2xl text-white font-bold uppercase mb-4'>ABOUT {user.username}</h1>
                             )}
                             <p className='text-neutral-400'>
-                                {user && user.bio}
+                            {user && <MarkdownViewer content={user.bio} />}
                             </p>
                         </div>
 
@@ -254,7 +254,7 @@ export default function Create() {
                                     </select>
                                 </div>
                                 <div className='bg-neutral-800 px-4 py-4 border-t-4 border-blue-600'>
-                                    {user && renderContent()}
+                                    {user != undefined && renderContent()}
                                 </div>
 
                                 <div className='w-full'>

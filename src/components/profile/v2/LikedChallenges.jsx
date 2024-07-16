@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import request from '@/utils/request';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 
 const LikedChallenges = ({ user }) => {
     const [likedChallenges, setLikedChallenges] = useState([]);
@@ -8,29 +11,19 @@ const LikedChallenges = ({ user }) => {
 
     useEffect(() => {
         const fetchLikedChallenges = async () => {
-            try {
+     
                 console.log("udata", user)
                 console.log("username", user.username);
-                if (user.username) {
+                if (user) {
                     const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/likes`, 'GET', null);
-                
                     setLikedChallenges(response.data);
-                
-                        } else {
-                            setError("User failure. Got back username of " + user.username);
-                        }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+                } else {
+                    fetchLikedChallenges();
+                }
             }
-        };
-
-        fetchLikedChallenges();
-        console.log("challenges: " , likedChallenges);
     }, [user]);
 
-    if (loading) return <div className='text-neutral-400'>Loading...</div>;
+    if (loading) return <div className='text-neutral-400'><Skeleton width="100%" baseColor="#363535" highlightColor="#615f5f"  /></div>;
     if (error) return <div className='text-red-400'>API Error: {error}</div>;
 
     return (
