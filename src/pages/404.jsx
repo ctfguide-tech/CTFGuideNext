@@ -53,9 +53,9 @@ const NotFound = () => {
               />
               <span
                 onClick={() => router.back()}
-                className="mt-6 cursor-pointer text-neutral-200 hover:text-neutral-100 mr-4 text-2xl"
+                className="mt-6 cursor-pointer text-neutral-200 hover:text-neutral-400 mr-4 text-lg"
               >
-                <i className="fas fa-long-arrow-alt-left mr-2"></i> Go Back
+                <i className="fas fa-arrow-left"></i> Go Back
               </span>
             </div>
           </div>
