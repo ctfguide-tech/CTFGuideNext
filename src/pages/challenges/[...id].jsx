@@ -520,14 +520,14 @@ function DescriptionPage({ cache }) {
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
         <h1 className="flex align-middle text-4xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
-          <div className="ml-auto  rounded-sm   text-right text-2xl flex items-center">
+          <div className="ml-auto rounded-sm text-right text-2xl flex items-center">
             <div onClick={upvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
-              <i  className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
-               {challengeData && challengeData.upvotes}
+              <i className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
+              {challengeData && challengeData.upvotes !== undefined ? challengeData.upvotes : <Skeleton width={20} />}
             </div>
             <div onClick={downvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
-              <i  className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
-               {challengeData && challengeData.downvotes}
+              <i className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
+              {challengeData && challengeData.downvotes !== undefined ? challengeData.downvotes : <Skeleton width={20} />}
             </div>
           </div>
         </h1>
@@ -549,8 +549,7 @@ function DescriptionPage({ cache }) {
             <p className="flex text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
               {challenge.views}
-              <i className="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
-              {challenge.upvotes}
+            
             </p>
           </>
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
@@ -756,13 +755,13 @@ function WriteupView({ writeup, onBack }) {
             className="px-2 rounded-full bg-green-700 hover:bg-green-600"
             onClick={() => upvoteWriteup(writeup.id)}
           >
-            <i className="fas fa-arrow-up"></i> {upvotes || 0}
+            <i className="fas fa-arrow-up"></i> {upvotes !== undefined ? upvotes : <Skeleton width={20} />}
           </button>
           <button
             className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
             onClick={() => downvoteWriteup(writeup.id)}
           >
-            <i className="fas fa-arrow-down"></i> {downvotes || 0}
+            <i className="fas fa-arrow-down"></i> {downvotes !== undefined ? downvotes : <Skeleton width={20} />}
           </button>
         </div>
       </div>
