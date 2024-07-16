@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CardDecorator } from '../design/CardDecorator';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
-import { EyeIcon, HeartIcon, UserIcon, PuzzlePieceIcon, ThumbUpIcon, ThumbDownIcon } from '@heroicons/react/20/solid';
+import { EyeIcon, HeartIcon, PuzzlePieceIcon, ThumbUpIcon, ThumbDownIcon } from '@heroicons/react/20/solid';
+import request from '@/utils/request';
 
 /** 
  * @param {import('react').HTMLAttributes<HTMLDivElement> & { challenge: {id: string, title: string, category: string, difficulty: string, createdAt: string, creator: string, views: number, likes: number} }} props 
  * */
 const ChallengeCard = (_props) => {
   const { challenge, ...props } = _props;
+  const [creatorPfp, setCreatorPfp] = useState('');
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+  useEffect(() => {
+    async function fetchCreatorPfp(username) {
+      try {
+        const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
+        const result = await request(endPoint, "GET", null);
+        if (result) {
+          setCreatorPfp(result);
+        } else {
+          setCreatorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
+        }
+      } catch (err) {
+        console.log('failed to get profile picture');
+      }
+    }
+
+    if (challenge && challenge.creator) {
+      fetchCreatorPfp(challenge.creator);
+    }
+  }, [challenge]);
+
   const dateFormatted = (date) =>
     new Date(date)
       .toLocaleDateString('en-US', {
@@ -40,12 +63,16 @@ const ChallengeCard = (_props) => {
           <h1 className="text-2xl font-bold text-white">{challenge.title}</h1>
 
           <div className="flex items-center text-gray-4000">
-          <span className='text-green-300'><i className="fas fa-arrow-up text-green-300"></i> {challenge.upvotes}</span>
-          <span className='ml-2 text-red-300'><i className="fas fa-arrow-down text-red-300"></i>  {challenge.downvotes}</span>
+            <span className='text-green-300'><i className="fas fa-arrow-up text-green-300"></i> {challenge.upvotes !== undefined ? challenge.upvotes : <Skeleton width={20} />}</span>
+            <span className='ml-2 text-red-300'><i className="fas fa-arrow-down text-red-200"></i>  {challenge.downvotes !== undefined ? challenge.downvotes : <Skeleton width={20} />}</span>
           </div>
         </div>
         <div className="mt-2 flex items-center text-gray-400">
-          <UserIcon className="h-5 w-5 mr-2" />
+          <img
+            className="h-5 w-5 mr-2 rounded-full"
+            src={creatorPfp || 'default-profile-image-url'}
+            alt="Profile Picture"
+          />
           <span>@{challenge.creator}</span>
         </div>
 
@@ -54,12 +81,10 @@ const ChallengeCard = (_props) => {
           <span className="text-white">{challenge.category}</span>
           <span className={`ml-4 px-2  rounded-sm text-sm font-bold capitalize ${colorText[challenge.difficulty || 0]}`}>{challenge.difficulty?.toLowerCase() || <Skeleton />}</span>
 
-        <div className="mt-4 ml-auto flex text-gray-400">
+        <div className=" ml-auto flex text-gray-400">
           <EyeIcon className="h-5 w-5 mr-2" />
-          <span>{challenge.views || 0}</span>
-          <HeartIcon className="h-5 w-5 ml-4 mr-2" />
-          <span>{challenge.likes || 0}</span>
-
+          <span>{challenge.views !== undefined ? challenge.views : <Skeleton width={20} />}</span>
+     
         </div>
         </div>
       </Link>

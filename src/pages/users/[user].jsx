@@ -86,7 +86,7 @@ export default function Create() {
             case 'LIKED CHALLENGES':
                 return <>
                     <h1 className='text-2xl font-bold text-white'>LIKED CHALLENGES</h1>
-                    {user && (
+                    {user != undefined && (
                         <LikedChallenges user={user} />
                     )}
                 </>
@@ -309,19 +309,10 @@ export default function Create() {
                         <div className='bg-neutral-800 px-4 py-4'>
                             {user && (
                                 <h1 className='text-2xl text-white font-bold uppercase mb-4'>ABOUT {user.username}</h1>
-                                
                             )}
-
-                        <button
-                        onClick={() => setShowBioPreview(!showBioPreview)}
-                        id='editButton'
-                        className="ml-auto rounded-md text-sm px-2 text-white"
-                        >    {showBioPreview ? 'Close Editor' : 'Edit Bio'}
-                        </button>
-                          
-                        <div className="mt-2 rounded-lg bg-neutral-800 p-4 text-white">
-                                <Markdown className={`break-words whitespace-pre-wrap ${showBioPreview ? 'overflow-auto max-h-60' : ''}`}>{tempBio}</Markdown>
-                            </div>
+                            <p className='text-neutral-400'>
+                            {user && <MarkdownViewer content={user.bio} />}
+                            </p>
                         </div>
                 {showBioPreview && (
                     <div className=" sm:col-span-full">
@@ -414,7 +405,7 @@ export default function Create() {
                                     </select>
                                 </div>
                                 <div className='bg-neutral-800 px-4 py-4 border-t-4 border-blue-600'>
-                                    {user && renderContent()}
+                                    {user != undefined && renderContent()}
                                 </div>
 
                                 <div className='w-full'>
