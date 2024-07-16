@@ -575,7 +575,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
 
       {
         !['/groups', '/assignments', '/submissions'].some(path => router.pathname.includes(path) || !showBanner) && (
-          <div className="bg-neutral-800 py-1 text-center text-sm text-white  mx-auto w-full ">
+          <div className="hidden bg-neutral-800 py-1 text-center text-sm text-white  mx-auto w-full ">
             <h1 className='px-4  mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
           </div>
         )

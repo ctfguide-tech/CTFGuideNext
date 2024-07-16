@@ -520,14 +520,14 @@ function DescriptionPage({ cache }) {
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
         <h1 className="flex align-middle text-4xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
-          <div className="ml-auto  rounded-sm   text-right text-2xl flex items-center">
+          <div className="ml-auto rounded-sm text-right text-2xl flex items-center">
             <div onClick={upvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
-              <i  className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
-               {challengeData && challengeData.upvotes}
+              <i className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
+              {challengeData && challengeData.upvotes !== undefined ? challengeData.upvotes : <Skeleton width={20} />}
             </div>
             <div onClick={downvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
-              <i  className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
-               {challengeData && challengeData.downvotes}
+              <i className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
+              {challengeData && challengeData.downvotes !== undefined ? challengeData.downvotes : <Skeleton width={20} />}
             </div>
           </div>
         </h1>
@@ -543,14 +543,13 @@ function DescriptionPage({ cache }) {
         <h2 className="flex gap-2 pb-8">
           {challenge ? <>
             <div className="flex items-center">
-              <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 rounded-full" />
+              <img src={authorPfp} alt="Author's profile picture" className="bg-neutral-700 h-8 w-8 rounded-full" />
               <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline ml-2">{challenge.creator}</Link>
             </div>
             <p className="flex text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
               {challenge.views}
-              <i className="ml-4 mr-2 text-neutral-300 fas fa-solid fa-heart text-lg"></i>
-              {challenge.upvotes}
+            
             </p>
           </>
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
@@ -572,6 +571,7 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
 
 function WriteUpPage({ cache, setCache }) {
 
+  const { challenge } = cache;
 
 
   const router = useRouter();
@@ -651,7 +651,7 @@ function WriteUpPage({ cache, setCache }) {
 
       </div>
       {selectedWriteup ? (
-        <WriteupView writeup={selectedWriteup} onBack={() => setSelectedWriteup(null)} />
+        <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => setSelectedWriteup(null)} />
       ) : (
       <div className="px-4 overflow-auto">
         {writeUp.map((writeup, index) => (
@@ -659,7 +659,7 @@ function WriteUpPage({ cache, setCache }) {
             <div className='w-full flex'>
               <div className="">
 
-                  <h3 className="text-2xl">{writeup.title}</h3>
+                  <h3 className="text-2xl">{writeup.title} </h3>
                   <p className="text-sm">Authored by {writeup.user.username}</p>
 
                 </div>
@@ -699,9 +699,32 @@ function WriteUpPage({ cache, setCache }) {
   )
 }
 
-function WriteupView({ writeup, onBack }) {
+function WriteupView({ writeup, onBack, cache }) {
+
+  const { challenge } = cache;
   const [upvotes, setUpvotes] = useState(writeup.upvotes);
   const [downvotes, setDownvotes] = useState(writeup.downvotes);
+  const [authorPfp, setAuthorPfp] = useState('');
+
+  useEffect(() => {
+    async function fetchAuthorPfp(username) {
+      try {
+        const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
+        const result = await request(endPoint, "GET", null);
+        if (result) {
+          setAuthorPfp(result);
+        } else {
+          setAuthorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
+        }
+      } catch (err) {
+        console.log('failed to get profile picture');
+      }
+    }
+
+    if (writeup && writeup.user && writeup.user.username) {
+      fetchAuthorPfp(writeup.user.username);
+    }
+  }, [writeup]);
 
   async function upvoteWriteup(writeupId) {
     try {
@@ -711,9 +734,8 @@ function WriteupView({ writeup, onBack }) {
       });
       if (response.success) {
         console.log("Upvoted successfully");
-        setUpvotes(response.upvotes)
-        setDownvotes(response.downvotes)
-
+        setUpvotes(response.upvotes);
+        setDownvotes(response.downvotes);
       } else {
         console.error("Failed to upvote:", response.message);
       }
@@ -730,8 +752,8 @@ function WriteupView({ writeup, onBack }) {
       });
       if (response.success) {
         console.log("Downvoted successfully");
-        setUpvotes(response.upvotes)
-        setDownvotes(response.downvotes)
+        setUpvotes(response.upvotes);
+        setDownvotes(response.downvotes);
       } else {
         console.error("Failed to downvote:", response.message);
       }
@@ -740,37 +762,43 @@ function WriteupView({ writeup, onBack }) {
     }
   }
 
-
   return (
     <div className="px-4 mt-4">
-
       <div className="flex">
         <div>
-          <h1 className="text-3xl">{writeup.title}</h1>
-          <p>Authored by {writeup.user.username}</p>
-
+          <h1 className="text-3xl">{writeup.title} <span className="text-lg text-white">for {challenge && challenge.title}</span></h1>
+        
+          <div className="flex items-center">
+              <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 bg-neutral-700 rounded-full mr-2" />
+              <p className="text-lg ">
+                Authored by <Link href={`/users/${writeup.user.username}`} className=" text-blue-500 hover:underline">
+                {writeup.user.username}
+              </Link>
+              </p>
+       
+          </div>
         </div>
-        <div className="ml-auto mt-3 text-right" >
-          <button className="hover:text-neutral-200 mb-2" onClick={onBack}><i className="fas fa-long-arrow-alt-left"></i> View all writeups</button> <br></br>
+        <div className="ml-auto mt-3 text-right">
+          <button className="hover:text-neutral-200 mb-2" onClick={onBack}>
+            <i className="fas fa-long-arrow-alt-left"></i> View all writeups
+          </button>
+          <br />
           <button
             className="px-2 rounded-full bg-green-700 hover:bg-green-600"
             onClick={() => upvoteWriteup(writeup.id)}
           >
-            <i className="fas fa-arrow-up"></i> {upvotes || 0}
+            <i className="fas fa-arrow-up"></i> {upvotes !== undefined ? upvotes : <Skeleton width={20} />}
           </button>
           <button
             className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
             onClick={() => downvoteWriteup(writeup.id)}
           >
-            <i className="fas fa-arrow-down"></i> {downvotes || 0}
+            <i className="fas fa-arrow-down"></i> {downvotes !== undefined ? downvotes : <Skeleton width={20} />}
           </button>
         </div>
       </div>
-
-
-      <br></br>
+      <br />
       <MarkdownViewer content={writeup.content} />
-
     </div>
   );
 }

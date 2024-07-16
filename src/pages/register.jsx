@@ -184,6 +184,12 @@ function Register() {
                   style={{ fontFamily: 'Poppins, sans-serif' }}
                   className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
                 >
+
+<h1 className='text-red-400 text-center'>You are on the preview version of CTFGuide. Preview accounts do not use the same authentication system as https://ctfguide.com</h1>
+<h1 className='text-red-400 text-center'>Account data may not persist. Features may not work as expected.</h1>
+<h1 className='text-red-400 text-center'>You assume all risk by using preview.ctfguide.com.</h1>
+
+<a className='mx-auto bg-blue-700 mt-2 text-white px-4 py-2 rounded-md w-1/6 text-center' href='https://ctfguide.com'>Take me to the main site</a>
               <form >
                   <div className="sm:mx-auto sm:w-full sm:max-w-md">
 
@@ -206,15 +212,14 @@ function Register() {
                           </div>
                           <div>
                             <div className='flex items-center'>
-
-                              <h1 className='text-white  text-xl'>Get started on</h1>
+                           <h1 className='text-white  text-xl'>Get started on</h1>
                               <Link href="/" className="flex items-center ml-1">
                                 <img
                                   className="z-10 h-10 w-10"
                                   src="/darkLogo.png"
                                   alt="CTFGuide"
                                 />
-                                <h1 className="text-xl text-white font-semibold">CTFGuide</h1>
+                                <h1 className="text-xl text-white font-semibold">CTFGuide </h1>
                               </Link>
                             </div>
                             <p className="text-sm text-gray-600">
@@ -392,6 +397,11 @@ function Register() {
 
                     </div>
 
+                    <div>
+
+                      
+                    </div>
+                        
 
                   </div>
               </form>

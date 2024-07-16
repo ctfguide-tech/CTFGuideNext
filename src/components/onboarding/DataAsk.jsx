@@ -33,8 +33,6 @@ export function DataAsk(props) {
       setValidationMessage('Username must be between 3 and 20 characters long.');
     } else if (/^[0-9]/.test(username)) {
       setValidationMessage('Username must not start with a number.');
-    } else if (/^[A-Z]/.test(username)) {
-      setValidationMessage('Username must not start with a capital letter.');
     } else if (/^[!@#$%^&*(),.?":{}|<>]/.test(username)) {
       setValidationMessage('Username must not start with a special character.');
     } else if (!/^[a-zA-Z0-9]+$/.test(username)) {
@@ -47,7 +45,7 @@ export function DataAsk(props) {
   async function submitData() {
     setIsLoading(true);
     // Generate JSON to send
-    var username = document.getElementById('username').value;
+    var username = document.getElementById('username').value.toLowerCase();
     var birthday = document.getElementById('birthday').value;
     var firstname = document.getElementById('firstname').value;
     var lastname = document.getElementById('lastname').value;
@@ -79,10 +77,6 @@ export function DataAsk(props) {
     } else if (/^[0-9]/.test(username)) {
       toast.error("Username starts with a number.");
       setIsLoading(false);
-    } else if (/^[A-Z]/.test(username)) {
-      toast.error("Username starts with a capital letter.");
-      setIsLoading(false);
-      
     } else if (/^[!@#$%^&*(),.?":{}|<>]/.test(username)) {
         toast.error("Username starts with a special character.");
         setIsLoading(false);

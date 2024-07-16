@@ -3,8 +3,7 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import request from '@/utils/request';
 import ChallengeCard from '@/components/profile/ChallengeCard';
@@ -20,6 +19,7 @@ export default function Dashboard() {
   const [activities, setActivities] = useState([]);
   const [popular, setPopular] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(true);
 
   const exampleObjectives = [
     {
@@ -126,6 +126,18 @@ export default function Dashboard() {
 
   }, []);
 
+  useEffect(() => {
+    const onboardingState = localStorage.getItem('showOnboarding');
+    if (onboardingState !== null) {
+      setShowOnboarding(JSON.parse(onboardingState));
+    }
+  }, []);
+
+  const handleHideOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('showOnboarding', JSON.stringify(false));
+  };
+
   return (
     <>
       <Head>
@@ -182,62 +194,50 @@ export default function Dashboard() {
         <main className="animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
             <div className='w-full'>
-              <div className='w-full'> 
-                  <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
-                    <div className='w-full  p-4'>
-                      <h1 className='text-2xl  font-semibold flex align-center'>Onboarding <span className='ml-auto text-neutral-400 text-lg'>1/3</span></h1>
-                      <p className='text-lg mb-6'>We've compiled a list of tutorials for you to make the most out of CTFGuide.</p>
-                      <div className='grid grid-cols-2 gap-4'>
-                        <div className='bg-neutral-800 border border-neutral-700'>
-                          <div className='relative'>
-                            <img src="../welcomeBanner.svg" className='w-full h-28 object-cover banner-image'></img>
-
-                          <div className='flex items-center justify-between'>
-                          <h1 className='mt-2 mb-2 ml-2 text-neutral-400'>Pending Completion</h1> 
-                          <div className='px-2'>
-                          <button className=' bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</button>
-                          </div>
-                          </div>
-                          </div>
+              {showOnboarding && (
+                <div className='w-full p-4'>
+                  <h1 className='text-2xl font-semibold flex align-middle'>
+                    Onboarding 
+                    <span 
+                      className='ml-auto text-neutral-700 text-sm cursor-pointer' 
+                      onClick={handleHideOnboarding}
+                    >
+                      Hide
+                    </span>
+                  </h1>
+                  <p className='text-lg mb-6'>Looks like you're new around here. These tutorials will help you get started. You'll even get a sweet badge for completing them!</p>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='bg-neutral-8000 border border-neutral-700'>
+                      <div className='relative'>
+                        <img src="../welcomeBanner.svg" className='w-full h-28 object-cover banner-image'></img>
+                        <div className='absolute bottom-2 right-2'>
+                          <button className='bg-white text-blue-500 font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</button>
                         </div>
-                        <div className='bg-neutral-800  border border-neutral-700'>
-                          <div className='relative'>
-                            <img src="../gettingStartedBanner.svg" className='w-full h-28 object-cover banner-image'></img>
-
-                          <div className='flex items-center justify-between'>
-                          <h1 className='mt-2 mb-2 ml-2 text-neutral-400'>Pending Completion</h1> 
-                          <div className='px-2'>
-                          <button className=' bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</button>
-                          </div>
-                          </div>
-                          </div>
+                      </div>
+                    </div>
+                    <div className='bg-neutral-800 border border-neutral-700'>
+                      <div className='relative'>
+                        <img src="../gettingStartedBanner.svg" className='w-full h-28 object-cover banner-image'></img>
+                        <div className='absolute bottom-2 right-2'>
+                          <button className='bg-white text-orange-400 font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</button>
                         </div>
-                        <div className='bg-neutral-800  border border-neutral-700'>
-                          <img src="../exploringChallengesBanner.svg" className='w-full h-28 object-cover banner-image'></img>
-
-                          <div className='flex items-center justify-between'>
-                          <h1 className='mt-2 mb-2 ml-2 text-neutral-400'>Pending Completion</h1> 
-                          <div className='px-2'>
-                          <button className=' bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</button>
-                          </div>
-                          </div>                        </div>
                       </div>
                     </div>
                   </div>
-           
+                </div>
+              )}
 
-
-                <div className='w-full p-4'>
-                  <h1 className='text-2xl mb-6 font-semibold'>Recommended Challenges</h1>
-                  <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
-                    {loading ? <><ChallengeCard /><ChallengeCard /></> : (
-                      likes?.length > 0 ?
-                        likes.map((challenge, index) => <ChallengeCard challenge={challenge} />)
-                        : <><ChallengeCard /><ChallengeCard /></>
-                    )}
-                  </div>
+              <div className='w-full p-4'>
+                <h1 className='text-2xl mb-6 font-semibold'>Recommended Challenges</h1>
+                <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
+                  {loading ? <><ChallengeCard /><ChallengeCard /></> : (
+                    likes?.length > 0 ?
+                      likes.map((challenge, index) => <ChallengeCard challenge={challenge} />)
+                      : <><ChallengeCard /><ChallengeCard /></>
+                  )}
                 </div>
               </div>
+
               <div className='w-full rounded-sm'>
                 <div className='w-full p-4'>
                   <h1 className='text-2xl mb-3 font-semibold'>Popular Challenges</h1>
@@ -280,7 +280,7 @@ export default function Dashboard() {
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
              
                 {activities && activities.length > 0 ?
-  activities.map((data) =>
+  activities.slice().reverse().map((data) =>
     <div className="text-lg">
       <li>
         <a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold' href={"../users/" + data.userName}>{data.userName}</a> completed 
@@ -356,10 +356,10 @@ export default function Dashboard() {
 
         <div class='break-inside relative overflow-hidden flex flex-col justify-between  text-sm rounded-xl max-w-[23rem] px-6 py-4 mb-4 bg-black border border-white/10 text-white'>
        
-       <a href="https://discord.gg/q3hgRBvgkX">
-             <div class="mr-4 max-w-sm  flex items-center gap-x-8">
-               <p class="  ml-5  text-6xl text-white">𝕏</p>
-   
+       <div>
+             <div class="mr-4 max-w-sm  flex items-center gap-x-6">
+           
+               <svg className='ml-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="100" ><path fill="white" d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"/></svg>
                <div>
                <h5 class=" text-xl font-semibold tracking-tight text-white">
                  Follow us on X!
@@ -379,9 +379,12 @@ export default function Dashboard() {
                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
                  </svg>
                </a>
+          
                </div>
+               </div>
+            
              </div>
-           </a>
+       
    
            </div>
           

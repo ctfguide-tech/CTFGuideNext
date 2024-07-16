@@ -144,16 +144,13 @@ export function DashboardHeader() {
                 )}
               </div>
 
-              <div
-                onClick={() => {
-                  createPopupWin('../terminal',
-                    'CTFGuide Terminal', 1200, 650);
-                }}
-                className="hidden cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
+              <a
+                href={`/users/${username}`}
+                className=" cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
               >
 
-                <p className="mt-0 text-white"><i className="fas fa-terminal mr-1"></i> Terminal</p>
-              </div>
+                <p className="mt-0 text-white"><i className="fas fa-user mr-1"></i> View Profile</p>
+              </a >
               <div
                 className="ml-4 mt-8 mb-0 rounded-lg px-10 py-1 hidden"
                 style={{ backgroundColor: '#212121', borderWidth: '0px' }}
