@@ -23,6 +23,7 @@ export default function Login() {
 
   async function handleLoginRequest(requestOptions, isGoogle) {
     setIsLoading(true);
+    
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + '/account/login';
       const response = await fetch(url, requestOptions);
