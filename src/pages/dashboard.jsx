@@ -280,7 +280,7 @@ export default function Dashboard() {
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
              
                 {activities && activities.length > 0 ?
-  activities.map((data) =>
+  activities.slice().reverse().map((data) =>
     <div className="text-lg">
       <li>
         <a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold' href={"../users/" + data.userName}>{data.userName}</a> completed 
