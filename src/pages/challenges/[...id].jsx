@@ -664,7 +664,7 @@ function WriteUpPage({ cache, setCache }) {
 
                 </div>
                 <div className="ml-auto mt-2">
-                  <p className="text-sm text-right">452 views</p>
+                  <p className="text-sm text-right">{writeup.views} views</p>
 
                   <div className=" space-x-2 text-right text-lg">
                     <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
