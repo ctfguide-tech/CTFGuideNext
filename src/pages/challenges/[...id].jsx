@@ -663,7 +663,8 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
                   <p className="text-sm">Authored by {writeup.user.username}</p>
                 </div>
                 <div className="ml-auto mt-2">
-                  <p className="text-sm text-right">452 views</p>
+                  <p className="text-sm text-right">{writeup.views} views</p>
+
                   <div className=" space-x-2 text-right text-lg">
                     <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
                     <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
