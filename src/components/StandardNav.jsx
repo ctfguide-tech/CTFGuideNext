@@ -62,6 +62,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   
 
   const router = useRouter();
+  console.log("logged in as " + useContext(Context).username);
 
   function logout() {
     document.cookie = 'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
