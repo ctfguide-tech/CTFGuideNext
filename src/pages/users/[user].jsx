@@ -260,7 +260,7 @@ export default function Create() {
                                 <div className='w-full'>
                                     <div className='text-white'>
                                         <div className='w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4 mt-4'>
-                                            <h2 className="text-2xl font-bold text-white mb-4">STREAK CHART</h2>
+                                            <h2 className="text-2xl font-bold text-white mb-4">SUBMISSION HISTORY</h2>
                                             <div className='flex justify-center'>
                                                 <ActivityCalendar
                                                     data={mockActivityData}
