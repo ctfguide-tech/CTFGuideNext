@@ -1008,8 +1008,12 @@ function CommentsPage({ cache }) {
 
   const handleUpvote = async (commentId) => {
     try {
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}/upvote`, "POST", null);
+      console.log("sending request to upvote");
+      console.log("commentId: " , commentId);
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}/upvote`, "POST", {});
+      console.log("after respose");
       if (response.success) {
+        console.log("upvoted successfully");
         // Update the comment's upvotes and downvotes
         const updatedComments = challenge.comments.map(comment => {
           if (comment.id === commentId) {
@@ -1019,6 +1023,7 @@ function CommentsPage({ cache }) {
         });
         challenge.comments = updatedComments;
       } else {
+        console.log("Failed to upvote");
         console.error('Failed to upvote comment:', response.message);
       }
     } catch (error) {
@@ -1028,7 +1033,7 @@ function CommentsPage({ cache }) {
 
   const handleDownvote = async (commentId) => {
     try {
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}/downvote`, "POST", null);
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}/downvote`, "POST", {});
       if (response.success) {
         // Update the comment's upvotes and downvotes
         const updatedComments = challenge.comments.map(comment => {
