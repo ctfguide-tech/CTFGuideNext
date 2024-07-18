@@ -71,7 +71,7 @@ export default function Leaderboard() {
     </div>
   </div>
 
-  <div className="flex-1 relative shadow bg-gradient-to-br from-amber-600 via-yellow-400 via-65% to-amber-600 w-full md:w-auto">
+  <div className="flex-1 relative shadow bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 w-full md:w-auto">
     <div className="flag-top"></div>
     <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 hidden md:block">
       <img
