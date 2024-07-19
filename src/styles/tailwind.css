@@ -428,7 +428,15 @@ ul {
 .fade-out {
   animation: fadeOut 2s forwards;
 }
+.podium {
+  position: relative;
+  transition: transform 0.3s ease-in-out, height 0.3s ease-in-out;
+}
 
+.podium:hover {
+  transform: translateY(-5px);
+  height: calc(100% + 200px)
+}
 @keyframes fadeOut {
   0% {
     opacity: 1;

@@ -43,6 +43,7 @@ export default function Leaderboard() {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+     
         </style>
       </Head>
       <div className="flex min-h-screen flex-col">
@@ -50,7 +51,7 @@ export default function Leaderboard() {
         <main>
           <div className="mx-auto mt-20 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
             <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto"
+              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto podium"
               onClick={() => {
                 window.location.href =
                   '../users/' + leaderboardData[1].user.username;
@@ -89,7 +90,7 @@ export default function Leaderboard() {
             </div>
 
             <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 shadow md:w-auto"
+              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 shadow md:w-auto podium"
               onClick={() => {
                 window.location.href =
                   '../users/' + leaderboardData[0].user.username;
@@ -128,7 +129,7 @@ export default function Leaderboard() {
             </div>
 
             <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900 shadow md:w-auto"
+              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900 shadow md:w-auto podium"
               onClick={() => {
                 window.location.href =
                   '../users/' + leaderboardData[2].user.username;
