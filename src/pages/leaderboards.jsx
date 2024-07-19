@@ -120,6 +120,8 @@ export default function Leaderboard() {
                   <dd className="mt-1 text-center text-3xl font-semibold text-gray-100">
                     <span className="text-2xl">#1</span>{' '}
                     {leaderboardData[0]?.user?.username}
+
+            
                   </dd>
                   <dd className="mx-auto mt-1 w-1/2 rounded-lg border border-white text-center text-xl text-white">
                     {leaderboardData[0]?.totalPoints} points
@@ -219,6 +221,16 @@ export default function Leaderboard() {
                                 href={'../users/' + entry.user.username}
                               >
                                 {entry.user.username}
+                                {entry.user.role === 'ADMIN' && (
+                <>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                </>
+              )}
+                 {entry.user.role === 'PRO' && (
+                <>
+                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                </>
+              )}
                               </a>
                             </div>
                           </TableCell>
