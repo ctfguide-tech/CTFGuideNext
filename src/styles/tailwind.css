@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -222,17 +221,16 @@ body {
 
 .typewriter  {
   overflow: hidden; /* Ensures the content is not revealed until the animation */
-  border-right: .15em solid blue; /* The typwriter cursor */
+  border-right: .15em solid white; /* The typewriter cursor */
   white-space: nowrap; /* Keeps the content on a single line */
   margin: 0 auto; /* Gives that scrolling effect as the typing happens */
-
   animation: 
-    typing 3.5s steps(40, end),
+    typewriter 4s steps(40, end),
     blink-caret .75s step-end infinite;
 }
 
 /* The typing effect */
-@keyframes typing {
+@keyframes typewriter {
   from { width: 0 }
   to { width: 100% }
 }
@@ -240,7 +238,7 @@ body {
 /* The typewriter cursor effect */
 @keyframes blink-caret {
   from, to { border-color: transparent }
-  50% { border-color: blue; }
+  50% { border-color: white; }
 }
 
 .floating { 
@@ -398,3 +396,44 @@ ul {
 
 
 /* tool tip*/
+
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 0.99;
+    text-shadow: -0.2px -0.2px 1px rgba(255, 255, 255, 0.1), 0.2px 0.2px 1px rgba(0, 0, 0, 0.1);
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+    text-shadow: none;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.flicker {
+  animation: flicker 1.5s infinite;
+}
+
+.fade-in {
+  animation: fadeIn 2s forwards;
+}
+
+.fade-out {
+  animation: fadeOut 2s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
