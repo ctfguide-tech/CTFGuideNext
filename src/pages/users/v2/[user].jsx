@@ -17,9 +17,11 @@ export default function Create() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('LIKED CHALLENGES');
   const [isBioExpanded, setIsBioExpanded] = useState(false);
+
+  // Follower/Following
   const [displayMode, setDisplayMode] = useState('default');
   const [mutuals, setMutuals] = useState([]);
-  const [page, setPage] = useState(0); // Initial page
+  const [page, setPage] = useState(0);             // Initial page
   const [totalPages, setTotalPages] = useState(0); // Total pages
 
   const sampleUser = {
@@ -304,7 +306,7 @@ export default function Create() {
                     <div className="flex items-center justify-center gap-x-5 py-4">
                       <button
                         onClick={prevPage}
-                        className="w-24 rounded-sm bg-gray-900 px-4 py-2 font-bold text-white hover:bg-gray-800 disabled:opacity-50 "
+                        className="w-24 rounded-sm bg-gray-800 px-4 py-2 font-bold text-white hover:bg-gray-700 disabled:opacity-50 "
                         disabled={page === 0}
                       >
                         Previous
@@ -359,6 +361,27 @@ export default function Create() {
                     </div>
                   ) : (
                     <p className="text-neutral-400">No followers yet.</p>
+                  )}
+                  {totalPages > 0 && (
+                    <div className="flex items-center justify-center gap-x-5 py-4">
+                      <button
+                        onClick={prevPage}
+                        className="w-24 rounded-sm bg-gray-800 px-4 py-2 font-bold text-white hover:bg-gray-700 disabled:opacity-50 "
+                        disabled={page === 0}
+                      >
+                        Previous
+                      </button>
+                      <span className="text-white">
+                        Page {page + 1} of {totalPages}
+                      </span>
+                      <button
+                        onClick={nextPage}
+                        className="w-24 rounded-sm bg-gray-800 px-4 py-2 font-bold text-white hover:bg-gray-700 disabled:opacity-50"
+                        disabled={page + 1 >= totalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
                   )}
                 </div>
               </>
