@@ -301,7 +301,11 @@ export default function Dashboard() {
               <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold mb-4'>
                   Sponsor Messaging
                 </h1>
-    <div class='break-inside relative overflow-hidden flex flex-col justify-between space-y-2 text-sm rounded-xl max-w-[23rem] p-4 pb-9 mb-4 bg-blue-800 text-white'>
+    <div class='break-inside relative overflow-hidden flex flex-col justify-between space-y-2 text-sm rounded-xl max-w-[23rem] p-4 pb-9 mb-4 bg-blue-800 text-white cursor-pointer' onClick={() => {
+                window.location.href =
+                  '../settings/billing'
+              }}
+            >
         <div class='flex flex-row items-center space-x-3 mt-2'>
             <img src="../product.png" width="80" ></img>
             <span class='text-base text-lg mt-2'>Upgrade to CTFGuide Pro today for just <span className="font-semibold">$5/month</span>.</span>
