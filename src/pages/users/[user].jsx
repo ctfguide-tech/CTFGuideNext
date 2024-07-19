@@ -13,6 +13,7 @@ import Writeups from '@/components/profile/v2/Writeups';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
+import { DonutChart } from '@tremor/react';
 
 const mockActivityData = [
     { date: '2024-01-01', count: 0, level: 0 },
@@ -30,6 +31,34 @@ export default function Create() {
     const [following, setFollowing] = useState(0);
     const [activityData, setActivityData] = useState(mockActivityData);
     const [completedChallenges, setCompletedChallenges] = useState(null);
+    let   [totalCompletedChallenges, setTotalCompletedChallenges] = useState(0);
+    const [completionData , setCompletionData] = useState([
+        {
+          name: 'Beginner',
+          amount: 0,
+          color: 'bg-blue-500',
+        },
+        {
+          name: 'Easy',
+          amount: 0,
+          color: 'bg-green-500',
+        },
+        {
+          name: 'Medium',
+          amount: 0,
+          color: 'bg-orange-500',
+        },
+        {
+          name: 'Hard',
+          amount: 0,
+          color: 'bg-red-500',
+        },
+        {
+          name: 'Insane',
+          amount: 0,
+          color: 'bg-purple-500',
+        },
+      ]);
 
     const toggleBio = () => {
         setIsBioExpanded(!isBioExpanded);
@@ -95,7 +124,35 @@ export default function Create() {
                     setCompletedChallenges(resp);
                     console.log("setting resp");
                 }
+                setTotalCompletedChallenges(resp.beginnerChallenges.length + resp.easyChallenges.length + resp.mediumChallenges.length + resp.hardChallenges.length + resp.insaneChallenges.length);
                 console.log("completed challenges: ", completedChallenges);
+                setCompletionData([
+                    {
+                      name: 'Beginner',
+                      amount: resp.beginnerChallenges.length,
+                      color: 'bg-blue-500',
+                    },
+                    {
+                      name: 'Easy',
+                      amount: resp.easyChallenges.length,
+                      color: 'bg-green-500',
+                    },
+                    {
+                      name: 'Medium',
+                      amount: resp.mediumChallenges.length,
+                      color: 'bg-orange-500',
+                    },
+                    {
+                      name: 'Hard',
+                      amount: resp.hardChallenges.length,
+                      color: 'bg-red-500',
+                    },
+                    {
+                      name: 'Insane',
+                      amount: resp.insaneChallenges.length,
+                      color: 'bg-purple-500',
+                    },
+                  ]);
             }catch (err) {
                 console.log(err);
             }
@@ -115,6 +172,7 @@ export default function Create() {
   useEffect(() => {
     if(router.query.user) loadStreakChart();
   },[router.query.user]);
+  
 
     return (
         <>
@@ -192,13 +250,24 @@ export default function Create() {
             <main className='max-w-7xl mx-auto mt-10'>
                 <div className='mt-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 gap-y-4 ' >
                     <div className='w-full bg-neutral-800 border-t-4 border-blue-600 h-40'>
-                        <div className='col-span-2 bg-neutral-800 px-4 pt-4 ' >
-                            <h1 className='text-2xl text-white font-bold'>ACTIVITY FEED</h1>
-                            {user && (
-                                <h1 className='mx-auto my-auto text-neutral-400'>Looks like {user.username} hasn't been that active.</h1>
+                        <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
+                            <div className='bg-neutral-800'>
+                                <h1 className='text-xl text-white font-bold'>CHALLENGE COMPLETION</h1>
+                                {(
+                                completionData && (
+                                    <DonutChart
+                                className="mt-8"
+                                data={completionData}
+                                category="amount"
+                                index="name"
+                                label = {`${totalCompletedChallenges} challenges`}
+                                showTooltip={true}
+                                />
+                                )
                             )}
-                            <hr className='px-4 border-neutral-700 mt-4'>
-                            </hr>
+                                
+                            </div>
+                            <hr className='px-4 border-neutral-700 mt-4'></hr>
                         </div>
 
                         <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
