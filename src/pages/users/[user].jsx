@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
@@ -13,6 +13,10 @@ import Writeups from '@/components/profile/v2/Writeups';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
+import { Context } from '@/context';
+import { useContext } from 'react';
+
+
 
 const mockActivityData = [
     { date: '2024-01-01', count: 1, level: 4 },
@@ -41,18 +45,64 @@ const mockActivityData = [
 
 export default function Create() {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
+    const bioRef = useRef(null);
+    const textRef = useRef(null)
+    
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('LIKED CHALLENGES');
-    const [isBioExpanded, setIsBioExpanded] = useState(false);
+    const [isBioExpanded, setIsBioExpanded] = useState();
     const [followers, setFollowers] = useState(0);
     const [following, setFollowing] = useState(0);
     const [activityData, setActivityData] = useState(mockActivityData);
+    const [unsavedNotif, setOpenBio] = useState(false);
+    const [banner, bannerState] = useState(false);
+    const [inputText, setInputText] = useState('');
+    const [currentUsersBio, setCurrentUsersBio] = useState(null);
 
-    const toggleBio = () => {
-        setIsBioExpanded(!isBioExpanded);
+
+
+    function closeUnsavedNotif() {
+        bannerState(false);
+    }
+
+    const handleInputChange = (event) => {
+        setInputText(event.target.value);
+        if (event.target.value !== '') {
+          bannerState(true);
+        } else {
+          bannerState(false)
+        }
+      };
+
+      const handleBioChange = (event) =>{
+        handleInputChange(event);
+        setCurrentUsersBio(event.target.value);
+      }
+
+    function openBioEditor(){
+        if(isBioExpanded === false){
+            setIsBioExpanded(true);
+            
+            console.log(isBioExpanded)
+        }
+       
     };
+
+    function focus(){
+        if(isBioExpanded === true){
+        bioRef.current.focus();
+        }
+    }
+
+     function closeBioEditor () {
+        setIsBioExpanded(false);
+        console.log(isBioExpanded)
+    };
+
+    const closeBioViaPageClick = (e) => {
+        
+    }
 
     const renderContent = () => {
         switch (activeTab) {
@@ -87,12 +137,14 @@ export default function Create() {
     };
 
     useEffect(() => {
+
         request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}`, "GET", null)
             .then((data) => {
                 console.log(data)
                 setUser(data);
                 setFollowers(data.followers || 0);
                 setFollowing(data.following || 0);
+
             })
             .catch((err) => {
                 console.log(err);
@@ -108,7 +160,161 @@ export default function Create() {
         };
 
         fetchActivityData();
+        
+        const fetchUserData = async () => {
+            try {
+              const response = await request(
+                `${process.env.NEXT_PUBLIC_API_URL}/account`,
+                'GET',
+                null
+              );
+              const userData = await response;
+      
+              // Set the fetched data into the state
+              setCurrentUsersBio(userData.bio || '');
+      
+            } catch (err) {
+              console.error('Failed to fetch user data', err);
+            } 
+          };
+          fetchUserData();
+
+          document.removeEventListener("click", setIsBioExpanded(false));
+
+
+
+
+          
     }, [router.query.user]);
+
+   
+   
+    const insertText = (text) => {
+        const textarea = bioRef.current;
+        const startPos = textarea.selectionStart;
+        const endPos = textarea.selectionEnd;
+        const newValue =
+          textarea.value.substring(0, startPos) +
+          text +
+          textarea.value.substring(endPos, textarea.value.length);
+        setCurrentUsersBio(newValue);
+        textarea.focus();
+        textarea.selectionEnd = startPos + text.length;
+        bannerState(true);
+      };
+    
+      const magicSnippet = () => {
+        const id = Math.random().toString(36).substring(7);
+        insertText(`[Click to run: ${id}](https://ctfguide.com/magic/)`);
+      };
+    
+      
+      function bioViewCheck(){
+        if((useContext(Context).username) === (user && user.username)){
+            return true;
+        }else{
+            return false;
+        }
+      }
+
+      const renderUsersBio = () =>{
+        return<>
+                <div onClick={openBioEditor} className="w-full text-left cursor-pointer focus:outline-none">
+                    {isBioExpanded ? <>
+                <div className=" sm:col-span-full">
+                    
+                    <div className="mt-2 rounded-lg bg-neutral-800 text-white">
+                        
+                <div className='mb-2 w-full flex justify-between'>
+                    <div className="flex space-x-2">
+                    <button
+                      onClick={() => insertText('**Enter bold here**')}
+                      className="toolbar-button mr-1 pr-2 text-white"
+                    >
+                      <i className="fas fa-bold text-sm"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('*Enter italic here*')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-italic text-sm"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('# Enter Heading here')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-heading text-sm"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('[Name](url)')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-link text-sm"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('```Enter Code here```')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-code text-sm"></i>
+                    </button>
+                    <button
+                      onClick={() => magicSnippet()}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-terminal text-sm"></i>
+                    </button>
+                </div>
+                 <button
+                     onClick={closeBioEditor}
+                      
+                      className="toolbar-button mr-1 px-2 text-white "
+                    >
+                      <i className="text-sm ">Close Editor</i>
+                    </button>
+                    
+                    
+                </div>
+                            <textarea 
+                                id="bio"
+                                name="bio"
+                                rows={4}
+                        
+                                value={currentUsersBio} 
+                                onChange={handleBioChange}
+                                className=" block w-full rounded-md border-0 border-none bg-neutral-700 text-white shadow-sm placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
+                                ref={bioRef}
+                                
+                           />
+                           
+                            </div>
+
+                        
+                    </div>
+                    </> : (user && <MarkdownViewer  content={currentUsersBio} />) }
+                    
+                    
+                </div>
+
+        </>
+    }
+
+  
+      const saveBio = async () => {     
+          const data = {
+              bio: currentUsersBio || '',
+            };
+            try {
+              const response = await request(
+                `${process.env.NEXT_PUBLIC_API_URL}/account`,
+                'PUT',
+                data
+              );
+              console.log(response);
+            } catch (err) {
+              console.error('Failed to save general information', err);
+            } 
+            closeUnsavedNotif();
+      }
 
     return (
         <>
@@ -220,10 +426,11 @@ export default function Create() {
                     <div className='col-span-3 border-t-4 border-blue-600'>
                         <div className='bg-neutral-800 px-4 py-4'>
                             {user && (
-                                <h1 className='text-2xl text-white font-bold uppercase mb-4'>ABOUT {user.username}</h1>
+                                <h1 className='text-2xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
                             )}
                             <p className='text-neutral-400'>
-                            {user && <MarkdownViewer content={user.bio} />}
+                                {bioViewCheck() ? renderUsersBio()  : user && <MarkdownViewer  content={user.bio} />}
+                            
                             </p>
                         </div>
 
@@ -281,6 +488,31 @@ export default function Create() {
 
 
             <Footer />
+
+            {banner && (
+                <div
+                    style={{ backgroundColor: '#212121' }}
+                    id="savebanner"
+                    className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                    hidden={!unsavedNotif}
+                >
+                    <p className="max-w-4xl text-2xl leading-6 text-white">
+                        You have unsaved changes.
+                    </p>
+                    <div className="flex flex-none items-center gap-x-5">
+                    <button onClick={saveBio} type="button" className="rounded-sm bg-green-700 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+                            Save Changes
+                        </button>
+                        <button
+                            onClick={closeUnsavedNotif}
+                            type="button"
+                            className="text-xl font-semibold leading-6 text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
