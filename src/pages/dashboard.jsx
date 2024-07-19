@@ -301,7 +301,11 @@ export default function Dashboard() {
               <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold mb-4'>
                   Sponsor Messaging
                 </h1>
-    <div class='break-inside relative overflow-hidden flex flex-col justify-between space-y-2 text-sm rounded-xl max-w-[23rem] p-4 pb-9 mb-4 bg-blue-800 text-white'>
+    <div class='break-inside relative overflow-hidden flex flex-col justify-between space-y-2 text-sm rounded-xl max-w-[23rem] p-4 pb-9 mb-4 bg-blue-800 text-white cursor-pointer' onClick={() => {
+                window.location.href =
+                  '../settings/billing'
+              }}
+            >
         <div class='flex flex-row items-center space-x-3 mt-2'>
             <img src="../product.png" width="80" ></img>
             <span class='text-base text-lg mt-2'>Upgrade to CTFGuide Pro today for just <span className="font-semibold">$5/month</span>.</span>
@@ -324,7 +328,7 @@ export default function Dashboard() {
                 </h1>
     <div class='break-inside relative overflow-hidden flex flex-col justify-between  text-sm rounded-xl max-w-[23rem] px-6 py-4 mb-4 bg-indigo-800 text-white'>
        
-    <a href="https://discord.gg/q3hgRBvgkX">
+    <a href="https://discord.gg/q3hgRBvgkX" target="_blank" rel="noopener noreferrer">
           <div class="mr-4 max-w-sm  flex items-center gap-x-8">
             <i class="fab fa-discord  ml-5  h-10 w-10 text-4xl text-white"></i>
 
@@ -367,7 +371,7 @@ export default function Dashboard() {
                <p class="mb-3 font-normal text-white">
                  Stay updated with the latest CTFGuide news and updates!
                </p>
-               <a href='https://x.com/intent/user?screen_name=ctfguideapp' class="inline-flex  text-center mx-auto items-center bg-white px-2 rounded-lg text-black  font-bold py-1 hover:underline">
+               <a href='https://x.com/intent/user?screen_name=ctfguideapp' target="_blank" rel="noopener noreferrer" class="inline-flex  text-center mx-auto items-center bg-white px-2 rounded-lg text-black  font-bold py-1 hover:underline">
                  Follow @ctfguideapp
                  <svg
                    class="ml-2 h-5 w-5"

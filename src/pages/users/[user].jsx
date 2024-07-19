@@ -13,34 +13,15 @@ import Writeups from '@/components/profile/v2/Writeups';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
+import { DonutChart } from '@tremor/react';
 
 const mockActivityData = [
-    { date: '2024-01-01', count: 1, level: 4 },
-    { date: '2024-01-02', count: 0, level: 4 },
-    { date: '2024-01-03', count: 0, level: 4 },
-    { date: '2024-02-01', count: 0, level: 4 },
-    { date: '2024-02-02', count: 0, level: 4 },
-    { date: '2024-02-03', count: 1, level: 4 },
-    { date: '2024-03-01', count: 2, level: 3 },
-    { date: '2024-03-02', count: 1, level: 2 },
-    { date: '2024-03-03', count: 0, level: 1 },
-    { date: '2024-04-01', count: 3, level: 4 },
-    { date: '2024-04-02', count: 2, level: 3 },
-    { date: '2024-04-03', count: 1, level: 2 },
-    { date: '2024-05-01', count: 1, level: 2 },
-    { date: '2024-06-01', count: 1, level: 2 },
-    { date: '2024-07-01', count: 1, level: 2 },
-    { date: '2024-08-01', count: 1, level: 2 },
-    { date: '2024-09-01', count: 1, level: 2 },
-    { date: '2024-10-01', count: 1, level: 2 },
-    { date: '2024-11-01', count: 1, level: 2 },
-    { date: '2024-12-01', count: 1, level: 2 },
-    { date: '2024-12-21', count: 1, level: 2 },
-
+    { date: '2024-01-01', count: 0, level: 0 },
+    { date: '2024-12-21', count: 0, level: 0 },
 ];
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export default function Create() {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     const router = useRouter();
     const [user, setUser] = useState(null);
@@ -49,6 +30,35 @@ export default function Create() {
     const [followers, setFollowers] = useState(0);
     const [following, setFollowing] = useState(0);
     const [activityData, setActivityData] = useState(mockActivityData);
+    const [completedChallenges, setCompletedChallenges] = useState(null);
+    let   [totalCompletedChallenges, setTotalCompletedChallenges] = useState(0);
+    const [completionData , setCompletionData] = useState([
+        {
+          name: 'Beginner',
+          amount: 0,
+          color: 'bg-blue-500',
+        },
+        {
+          name: 'Easy',
+          amount: 0,
+          color: 'bg-green-500',
+        },
+        {
+          name: 'Medium',
+          amount: 0,
+          color: 'bg-orange-500',
+        },
+        {
+          name: 'Hard',
+          amount: 0,
+          color: 'bg-red-500',
+        },
+        {
+          name: 'Insane',
+          amount: 0,
+          color: 'bg-purple-500',
+        },
+      ]);
 
     const toggleBio = () => {
         setIsBioExpanded(!isBioExpanded);
@@ -101,14 +111,68 @@ export default function Create() {
         const fetchActivityData = async () => {
             try {
                 const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/activity`, 'GET', null);
-                setActivityData(response.data);
+                //setActivityData(response.data);
             } catch (err) {
                 console.log(err);
             }
         };
 
+        const fetchChallenges = async () => {
+            try{
+                const resp = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/completedChallenges`, 'GET', null);
+                if (resp){
+                    setCompletedChallenges(resp);
+                    console.log("setting resp");
+                }
+                setTotalCompletedChallenges(resp.beginnerChallenges.length + resp.easyChallenges.length + resp.mediumChallenges.length + resp.hardChallenges.length + resp.insaneChallenges.length);
+                console.log("completed challenges: ", completedChallenges);
+                setCompletionData([
+                    {
+                      name: 'Beginner',
+                      amount: resp.beginnerChallenges.length,
+                      color: 'bg-blue-500',
+                    },
+                    {
+                      name: 'Easy',
+                      amount: resp.easyChallenges.length,
+                      color: 'bg-green-500',
+                    },
+                    {
+                      name: 'Medium',
+                      amount: resp.mediumChallenges.length,
+                      color: 'bg-orange-500',
+                    },
+                    {
+                      name: 'Hard',
+                      amount: resp.hardChallenges.length,
+                      color: 'bg-red-500',
+                    },
+                    {
+                      name: 'Insane',
+                      amount: resp.insaneChallenges.length,
+                      color: 'bg-purple-500',
+                    },
+                  ]);
+            }catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchChallenges();
         fetchActivityData();
     }, [router.query.user]);
+
+  async function loadStreakChart() {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/activity/${router.query.user}`;
+    const response = await request(url, "GET", null);
+    console.log(response);
+    setActivityData(response.body);
+  }
+
+  useEffect(() => {
+    if(router.query.user) loadStreakChart();
+  },[router.query.user]);
+  
 
     return (
         <>
@@ -123,7 +187,7 @@ export default function Create() {
                 <div>
                     <div
                         style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
-                        className="h-20 w-full object-cover lg:h-20"
+                        className="h-20 w-full object-cover lg:h-56"
                         alt=""
                     >
                     </div>
@@ -132,10 +196,10 @@ export default function Create() {
                     <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                         <div className="flex w-40">
                             <a href='../settings'>
-                                {(user && user.profileImage && (
+                                {(user && (
                                     <img
                                         className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
-                                        src={user && user.profileImage}
+                                        src={user.profileImage || 'https://robohash.org/' + user.username}
                                         alt=""
                                     />
                                 )) || (
@@ -186,13 +250,24 @@ export default function Create() {
             <main className='max-w-7xl mx-auto mt-10'>
                 <div className='mt-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 gap-y-4 ' >
                     <div className='w-full bg-neutral-800 border-t-4 border-blue-600 h-40'>
-                        <div className='col-span-2 bg-neutral-800 px-4 pt-4 ' >
-                            <h1 className='text-2xl text-white font-bold'>ACTIVITY FEED</h1>
-                            {user && (
-                                <h1 className='mx-auto my-auto text-neutral-400'>Looks like {user.username} hasn't been that active.</h1>
+                        <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
+                            <div className='bg-neutral-800'>
+                                <h1 className='text-xl text-white font-bold'>CHALLENGE COMPLETION</h1>
+                                {(
+                                completionData && (
+                                    <DonutChart
+                                className="mt-8"
+                                data={completionData}
+                                category="amount"
+                                index="name"
+                                label = {`${totalCompletedChallenges} challenges`}
+                                showTooltip={true}
+                                />
+                                )
                             )}
-                            <hr className='px-4 border-neutral-700 mt-4'>
-                            </hr>
+                                
+                            </div>
+                            <hr className='px-4 border-neutral-700 mt-4'></hr>
                         </div>
 
                         <div className='col-span-2 bg-neutral-800 px-4 pt-4 '>
@@ -260,10 +335,10 @@ export default function Create() {
                                 <div className='w-full'>
                                     <div className='text-white'>
                                         <div className='w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4 mt-4'>
-                                            <h2 className="text-2xl font-bold text-white mb-4">STREAK CHART</h2>
+                                            <h2 className="text-2xl font-bold text-white mb-4">SUBMISSION HISTORY</h2>
                                             <div className='flex justify-center'>
                                                 <ActivityCalendar
-                                                    data={mockActivityData}
+                                                    data={activityData}
                                                     showMonthLabels={true} // Ensure month labels are shown
                                                     theme={{
                                                         light: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],

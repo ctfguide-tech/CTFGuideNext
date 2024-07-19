@@ -22,7 +22,7 @@ import Confetti from 'react-confetti';
 
 export default function Challenge() {
   const router = useRouter();
-
+  const [selectedWriteup, setSelectedWriteup] = useState(null);
 
   // I hate this
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
@@ -203,6 +203,31 @@ export default function Challenge() {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
 
+  useEffect(() => {
+    const { id } = router.query;
+    if (id && id.length === 3 && id[1] === 'writeups') {
+      const writeupID = id[2];
+      // Fetch the writeup by ID and set it as the selected writeup
+      (async () => {
+        try {
+          const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupID}`, "GET", null);
+          if (response.success) {
+            setSelectedWriteup(response.writeup);
+          } else {
+            console.error('Failed to fetch writeup:', response.message);
+          }
+        } catch (error) {
+          console.error('Error fetching writeup:', error);
+        }
+      })();
+    }
+  }, [router.query]);
+
+  const handleWriteupSelect = (writeup) => {
+    setSelectedWriteup(writeup);
+    router.push(`/challenges/${urlChallengeId}/writeups/${writeup.id}`);
+  };
+
   return (
     <>
       <Head>
@@ -225,59 +250,55 @@ export default function Challenge() {
             <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full">
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
-            <selectedTab.element cache={cache} setCache={setCache} />
+            {selectedWriteup ? (
+              <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => setSelectedWriteup(null)} />
+            ) : (
+              <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
+            )}
             <div className='flex w-full h-full grow basis-0'></div>
-
             <div className="shrink-0 bg-neutral-800 h-12 w-full">
-            <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
+              <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
                 <input name="flag" type="text" required placeholder="Enter flag submission here" className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2" />
                 <input name="submitFlag" type="submit" value="Submit Flag" disabled={loadingFlagSubmit} className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm" />
               </form>
             </div>
-            
           </div>
           <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
               <div className="h-full">
-
                 {foundTerminal && (
-                <div className="flex">
-                  
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
-                    Username: {userName} 
-                    <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
-                      <i className="fas fa-copy"></i>
-                    </button>
-                  </h1>
-                  <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
-                    Password: {password} 
-                    <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
-                      <i className="fas fa-copy"></i>
-                    </button>
-                  </h1>
-                  <h1 className="text-sm ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
-                    Remaining Time: {formatTime(minutesRemaining)}
-                  </h1>
-            
-
-
-                </div>
+                  <div className="flex">
+                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
+                      Username: {userName} 
+                      <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
+                        <i className="fas fa-copy"></i>
+                      </button>
+                    </h1>
+                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
+                      Password: {password} 
+                      <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
+                        <i className="fas fa-copy"></i>
+                      </button>
+                    </h1>
+                    <h1 className="text-sm ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
+                      Remaining Time: {formatTime(minutesRemaining)}
+                    </h1>
+                  </div>
                 )}
-           
                 {fetchingTerminal ? (
                   <div className="flex mx-auto text-center justify-center items-center h-full">
                     <div>
-                    <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
-                    <span className="text-white text-xl">{loadingMessage}</span>
-                  </div>
+                      <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
+                      <span className="text-white text-xl">{loadingMessage}</span>
                     </div>
+                  </div>
                 ) : (
                   <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
                 )}
               </div>
             </div>
           </div>
-        </main >
+        </main>
       </div>
       <ToastContainer
         position="top-right"
@@ -569,16 +590,11 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
   return <p className={`${bgColor} ${textColor} capitalize rounded-sm px-2`}>{children}</p>
 }
 
-function WriteUpPage({ cache, setCache }) {
-
+function WriteUpPage({ cache, setCache, onWriteupSelect }) {
   const { challenge } = cache;
-
-
   const router = useRouter();
   const [selectedWriteup, setSelectedWriteup] = useState(null);
-
   const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
-
 
   useEffect(() => {
     (async () => {
@@ -587,9 +603,7 @@ function WriteUpPage({ cache, setCache }) {
       }
       setCache('write-page', {});
     })();
-  })
-
-
+  });
 
   // START OF CREATE FUNCTIONALITY
   const [isCreating, setIsCreating] = useState(false);
@@ -598,22 +612,13 @@ function WriteUpPage({ cache, setCache }) {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
-
           request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
-            console.log("cow")
-            console.log(challenges)
-            challenges.forEach((challenge) => (
-              console.log(challenge.slug)
-            ))
-            setSolvedChallenges(challenges)
-
-          })
+            setSolvedChallenges(challenges);
+          });
         })
         .catch((err) => {
           console.log(err);
         });
-
-
     } catch (error) { }
   }, []);
   // END OF CREATE FUNCTIONALITY
@@ -621,13 +626,10 @@ function WriteUpPage({ cache, setCache }) {
   // START OF FETCH WRITEUP FUNCTIONALITY
   const [writeUp, setWriteUp] = useState([]);
   useEffect(() => {
-    console.log(`Fetching writeup data for challenge ${urlChallengeId}`)
-
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/writeups`, "GET", null)
         .then((data) => {
-          console.log(`Writeup data: ${JSON.stringify(data)}`)
-          setWriteUp(data)
+          setWriteUp(data);
         })
         .catch((err) => {
           console.log(err);
@@ -648,55 +650,46 @@ function WriteUpPage({ cache, setCache }) {
             </div>
           </>
         )}
-
       </div>
       {selectedWriteup ? (
         <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => setSelectedWriteup(null)} />
       ) : (
-      <div className="px-4 overflow-auto">
-        {writeUp.map((writeup, index) => (
-          <div key={index} onClick={() => setSelectedWriteup(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
-            <div className='w-full flex'>
-              <div className="">
-
+        <div className="px-4 overflow-auto">
+          {writeUp.map((writeup, index) => (
+            <div key={index} onClick={() => onWriteupSelect(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+              <div className='w-full flex'>
+                <div className="">
                   <h3 className="text-2xl">{writeup.title} </h3>
                   <p className="text-sm">Authored by {writeup.user.username}</p>
-
                 </div>
                 <div className="ml-auto mt-2">
-                  <p className="text-sm text-right">452 views</p>
+                  <p className="text-sm text-right">{writeup.views} views</p>
 
                   <div className=" space-x-2 text-right text-lg">
                     <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
                     <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
                   </div>
-
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-
-      {
-        !writeUp.length && (
-          <div className="px-3">
-            <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
-              <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
-                <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
-                <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
-                <p className="text-sm">Maybe you could create one?</p>
-
-              </div>
+      {!writeUp.length && (
+        <div className="px-3">
+          <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
+            <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
+              <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
+              <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
+              <p className="text-sm">Maybe you could create one?</p>
             </div>
           </div>
-        )
-      }
-
+        </div>
+      )}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
     </>
-  )
+  );
 }
 
 function WriteupView({ writeup, onBack, cache }) {
@@ -1015,8 +1008,12 @@ function CommentsPage({ cache }) {
 
   const handleUpvote = async (commentId) => {
     try {
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}/upvote`, "POST", null);
+      console.log("sending request to upvote");
+      console.log("commentId: " , commentId);
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}/upvote`, "POST", {});
+      console.log("after respose");
       if (response.success) {
+        console.log("upvoted successfully");
         // Update the comment's upvotes and downvotes
         const updatedComments = challenge.comments.map(comment => {
           if (comment.id === commentId) {
@@ -1026,6 +1023,7 @@ function CommentsPage({ cache }) {
         });
         challenge.comments = updatedComments;
       } else {
+        console.log("Failed to upvote");
         console.error('Failed to upvote comment:', response.message);
       }
     } catch (error) {
@@ -1035,7 +1033,7 @@ function CommentsPage({ cache }) {
 
   const handleDownvote = async (commentId) => {
     try {
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}/downvote`, "POST", null);
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}/downvote`, "POST", {});
       if (response.success) {
         // Update the comment's upvotes and downvotes
         const updatedComments = challenge.comments.map(comment => {
