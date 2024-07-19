@@ -15,32 +15,12 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
 
 const mockActivityData = [
-    { date: '2024-01-01', count: 0, level: 4 },
-    { date: '2024-01-02', count: 0, level: 4 },
-    { date: '2024-01-03', count: 0, level: 4 },
-    { date: '2024-02-01', count: 0, level: 4 },
-    { date: '2024-02-02', count: 0, level: 4 },
-    { date: '2024-02-03', count: 0, level: 4 },
-    { date: '2024-03-01', count: 0, level: 3 },
-    { date: '2024-03-02', count: 0, level: 2 },
-    { date: '2024-03-03', count: 0, level: 1 },
-    { date: '2024-04-01', count: 0, level: 4 },
-    { date: '2024-04-02', count: 0, level: 3 },
-    { date: '2024-04-03', count: 0, level: 2 },
-    { date: '2024-05-01', count: 0, level: 2 },
-    { date: '2024-06-01', count: 0, level: 2 },
-    { date: '2024-07-01', count: 0, level: 2 },
-    { date: '2024-08-01', count: 0, level: 2 },
-    { date: '2024-09-01', count: 0, level: 2 },
-    { date: '2024-10-01', count: 0, level: 2 },
-    { date: '2024-11-01', count: 0, level: 2 },
-    { date: '2024-12-01', count: 0, level: 2 },
-    { date: '2024-12-21', count: 0, level: 2 },
-
+    { date: '2024-01-01', count: 0, level: 0 },
+    { date: '2024-12-21', count: 0, level: 0 },
 ];
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export default function Create() {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     const router = useRouter();
     const [user, setUser] = useState(null);
@@ -102,7 +82,7 @@ export default function Create() {
         const fetchActivityData = async () => {
             try {
                 const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/activity`, 'GET', null);
-                setActivityData(response.data);
+                //setActivityData(response.data);
             } catch (err) {
                 console.log(err);
             }
@@ -124,6 +104,17 @@ export default function Create() {
         fetchChallenges();
         fetchActivityData();
     }, [router.query.user]);
+
+  async function loadStreakChart() {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/activity/${router.query.user}`;
+    const response = await request(url, "GET", null);
+    console.log(response);
+    setActivityData(response.body);
+  }
+
+  useEffect(() => {
+    if(router.query.user) loadStreakChart();
+  },[router.query.user]);
 
     return (
         <>
@@ -278,7 +269,7 @@ export default function Create() {
                                             <h2 className="text-2xl font-bold text-white mb-4">SUBMISSION HISTORY</h2>
                                             <div className='flex justify-center'>
                                                 <ActivityCalendar
-                                                    data={mockActivityData}
+                                                    data={activityData}
                                                     showMonthLabels={true} // Ensure month labels are shown
                                                     theme={{
                                                         light: ['#1f1f1f', '#c0d7ff', '#93bfff', '#66a7ff', '#3a8fff'],
