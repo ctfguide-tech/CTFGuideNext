@@ -49,6 +49,7 @@ export default function Create() {
     const [followers, setFollowers] = useState(0);
     const [following, setFollowing] = useState(0);
     const [activityData, setActivityData] = useState(mockActivityData);
+    const [completedChallenges, setCompletedChallenges] = useState(null);
 
     const toggleBio = () => {
         setIsBioExpanded(!isBioExpanded);
@@ -107,6 +108,20 @@ export default function Create() {
             }
         };
 
+        const fetchChallenges = async () => {
+            try{
+                const resp = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/completedChallenges`, 'GET', null);
+                if (resp){
+                    setCompletedChallenges(resp);
+                    console.log("setting resp");
+                }
+                console.log("completed challenges: ", completedChallenges);
+            }catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchChallenges();
         fetchActivityData();
     }, [router.query.user]);
 
