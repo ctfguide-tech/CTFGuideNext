@@ -23,6 +23,7 @@ export default function Login() {
 
   async function handleLoginRequest(requestOptions, isGoogle) {
     setIsLoading(true);
+    
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + '/account/login';
       const response = await fetch(url, requestOptions);
@@ -106,6 +107,13 @@ export default function Login() {
           style={{ fontFamily: 'Poppins, sans-serif' }}
           className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
         >
+
+<h1 className='text-red-400 text-center'>You are on the preview version of CTFGuide. Preview accounts do not use the same authentication system as https://ctfguide.com</h1>
+<h1 className='text-red-400 text-center'>Account data may not persist. Features may not work as expected.</h1>
+<h1 className='text-red-400 text-center'>You assume all risk by using preview.ctfguide.com.</h1>
+
+<a className='mx-auto bg-blue-700 mt-2 text-white px-4 py-2 rounded-md w-1/6 text-center' href='https://ctfguide.com'>Take me to the main site</a>
+   
           <form onSubmit={handleLogin}>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md">

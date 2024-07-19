@@ -44,7 +44,7 @@ export default function Leaderboard() {
         <StandardNav />
         <main>
         <div className="mt-20 flex flex-col md:flex-row max-w-7xl mx-auto items-end gap-5">
-  <div className="flex-1 relative shadow bg-gradient-to-r from-gray-600 to-gray-700 w-full md:w-auto">
+  <div className="flex-1 relative shadow bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 w-full md:w-auto">
     <div className="flag-top"></div>
     <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 hidden md:block">
       <img
@@ -71,7 +71,7 @@ export default function Leaderboard() {
     </div>
   </div>
 
-  <div className="flex-1 relative shadow bg-gradient-to-r from-yellow-600 to-yellow-700 w-full md:w-auto">
+  <div className="flex-1 relative shadow bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 w-full md:w-auto">
     <div className="flag-top"></div>
     <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 hidden md:block">
       <img
@@ -98,7 +98,10 @@ export default function Leaderboard() {
     </div>
   </div>
 
-  <div className="flex-1 relative shadow bg-gradient-to-r from-orange-900 to-orange-950 w-full md:w-auto">
+  <div className="flex-1 relative shadow bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900 w-full md:w-auto">
+    {
+      //too poopy
+    }
     <div className="flag-top"></div>
     <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 hidden md:block">
       <img

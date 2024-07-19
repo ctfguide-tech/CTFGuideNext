@@ -19,27 +19,27 @@ import { useContext } from 'react';
 
 
 const mockActivityData = [
-    { date: '2024-01-01', count: 1, level: 4 },
+    { date: '2024-01-01', count: 0, level: 4 },
     { date: '2024-01-02', count: 0, level: 4 },
     { date: '2024-01-03', count: 0, level: 4 },
     { date: '2024-02-01', count: 0, level: 4 },
     { date: '2024-02-02', count: 0, level: 4 },
-    { date: '2024-02-03', count: 1, level: 4 },
-    { date: '2024-03-01', count: 2, level: 3 },
-    { date: '2024-03-02', count: 1, level: 2 },
+    { date: '2024-02-03', count: 0, level: 4 },
+    { date: '2024-03-01', count: 0, level: 3 },
+    { date: '2024-03-02', count: 0, level: 2 },
     { date: '2024-03-03', count: 0, level: 1 },
-    { date: '2024-04-01', count: 3, level: 4 },
-    { date: '2024-04-02', count: 2, level: 3 },
-    { date: '2024-04-03', count: 1, level: 2 },
-    { date: '2024-05-01', count: 1, level: 2 },
-    { date: '2024-06-01', count: 1, level: 2 },
-    { date: '2024-07-01', count: 1, level: 2 },
-    { date: '2024-08-01', count: 1, level: 2 },
-    { date: '2024-09-01', count: 1, level: 2 },
-    { date: '2024-10-01', count: 1, level: 2 },
-    { date: '2024-11-01', count: 1, level: 2 },
-    { date: '2024-12-01', count: 1, level: 2 },
-    { date: '2024-12-21', count: 1, level: 2 },
+    { date: '2024-04-01', count: 0, level: 4 },
+    { date: '2024-04-02', count: 0, level: 3 },
+    { date: '2024-04-03', count: 0, level: 2 },
+    { date: '2024-05-01', count: 0, level: 2 },
+    { date: '2024-06-01', count: 0, level: 2 },
+    { date: '2024-07-01', count: 0, level: 2 },
+    { date: '2024-08-01', count: 0, level: 2 },
+    { date: '2024-09-01', count: 0, level: 2 },
+    { date: '2024-10-01', count: 0, level: 2 },
+    { date: '2024-11-01', count: 0, level: 2 },
+    { date: '2024-12-01', count: 0, level: 2 },
+    { date: '2024-12-21', count: 0, level: 2 },
 
 ];
 
@@ -329,7 +329,7 @@ export default function Create() {
                 <div>
                     <div
                         style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
-                        className="h-20 w-full object-cover lg:h-20"
+                        className="h-20 w-full object-cover lg:h-48"
                         alt=""
                     >
                     </div>
@@ -338,10 +338,10 @@ export default function Create() {
                     <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                         <div className="flex w-40">
                             <a href='../settings'>
-                                {(user && user.profileImage && (
+                                {(user && (
                                     <img
                                         className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
-                                        src={user && user.profileImage}
+                                        src={user.profileImage || 'https://robohash.org/' + user.username}
                                         alt=""
                                     />
                                 )) || (
@@ -467,7 +467,7 @@ export default function Create() {
                                 <div className='w-full'>
                                     <div className='text-white'>
                                         <div className='w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4 mt-4'>
-                                            <h2 className="text-2xl font-bold text-white mb-4">STREAK CHART</h2>
+                                            <h2 className="text-2xl font-bold text-white mb-4">SUBMISSION HISTORY</h2>
                                             <div className='flex justify-center'>
                                                 <ActivityCalendar
                                                     data={mockActivityData}
