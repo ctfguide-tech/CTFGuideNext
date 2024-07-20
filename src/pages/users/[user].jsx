@@ -697,9 +697,9 @@ export default function Create() {
                                             ABOUT {user.username}
                                         </h1>
                                     )}
-                                    <p className="text-neutral-400">
+                                    <div className="text-neutral-400 max-h-60 overflow-y-auto">
                                         {user && <MarkdownViewer content={user.bio} />}
-                                    </p>
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-y-4 pt-4 ">
