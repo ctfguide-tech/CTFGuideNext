@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Popover, Transition } from '@headlessui/react';
-import { Dialog } from '@headlessui/react'
+import { Dialog } from '@headlessui/react';
 
 import {
   Bars3Icon,
@@ -11,14 +11,21 @@ import {
   UserCircleIcon,
   ArrowRightIcon,
   EllipsisVerticalIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
-import request from "@/utils/request";
+import request from '@/utils/request';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { faBug, faLock, faUserSecret, faNetworkWired, faBrain, faTerminal } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBug,
+  faLock,
+  faUserSecret,
+  faNetworkWired,
+  faBrain,
+  faTerminal,
+} from '@fortawesome/free-solid-svg-icons';
 
 import 'reactjs-popup/dist/index.css';
 import Upgrade from './nav/Upgrade';
@@ -58,47 +65,47 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const [open, setOpen] = useState(true)
-  
+  const [open, setOpen] = useState(true);
 
   const router = useRouter();
-  console.log("logged in as " + useContext(Context).username);
+  console.log('logged in as ' + useContext(Context).username);
 
   function logout() {
-    document.cookie = 'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie =
+      'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     router.push('/login');
   }
- 
+
   useEffect(() => {
     if (!localStorage.getItem('dismissStatus')) {
       setShowBanner(true);
     }
-    
   }, []);
-    // Function to close the modal
-    const closeModal = () => {
-      setShowSearchModal(false);
+  // Function to close the modal
+  const closeModal = () => {
+    setShowSearchModal(false);
+  };
+
+  // Effect to add and remove the event listener
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 27) {
+        // 27 is the key code for ESC key
+        closeModal();
+      }
     };
-  
-    // Effect to add and remove the event listener
-    useEffect(() => {
-      const handleKeyDown = (event) => {
-        if (event.keyCode === 27) { // 27 is the key code for ESC key
-          closeModal();
-        }
-      };
-  
-      // Add event listener
-      document.addEventListener('keydown', handleKeyDown);
-  
-      // Remove event listener on cleanup
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    }, []); 
+
+    // Add event listener
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Remove event listener on cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const toggleSearchModal = () => {
-    setShowSearchModal(prev => !prev); // Toggle the state
+    setShowSearchModal((prev) => !prev); // Toggle the state
   };
 
   const [notification, showNotifications] = useState(false);
@@ -115,22 +122,22 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       return;
     }
 
-    if (localStorage.getItem("pfp")) {
-      setPfp(localStorage.getItem("pfp"));
+    if (localStorage.getItem('pfp')) {
+      setPfp(localStorage.getItem('pfp'));
     }
 
     const fetchData = async () => {
       try {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
-        const result = await request(endPoint, "GET", null);
+        const endPoint =
+          process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
+        const result = await request(endPoint, 'GET', null);
         if (result) {
-          setPfp(result)
+          setPfp(result);
         } else {
-          setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+          setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
         }
-
       } catch (err) {
-        console.log('failed to get profile picture')
+        console.log('failed to get profile picture');
       }
     };
     fetchData();
@@ -138,11 +145,12 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
 
   useEffect(() => {
     const fetchNotification = async () => {
-      const endPoint = process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
+      const endPoint =
+        process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
       const result = await request(endPoint, 'GET', null);
       if (!result || !result.length) return;
 
-      console.log("Here is the result");
+      console.log('Here is the result');
       console.log(result);
 
       setNotificationData(
@@ -176,7 +184,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
         })
       );
     };
-    setUsername(localStorage.getItem("username") || null);
+    setUsername(localStorage.getItem('username') || null);
     fetchNotification();
   }, []);
 
@@ -194,38 +202,37 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
         setNotifications(data.body);
         console.log(data);
       } else {
-        setNotifications(["Unable to get notification, try again"]);
+        setNotifications(['Unable to get notification, try again']);
       }
-
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
-  const linkClass = (path) => `inline-flex items-center border-b-2 px-4 pt-1 text-md transition-all ${
-    router.pathname === path ? 'text-blue-500 border-blue-500' : 'text-gray-300 hover:text-gray-50 border-transparent'
-  }`;
+  const linkClass = (path) =>
+    `inline-flex items-center border-b-2 px-4 pt-1 text-md transition-all ${
+      router.pathname === path
+        ? 'text-blue-500 border-blue-500'
+        : 'text-gray-300 hover:text-gray-50 border-transparent'
+    }`;
 
   return (
     <>
-        {isPopoverOpen && (
-            <div 
-            className="fastanimate hidden  fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-70 animate__animated animate__faster animate__fadeIn"
-            style={{ 
-              backdropFilter: 'blur(2px)',
-             }}
-            onClick={() => setShowSearchModal(false)}
-          >
-            <h1>test</h1>
+      {isPopoverOpen && (
+        <div
+          className="fastanimate animate__animated  animate__faster animate__fadeIn fixed inset-0 z-10 flex hidden items-center justify-center bg-black bg-opacity-70"
+          style={{
+            backdropFilter: 'blur(2px)',
+          }}
+          onClick={() => setShowSearchModal(false)}
+        >
+          <h1>test</h1>
 
-            <br></br>
-            </div>
-    )}
+          <br></br>
+        </div>
+      )}
 
-
-
-
-      <Disclosure as="nav" className=" shadow border-b border-neutral-800">
+      <Disclosure as="nav" className=" border-b border-neutral-800 shadow">
         {({ open }) => (
           <>
             <div className={`px-2 ${alignCenter ? 'mx-auto' : ''}`}>
@@ -249,44 +256,56 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Disclosure.Button>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
-                    <Link href='/dashboard' aria-label="Dashboard">
-                     <Logo/>
+                    <Link href="/dashboard" aria-label="Dashboard">
+                      <Logo />
                     </Link>
                   </div>
-                  <div className=" md:ml-6 md:flex vertical-align  ">
-             
+                  <div className=" vertical-align md:ml-6 md:flex  ">
                     <Link
-                      href='/practice'
-                      className={linkClass('/practice') + " hidden lg:inline-flex"}
+                      href="/practice"
+                      className={
+                        linkClass('/practice') + ' hidden lg:inline-flex'
+                      }
                     >
                       Practice
                     </Link>
                     <Link
-                      href='/leaderboards'
-                      className={linkClass('/leaderboards') + " hidden lg:inline-flex"}
+                      href="/leaderboards"
+                      className={
+                        linkClass('/leaderboards') + ' hidden lg:inline-flex'
+                      }
                     >
                       Leaderboards
                     </Link>
                     <Link
-                      href='/create'
-                      className={linkClass('/create') + " hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex"}
+                      href="/create"
+                      className={
+                        linkClass('/create') +
+                        ' hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex'
+                      }
                     >
                       Create
-                                         </Link>
+                    </Link>
 
                     <Link
-                      href='/groups'
-                      className={linkClass('/groups') + " hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex"}
+                      href="/groups"
+                      className={
+                        linkClass('/groups') +
+                        ' hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex'
+                      }
                     >
                       Classrooms
                     </Link>
 
                     {/* Ellipsis dropdown */}
-                    <Popover className="relative  md:block lg:block xl:block 2xl:hidden  hidden lg:inline-flex">
+                    <Popover className="relative  hidden md:block lg:block lg:inline-flex  xl:block 2xl:hidden">
                       {({ open }) => (
                         <>
-                          <Popover.Button className="inline-flex items-center p-2 text-gray-400 hover:text-white ring-none outline-none " >
-                            <EllipsisVerticalIcon className="h-6 w-6 mt-3" aria-hidden="true" />
+                          <Popover.Button className="ring-none inline-flex items-center p-2 text-gray-400 outline-none hover:text-white ">
+                            <EllipsisVerticalIcon
+                              className="mt-3 h-6 w-6"
+                              aria-hidden="true"
+                            />
                           </Popover.Button>
                           <Transition
                             as={Fragment}
@@ -299,10 +318,10 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                           >
                             <Popover.Panel className="absolute z-10 w-48 max-w-sm transform px-4 sm:px-0 lg:max-w-3xl">
                               <div className="overflow-hidden  shadow-lg ">
-                                <div className="relative grid gap-6 bg-neutral-900 border border-neutral-800  sm:gap-8 sm:p-8">
+                                <div className="relative grid gap-6 border border-neutral-800 bg-neutral-900  sm:gap-8 sm:p-8">
                                   <Link
                                     href="/create"
-                                    className="w-full flex items-start rounded-lg "
+                                    className="flex w-full items-start rounded-lg "
                                   >
                                     <p className="text-base font-medium text-gray-400 hover:text-white">
                                       Create
@@ -310,7 +329,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                   </Link>
                                   <Link
                                     href="/groups"
-                                    className=" flex items-start rounded-lg s"
+                                    className=" s flex items-start rounded-lg"
                                   >
                                     <p className="text-base font-medium text-gray-400 hover:text-white">
                                       Classrooms
@@ -324,17 +343,22 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       )}
                     </Popover>
 
-                      {/*search bar*/}
-                      <div className="mt-3 ml-4 flex-grow ">
-      <div
-        type="text"
-        className="hidden lg:inline-flex w-full px-16 py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-50 placeholder-gray-300 bg-neutral-800 hover:cursor-pointer border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center"
-        onClick={() => setShowSearchModal(true)}
-      >
-        <FontAwesomeIcon icon={faSearch} className="w-3 h-3  mr-1" />
-        <span className="hidden md:inline">Search for anything</span>
-      </div>
-    </div>
+                    {/*search bar*/}
+                    <div className="ml-4 mt-3 flex-grow ">
+                      <div
+                        type="text"
+                        className="flex hidden w-full items-center rounded-lg border border-transparent bg-neutral-800 px-16 py-2 text-sm font-semibold text-neutral-500 placeholder-gray-300 hover:cursor-pointer hover:text-neutral-50 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 lg:inline-flex"
+                        onClick={() => setShowSearchModal(true)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faSearch}
+                          className="mr-1 h-3  w-3"
+                        />
+                        <span className="hidden md:inline">
+                          Search for anything
+                        </span>
+                      </div>
+                    </div>
                     {/* <Link */}
                     {/*   href={`${baseUrl}/live`} */}
                     {/*   className="inline-flex items-center border-b-2 border-transparent px-4 pt-1 text-sm font-semibold text-gray-300 hover:text-gray-50 transition-all" */}
@@ -348,29 +372,32 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     {/* > */}
                     {/*   EDU */}
                     {/* </Link> */}
-              
                   </div>
                 </div>
-                {!guestAllowed &&
-                  <div className="flex items-center hidden lg:inline-flex ">
+                {!guestAllowed && (
+                  <div className="flex hidden items-center lg:inline-flex ">
+                    <button
+                      className="hidden rounded-md bg-blue-600 px-2 py-1 text-sm text-white hover:bg-blue-500"
+                      onClick={() => setTerminalIsOpen(true)}
+                    >
+                      <i className="fas fa-terminal"></i> Launch a machine
+                    </button>
 
-                    <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
-                            onClick={() => setTerminalIsOpen(true)}
-                            ><i className="fas fa-terminal"></i> Launch a machine</button>
+                    <button
+                      className="ml-4 rounded-md bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 px-2 py-1 text-sm text-white hover:from-yellow-600 hover:to-yellow-600"
+                      onClick={() => router.push('/settings/billing')}
+                    >
+                      <i className="fas fa-crown"></i> Upgrade to Pro
+                    </button>
 
-<button
-        className='ml-4 bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 text-sm rounded-md'
-        onClick={() => setUpgradeModalOpen(true)}
-      >
-        <i className="fas fa-crown"></i> Upgrade to Pro
-      </button>
-
-      <div className="ml-4 mb-0 flex items-center space-x-2 rounded-lg px-4 py-1 tooltip cursor-pointer" 
-     style={{ backgroundColor: '#212121', borderWidth: '0px' }}>
-    <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-blue-500"> 
-        <i className="far fa-check-circle"></i> {points}
-    </h1>
-</div>
+                    <div
+                      className="tooltip mb-0 ml-4 flex cursor-pointer items-center space-x-2 rounded-lg px-4 py-1"
+                      style={{ backgroundColor: '#212121', borderWidth: '0px' }}
+                    >
+                      <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-blue-500">
+                        <i className="far fa-check-circle"></i> {points}
+                      </h1>
+                    </div>
                     {/* <div */}
                     {/*   className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1" */}
                     {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
@@ -379,14 +406,17 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     {/*     <i class="fas fa-fire"></i> 0 */}
                     {/*   </h1> */}
                     {/* </div> */}
-                    <div className="hidden  md:flex md:flex-shrink-0 md:items-center px-2">
+                    <div className="hidden  px-2 md:flex md:flex-shrink-0 md:items-center">
                       {/* Profile dropdown */}
-                      <Popover as="div" className="relative ml-3" >
+                      <Popover as="div" className="relative ml-3">
                         <div>
-                          <Popover.Button onClick={() => setIsPopoverOpen(true)} className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                          <Popover.Button
+                            onClick={() => setIsPopoverOpen(true)}
+                            className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                          >
                             <span className="sr-only">Open user menu</span>
                             <img
-                              className="h-10 w-10 rounded-full border bg-neutral-900 border-white"
+                              className="h-10 w-10 rounded-full border border-white bg-neutral-900"
                               src={pfp}
                               loading="lazy"
                               alt=""
@@ -402,12 +432,12 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <Popover.Panel className="z-40 absolute text-sm right-0 z-10 mt-2 w-48 overflow-hidden origin-top-right rounded-md bg-neutral-800 shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="flex items-center w-full">
+                          <Popover.Panel className="absolute right-0 z-10 z-40 mt-2 w-48 origin-top-right overflow-hidden rounded-md bg-neutral-800 text-sm shadow-md shadow-black/30 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="flex w-full items-center">
                               <Link
                                 href={`/users/${username}`}
                                 className={classNames(
-                                  'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
+                                  'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <UserCircleIcon
@@ -417,11 +447,11 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                 Profile
                               </Link>
                             </div>
-                            <div className="flex items-center w-full">
+                            <div className="flex w-full items-center">
                               <Link
                                 href="/settings"
                                 className={classNames(
-                                  'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
+                                  'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <Cog6ToothIcon
@@ -434,7 +464,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <a
                               href="https://ctfguide.hellonext.co/b/feedback"
                               className={classNames(
-                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
+                                'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <PencilSquareIcon
@@ -446,41 +476,39 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <Link
                               href="/report"
                               className={classNames(
-                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
+                                'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <ShieldExclamationIcon
-                                className="block mr-4 h-6 w-6"
+                                className="mr-4 block h-6 w-6"
                                 aria-hidden="true"
                               />
                               Report
                             </Link>
 
-                            {
-                              role === 'ADMIN' && (
-                                <Link
-                                  href="/moderation"
-                                  className={classNames(
-                                    'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700'
-                                  )}
-                                >
-                                  <ShieldCheckIcon
-                                    className="block mr-4 h-6 w-6"
-                                    aria-hidden="true"
-                                  />
-                                  Moderation
-                                </Link>
-                              )
-                            }
-                          
+                            {role === 'ADMIN' && (
+                              <Link
+                                href="/moderation"
+                                className={classNames(
+                                  'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                )}
+                              >
+                                <ShieldCheckIcon
+                                  className="mr-4 block h-6 w-6"
+                                  aria-hidden="true"
+                                />
+                                Moderation
+                              </Link>
+                            )}
+
                             <button
                               onClick={logout}
                               className={classNames(
-                                'flex px-4 py-3 font-semibold w-full text-neutral-50 hover:bg-neutral-700 cursor-pointer'
+                                'flex w-full cursor-pointer px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <ArrowRightIcon
-                                className="block mr-4 h-6 w-6"
+                                className="mr-4 block h-6 w-6"
                                 aria-hidden="true"
                               />
                               Sign out
@@ -490,8 +518,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       </Popover>
                     </div>
                   </div>
-                }
-
+                )}
               </div>
             </div>
 
@@ -551,7 +578,6 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     Settings
                   </Disclosure.Button>
 
-                  
                   <Disclosure.Button
                     as="a"
                     onClick={logout}
@@ -564,24 +590,36 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
             </Disclosure.Panel>
           </>
         )}
-      </Disclosure >
+      </Disclosure>
 
+      <SearchModal
+        showSearchModal={showSearchModal}
+        setShowSearchModal={setShowSearchModal}
+      />
+      <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
-             <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />
-             <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
-
- 
-    
-      
-
-      {
-        !['/groups', '/assignments', '/submissions'].some(path => router.pathname.includes(path) || !showBanner) && (
-          <div className="hidden bg-neutral-800 py-1 text-center text-sm text-white  mx-auto w-full ">
-            <h1 className='px-4  mx-auto text-left'>Limited feature availability for GP. View entire site status <a className='text-blue-500 font-semibold' href="https://status.ctfguide.com">here</a>.  <i onClick={dismissStatus} className='text-right float-right text-neutral-500 hover:text-neutral-300 cursor-pointer'>Dismiss</i></h1>
-          </div>
-        )
-      }
-
+      {!['/groups', '/assignments', '/submissions'].some(
+        (path) => router.pathname.includes(path) || !showBanner
+      ) && (
+        <div className="mx-auto hidden w-full bg-neutral-800 py-1 text-center  text-sm text-white ">
+          <h1 className="mx-auto  px-4 text-left">
+            Limited feature availability for GP. View entire site status{' '}
+            <a
+              className="font-semibold text-blue-500"
+              href="https://status.ctfguide.com"
+            >
+              here
+            </a>
+            .{' '}
+            <i
+              onClick={dismissStatus}
+              className="float-right cursor-pointer text-right text-neutral-500 hover:text-neutral-300"
+            >
+              Dismiss
+            </i>
+          </h1>
+        </div>
+      )}
 
       <SpawnTerminal open={terminaIsOpen} setOpen={setTerminalIsOpen} />
     </>

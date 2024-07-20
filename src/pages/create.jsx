@@ -14,6 +14,7 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import request from "@/utils/request";
 import Menu from '@/components/editor/Menu';
 import Skeleton from 'react-loading-skeleton';
+
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
   const [challenges, setChallenges] = useState([]);
@@ -28,24 +29,24 @@ export default function Create() {
   const [isCreating, setIsCreating] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  // check if url has success=true
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const success = urlParams.get('success');
     if (success === 'true') {
       document.getElementById('saved').classList.remove('hidden');
     }
-  }, [])
+  }, []);
 
   const [writeups, setWriteups] = useState([]);
 
-
-
   useEffect(() => {
+    setLoading(true);
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/stats/creator`, "GET", null)
         .then((data) => {
@@ -71,11 +72,15 @@ export default function Create() {
               value: data.challengeSolves,
             }
           ]);
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
-    } catch { }
+    } catch {
+      setLoading(false);
+    }
   }, []);
 
   const [stats, setStats] = useState([
@@ -87,6 +92,7 @@ export default function Create() {
 
   const [solvedChallenges, setSolvedChallenges] = useState([]);
   useEffect(() => {
+    setLoading(true);
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
         .then((data) => {
@@ -94,22 +100,19 @@ export default function Create() {
           fetchWriteups(data.username);
           setDate(data.createdAt);
           request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
-            console.log("cow")
-            console.log(challenges)
-            challenges.forEach((challenge) => (
-              console.log(challenge.slug)
-            ))
-            setSolvedChallenges(challenges)
-
-          })
+            setSolvedChallenges(challenges);
+            setLoading(false);
+          });
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
 
       fetchChallenges("unverified");
-
-    } catch (error) { }
+    } catch (error) {
+      setLoading(false);
+    }
   }, [activeTab]);
 
   const fetchWriteups = async (username) => {
@@ -221,7 +224,6 @@ export default function Create() {
       </Head>
       <StandardNav />
       <main>
-        {/*<CreatorDashboard />*/}
         <br></br>
         <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
 
@@ -370,36 +372,56 @@ export default function Create() {
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <AnimatePresence className="w-full">
                   {hasChallenges && (
-                    <motion.div
-                      className="  lg:min-w-0 lg:flex-1"
-                      initial={{ opacity: 0, x: 100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2, delay: 0.2 }}
-                    >
-                      {challenges.map((challenge) => (
-                        <motion.div
-                          key={challenge.id}
-                          initial={{ opacity: 0, x: 100 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.4, delay: 0.4 }}
-                        >
-                          <ChallengeCard challenge={challenge} />
-                        </motion.div>
-                      ))}
-                    </motion.div>
+                    <div className="mt-4 flow-root">
+                      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                          <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
+                            <thead>
+                              <tr>
+                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                                  Challenge Name
+                                </th>
+                                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
+                                  Status
+                                </th>
+                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                                  Last Updated
+                                </th>
+                                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                  <span className="sr-only">Edit</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-neutral-800">
+                              {challenges.map((challenge) => (
+                                <tr key={challenge.id} className="even:bg-neutral-900">
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
+                                    {challenge.title}
+                                  </td>
+                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3 text-white">
+                                    {challenge.verified ? 'Verified' : challenge.pending ? 'Pending' : 'Unverified'}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
+                                    {new Date(challenge.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                  </td>
+                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                                    <a href={`/create/editor?cid=${challenge.id}`} className="text-blue-600 hover:text-blue-900">
+                                      Edit<span className="sr-only">, {challenge.title}</span>
+                                    </a>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
                   )}
 
                   {!hasChallenges && (
-                    <motion.div
-                      className="mx-auto w-full rounded-md"
-                      initial={{ opacity: 0, x: 100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
+                    <div>
                       <div className="mx-auto mt-2 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
                         <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
                           <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
@@ -409,9 +431,9 @@ export default function Create() {
                           </a>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
+                </div>
 
                 <hr className='mt-4 border-neutral-700'></hr>
                 <div className=" mt-4  pb-4  ">

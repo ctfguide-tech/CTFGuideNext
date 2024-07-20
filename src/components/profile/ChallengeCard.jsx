@@ -12,24 +12,21 @@ const ChallengeCard = (_props) => {
   const { challenge, ...props } = _props;
   const [creatorPfp, setCreatorPfp] = useState('');
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
-
+  // generate code to hit /users endpoint for each challenge creator
+  const [creator, setCreator] = useState(null);
   useEffect(() => {
-    async function fetchCreatorPfp(username) {
-      try {
-        const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
-        const result = await request(endPoint, "GET", null);
-        if (result) {
-          setCreatorPfp(result);
-        } else {
-          setCreatorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
-        }
-      } catch (err) {
-        console.log('failed to get profile picture');
+    async function fetchCreatorData(username) {
+      const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}`;
+      const result = await request(endPoint, "GET", null);
+      setCreator(result);
+      if (result.profileImage) {
+        setCreatorPfp(result.profileImage);
+      } else {
+        setCreatorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
       }
     }
-
     if (challenge && challenge.creator) {
-      fetchCreatorPfp(challenge.creator);
+      fetchCreatorData(challenge.creator);
     }
   }, [challenge]);
 
@@ -55,10 +52,17 @@ const ChallengeCard = (_props) => {
     'HARD': 'bg-red-500 text-red-50',
     'INSANE': 'bg-purple-500 text-purple-50',
   };
+  const colorBorder = {
+    'BEGINNER': 'border-blue-500',
+    'EASY': 'border-green-500',
+    'MEDIUM': 'border-orange-500',
+    'HARD': 'border-red-500',
+    'INSANE': 'border-purple-500',
+  };
 
   return (
     challenge && (
-      <Link {...props} className={`group w-full  border-l-4 border-green-500 bg-[#212121] px-5 py-6 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
+      <Link {...props} className={`group w-full  border-l-4 ${colorBorder[challenge.difficulty]} bg-[#212121] px-5 py-6 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold text-white">{challenge.title}</h1>
 
@@ -74,6 +78,13 @@ const ChallengeCard = (_props) => {
             alt="Profile Picture"
           />
           <span>@{challenge.creator}</span>
+          {creator && creator.role === 'ADMIN' && (
+            <span className="text-red-500 text-xs ml-1"><i className="fas fa-code fa-fw"></i></span>
+          )}
+          {creator && creator.role === 'PRO' && (
+            <span className="text-yellow-500 text-xs ml-1"><i className="fas fa-crown fa-fw"></i></span>
+       
+       )}
         </div>
 
         <div className="mt-4 flex items-center">

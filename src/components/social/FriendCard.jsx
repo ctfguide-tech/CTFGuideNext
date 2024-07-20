@@ -11,6 +11,7 @@ const FriendCard = ({ data }, mutual) => {
     bannerImage,
     location,
     leaderboardNum,
+    points,
     followedBy,
     role,
   } = data;
@@ -65,42 +66,22 @@ const FriendCard = ({ data }, mutual) => {
                   </div>
                   {/* Friend Icon */}
                   {mutual ? (
-                    <div
-                      data-tooltip-id="mutual"
-                      data-tooltip-content="Mutuals!"
-                      data-tooltip-place="right"
-                    >
+                    <div>
                       <i class="fas fa-user-friends ml-2 mt-0.5 py-2 text-lg text-white hover:text-gray-400">
                         {' '}
                       </i>
-                      <Tooltip className="" id="mutual" />
                     </div>
                   ) : (
-                    <div
-                      data-tooltip-id="follower"
-                      data-tooltip-content="Follower!"
-                      data-tooltip-place="right"
-                    >
+                    <div>
                       <i class="fas fa-user ml-2 mt-0.5 py-2 text-lg text-white hover:text-gray-400">
                         {' '}
                       </i>
-                      <Tooltip className="" id="follower" />
                     </div>
                   )}
                   {/* CTFGuide Badge */}
                   {proUser && (
-                    <div
-                      data-tooltip-id="proUser"
-                      data-tooltip-content="CTFGuide Pro!"
-                      data-tooltip-place="right"
-                    >
-                      <img
-                        src="https://ctfguide.com/proBadge.png"
-                        alt="CTFGuide Badge"
-                        className="mt-0.5 h-8 w-8 rounded-md"
-                      />
-                      <Tooltip className="" id="proUser" />
-                    </div>
+                    <span className="ml-1 flex items-center rounded-lg bg-gradient-to-br from-orange-400 to-yellow-600 px-1">
+                      <i className="fas fa-crown fa-fw"></i>pro</span>
                   )}
                 </div>
                 {/* bottom row */}
@@ -122,23 +103,14 @@ const FriendCard = ({ data }, mutual) => {
           <div className="mt-4 flex justify-between">
             <div
               className="flex pl-1  text-lg text-white hover:text-gray-400"
-              data-tooltip-id="followerCount"
-              data-tooltip-content="Followers!"
-              data-tooltip-place="right"
             >
               <i class="fas fa-users mt-1"></i>
               <p className="ml-1 font-bold ">{followers}</p>
-              <Tooltip className="" id="followerCount" />
             </div>
-            <div
-              data-tooltip-id="leaderboard"
-              data-tooltip-content="Leaderboard Rank!"
-              data-tooltip-place="left"
-            >
+            <div>
               <p className="text-lg font-bold text-white hover:text-gray-400">
-                #{leaderboardNum}
+                {points} points
               </p>
-              <Tooltip className="" id="leaderboard" />
             </div>
           </div>
         </div>

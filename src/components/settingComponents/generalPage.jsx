@@ -17,6 +17,7 @@ export default function General() {
   const router = useRouter();
   const bioRef = useRef(null);
 
+  const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -38,6 +39,9 @@ export default function General() {
   const [userData, setUserData] = useState(null);
   const [tempBio, setTempBio] = useState(bio);
   const [showBioPreview, setShowBioPreview] = useState(false);
+  const [banner, setBanner] = useState(
+    'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80&quote'
+  );
 
   const insertText = (text) => {
     const textarea = bioRef.current;
@@ -84,6 +88,18 @@ export default function General() {
     setIsPopupOpen(true);
   };
 
+  const handleBannerPopupOpen = () => {
+    setIsBannerPopupOpen(true);
+  };
+
+  const handleBannerChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file); // Ensure selectedImage is set for banner as well
+    setImageUrl(URL.createObjectURL(file));
+    setBanner(URL.createObjectURL(file)); // Set the banner URL
+    setIsBannerPopupOpen(true); // Open the banner popup
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -104,6 +120,7 @@ export default function General() {
         setBio(userData.bio || '');
         setTempBio(userData.bio || '');
         setLocation(userData.location || '');
+        setBanner(userData.bannerImage || '');
 
         const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${userData.username}/pfp`;
         const result = await request(endPoint, 'GET', null);
@@ -177,6 +194,49 @@ export default function General() {
       console.log('An error occurred while uploading profile picture', err);
     } finally {
       setIsPopupOpen(false);
+    }
+  };
+
+
+  const handleBannerSaveChanges = async () => {
+    setIsSaving(true);
+ 
+
+    try {
+      const response = await fetch(banner);
+      const blob = await response.blob();
+      const file = new File([blob], 'banner.png', {
+        type: 'image/png',
+      });
+
+      const formData = new FormData();
+      formData.append('banner', file);
+
+      const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/updateBanner`;
+      const uploadResponse = await fetch(endPoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${getCookie()}`,
+          credentials: 'include',
+        },
+        body: formData,
+      });
+
+      const result = await uploadResponse.json();
+      console.log('Here is the result: ', result);
+
+      if (result.success) {
+        console.log('Banner uploaded successfully');
+        setIsSaving(false);
+        window.location.reload();
+      } else {
+        console.log('Failed to upload banner');
+        setIsSaving(false);
+      }
+    } catch (err) {
+      console.log('An error occurred while uploading banner', err);
+    } finally {
+      setIsBannerPopupOpen(false);
     }
   };
 
@@ -368,9 +428,10 @@ export default function General() {
                     disabled
                   />
                 </div>
+                
               </div>
 
-              <div className="sm:col-span-6">
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="photo"
                   className="block flex text-sm font-medium leading-6 text-white"
@@ -395,6 +456,40 @@ export default function General() {
                   />
                   <button
                     onClick={handlePopupOpen}
+                    className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
+                  >
+                    Change
+                  </button>
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="photo"
+                  className="block flex text-sm font-medium leading-6 text-white"
+                >
+                  Banner Picture
+                </label>
+                <div className="mt-2 flex items-center">
+                  {banner && (
+                    <img
+                   
+                    className="h-12 w-full object-cover"
+                    id="banner"
+                    src={banner}
+                    alt="banner"
+                    />
+
+                  )}
+                  <input
+                    className="hidden"
+                    type="file"
+                    id="bannerImageInput"
+                    onChange={handleBannerChange}
+                    accept="image/*"
+                  />
+                  <button
+                    onClick={handleBannerPopupOpen}
                     className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
                   >
                     Change
@@ -548,6 +643,7 @@ export default function General() {
               </div>
             </div>
 
+              {/* Profile Picture Popup */}
             <Transition.Root show={isPopupOpen} as={Fragment}>
               <Dialog
                 as="div"
@@ -614,7 +710,7 @@ export default function General() {
                             position: 'relative',
                           }}
                         >
-                          <Cropper
+                                     <Cropper
                             image={imageUrl}
                             crop={crop}
                             rotation={rotation}
@@ -633,6 +729,84 @@ export default function General() {
                       <div className="mt-4 flex justify-end">
                         <button
                           onClick={handleSaveChanges}
+                          className="rounded-md bg-blue-500 px-4 py-2 text-white"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </Transition.Child>
+                </div>
+              </Dialog>
+            </Transition.Root>
+
+            {/* Banner Popup */}
+
+            <Transition.Root show={isBannerPopupOpen} as={Fragment}>
+              <Dialog
+                as="div"
+                className="fixed inset-0 z-10 overflow-y-auto"
+                onClose={() => setIsBannerPopupOpen(false)} // Ensure the popup can be closed
+              >
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div
+                    onClick={() => setIsBannerPopupOpen(false)}
+                    className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
+                  />
+                </Transition.Child>
+                <div className="mt-20 flex min-h-screen items-center justify-center px-4 pt-4 text-center sm:block sm:p-0">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-0 translate-y-0 sm:scale-100"
+                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  >
+                    <div className="relative inline-block w-full max-w-xl transform overflow-hidden border-t-4 border-blue-500 bg-neutral-800 px-10 pb-10 pb-4 pt-10 pt-5 text-left align-middle shadow-xl transition-all sm:my-8 sm:align-middle">
+                      <h1 className="mt-4 text-xl text-white">
+                        Upload a banner image
+                      </h1>
+                      <p className="mt-2 pb-8 text-sm text-white">
+                        Your banner will replace the default banner on your profile. All images must follow CTFGuide's{' '}
+                        <a
+                          href="https://ctfguide.com/terms"
+                          className="font-semibold text-blue-500"
+                        >
+                          terms of service
+                        </a>
+                        .
+                      </p>
+             
+                      {banner && (
+                        <div
+                          className="mx-auto mt-4"
+                     
+                        >
+                          <img src={banner} className="h-20 w-full object-cover" alt="banner" />
+                        </div>
+                      )}
+
+<div className="mx-auto mt-4 w-auto text-center text-white">
+                        <label
+                          htmlFor="bannerImageInput"
+                          className={`cursor-pointer rounded-md bg-neutral-600 px-3 py-2 text-white ${banner ? 'cursor-default' : ''}`}
+                        >
+                          {banner ? 'Choose a different picture' : 'Choose a file'}
+                        </label>
+                      </div>
+                      <div className="mt-4 flex justify-end">
+                        <button
+                          onClick={handleBannerSaveChanges}
                           className="rounded-md bg-blue-500 px-4 py-2 text-white"
                         >
                           Save

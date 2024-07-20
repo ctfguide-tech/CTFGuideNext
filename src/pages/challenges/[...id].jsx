@@ -764,7 +764,7 @@ function WriteupView({ writeup, onBack, cache }) {
           <div className="flex items-center">
               <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 bg-neutral-700 rounded-full mr-2" />
               <p className="text-lg ">
-                Authored by <Link href={`/users/${writeup.user.username}`} className=" text-blue-500 hover:underline">
+                Authored by <Link href={`/users/${writeup.user.username}`} className={`text-blue-500 hover:underline ${writeup.user.role === 'PRO' ? 'bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent' : ''}`}>
                 {writeup.user.username}
               </Link>
               </p>
@@ -934,7 +934,9 @@ function CommentsPage({ cache }) {
   const [hasReply, configReply] = useState(false);
   const [reply, setReply] = useState({});
   const [replyingPerson, setReplyingTo] = useState('');
+  
   const [replyingId, setReplyingId] = useState('');
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     if (!challenge) {
@@ -943,52 +945,12 @@ function CommentsPage({ cache }) {
     (async () => {
       try {
         const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
-        challenge[`comments`] = getCommentsResult.result;
-        console.log(challenge.comments);
-        setNewComment();
+        setComments(getCommentsResult.result);
       } catch (error) {
         console.error("Failed to fetch comments: " + error);
       }
     })();
   }, [challenge]);
-
-  const handleCommentSubmit = async (e) => {
-    if (!newComment) return;
-    e.preventDefault();
-    if (!newComment.trim()) return; // Prevent empty comments
-
-    try {
-      let payload = { content: newComment };
-      console.log("debug: " + hasReply);
-      console.log(replyingId);
-
-      if (hasReply) {
-        payload = { content: newComment, parent: replyingId };
-      }
-
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "POST", payload);
-      setNewComment('');
-      (async () => {
-        try {
-          const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
-          challenge[`comments`] = getCommentsResult.result;
-          console.log(challenge.comments);
-          setNewComment();
-        } catch (error) {
-          console.error("Failed to fetch comments: " + error);
-        }
-      })();
-      if (response.success) {
-        console.log('Comment submitted:', response);
-        setNewComment(''); // Clear the input after successful submission
-        // Optionally refresh comments or update UI here
-      } else {
-        console.error('Failed to submit comment:', response.error);
-      }
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-    }
-  };
 
   const handleReplySubmit = async (commentId, replyText) => {
     // Implement API call to submit reply
@@ -1006,24 +968,45 @@ function CommentsPage({ cache }) {
     configReply(false);
   };
 
+
+  const handleCommentSubmit = async (e) => {
+    if (!newComment) return;
+    e.preventDefault();
+    if (!newComment.trim()) return; // Prevent empty comments
+
+    try {
+      let payload = { content: newComment };
+      if (hasReply) {
+        payload = { content: newComment, parent: replyingId };
+      }
+
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "POST", payload);
+      setNewComment('');
+      const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+      setComments(getCommentsResult.result);
+      if (response.success) {
+        console.log('Comment submitted:', response);
+        setNewComment(''); // Clear the input after successful submission
+      } else {
+        console.error('Failed to submit comment:', response.error);
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
+  };
+
   const handleUpvote = async (commentId) => {
     try {
-      console.log("sending request to upvote");
-      console.log("commentId: " , commentId);
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}/upvote`, "POST", {});
-      console.log("after respose");
       if (response.success) {
-        console.log("upvoted successfully");
-        // Update the comment's upvotes and downvotes
-        const updatedComments = challenge.comments.map(comment => {
+        const updatedComments = comments.map(comment => {
           if (comment.id === commentId) {
             return { ...comment, upvotes: response.upvotes, downvotes: response.downvotes };
           }
           return comment;
         });
-        challenge.comments = updatedComments;
+        setComments(updatedComments);
       } else {
-        console.log("Failed to upvote");
         console.error('Failed to upvote comment:', response.message);
       }
     } catch (error) {
@@ -1035,14 +1018,13 @@ function CommentsPage({ cache }) {
     try {
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}/downvote`, "POST", {});
       if (response.success) {
-        // Update the comment's upvotes and downvotes
-        const updatedComments = challenge.comments.map(comment => {
+        const updatedComments = comments.map(comment => {
           if (comment.id === commentId) {
             return { ...comment, upvotes: response.upvotes, downvotes: response.downvotes };
           }
           return comment;
         });
-        challenge.comments = updatedComments;
+        setComments(updatedComments);
       } else {
         console.error('Failed to downvote comment:', response.message);
       }
@@ -1096,13 +1078,17 @@ function CommentsPage({ cache }) {
               alt={`${comment.username}'s profile`}
             />
             <span className="ml-2 text-lg font-semibold text-white">
-              <a href={`/users/${comment.username}`} className="hover:text-neutral-10">
+              <a href={`/users/${comment.username}`} className={`hover:text-neutral-10 ${comment.role === 'PRO' ? 'bg-gradient-to-br from-orange-300 to-yellow-300 bg-clip-text text-transparent' : ''}`}>
                 {comment.username}
               </a>
-              {comment.username === 'laphatize' && (
+              {comment.role === 'ADMIN' && (
                 <>
                   <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
-                  <span className="ml-2 bg-orange-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                </>
+              )}
+                 {comment.role === 'PRO' && (
+                <>
+                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
@@ -1164,13 +1150,11 @@ function CommentsPage({ cache }) {
               }
             </div>
             <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-paper-plane"></i></button>
-            <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-trash"></i></button>
           </div>
         </form>
-        {challenge && challenge.comments && <CommentsSection comments={challenge.comments} />}
+        {challenge && comments && <CommentsSection comments={comments} />}
       </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
-
     </>
   );
 }

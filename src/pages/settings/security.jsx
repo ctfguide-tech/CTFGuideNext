@@ -3,13 +3,24 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import { useState } from 'react';
-import { request } from '@/utils/request';
-const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+import request from '@/utils/request';
+//const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+import { Context } from '@/context';
+import { useContext, useEffect } from 'react';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Security(){
-  
+
+  const { accountType } = useContext(Context);
   const [inputText, setInputText] = useState('');
+  const [isGoogle, setIsGoogle] = useState(true);
+
+  useEffect(() => {
+    setIsGoogle(accountType === "GOOGLE");
+  },[accountType])
 
   const user = {};
 
@@ -17,38 +28,57 @@ export default function Security(){
     setInputText(event.target.value);
   };
 
+  async function saveSecurity() {
+    document.getElementById('saveSecurity').innerText = 'Saving...';
+    var oldPassword = document.getElementById('oldPassword').value;
+    var newPassword = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirm-password').value;
 
-  function saveSecurity() {
-      document.getElementById('saveSecurity').innerText = 'Saving...';
-      var oldPassword = document.getElementById('oldPassword').value;
-  
-      reauthenticateWithCredential(
-        user,
-        EmailAuthProvider.credential(user.email, oldPassword)
-      )
-        .then(() => {
-          var password = document.getElementById('password').value;
-          var confirmPassword = document.getElementById('confirm-password').value;
-  
-          if (password == confirmPassword) {
-            updatePassword(user, confirmPassword)
-              .then(() => {
-                document.getElementById('saveSecurity').innerText = 'Save';
-  
-                document.getElementById('password').value = '';
-                document.getElementById('confirm-password').value = '';
-              })
-              .catch((error) => {
-                document.getElementById('saveSecurity').innerText = 'Save';
-                window.alert(error);
-              });
-          }
-        })
-        .catch((error) => {
-          document.getElementById('saveSecurity').innerText = 'Save';
-          window.alert(error);
-        });
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      document.getElementById('saveSecurity').innerText = 'Save';
+      return;
     }
+
+    let valid = false;
+    if (newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
+    } else if (!/[A-Z]/.test(newPassword)) {
+      toast.error('Password must contain at least one uppercase letter.');
+    } else if (!/[a-z]/.test(newPassword)) {
+      toast.error('Password must contain at least one lowercase letter.');
+    } else if (!/[0-9]/.test(newPassword)) {
+      toast.error('Password must contain at least one number.');
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      toast.error('Password must contain at least one special character.');
+    } else {
+      valid = true;
+    }
+
+    if(!valid) {
+      document.getElementById('saveSecurity').innerText = 'Save';
+      return;
+    }
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/account/change-password`;
+    const response = await request(url, "POST", {oldPassword, password: newPassword});
+    if(!response || !response.success) {
+      toast.error("Something went wrong!");
+    } else {
+      toast.success("Your password has been updated");
+    }
+    
+  try {
+    document.getElementById('saveSecurity').innerText = 'Save';
+
+    document.getElementById('password').value = '';
+    document.getElementById('confirm-password').value = '';
+    document.getElementById('oldPassword').value = '';
+  } catch (error) {
+    document.getElementById('saveSecurity').innerText = 'Save';
+    window.alert(error);
+  }
+}
 
     return(
         <>
@@ -96,9 +126,10 @@ export default function Security(){
                       <input
                         type="password"
                         name="password"
+                        disabled={isGoogle}
                         id="password"
                         autoComplete="given-name"
-                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                        className={`mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6 ${isGoogle? 'cursor-not-allowed' : ''}`}
                       />
                     </div>
 
@@ -114,7 +145,8 @@ export default function Security(){
                         name="confirm-password"
                         id="confirm-password"
                         autoComplete="family-name"
-                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                        disabled={isGoogle}
+                        className={`mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6 ${isGoogle? 'cursor-not-allowed' : ''}`}
                       />
                     </div>
 
@@ -129,17 +161,19 @@ export default function Security(){
                         type="password"
                         name="password"
                         id="oldPassword"
+                        disabled={isGoogle}
                         autoComplete="given-name"
-                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                        className={`mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6 ${isGoogle? 'cursor-not-allowed' : ''}`}
                       />
                     </div>
                   </div>
 
                   <button
                     id="saveSecurity"
-                    onClick={saveSecurity}
-                    className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                  >
+              onClick={saveSecurity}
+              className={`inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${isGoogle? 'cursor-not-allowed' : ''}`}
+              disabled={isGoogle}
+              >
                     Save
                   </button>
                 </div>
@@ -147,6 +181,18 @@ export default function Security(){
             </div>
         </div>
   
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
         <Footer />
       </>
     );
