@@ -392,6 +392,11 @@ export default function Create() {
         },
     };
 
+
+    const updatedCompletionData = completionData.map(item => ({
+        ...item
+    }));
+
     return (
         <>
             <Head>
@@ -539,12 +544,13 @@ export default function Create() {
                                 {completionData && (
                                     <DonutChart
                                         className="mt-10"
-                                        data={completionData}
+                                        data={updatedCompletionData}
                                         category="amount"
                                         index="name"
                                         label={`${totalCompletedChallenges} challenges`}
                                         showTooltip={true}
-                                    />
+                                        colors={['blue', 'green', 'amber', 'red', 'indigo']}
+                                        />
                                 )}
                             </div>
                             <hr className="mt-4 border-neutral-700 px-4"></hr>
