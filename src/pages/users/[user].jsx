@@ -13,14 +13,16 @@ import Writeups from '@/components/profile/v2/Writeups';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
-import { DonutChart } from '@tremor/react';
+import { Pie } from 'react-chartjs-2';
 import Followers from '@/components/profile/Followers';
 import Following from '@/components/profile/Following';
 import { Radar } from 'react-chartjs-2';
-import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, ArcElement } from 'chart.js';
+import { buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 // Register the necessary chart components
-ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, ArcElement);
 
 const mockActivityData = [
     { date: '2024-01-01', count: 0, level: 0 },
@@ -28,6 +30,48 @@ const mockActivityData = [
 ];
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+// Custom Multi-colored Circular Progress Bar Component
+const MultiColorCircularProgressBar = ({ segments }) => {
+    const radius = 50;
+    const circumference = 2 * Math.PI * radius;
+    let offset = 0;
+
+    return (
+        <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle
+                cx="60"
+                cy="60"
+                r={radius}
+                fill="none"
+                stroke="#444"
+                strokeWidth="10"
+            />
+            {segments.map((segment, index) => {
+                const segmentLength = (segment.value / 100) * circumference;
+                const strokeDasharray = `${segmentLength} ${circumference - segmentLength}`;
+                const strokeDashoffset = offset;
+                offset -= segmentLength;
+
+                return (
+                    <circle
+                        key={index}
+                        cx="60"
+                        cy="60"
+                        r={radius}
+                        fill="none"
+                        stroke={segment.color}
+                        strokeWidth="10"
+                        strokeDasharray={strokeDasharray}
+                        strokeDashoffset={strokeDashoffset}
+                        transform="rotate(-90 60 60)"
+                    />
+                );
+            })}
+        </svg>
+    );
+};
+
 export default function Create() {
     const router = useRouter();
     const [user, setUser] = useState(null);
@@ -385,16 +429,58 @@ export default function Create() {
             tooltip: {
                 callbacks: {
                     label: function (context) {
-                        return `${context.label}: ${context.raw}`;
+                        return `${context.label}: ${context.raw} challenges`;
                     },
                 },
             },
         },
     };
 
+    const pieData = {
+        labels: completionData.map(item => item.name),
+        datasets: [
+            {
+                data: completionData.map(item => item.amount),
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                hoverBackgroundColor: ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed'],
+                borderWidth: 0,
+                borderRadius: 0,
+                cutout: '70%', // This makes it a donut chart
+            },
+        ],
+    };
+
+    const pieOptions = {
+        plugins: {
+            legend: {
+                display: false, // Hide the legend
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const label = context.label || '';
+                        const value = context.raw || 0;
+                        return `${label}: ${value} challenges`;
+                    },
+                },
+            },
+        },
+    };
 
     const updatedCompletionData = completionData.map(item => ({
         ...item
+    }));
+
+    const totalChallenges = completionData.reduce((acc, item) => acc + item.amount, 0);
+    const solvedChallenges = totalCompletedChallenges;
+
+    const segments = completionData.map(item => ({
+        value: (item.amount / totalChallenges) * 100,
+        color: item.color.split('-')[1] === 'blue' ? '#3b82f6' :
+               item.color.split('-')[1] === 'green' ? '#10b981' :
+               item.color.split('-')[1] === 'orange' ? '#f59e0b' :
+               item.color.split('-')[1] === 'red' ? '#ef4444' :
+               item.color.split('-')[1] === 'purple' ? '#8b5cf6' : '#fff'
     }));
 
     return (
@@ -537,21 +623,29 @@ export default function Create() {
                         </div>
 
                         <div className="col-span-2 bg-neutral-800 px-4 pt-4 ">
-                            <div className="bg-neutral-800">
+                            <div className="bg-neutral-800 text-white">
                                 <h1 className="text-xl font-bold text-white mb-4">
                                     DIFFICULTY BREAKDOWN
                                 </h1>
-                                {completionData && (
-                                    <DonutChart
-                                        className="mt-10"
-                                        data={updatedCompletionData}
-                                        category="amount"
-                                        index="name"
-                                        label={`${totalCompletedChallenges} challenges`}
-                                        showTooltip={true}
-                                        colors={['blue', 'green', 'amber', 'red', 'indigo']}
-                                        />
-                                )}
+                                <div className="flex items-center justify-center">
+                                    <div className="w-1/2">
+                                        <MultiColorCircularProgressBar segments={segments} />
+                                        <p className=" text-center text-white mt-2">{solvedChallenges} Solved</p>
+                                    </div>
+                                    <div className="w-1/2 ml-4">
+                                        {completionData.map((item, index) => (
+                                            <div key={index} className="flex justify-between mb-2">
+                                                <span 
+                                                    className={`text-${item.color.split('-')[1]}-500`} 
+                                                    title={`${item.name}: ${item.amount} challenges`}
+                                                >
+                                                    {item.name}
+                                                </span>
+                                                <span className="text-white">{item.amount}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                             <hr className="mt-4 border-neutral-700 px-4"></hr>
                         </div>
