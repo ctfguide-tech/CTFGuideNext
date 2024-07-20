@@ -88,21 +88,21 @@ export default function Create() {
       case 'LIKED CHALLENGES':
         return (
           <>
-            <h1 className="text-2xl font-bold text-white">LIKED CHALLENGES</h1>
+            <h1 className="text-xl font-bold text-white">LIKED CHALLENGES</h1>
             {user != undefined && <LikedChallenges user={user} />}
           </>
         );
       case 'WRITEUPS':
         return (
           <>
-            <h1 className="text-2xl font-bold text-white">WRITEUPS</h1>
+            <h1 className="text-xl font-bold text-white">WRITEUPS</h1>
             {user && <Writeups user={user} />}
           </>
         );
       case 'CREATED CHALLENGES':
         return (
           <>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-xl font-bold text-white">
               CREATED CHALLENGES
             </h1>
             <CreatedChallenges />
@@ -111,7 +111,7 @@ export default function Create() {
       case 'BADGES':
         return (
           <>
-            <h1 className="text-2xl font-bold text-white">BADGES</h1>
+            <h1 className="text-xl font-bold text-white">BADGES</h1>
             <Badges />
           </>
         );
@@ -503,28 +503,10 @@ export default function Create() {
       <main className="mx-auto mt-10 max-w-7xl">
         <div className="mt-10 grid grid-cols-1 gap-y-4 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 ">
           <div className="h-40 w-full border-t-4 border-blue-600 bg-neutral-800">
-            <div className="col-span-2 bg-neutral-800 px-4 pt-4 ">
+          
+          <div className="col-span-2 bg-neutral-800 px-4 pt-4">
               <div className="bg-neutral-800">
-                <h1 className="text-xl font-bold text-white">
-                  CHALLENGE COMPLETION
-                </h1>
-                {completionData && (
-                  <DonutChart
-                    className="mt-8"
-                    data={completionData}
-                    category="amount"
-                    index="name"
-                    label={`${totalCompletedChallenges} challenges`}
-                    showTooltip={true}
-                  />
-                )}
-              </div>
-              <hr className="mt-4 border-neutral-700 px-4"></hr>
-            </div>
-
-            <div className="col-span-2 bg-neutral-800 px-4 pt-4">
-              <div className="bg-neutral-800">
-                <h1 className="text-2xl font-bold text-white">SKILL CHART</h1>
+                <h1 className="text-xl font-bold text-white">SKILL CHART</h1>
                 {categoryChallenges.length > 0 ? (
                   <Radar data={radarData} options={radarOptions} />
                 ) : (
@@ -536,8 +518,28 @@ export default function Create() {
               <hr className="mt-4 border-neutral-700 px-4"></hr>
             </div>
 
+            <div className="col-span-2 bg-neutral-800 px-4 pt-4 ">
+              <div className="bg-neutral-800">
+                <h1 className="text-xl font-bold text-white mb-4">
+                  DIFFICULTY BREAKDOWN
+                </h1>
+                {completionData && (
+                  <DonutChart
+                    className="mt-10"
+                    data={completionData}
+                    category="amount"
+                    index="name"
+                    label={`${totalCompletedChallenges} challenges`}
+                    showTooltip={true}
+                  />
+                )}
+              </div>
+              <hr className="mt-4 border-neutral-700 px-4"></hr>
+            </div>
+
+
             <div className="h-full gap-y-4 bg-neutral-800 px-4 py-4">
-              <h1 className="text-2xl font-bold text-white">NERD STATS</h1>
+              <h1 className="text-xl font-bold text-white">NERD STATS</h1>
               {user && (
                 <div className="text-xs text-neutral-400">
                   <p>
@@ -578,7 +580,7 @@ export default function Create() {
             
             <div className="bg-neutral-800 px-4 py-4">
               {user && (
-                <h1 className="mb-4 text-2xl font-bold uppercase text-white">
+                <h1 className="mb-4 text-xl font-bold uppercase text-white">
                   ABOUT {user.username}
                 </h1>
               )}
@@ -634,8 +636,8 @@ export default function Create() {
                 <div className="w-full">
                   <div className="text-white">
                     <div className="mt-4 w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4">
-                      <h2 className="mb-4 text-2xl font-bold text-white">
-                        SUBMISSION HISTORY
+                      <h2 className="mb-4 text-xl font-bold text-white">
+                        ACTIVITY CALENDAR
                       </h2>
                       <div className="flex justify-center">
                         <ActivityCalendar
