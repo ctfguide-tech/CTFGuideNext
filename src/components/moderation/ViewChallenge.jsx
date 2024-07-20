@@ -13,6 +13,8 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
         "difficulty": "Loading..."
     });
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         const fetchChallengeData = async () => {
           try {
@@ -114,7 +116,14 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
       
       <textarea placeholder="Challenge creators can see these notes if you request changes!" className='bg-neutral-800 w-full border-neutral-700'>
       
-      </textarea></div>
+      </textarea>
+      
+
+      <br></br><br></br>
+      <h1 className='font-bold text-blue-600 mb-1'>Set Bonus Points</h1> 
+      <input type="number" placeholder="0" className='bg-neutral-800 w-full border-neutral-700' />
+
+      </div>
                    </div>
                         
              
@@ -136,10 +145,29 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                         Request Changes
                       </button>
                       <button
+                      onClick={async () => {
+                        setIsLoading(true);
+                        const basePoints = document.querySelector('input[type="number"]').value;
+                        console.log(basePoints)
+                        try {
+                          await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${selected}/approve`, "POST", { basePoints: basePoints });
+                        } catch (error) {
+                          console.error(error);
+                        } finally {
+                          setIsLoading(false);
+                        }
+                      }}
                         type="submit"
                         className="ml-4 inline-flex justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
                       >
-                        Approve
+                        {isLoading ? (
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                          </svg>
+                        ) : (
+                          "Approve"
+                        )}
                       </button>
                     </div>
                   </div>

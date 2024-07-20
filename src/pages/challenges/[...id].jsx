@@ -934,6 +934,7 @@ function CommentsPage({ cache }) {
   const [hasReply, configReply] = useState(false);
   const [reply, setReply] = useState({});
   const [replyingPerson, setReplyingTo] = useState('');
+  
   const [replyingId, setReplyingId] = useState('');
   const [comments, setComments] = useState([]);
 
@@ -950,6 +951,23 @@ function CommentsPage({ cache }) {
       }
     })();
   }, [challenge]);
+
+  const handleReplySubmit = async (commentId, replyText) => {
+    // Implement API call to submit reply
+    console.log(`Reply to ${commentId}:`, replyText);
+    setReply({ ...reply, [commentId]: '' });
+  };
+
+  const replyingTo = async (commentId, username) => {
+    configReply(true);
+    setReplyingTo(username);
+    setReplyingId(commentId);
+  };
+
+  const cancelReply = async () => {
+    configReply(false);
+  };
+
 
   const handleCommentSubmit = async (e) => {
     if (!newComment) return;
@@ -1132,7 +1150,6 @@ function CommentsPage({ cache }) {
               }
             </div>
             <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-paper-plane"></i></button>
-            <button type="submit" className="bg-neutral-600 hover:bg-red-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-trash"></i></button>
           </div>
         </form>
         {challenge && comments && <CommentsSection comments={comments} />}
