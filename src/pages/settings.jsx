@@ -9,11 +9,26 @@ import Sidebar from '@/components/settingComponents/sidebar';
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
+import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function Dashboard() {
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const [inputText, setInputText] = useState('');
 
@@ -138,9 +153,8 @@ export default function Dashboard() {
 
       <StandardNav />
 
-      <div className="mx-auto flex max-w-6xl">
-        <Sidebar />
-
+      <div className="mx-auto max-w-6xl md:flex">
+        {isMobile ? <Dropdown /> : <Sidebar />}
         {general && (
           <div id="general" className="">
             {/*CONTAINING THE BODY OF GENERAL SECTION*/}

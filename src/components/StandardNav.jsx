@@ -354,13 +354,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                 {!guestAllowed &&
                   <div className="flex items-center hidden lg:inline-flex ">
 
-                    <button className='bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
+                    <button className='hidden bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 text-sm rounded-md'
                             onClick={() => setTerminalIsOpen(true)}
                             ><i className="fas fa-terminal"></i> Launch a machine</button>
 
 <button
-        className='ml-4 bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 text-sm rounded-md'
-        onClick={() => setUpgradeModalOpen(true)}
+        className='ml-4 bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-600 text-white px-2 py-1 text-sm rounded-md'
+        onClick={() => router.push('/settings/billing')}
       >
         <i className="fas fa-crown"></i> Upgrade to Pro
       </button>

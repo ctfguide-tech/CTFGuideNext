@@ -758,7 +758,7 @@ export default function General() {
                   leaveTo="opacity-0"
                 >
                   <div
-                    
+                    onClick={() => setIsBannerPopupOpen(false)}
                     className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
                   />
                 </Transition.Child>
