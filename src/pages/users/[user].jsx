@@ -177,7 +177,11 @@ export default function Create() {
 
             request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/rank`, 'GET', null)
                 .then((data) => {
-                    setRank(data.rank);
+                    if (data.rank == "User not found in the ranking") {
+                        setRank("???");
+                    } else {
+                        setRank(data.rank);
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
