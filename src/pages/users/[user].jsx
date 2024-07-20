@@ -355,6 +355,18 @@ export default function Create() {
                             width="15rem"
                           />
                         )}
+
+
+{user && user.role === 'ADMIN' && (
+        <span className="bg-red-600 px-1 text-sm ml-2">
+          <i className="fas fa-code fa-fw"></i> developer
+        </span>
+      )}
+      {user && user.role === 'PRO' && (
+        <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
+          <i className="fas fa-crown fa-fw"></i> pro
+                          </span>
+                        )}
                       </h1>
                       <p className="text-white  ">
                         <i className="fas fa-map-marker-alt mt-2"></i>{' '}
