@@ -32,6 +32,7 @@ export default function Create() {
     const [activityData, setActivityData] = useState(mockActivityData);
     const [completedChallenges, setCompletedChallenges] = useState(null);
     let   [totalCompletedChallenges, setTotalCompletedChallenges] = useState(0);
+    const [categoryChallenges, setCategoryChallenges] = useState(null);
     const [completionData , setCompletionData] = useState([
         {
           name: 'Beginner',
@@ -157,7 +158,22 @@ export default function Create() {
                 console.log(err);
             }
         };
+        const fetchCategories = async () => {
+            try{
+            const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/completedCategory`, 'GET', null);
+            console.log("categories: ", response);
+            if (response){
+                console.log("setting response");
+                setCategoryChallenges(response);
+                console.log("category challenges: ", categoryChallenges);
+            }
 
+            }catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchCategories();
         fetchChallenges();
         fetchActivityData();
     }, [router.query.user]);
