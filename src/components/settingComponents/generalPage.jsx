@@ -76,11 +76,11 @@ export default function General() {
     }
   };
 
-  const handleInputChange = (event) => {
+  const handlePFPInputChange = (event) => {
     setInputText(event.target.value);
   };
 
-  const handlePopupOpen = () => {
+  const handlePFPPopupOpen = () => {
     setIsPopupOpen(true);
   };
 
@@ -124,17 +124,17 @@ export default function General() {
     fetchUserData();
   }, []);
 
-  const handlePopupClose = () => {
+  const handlePFPPopupClose = () => {
     setIsPopupOpen(false);
   };
 
-  const handleImageChange = (event) => {
+  const handlePFPImageChange = (event) => {
     const file = event.target.files[0];
     setSelectedImage(file);
     setImageUrl(URL.createObjectURL(file));
   };
 
-  const handleSaveChanges = async () => {
+  const handlePFPSaveChanges = async () => {
     setIsSaving(true);
     if (!croppedImage) {
       console.log('No cropped image available');
@@ -390,11 +390,11 @@ export default function General() {
                     className="hidden"
                     type="file"
                     id="profileImageInput"
-                    onChange={handleImageChange}
+                    onChange={handlePFPImageChange}
                     accept="image/*"
                   />
                   <button
-                    onClick={handlePopupOpen}
+                    onClick={handlePFPPopupOpen}
                     className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
                   >
                     Change
@@ -490,7 +490,7 @@ export default function General() {
                 </label>
                 <input
                   type="text"
-                  onChange={handleInputChange}
+                  onChange={handlePFPInputChange}
                   name="url"
                   id="url"
                   value={inputText}
@@ -552,7 +552,7 @@ export default function General() {
               <Dialog
                 as="div"
                 className="fixed inset-0 z-10 overflow-y-auto"
-                onClose={handlePopupClose}
+                onClose={handlePFPPopupClose}
               >
                 <Transition.Child
                   as={Fragment}
@@ -565,7 +565,7 @@ export default function General() {
                 >
                   <div
                     onClick={() => {
-                      handlePopupClose();
+                      handlePFPPopupClose();
                       localStorage.setItem('22-18-update', false);
                     }}
                     className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
@@ -632,7 +632,7 @@ export default function General() {
                       )}
                       <div className="mt-4 flex justify-end">
                         <button
-                          onClick={handleSaveChanges}
+                          onClick={handlePFPSaveChanges}
                           className="rounded-md bg-blue-500 px-4 py-2 text-white"
                         >
                           Save
