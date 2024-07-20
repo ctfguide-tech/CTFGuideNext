@@ -15,6 +15,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import ActivityCalendar from 'react-activity-calendar';
 import { Context } from '@/context';
 import { useContext } from 'react';
+import { Tooltip } from 'react-tooltip';
 
 
 
@@ -46,12 +47,14 @@ const mockActivityData = [
 export default function Create() {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const bioRef = useRef(null);
-    const textRef = useRef(null)
+    const toolKitRef = useRef(null)
+    const saveRef = useRef(null)
+    const bioContainerRef = useRef(null)
     
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('LIKED CHALLENGES');
-    const [isBioExpanded, setIsBioExpanded] = useState();
+    const [isBioExpanded, setIsBioExpanded] = useState(false);
     const [followers, setFollowers] = useState(0);
     const [following, setFollowing] = useState(0);
     const [activityData, setActivityData] = useState(mockActivityData);
@@ -64,6 +67,7 @@ export default function Create() {
 
     function closeUnsavedNotif() {
         bannerState(false);
+        setIsBioExpanded(false);
     }
 
     const handleInputChange = (event) => {
@@ -83,7 +87,6 @@ export default function Create() {
     function openBioEditor(){
         if(isBioExpanded === false){
             setIsBioExpanded(true);
-            
             console.log(isBioExpanded)
         }
        
@@ -100,9 +103,7 @@ export default function Create() {
         console.log(isBioExpanded)
     };
 
-    const closeBioViaPageClick = (e) => {
-        
-    }
+    
 
     const renderContent = () => {
         switch (activeTab) {
@@ -136,8 +137,21 @@ export default function Create() {
         }
     };
 
-    useEffect(() => {
+    const handleClickOutside = (event) => {
+        
+        if ( (bioRef.current && !bioRef.current.contains(event.target)) &&
+        (toolKitRef.current && !toolKitRef.current.contains(event.target)) &&
+        (!saveRef.current || (saveRef.current && !saveRef.current.contains(event.target)))) 
+        {
+            setIsBioExpanded(false);
+            bannerState(false);
+        }
+        
+      };
 
+    useEffect(() => {
+        
+        
         request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}`, "GET", null)
             .then((data) => {
                 console.log(data)
@@ -179,13 +193,18 @@ export default function Create() {
           };
           fetchUserData();
 
-          document.removeEventListener("click", setIsBioExpanded(false));
-
-
-
-
+          if (isBioExpanded) {
+            document.addEventListener('mousedown', handleClickOutside);
+          } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+          }
+      
+          return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+          };
+           
           
-    }, [router.query.user]);
+    }, [router.query.user, isBioExpanded]);
 
    
    
@@ -217,59 +236,80 @@ export default function Create() {
         }
       }
 
+      const renderEditButton = () => {
+        return<>
+        {!isBioExpanded &&   <button className="flex flex-col justify-start  pointer-events-none"
+                                onClick={openBioEditor} 
+                                data-tooltip-id="edit-bio"
+                                data-tooltip-content="Edit Bio"
+                                data-tooltip-place="top-end">
+
+                                <i class="pointer-events-auto text-xl mt-2 mr-4 text-white hover:text-gray-400 fas fa-edit"></i>
+                                <Tooltip className="" id="edit-bio" />
+                            </button>}
+        </>
+      }
+
       const renderUsersBio = () =>{
         return<>
-                <div onClick={openBioEditor} className="w-full text-left cursor-pointer focus:outline-none">
-                    {isBioExpanded ? <>
-                <div className=" sm:col-span-full">
+            <div id='bioDiv'>
+
+            <div className="w-full text-left cursor-pointer focus:outline-none">
+                        {isBioExpanded ? <>
+            <div className=" sm:col-span-full">
                     
-                    <div className="mt-2 rounded-lg bg-neutral-800 text-white">
+            <div className="mt-2 rounded-lg bg-neutral-800 text-white">
                         
-                <div className='mb-2 w-full flex justify-between'>
-                    <div className="flex space-x-2">
+                <div className='mb-2 w-full flex justify-between ' ref={toolKitRef}>
+                        <div className="flex space-x-2 bg-neutral-900 rounded-md">
+                            <button
+                                onClick={() => insertText('**Enter bold here**')}
+                                className="toolbar-button mr-1 ml-2 pr-2 text-white"
+                            >
+                                <i className="fas fa-bold text-sm"></i>
+                            </button>
+
+                            <button
+                                onClick={() => insertText('*Enter italic here*')}
+                                className="toolbar-button mr-1 px-2 text-white"
+                            >
+                                <i className="fas fa-italic text-sm"></i>
+                            </button>
+
+                            <button
+                                onClick={() => insertText('# Enter Heading here')}
+                                className="toolbar-button mr-1 px-2 text-white"
+                            >
+                                <i className="fas fa-heading text-sm"></i>
+                            </button>
+
+                            <button
+                                onClick={() => insertText('[Name](url)')}
+                                className="toolbar-button mr-1 px-2 text-white"
+                            >
+                                <i className="fas fa-link text-sm"></i>
+                            </button>
+
+                            <button
+                                onClick={() => insertText('```Enter Code here```')}
+                                className="toolbar-button mr-1 px-2 text-white"
+                            >
+                                <i className="fas fa-code text-sm"></i>
+                            </button>
+
+                            <button
+                                onClick={() => magicSnippet()}
+                                className="toolbar-button mr-1 px-2 text-white"
+                            >
+                                <i className="fas fa-terminal text-sm"></i>
+                            </button>
+                        </div >
                     <button
-                      onClick={() => insertText('**Enter bold here**')}
-                      className="toolbar-button mr-1 pr-2 text-white"
-                    >
-                      <i className="fas fa-bold text-sm"></i>
-                    </button>
-                    <button
-                      onClick={() => insertText('*Enter italic here*')}
-                      className="toolbar-button mr-1 px-2 text-white"
-                    >
-                      <i className="fas fa-italic text-sm"></i>
-                    </button>
-                    <button
-                      onClick={() => insertText('# Enter Heading here')}
-                      className="toolbar-button mr-1 px-2 text-white"
-                    >
-                      <i className="fas fa-heading text-sm"></i>
-                    </button>
-                    <button
-                      onClick={() => insertText('[Name](url)')}
-                      className="toolbar-button mr-1 px-2 text-white"
-                    >
-                      <i className="fas fa-link text-sm"></i>
-                    </button>
-                    <button
-                      onClick={() => insertText('```Enter Code here```')}
-                      className="toolbar-button mr-1 px-2 text-white"
-                    >
-                      <i className="fas fa-code text-sm"></i>
-                    </button>
-                    <button
-                      onClick={() => magicSnippet()}
-                      className="toolbar-button mr-1 px-2 text-white"
-                    >
-                      <i className="fas fa-terminal text-sm"></i>
-                    </button>
-                </div>
-                 <button
-                     onClick={closeBioEditor}
-                      
-                      className="toolbar-button mr-1 px-2 text-white "
-                    >
-                      <i className="text-sm ">Close Editor</i>
+                        onClick={closeBioEditor}
+                        
+                        className="toolbar-button mr-1 px-2 text-white bg-neutral-900 rounded-md "
+                        >
+                        <i className="text-sm ">Close Editor</i>
                     </button>
                     
                     
@@ -286,18 +326,24 @@ export default function Create() {
                                 
                            />
                            
-                            </div>
+            </div>
 
                         
                     </div>
-                    </> : (user && <MarkdownViewer  content={currentUsersBio} />) }
+                    </> : <> 
+                    {user && <MarkdownViewer  content={currentUsersBio} />}
+                    
+                    </>}
                     
                     
+                </div>
+
                 </div>
 
         </>
     }
 
+    
   
       const saveBio = async () => {     
           const data = {
@@ -317,7 +363,8 @@ export default function Create() {
       }
 
     return (
-        <>
+        <span >
+    
             <Head>
                 <title>{user && user.username}'s Profile - CTFGuide</title>
                 <style>
@@ -325,7 +372,7 @@ export default function Create() {
                 </style>
             </Head>
             <StandardNav />
-            <div>
+            <div >
                 <div>
                     <div
                         style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
@@ -425,9 +472,17 @@ export default function Create() {
                     </div>
                     <div className='col-span-3 border-t-4 border-blue-600'>
                         <div className='bg-neutral-800 px-4 py-4'>
-                            {user && (
-                                <h1 className='text-2xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
-                            )}
+                          <div className="mb-2 w-full flex justify-between  "> 
+                            <div className="flex space-x-2  rounded-md">
+                                {user && (
+                                    <h1 className='text-2xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
+                                )}
+                            </div>
+                            {bioViewCheck() ? renderEditButton():'' }
+                            
+                          
+                        </div> 
+                            
                             <p className='text-neutral-400'>
                                 {bioViewCheck() ? renderUsersBio()  : user && <MarkdownViewer  content={user.bio} />}
                             
@@ -490,7 +545,7 @@ export default function Create() {
             <Footer />
 
             {banner && (
-                <div
+                <div ref={saveRef}
                     style={{ backgroundColor: '#212121' }}
                     id="savebanner"
                     className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
@@ -500,7 +555,7 @@ export default function Create() {
                         You have unsaved changes.
                     </p>
                     <div className="flex flex-none items-center gap-x-5">
-                    <button onClick={saveBio} type="button" className="rounded-sm bg-green-700 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+                    <button  onClick={saveBio} type="button" className="rounded-sm bg-green-700 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
                             Save Changes
                         </button>
                         <button
@@ -513,6 +568,6 @@ export default function Create() {
                     </div>
                 </div>
             )}
-        </>
+        </span>
     );
 }
