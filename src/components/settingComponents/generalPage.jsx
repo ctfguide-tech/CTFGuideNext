@@ -710,16 +710,16 @@ export default function General() {
                             position: 'relative',
                           }}
                         >
-                          <Cropper
+                                     <Cropper
                             image={imageUrl}
-                            crop={{ x: 0, y: 0 }}
-                            rotation={0}
-                            zoom={1}
+                            crop={crop}
+                            rotation={rotation}
+                            zoom={zoom}
                             aspect={1}
-                            onCropChange={(newCrop) => setCrop(newCrop)}
-                            onRotationChange={(newRotation) => setRotation(newRotation)}
-                            onZoomChange={(newZoom) => setZoom(newZoom)}
-                            onCropComplete={(croppedArea, croppedAreaPixels) => onCropComplete(croppedArea, croppedAreaPixels)}
+                            onCropChange={setCrop}
+                            onRotationChange={setRotation}
+                            onZoomChange={setZoom}
+                            onCropComplete={onCropComplete}
                             style={{
                               containerStyle: { height: '100%', width: '100%' },
                             }}
