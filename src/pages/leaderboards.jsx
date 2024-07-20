@@ -43,6 +43,7 @@ export default function Leaderboard() {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+     
         </style>
       </Head>
       <div className="flex min-h-screen flex-col">
@@ -50,7 +51,7 @@ export default function Leaderboard() {
         <main>
           <div className="mx-auto mt-20 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
             <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto"
+              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto podium"
               onClick={() => {
                 window.location.href =
                   '../users/' + leaderboardData[1].user.username;
@@ -89,7 +90,7 @@ export default function Leaderboard() {
             </div>
 
             <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 shadow md:w-auto"
+              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 shadow md:w-auto podium"
               onClick={() => {
                 window.location.href =
                   '../users/' + leaderboardData[0].user.username;
@@ -119,6 +120,8 @@ export default function Leaderboard() {
                   <dd className="mt-1 text-center text-3xl font-semibold text-gray-100">
                     <span className="text-2xl">#1</span>{' '}
                     {leaderboardData[0]?.user?.username}
+
+            
                   </dd>
                   <dd className="mx-auto mt-1 w-1/2 rounded-lg border border-white text-center text-xl text-white">
                     {leaderboardData[0]?.totalPoints} points
@@ -128,7 +131,7 @@ export default function Leaderboard() {
             </div>
 
             <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900 shadow md:w-auto"
+              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900 shadow md:w-auto podium"
               onClick={() => {
                 window.location.href =
                   '../users/' + leaderboardData[2].user.username;
@@ -218,6 +221,16 @@ export default function Leaderboard() {
                                 href={'../users/' + entry.user.username}
                               >
                                 {entry.user.username}
+                                {entry.user.role === 'ADMIN' && (
+                <>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                </>
+              )}
+                 {entry.user.role === 'PRO' && (
+                <>
+                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                </>
+              )}
                               </a>
                             </div>
                           </TableCell>

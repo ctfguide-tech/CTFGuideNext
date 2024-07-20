@@ -15,6 +15,7 @@ export function DashboardHeader() {
   const [points, setPoints] = useState('');
   const [rank, setRank] = useState('');
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+  const [role, setRole] = useState('');
 
   useEffect(() => {
     try {
@@ -28,6 +29,7 @@ export function DashboardHeader() {
           }
           setPoints(data.points);
           setRank(data.leaderboardNum + 1);
+          setRole(data.role);
         })
         .catch((err) => {
           console.log(err);
@@ -105,6 +107,17 @@ export function DashboardHeader() {
                 {username || (
                   <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
                 )}
+
+{role === 'ADMIN' && (
+        <span className="bg-red-600 px-1 text-sm ml-2">
+          <i className="fas fa-code fa-fw"></i> developer
+        </span>
+      )}
+      {role === 'PRO' && (
+        <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
+          <i className="fas fa-crown fa-fw"></i> pro
+                </span>
+              )}
               </h1>
               <p className="text-white">
                 <i className="fas fa-map-marker-alt mt-2"></i>{' '}
