@@ -359,7 +359,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             ><i className="fas fa-terminal"></i> Launch a machine</button>
 
 <button
-        className='ml-4 bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-600 text-white px-2 py-1 text-sm rounded-md'
+        className='ml-4 bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 hover:from-yellow-600 hover:to-yellow-600 text-white px-2 py-1 text-sm rounded-md'
         onClick={() => router.push('/settings/billing')}
       >
         <i className="fas fa-crown"></i> Upgrade to Pro
