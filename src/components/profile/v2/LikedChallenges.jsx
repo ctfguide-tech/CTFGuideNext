@@ -11,16 +11,19 @@ const LikedChallenges = ({ user }) => {
 
     useEffect(() => {
         const fetchLikedChallenges = async () => {
-     
-                console.log("udata", user)
-                console.log("username", user.username);
+            try {
                 if (user) {
                     const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/likes`, 'GET', null);
                     setLikedChallenges(response.data);
-                } else {
-                    fetchLikedChallenges();
                 }
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
+        };
+
+        fetchLikedChallenges();
     }, [user]);
 
     if (loading) return <div className='text-neutral-400'><Skeleton width="100%" baseColor="#363535" highlightColor="#615f5f"  /></div>;
@@ -28,7 +31,7 @@ const LikedChallenges = ({ user }) => {
 
     return (
         <div className="mt-4 rounded-sm">
-            {likedChallenges ? (
+            {likedChallenges && likedChallenges.length > 0 ? (
             <ul>
                 {likedChallenges.map(challenge => (
                     <li key={challenge.id}>{challenge.name}</li>
