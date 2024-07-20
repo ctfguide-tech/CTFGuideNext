@@ -16,6 +16,11 @@ import ActivityCalendar from 'react-activity-calendar';
 import { DonutChart } from '@tremor/react';
 import Followers from '@/components/profile/Followers';
 import Following from '@/components/profile/Following';
+import { Radar } from 'react-chartjs-2';
+import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
+
+// Register the necessary chart components
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 const mockActivityData = [
   { date: '2024-01-01', count: 0, level: 0 },
@@ -71,6 +76,8 @@ export default function Create() {
   const [following, setFollowing] = useState(0);
   const [followingPage, setFollowingPage] = useState(0); // Initial page
   const [totalFollowingPages, setTotalFollowingPages] = useState(0); // Total pages
+
+  const [categoryChallenges, setCategoryChallenges] = useState([]);
 
   const toggleBio = () => {
     setIsBioExpanded(!isBioExpanded);
@@ -191,18 +198,27 @@ export default function Create() {
       }
     };
     const fetchCategories = async () => {
-        try{
+      try {
         const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}/completedCategory`, 'GET', null);
-        console.log("categories: ", response);
-        if (response){
-            console.log("setting response");
-            setCategoryChallenges(response);
-            console.log("category challenges: ", categoryChallenges);
+        if (response) {
+          const categories = [
+            { name: 'Forensics', completed: response.forensicsChallenges.length },
+            { name: 'Crypto', completed: response.cryptographyChallenges.length },
+            { name: 'RE', completed: response.reverseEngineeringChallenges.length },
+            { name: 'Web', completed: response.webChallenges.length },
+            { name: 'Pwn', completed: response.pwnChallenges.length },
+            { name: 'Pgrming', completed: response.programmingChallenges.length },
+            { name: 'Basic', completed: response.basicChallenges.length },
+            { name: 'Other', completed: response.otherChallenges.length },
+          ];
+          setCategoryChallenges(categories);
+        } else {
+          setCategoryChallenges([]);
         }
-
-        }catch (err) {
-            console.log(err);
-        }
+      } catch (err) {
+        console.log(err);
+        setCategoryChallenges([]);
+      }
     };
 
     fetchCategories();
@@ -309,6 +325,63 @@ export default function Create() {
     totalPages: totalFollowingPages,
     prevPage: prevFollowingPage,
     nextPage: nextFollowingPage,
+  };
+
+  const radarData = {
+    labels: categoryChallenges.map(category => category.name),
+    datasets: [
+      {
+        label: 'Completed Challenges',
+        data: categoryChallenges.map(category => category.completed),
+        backgroundColor: 'rgba(34, 202, 236, 0.2)',
+        borderColor: 'rgba(34, 202, 236, 1)',
+        pointBackgroundColor: 'rgba(34, 202, 236, 1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(34, 202, 236, 1)',
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const radarOptions = {
+    scales: {
+      r: {
+        angleLines: {
+          display: true,
+          color: '#444',
+        },
+        grid: {
+          color: '#444',
+        },
+        pointLabels: {
+          color: '#fff',
+          font: {
+            size: 14,
+          },
+        },
+        ticks: {
+          beginAtZero: true,
+          min: 0,
+          max: 10,
+          stepSize: 2,
+          showLabelBackdrop: false,
+          color: '#fff',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.label}: ${context.raw}`;
+          },
+        },
+      },
+    },
   };
 
   return (
@@ -449,13 +522,14 @@ export default function Create() {
               <hr className="mt-4 border-neutral-700 px-4"></hr>
             </div>
 
-            <div className="col-span-2 bg-neutral-800 px-4 pt-4 ">
+            <div className="col-span-2 bg-neutral-800 px-4 pt-4">
               <div className="bg-neutral-800">
                 <h1 className="text-2xl font-bold text-white">SKILL CHART</h1>
-                {user && (
+                {categoryChallenges.length > 0 ? (
+                  <Radar data={radarData} options={radarOptions} />
+                ) : (
                   <h1 className="mx-auto my-auto text-neutral-400">
-                    It seems that {user.username} hasn't solved any challenges
-                    yet.
+                    It seems that {user && user.username} hasn't solved any challenges yet.
                   </h1>
                 )}
               </div>
