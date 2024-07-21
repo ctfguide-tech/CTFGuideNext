@@ -154,7 +154,7 @@ export default function Dashboard() {
       <StandardNav />
 
       <div className="mx-auto max-w-6xl md:flex">
-        {isMobile ? <Dropdown /> : <Sidebar />}
+        {isMobile ? <Dropdown tab="../settings"/> : <Sidebar />}
         {general && (
           <div id="general" className="">
             {/*CONTAINING THE BODY OF GENERAL SECTION*/}

@@ -3,6 +3,9 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
+import { useState, useEffect } from 'react';
+import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
+
 export default function Preferences(){
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.
@@ -59,7 +62,20 @@ export default function Preferences(){
     
         xhr.send(data);
       }
-    
+      const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
       
     return(
         <>
@@ -76,11 +92,13 @@ export default function Preferences(){
         </Head>
   
         <StandardNav />
-  
-        <div className="mx-auto flex max-w-6xl">
-            <Sidebar/>
-            
-            <div className="flex-1 xl:overflow-y-auto">
+
+
+        <div className="mx-auto max-w-6xl md:flex">
+
+        {isMobile ? <Dropdown tab="../settings/preferences"/> : <Sidebar />}
+
+        <div className="flex-1 xl:overflow-y-auto">
                   <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                     <h1 className="text-3xl font-bold tracking-tight text-white">
                       Email Preferences

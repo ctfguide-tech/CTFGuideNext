@@ -10,6 +10,7 @@ import { useContext, useEffect } from 'react';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
 
 
 export default function Security(){
@@ -79,6 +80,20 @@ export default function Security(){
     window.alert(error);
   }
 }
+const [isMobile, setIsMobile] = useState(false);
+
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  handleResize(); // Check on initial render
+  window.addEventListener('resize', handleResize);
+
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);
 
     return(
         <>
@@ -96,9 +111,8 @@ export default function Security(){
   
         <StandardNav />
   
-        <div className="mx-auto flex max-w-6xl">
-            <Sidebar/>
-            
+        <div className="mx-auto max-w-6xl md:flex">
+        {isMobile ? <Dropdown tab="../settings/security" /> : <Sidebar />}
             <div className="flex-1 xl:overflow-y-auto">
               <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                 <h1 className="text-3xl font-bold tracking-tight text-white">

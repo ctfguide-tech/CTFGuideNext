@@ -2,10 +2,13 @@ import { loadStripe } from '@stripe/stripe-js';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 import Head from 'next/head';
 import { Footer } from '@/components/Footer';
+import { useState, useEffect } from 'react';
+
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import UpgradeBox from '@/components/settingComponents/UpgradeBox';
 import FreeBox from '@/components/settingComponents/FreeBox';
+import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
 
 export default function Billing() {
   const redirectToCheckout = async (event) => {
@@ -99,6 +102,21 @@ export default function Billing() {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -115,8 +133,10 @@ export default function Billing() {
 
       <StandardNav />
 
+
+      {isMobile ? <Dropdown tab="../settings/billing"/> : <Sidebar />}
       <div className="mx-auto flex max-w-6xl">
-        <Sidebar />
+
 
         <div className="flex-1 xl:overflow-y-auto">
           <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
