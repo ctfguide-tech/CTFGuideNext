@@ -25,9 +25,6 @@ import 'react-circular-progressbar/dist/styles.css';
 //toast
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Tooltip as ReactToolTip } from 'react-tooltip';
-
-
 
 
 // Register the necessary chart components
@@ -99,7 +96,6 @@ export default function Create() {
     const [banner, bannerState] = useState(false);
     const [inputText, setInputText] = useState('');
     const [currentUsersBio, setCurrentUsersBio] = useState(null);
-    const [editButton, setEditButton] = useState(true);
 
     const [completionData, setCompletionData] = useState([
         {
@@ -146,7 +142,6 @@ export default function Create() {
 
     function closeUnsavedNotif() {
         bannerState(false);
-        setEditButton(true);
         setIsBioExpanded(false);
     }
 
@@ -170,7 +165,6 @@ export default function Create() {
     function openBioEditor(){
         if(isBioExpanded === false){
             setIsBioExpanded(true);
-            setEditButton(false);
             console.log(isBioExpanded)
         }
        
@@ -178,7 +172,6 @@ export default function Create() {
 
     function closeBioEditor () {
         setIsBioExpanded(false);
-        setEditButton(true);
         console.log(isBioExpanded)
     };
 
@@ -228,7 +221,6 @@ export default function Create() {
         {
             setIsBioExpanded(false);
             bannerState(false);
-            setEditButton(true);
         }
        
       };
@@ -421,7 +413,7 @@ export default function Create() {
 
       const renderEditButton = () => {
         return<>
-        {editButton &&   <button className="flex flex-col justify-start  pointer-events-none"
+        {!isBioExpanded &&   <button className="flex flex-col justify-start  pointer-events-none"
                                 onClick={openBioEditor}
                                 data-tooltip-id="edit-bio"
                                 data-tooltip-content="Edit Bio"
@@ -551,7 +543,6 @@ export default function Create() {
             console.error('Failed to save general information', err);
           }
           closeUnsavedNotif();
-          setEditButton(true);
     }
 
     async function loadStreakChart() {
@@ -634,7 +625,7 @@ export default function Create() {
             };
             fetchFollowers();
         }
-    }, [user, followerPage, followedUser]);
+    }, [user, followerPage]);
 
     // Following useEffect
     useEffect(() => {
@@ -875,24 +866,14 @@ export default function Create() {
                                                         <i className="fas fa-crown fa-fw"></i> pro
                                                     </span>
                                                 )}
-                                                {!ownUser && followedUser && (
-                                                    <span className="ml-2 text-lg"
-                                                      data-tooltip-id="unfollow"
-                                                      data-tooltip-content={"Unfollow " + router.query.user}
-                                                      data-tooltip-place="right">
+                                                      {!ownUser && followedUser && (
+                                                    <span className="ml-2 text-lg">
                                                         <i className="text-lg fas fa-user-slash hover:text-gray-400" onClick={handleUnfollowUser}></i>
-                                                        <ReactToolTip className="" id="unfollow" />
-
                                                     </span>
                                                 )}
                                                 {!ownUser && !followedUser && (
-                                                    <span className="ml-2 text-lg"
-                                                      data-tooltip-id="follow"
-                                                      data-tooltip-content={"Follow " + router.query.user}
-                                                      data-tooltip-place="right">
+                                                    <span className="ml-2 text-lg">
                                                         <i className="text-lg fas fa-user-plus hover:text-gray-400" onClick={handleFollowUser}></i>
-                                                        <ReactToolTip className="" id="follow" />
-
                                                     </span>
                                                 )}
                                             </h1>
@@ -943,10 +924,11 @@ export default function Create() {
                 <div className="mt-10 grid grid-cols-1 gap-y-4 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 ">
                     <div className="h-40 w-full border-t-4 border-blue-600 bg-neutral-800">
 
+
                         <div className="col-span-2 bg-neutral-800 px-4 pt-4">
                             <div className="bg-neutral-800">
                                 <h1 className="text-xl font-bold text-white">SKILL CHART</h1>
-                                {categoryChallenges.length > 0 ? (
+                                {(categoryChallenges.length > 0 && categoryChallenges.some(category => category.completed > 0)) ? (
                                     <Radar data={radarData} options={radarOptions} />
                                 ) : (
                                     <h1 className="mx-auto my-auto text-neutral-400">
@@ -959,28 +941,34 @@ export default function Create() {
 
                         <div className="col-span-2 bg-neutral-800 px-4 pt-4 ">
                             <div className="bg-neutral-800 text-white">
-                                <h1 className="text-xl font-bold text-white mb-4">
+                                <h1 className="text-xl font-bold text-white">
                                     DIFFICULTY BREAKDOWN
                                 </h1>
-                                <div className="flex items-center justify-center">
+                                {solvedChallenges > 0 ? (
+                                <div className="flex items-center justify-center mt-4">
                                     <div className="w-1/2">
                                         <MultiColorCircularProgressBar segments={segments} />
                                         <p className=" text-center text-white mt-2">{solvedChallenges} Solved</p>
                                     </div>
                                     <div className="w-1/2 ml-4">
-                                        {completionData.map((item, index) => (
-                                            <div key={index} className="flex justify-between mb-2">
-                                                <span
-                                                    className={`text-${item.color.split('-')[1]}-500`}
-                                                    title={`${item.name}: ${item.amount} challenges`}
-                                                >
-                                                    {item.name}
-                                                </span>
-                                                <span className="text-white">{item.amount}</span>
-                                            </div>
-                                        ))}
+                                        {(
+                                            completionData.map((item, index) => (
+                                                <div key={index} className="flex justify-between mb-2">
+                                                    <span
+                                                        className={`text-${item.color.split('-')[1]}-500`}
+                                                        title={`${item.name}: ${item.amount} challenges`}
+                                                    >
+                                                        {item.name}
+                                                    </span>
+                                                    <span className="text-white">{item.amount}</span>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
+                                ) : (
+                                    <p className="text-neutral-400">Hmm, {user && user.username} hasn't solved any challenges yet.</p>
+                                )}
                             </div>
                             <hr className="mt-4 border-neutral-700 px-4"></hr>
                         </div>
