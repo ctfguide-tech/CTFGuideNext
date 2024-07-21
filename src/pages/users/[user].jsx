@@ -75,6 +75,7 @@ const MultiColorCircularProgressBar = ({ segments }) => {
 export default function Create() {
     const router = useRouter();
     const [user, setUser] = useState(null);
+    const [ownUser, setOwnUser] = useState(false);
     const [activeTab, setActiveTab] = useState('LIKED CHALLENGES');
     const [isBioExpanded, setIsBioExpanded] = useState(false);
     const [followerNum, setFollowerNum] = useState(0);
@@ -112,6 +113,8 @@ export default function Create() {
 
     const [displayMode, setDisplayMode] = useState('default');
     const [mutuals, setMutuals] = useState([]);
+
+    const [followedUser, setFollowedUser] = useState(false);
 
     const [followers, setFollowers] = useState(0);
     const [followerPage, setFollowerPage] = useState(0); // Initial page
@@ -170,6 +173,15 @@ export default function Create() {
             request(`${process.env.NEXT_PUBLIC_API_URL}/users/${router.query.user}`, 'GET', null)
                 .then((data) => {
                     setUser(data);
+                    const storedUser = localStorage.getItem('username');
+                    if (storedUser && (storedUser === router.query.user)) {
+                      setOwnUser(true);
+                      console.log("USER IS OWN USER");
+                    } else {
+                      fetchIsFollowing();
+                      setOwnUser(false);
+                      console.log("USER IS NOT OWN USER")
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -221,7 +233,6 @@ export default function Create() {
                     resp.hardChallenges.length +
                     resp.insaneChallenges.length
                 );
-                console.log('completed challenges: ', completedChallenges);
                 setCompletionData([
                     {
                         name: 'Beginner',
@@ -285,21 +296,31 @@ export default function Create() {
     async function loadStreakChart() {
         const url = `${process.env.NEXT_PUBLIC_API_URL}/activity/${router.query.user}`;
         const response = await request(url, 'GET', null);
-        console.log(response);
         setActivityData(response.body);
     }
 
-    useEffect(() => {
-        if (router.query.user) loadStreakChart();
-    }, [router.query.user]);
-
-    // Get the Username from Local Storage
-    useEffect(() => {
-        const storedUser = localStorage.getItem('username');
-        if (storedUser) {
-            setUser(storedUser);
+    async function fetchIsFollowing() {
+        try {
+            const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/followers/${router.query.user}/isFollowing`;
+            const result = await request(endPoint, 'GET');
+            setFollowedUser(result.isFollowing);
+            console.log("FOLLOW STATUS: " + result.isFollowing)
+        } catch (err) {
+            console.error(err);
         }
-    }, []);
+    }
+
+    // useEffect(() => {
+    //   if (router.query.user) {
+    //     fetchIsFollowing();
+    //   }
+    // }, [router.query.user])
+
+    useEffect(() => {
+        if (router.query.user) {
+          loadStreakChart();
+        }
+    }, [router.query.user]);
 
     // Followers useEffect
     useEffect(() => {
@@ -323,7 +344,7 @@ export default function Create() {
             };
             fetchFollowers();
         }
-    }, [user, followerPage]);
+    }, [user, followerPage, followedUser]);
 
     // Following useEffect
     useEffect(() => {
@@ -349,6 +370,7 @@ export default function Create() {
         }
     }, [user, followingPage]);
 
+
     const userData = { user, ownUser: true };
 
     // Follower
@@ -366,6 +388,30 @@ export default function Create() {
         prevPage: prevFollowerPage,
         nextPage: nextFollowerPage,
     };
+
+    const handleFollowUser = async () => {
+      if (user) {
+        try {
+            const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/followers/${user.username}/follow`;
+            const result = await request(endPoint, 'POST');
+            setFollowedUser(true);
+            console.log(result);
+        } catch (err) {
+            console.error(err);
+        }
+      }
+    }
+
+    const handleUnfollowUser = async () => {
+        try {
+            const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/followers/${user.username}/unfollow`;
+            const result = await request(endPoint, 'DELETE');
+            setFollowedUser(false);
+            console.log(result);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     // Following
     const handleFollowingPageChange = (newPage) => {
@@ -562,6 +608,20 @@ export default function Create() {
                                                 {user && user.role === 'PRO' && (
                                                     <span className="bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm ml-4">
                                                         <i className="fas fa-crown fa-fw"></i> pro
+                                                    </span>
+                                                )}
+
+                                                {!ownUser && followedUser && (
+                                                    <span className="ml-2">
+                                                      <i className="fas fa-user-slash hover:text-gray-400"
+                                                      onClick={handleUnfollowUser}></i>
+                                                    </span>
+                                                )}
+
+                                                {!ownUser && !followedUser && (
+                                                    <span className="ml-2">
+                                                      <i className="fas fa-user-plus hover:text-gray-400"
+                                                      onClick={handleFollowUser}></i>
                                                     </span>
                                                 )}
                                             </h1>

@@ -25,8 +25,6 @@ const FriendCard = ({ data }, mutual) => {
   const proUser = role !== 'USER';
   const followers = followedBy.length;
 
-  console.log(role);
-
   return (
     <Link href={`/users/${username}`} passHref>
     <div className="flex flex-1">
