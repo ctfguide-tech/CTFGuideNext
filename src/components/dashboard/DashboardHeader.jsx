@@ -1,39 +1,35 @@
-import { useEffect, useState } from 'react';
-
+import { useEffect, useState, useContext } from 'react';
+import { Context } from '@/context';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import request from '@/utils/request';
 import Link from 'next/link';
 
 export function DashboardHeader() {
-  const [username, setUsername] = useState(null);
+  const { username } = useContext(Context);
   const [location, setLocation] = useState('');
   const [join, setJoin] = useState('');
   const [github, setGithub] = useState('');
   const [pfp, setPfp] = useState('');
   const [githubUsername, setGithubUsername] = useState('.');
-
   const [points, setPoints] = useState('');
   const [rank, setRank] = useState('');
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
-
+  const [role, setRole] = useState('');
 
   useEffect(() => {
     try {
       request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
         .then((data) => {
-          setUsername(data.username);
           setLocation(data.location);
-          localStorage.setItem("username", data.username)
-
           setJoin(data.createdAt.substring(0, 10));
           if (data.githubUrl) {
             setGithub(`https://github.com/${data.githubUrl}`);
             setGithubUsername(data.githubUsername);
-
           }
           setPoints(data.points);
           setRank(data.leaderboardNum + 1);
+          setRole(data.role);
         })
         .catch((err) => {
           console.log(err);
@@ -50,23 +46,22 @@ export function DashboardHeader() {
       try {
         const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
         const result = await request(endPoint, "GET", null);
-        console.log(result)
         if (result) {
-          setPfp(result)
-          localStorage("pfp", result)
+          console.log(result)
+          setPfp(result);
         } else {
-          setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+          console.log("here:" + username)
+          console.log(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+          setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
         }
-
       } catch (err) {
-        console.log('failed to get profile picture')
+        console.log('failed to get profile picture');
       }
     };
     fetchData();
   }, [username]);
 
-  function createPopupWin(pageURL, pageTitle,
-    popupWinWidth, popupWinHeight) {
+  function createPopupWin(pageURL, pageTitle, popupWinWidth, popupWinHeight) {
     var left = (screen.width);
     var top = (screen.height);
     var myWindow = window.open(pageURL, pageTitle,
@@ -96,27 +91,38 @@ export function DashboardHeader() {
                   alt=""
                 />
               )) || (
-                  <Skeleton
-                    circle={true}
-                    height={128}
-                    width={128}
-                    baseColor="#262626"
-                    highlightColor="#262626"
-                  />
-                )}
+                <Skeleton
+                  circle={true}
+                  height={128}
+                  width={128}
+                  baseColor='#262626'
+                  highlightColor='#3a3a3a'
+                />
+              )}
             </Link>
           </div>
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
               <h1 className="mt-8 truncate text-2xl font-bold text-white">
                 {username || (
-                  <Skeleton baseColor="#262626" highlightColor="#262626" width='15rem' />
+                  <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
                 )}
+
+{role === 'ADMIN' && (
+        <span className="bg-red-600 px-1 text-sm ml-2">
+          <i className="fas fa-code fa-fw"></i> developer
+        </span>
+      )}
+      {role === 'PRO' && (
+        <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
+          <i className="fas fa-crown fa-fw"></i> pro
+                </span>
+              )}
               </h1>
               <p className="text-white">
                 <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                 {location || (
-                  <Skeleton width='25rem' baseColor="#262626" highlightColor="#262626" />
+                  <Skeleton width='25rem' baseColor='#262626' highlightColor='#3a3a3a' />
                 )}
               </p>
             </div>
@@ -143,17 +149,12 @@ export function DashboardHeader() {
                   </a>
                 )}
               </div>
-
-              <div
-                onClick={() => {
-                  createPopupWin('../terminal',
-                    'CTFGuide Terminal', 1200, 650);
-                }}
-                className="hidden cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
+              <a
+                href={`/users/${username}`}
+                className=" cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
               >
-
-                <p className="mt-0 text-white"><i className="fas fa-terminal mr-1"></i> Terminal</p>
-              </div>
+                <p className="mt-0 text-white"><i className="fas fa-user mr-1"></i> View Profile</p>
+              </a >
               <div
                 className="ml-4 mt-8 mb-0 rounded-lg px-10 py-1 hidden"
                 style={{ backgroundColor: '#212121', borderWidth: '0px' }}
@@ -169,7 +170,7 @@ export function DashboardHeader() {
         <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
           <h1 className="truncate text-2xl font-bold text-gray-900">
             {username || (
-              <Skeleton baseColor="#262626" highlightColor="#262626" />
+              <Skeleton baseColor='#262626' highlightColor='#3a3a3a' />
             )}
           </h1>
         </div>

@@ -4,6 +4,9 @@ export const defaultState = {
   username: "",
   setUsername: () => { },
 
+  accountType: "",
+  setAccountType: () => { },
+
   profilePic: "",
   setProfilePic: () => { },
 

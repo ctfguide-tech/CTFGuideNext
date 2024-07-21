@@ -3,8 +3,8 @@ import { EyeIcon, PencilIcon } from '@heroicons/react/20/solid';
 export function ChallengeCard({ challenge }) {
   return (
     <>
-      <div className="mt-4 w-full  pl-5">
-        <div className="mx-auto flex rounded-lg border-l-4 border-blue-600 bg-[#212121] px-6 py-2.5 hover:bg-[#2c2c2c] hover:outline-neutral-700">
+      <div className="mt-4 w-full  ">
+        <div className="mx-auto flex border border-neutral-800 bg-neutral-900 px-6 py-2.5 ">
           <div className="my-auto mr-6 text-lg text-white">
             {challenge.title}
           </div>
@@ -40,8 +40,8 @@ export function ChallengeCard({ challenge }) {
             )}
             {(challenge.state == 'STANDARD_UNVERIFIED' ||
               challenge.state == 'STANDARD_PENDING') && (
-              <div className="mx-auto ml-4 mr-2 cursor-pointer rounded-lg bg-neutral-900 px-2 py-2.5 text-center text-red-500">
-                Delete
+              <div className="mx-auto ml-4 mr-2 cursor-pointer hover:font-bold rounded-lg  px-2 py-2.5 text-center text-red-500">
+              <i className="fas fa-trash-alt"></i> Delete
               </div>
             )}
           </div>
