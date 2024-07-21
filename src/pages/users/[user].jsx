@@ -625,7 +625,7 @@ export default function Create() {
             };
             fetchFollowers();
         }
-    }, [user, followerPage]);
+    }, [user, followerPage, followedUser]);
 
     // Following useEffect
     useEffect(() => {
