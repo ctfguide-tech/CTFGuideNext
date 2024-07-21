@@ -118,7 +118,6 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
       
       </textarea>
       
-
       <br></br><br></br>
       <h1 className='font-bold text-blue-600 mb-1'>Set Bonus Points</h1> 
       <input type="number" placeholder="0" className='bg-neutral-800 w-full border-neutral-700' />
@@ -127,7 +126,6 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                    </div>
                         
              
-
                       </div>
                     </div>
                     <div className="flex flex-shrink-0 justify-end px-4 py-4">
@@ -139,7 +137,19 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                         Cancel
                       </button>
                       <button
-                        type="submit"
+                        onClick={async () => {
+                          const reason = prompt("Please enter the reason for denial:");
+                          if (reason) {
+                            try {
+                              await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${selected}/deny`, "POST", { reason });
+                              alert("Challenge denied successfully!");
+                            } catch (error) {
+                              console.error(error);
+                              alert("Failed to deny challenge!");
+                            }
+                          }
+                        }}
+                        type="button"
                         className="ml-4 inline-flex justify-center rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
                       >
                         Request Changes

@@ -407,7 +407,7 @@ export default function Create() {
                                     {new Date(challenge.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                   </td>
                                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                    <a href={`/create/editor?cid=${challenge.id}`} className="text-blue-600 hover:text-blue-900">
+                                    <a href={`/create/edit?cid=${challenge.id}`} className="text-blue-600 hover:text-blue-900">
                                       Edit<span className="sr-only">, {challenge.title}</span>
                                     </a>
                                   </td>

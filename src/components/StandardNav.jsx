@@ -12,6 +12,7 @@ import {
   ArrowRightIcon,
   EllipsisVerticalIcon,
   ShieldCheckIcon,
+  BellIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
@@ -64,6 +65,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [showBanner, setShowBanner] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
 
   const [open, setOpen] = useState(true);
 
@@ -145,6 +147,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
 
   useEffect(() => {
     const fetchNotification = async () => {
+      console.log('fetching notifications');
       const endPoint =
         process.env.NEXT_PUBLIC_API_URL + '/account/notifications';
       const result = await request(endPoint, 'GET', null);
@@ -398,6 +401,44 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                         <i className="far fa-check-circle"></i> {points}
                       </h1>
                     </div>
+
+                    {/* Notification Bell Icon */}
+                    <Popover className="relative ml-4">
+                      {({ open }) => (
+                        <>
+                          <Popover.Button className="p-1 rounded-full text-gray-400 hover:text-white focus:outline-none">
+                            <BellIcon className="h-6 w-6" aria-hidden="true" />
+                          </Popover.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="opacity-0 translate-y-1"
+                            enterTo="opacity-100 translate-y-0"
+                            leave="transition ease-in duration-150"
+                            leaveFrom="opacity-100 translate-y-0"
+                            leaveTo="opacity-0 translate-y-1"
+                          >
+                            <Popover.Panel className="absolute right-0 mt-2 w-80 bg-neutral-800 rounded-md shadow-lg overflow-hidden z-20">
+                              <div className="py-2">
+                                {notificationData.length > 0 ? (
+                                  notificationData.map((notification, index) => (
+                                    <div key={index} className="flex items-center px-4 py-3 ">
+                                    
+                                      <div className="ml-3 text-white">
+                                        <p className="text-sm font-medium">{notification.message}</p>
+                                        <p className="text-xs">{notification.receivedTime}</p>
+                                      </div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-center text-gray-500 py-4">No notifications</p>
+                                )}
+                              </div>
+                            </Popover.Panel>
+                          </Transition>
+                        </>
+                      )}
+                    </Popover>
                     {/* <div */}
                     {/*   className="mb-0 ml-4 flex items-center space-x-2 rounded-lg px-4 py-1" */}
                     {/*   style={{ backgroundColor: '#212121', borderWidth: '0px' }} */}
@@ -517,6 +558,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                         </Transition>
                       </Popover>
                     </div>
+              
                   </div>
                 )}
               </div>
