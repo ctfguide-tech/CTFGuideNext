@@ -15,7 +15,7 @@ export default function Billing() {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById('paymentType').value;
-      console.log(subscriptionType);
+    //  console.log(subscriptionType);
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
@@ -45,7 +45,7 @@ export default function Billing() {
       });
 
       if (result.error) {
-        console.log(result.error.message);
+      //  console.log(result.error.message);
       }
     } catch (error) {
       console.log(error);
@@ -96,7 +96,7 @@ export default function Billing() {
         },
       });
       const data = await response.json();
-      console.log(data.message);
+     // console.log(data.message);
     } catch (err) {
       console.log(err);
     }

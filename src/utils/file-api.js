@@ -8,7 +8,7 @@ export const getFile = async (fileId, filename) => {
   const response = await fetch(url, requestOptions);
 
   if(!response.ok) {
-    console.error('Error during file download:', response);
+   // console.error('Error during file download:', response);
     return;
   }
 
@@ -69,7 +69,7 @@ export const getNewFileIds = async (oldFileIds, token) => {
   const response = await fetch(url, requestOptions);
 
   if(!response.ok) {
-    console.error('Error during file duplication:', response);
+    //console.error('Error during file duplication:', response);
     return null;
   }
 
@@ -142,7 +142,7 @@ const fileApi = async (token, selectedFile) => {
       return null;
     }
   } catch (error) {
-    console.error('Error during file upload:', error);
+  //  console.error('Error during file upload:', error);
     return null;
   }
 };
