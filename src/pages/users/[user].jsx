@@ -1007,7 +1007,7 @@ export default function Create() {
                         {displayMode === 'default' && (
                             <>
                      <div className='col-span-3 border-t-4 border-blue-600'>
-                        <div className='bg-neutral-800 px-4 py-4'>
+                        <div className='bg-neutral-800 px-4 py-4 '>
                           <div className="mb-2 w-full flex justify-between  ">
                             <div className="flex space-x-2  rounded-md">
                                 {user && (
