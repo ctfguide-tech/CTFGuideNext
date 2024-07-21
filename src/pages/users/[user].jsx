@@ -96,6 +96,7 @@ export default function Create() {
     const [banner, bannerState] = useState(false);
     const [inputText, setInputText] = useState('');
     const [currentUsersBio, setCurrentUsersBio] = useState(null);
+    const [editButton, setEditButton] = useState(true);
 
     const [completionData, setCompletionData] = useState([
         {
@@ -142,6 +143,7 @@ export default function Create() {
 
     function closeUnsavedNotif() {
         bannerState(false);
+        setEditButton(true);
         setIsBioExpanded(false);
     }
 
@@ -165,6 +167,7 @@ export default function Create() {
     function openBioEditor(){
         if(isBioExpanded === false){
             setIsBioExpanded(true);
+            setEditButton(false);
             console.log(isBioExpanded)
         }
        
@@ -172,6 +175,7 @@ export default function Create() {
 
     function closeBioEditor () {
         setIsBioExpanded(false);
+        setEditButton(true);
         console.log(isBioExpanded)
     };
 
@@ -221,6 +225,7 @@ export default function Create() {
         {
             setIsBioExpanded(false);
             bannerState(false);
+            setEditButton(true);
         }
        
       };
@@ -413,7 +418,7 @@ export default function Create() {
 
       const renderEditButton = () => {
         return<>
-        {!isBioExpanded &&   <button className="flex flex-col justify-start  pointer-events-none"
+        {editButton &&   <button className="flex flex-col justify-start  pointer-events-none"
                                 onClick={openBioEditor}
                                 data-tooltip-id="edit-bio"
                                 data-tooltip-content="Edit Bio"
@@ -543,6 +548,7 @@ export default function Create() {
             console.error('Failed to save general information', err);
           }
           closeUnsavedNotif();
+          setEditButton(true);
     }
 
     async function loadStreakChart() {
