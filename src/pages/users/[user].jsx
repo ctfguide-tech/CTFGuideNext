@@ -1018,7 +1018,7 @@ export default function Create() {
                           <div className="mb-2 w-full flex justify-between  ">
                             <div className="flex space-x-2  rounded-md">
                                 {user && (
-                                    <h1 className='text-2xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
+                                    <h1 className='text-xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
                                 )}
                             </div>
                             {bioViewCheck() ? renderEditButton():'' }
@@ -1041,7 +1041,7 @@ export default function Create() {
                                                     'LIKED CHALLENGES',
                                                     'WRITEUPS',
                                                     'CREATED CHALLENGES',
-                                                    'BADGES',
+                                                 
                                                 ].map((tab) => (
                                                     <li
                                                         key={tab}
