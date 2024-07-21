@@ -133,9 +133,9 @@ export default function Billing() {
 
       <StandardNav />
 
+      <div className="mx-auto max-w-6xl md:flex">
 
       {isMobile ? <Dropdown tab="../settings/billing"/> : <Sidebar />}
-      <div className="mx-auto flex max-w-6xl">
 
 
         <div className="flex-1 xl:overflow-y-auto">
