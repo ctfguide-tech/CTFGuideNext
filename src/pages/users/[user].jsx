@@ -25,6 +25,9 @@ import 'react-circular-progressbar/dist/styles.css';
 //toast
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Tooltip as ReactToolTip } from 'react-tooltip';
+
+
 
 
 // Register the necessary chart components
@@ -872,14 +875,24 @@ export default function Create() {
                                                         <i className="fas fa-crown fa-fw"></i> pro
                                                     </span>
                                                 )}
-                                                      {!ownUser && followedUser && (
-                                                    <span className="ml-2 text-lg">
+                                                {!ownUser && followedUser && (
+                                                    <span className="ml-2 text-lg"
+                                                      data-tooltip-id="unfollow"
+                                                      data-tooltip-content={"Unfollow " + router.query.user}
+                                                      data-tooltip-place="right">
                                                         <i className="text-lg fas fa-user-slash hover:text-gray-400" onClick={handleUnfollowUser}></i>
+                                                        <ReactToolTip className="" id="unfollow" />
+
                                                     </span>
                                                 )}
                                                 {!ownUser && !followedUser && (
-                                                    <span className="ml-2 text-lg">
+                                                    <span className="ml-2 text-lg"
+                                                      data-tooltip-id="follow"
+                                                      data-tooltip-content={"Follow " + router.query.user}
+                                                      data-tooltip-place="right">
                                                         <i className="text-lg fas fa-user-plus hover:text-gray-400" onClick={handleFollowUser}></i>
+                                                        <ReactToolTip className="" id="follow" />
+
                                                     </span>
                                                 )}
                                             </h1>

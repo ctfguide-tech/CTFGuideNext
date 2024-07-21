@@ -78,9 +78,8 @@ const FriendCard = ({ data }, mutual) => {
                   )}
                   {/* CTFGuide Badge */}
                   {proUser && (
-                    <h1 className="ml-1 flex items-center px-1 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-lg text-transparent">
-                      <i className=" fas fa-crown fa-fw"></i>
-                      </h1>
+                    <span className="ml-1 flex items-center rounded-lg text-yellow-500">
+                      <i className="fas fa-crown fa-fw"></i></span>
                   )}
                 </div>
                 {/* bottom row */}
