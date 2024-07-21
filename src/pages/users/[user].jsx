@@ -25,6 +25,9 @@ import 'react-circular-progressbar/dist/styles.css';
 //toast
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Tooltip as ReactToolTip } from 'react-tooltip';
+
+
 
 
 // Register the necessary chart components
@@ -96,6 +99,7 @@ export default function Create() {
     const [banner, bannerState] = useState(false);
     const [inputText, setInputText] = useState('');
     const [currentUsersBio, setCurrentUsersBio] = useState(null);
+    const [editButton, setEditButton] = useState(true);
 
     const [completionData, setCompletionData] = useState([
         {
@@ -142,6 +146,7 @@ export default function Create() {
 
     function closeUnsavedNotif() {
         bannerState(false);
+        setEditButton(true);
         setIsBioExpanded(false);
     }
 
@@ -165,6 +170,7 @@ export default function Create() {
     function openBioEditor(){
         if(isBioExpanded === false){
             setIsBioExpanded(true);
+            setEditButton(false);
             console.log(isBioExpanded)
         }
        
@@ -172,6 +178,7 @@ export default function Create() {
 
     function closeBioEditor () {
         setIsBioExpanded(false);
+        setEditButton(true);
         console.log(isBioExpanded)
     };
 
@@ -221,6 +228,7 @@ export default function Create() {
         {
             setIsBioExpanded(false);
             bannerState(false);
+            setEditButton(true);
         }
        
       };
@@ -413,7 +421,7 @@ export default function Create() {
 
       const renderEditButton = () => {
         return<>
-        {!isBioExpanded &&   <button className="flex flex-col justify-start  pointer-events-none"
+        {editButton &&   <button className="flex flex-col justify-start  pointer-events-none"
                                 onClick={openBioEditor}
                                 data-tooltip-id="edit-bio"
                                 data-tooltip-content="Edit Bio"
@@ -543,6 +551,7 @@ export default function Create() {
             console.error('Failed to save general information', err);
           }
           closeUnsavedNotif();
+          setEditButton(true);
     }
 
     async function loadStreakChart() {
@@ -625,7 +634,7 @@ export default function Create() {
             };
             fetchFollowers();
         }
-    }, [user, followerPage]);
+    }, [user, followerPage, followedUser]);
 
     // Following useEffect
     useEffect(() => {
@@ -866,14 +875,24 @@ export default function Create() {
                                                         <i className="fas fa-crown fa-fw"></i> pro
                                                     </span>
                                                 )}
-                                                      {!ownUser && followedUser && (
-                                                    <span className="ml-2 text-lg">
+                                                {!ownUser && followedUser && (
+                                                    <span className="ml-2 text-lg"
+                                                      data-tooltip-id="unfollow"
+                                                      data-tooltip-content={"Unfollow " + router.query.user}
+                                                      data-tooltip-place="right">
                                                         <i className="text-lg fas fa-user-slash hover:text-gray-400" onClick={handleUnfollowUser}></i>
+                                                        <ReactToolTip className="" id="unfollow" />
+
                                                     </span>
                                                 )}
                                                 {!ownUser && !followedUser && (
-                                                    <span className="ml-2 text-lg">
+                                                    <span className="ml-2 text-lg"
+                                                      data-tooltip-id="follow"
+                                                      data-tooltip-content={"Follow " + router.query.user}
+                                                      data-tooltip-place="right">
                                                         <i className="text-lg fas fa-user-plus hover:text-gray-400" onClick={handleFollowUser}></i>
+                                                        <ReactToolTip className="" id="follow" />
+
                                                     </span>
                                                 )}
                                             </h1>

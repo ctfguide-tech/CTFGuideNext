@@ -27,7 +27,7 @@ const Following = ({ followings, pageData, userData }) => {
         {followings.length>0 ? (
           <div className="gap-4">
             <div className="flex justify-center p-4">
-              <div className="grid max-w-7xl grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid max-w-7xl grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3">
                 {followings.length > 0 ? (
                   followings.map((following, index) => (
                     <FriendCard key={index} data={following} mutual={true} />
