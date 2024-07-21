@@ -20,6 +20,8 @@ import { Radar } from 'react-chartjs-2';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, ArcElement } from 'chart.js';
 import { buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 // Register the necessary chart components
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, ArcElement);
@@ -394,6 +396,7 @@ export default function Create() {
         try {
             const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/followers/${user.username}/follow`;
             const result = await request(endPoint, 'POST');
+            toast.success("You are now following this user.");
             setFollowedUser(true);
             console.log(result);
         } catch (err) {
@@ -406,12 +409,15 @@ export default function Create() {
         try {
             const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/followers/${user.username}/unfollow`;
             const result = await request(endPoint, 'DELETE');
+            toast.success("You are no longer following this user.");
             setFollowedUser(false);
             console.log(result);
         } catch (err) {
             console.error(err);
         }
     }
+
+
 
     // Following
     const handleFollowingPageChange = (newPage) => {
@@ -585,43 +591,30 @@ export default function Create() {
                                     <div className="mt-6  flex w-full">
                                         <div>
                                             <h1 className="f mt-8 truncate text-2xl font-bold text-white">
-                                                {(user && user.username) || (
-                                                    <Skeleton
-                                                        baseColor="#262626"
-                                                        highlightColor="#3a3a3a"
-                                                        width="15rem"
-                                                    />
-                                                )}
+                                                {user && user.username}
                                                 {user && rank && (
-                                                    <span className="ml-2 text-2xl  text-neutral-400">
+                                                    <span className="ml-2 text-2xl text-neutral-400">
                                                         #{rank}
                                                     </span>
                                                 )}
-
-
                                                 {user && user.role === 'ADMIN' && (
                                                     <span className="bg-red-600 px-1 text-sm ml-4">
                                                         <i className="fas fa-code fa-fw"></i> developer
                                                     </span>
                                                 )}
-
                                                 {user && user.role === 'PRO' && (
                                                     <span className="bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm ml-4">
                                                         <i className="fas fa-crown fa-fw"></i> pro
                                                     </span>
                                                 )}
-
                                                 {!ownUser && followedUser && (
-                                                    <span className="ml-2">
-                                                      <i className="fas fa-user-slash hover:text-gray-400"
-                                                      onClick={handleUnfollowUser}></i>
+                                                    <span className="ml-2 text-lg">
+                                                        <i className="text-lg fas fa-user-slash hover:text-gray-400" onClick={handleUnfollowUser}></i>
                                                     </span>
                                                 )}
-
                                                 {!ownUser && !followedUser && (
-                                                    <span className="ml-2">
-                                                      <i className="fas fa-user-plus hover:text-gray-400"
-                                                      onClick={handleFollowUser}></i>
+                                                    <span className="ml-2 text-lg">
+                                                        <i className="text-lg fas fa-user-plus hover:text-gray-400" onClick={handleFollowUser}></i>
                                                     </span>
                                                 )}
                                             </h1>
@@ -670,12 +663,12 @@ export default function Create() {
 
             <main className="mx-auto mt-10 max-w-7xl">
                 <div className="mt-10 grid grid-cols-1 gap-y-4 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 ">
-                    <div className="h-40 w-full border-t-4 border-blue-600 bg-neutral-800">
+                    <div className="h-48 w-full border-t-4 border-blue-600 bg-neutral-800">
 
                         <div className="col-span-2 bg-neutral-800 px-4 pt-4">
                             <div className="bg-neutral-800">
                                 <h1 className="text-xl font-bold text-white">SKILL CHART</h1>
-                                {categoryChallenges.length > 0 ? (
+                                {(categoryChallenges.length > 0 && categoryChallenges.some(category => category.completed > 0)) ? (
                                     <Radar data={radarData} options={radarOptions} />
                                 ) : (
                                     <h1 className="mx-auto my-auto text-neutral-400">
@@ -688,53 +681,62 @@ export default function Create() {
 
                         <div className="col-span-2 bg-neutral-800 px-4 pt-4 ">
                             <div className="bg-neutral-800 text-white">
-                                <h1 className="text-xl font-bold text-white mb-4">
+                                <h1 className="text-xl font-bold text-white ">
                                     DIFFICULTY BREAKDOWN
                                 </h1>
-                                <div className="flex items-center justify-center">
+                                {solvedChallenges > 0 ? (
+                                <div className="flex items-center justify-center mt-4">
                                     <div className="w-1/2">
                                         <MultiColorCircularProgressBar segments={segments} />
                                         <p className=" text-center text-white mt-2">{solvedChallenges} Solved</p>
                                     </div>
                                     <div className="w-1/2 ml-4">
-                                        {completionData.map((item, index) => (
-                                            <div key={index} className="flex justify-between mb-2">
-                                                <span
-                                                    className={`text-${item.color.split('-')[1]}-500`}
-                                                    title={`${item.name}: ${item.amount} challenges`}
-                                                >
-                                                    {item.name}
-                                                </span>
-                                                <span className="text-white">{item.amount}</span>
-                                            </div>
-                                        ))}
+                                        {(
+                                            completionData.map((item, index) => (
+                                                <div key={index} className="flex justify-between mb-2">
+                                                    <span
+                                                        className={`text-${item.color.split('-')[1]}-500`}
+                                                        title={`${item.name}: ${item.amount} challenges`}
+                                                    >
+                                                        {item.name}
+                                                    </span>
+                                                    <span className="text-white">{item.amount}</span>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
+                                ) : (
+                                    <p className="text-neutral-400">Hmm, {user && user.username} hasn't solved any challenges yet.</p>
+                                )}
                             </div>
+
                             <hr className="mt-4 border-neutral-700 px-4"></hr>
                         </div>
 
 
-                        <div className="h-full gap-y-4 bg-neutral-800 px-4 py-4">
+                        <div className=" h-full gap-y-4 bg-neutral-800 px-4 py-4">
                             <h1 className="text-xl font-bold text-white">NERD STATS</h1>
                             {user && (
-                                <div className="text-xs text-neutral-400">
+                                <div className="text-neutral-400">
                                     <p>
                                         Creation Date :{' '}
                                         {new Date(user.createdAt).toLocaleDateString('en-US', {
                                             month: 'long',
                                             day: 'numeric',
-                                            year: 'numeric',
-                                            minute: 'numeric',
-                                            hour: 'numeric',
+                                            year: 'numeric'
                                         })}
                                     </p>
                                     <p>Total Challenges: {user.totalChallenges || '0'}</p>
                                     <p>Total Writeups: {user.totalWriteups || '0'}</p>
                                     <p>Total Badges: {user.totalBadges || '0'}</p>
+                                 
                                 </div>
                             )}
+
+                            
                         </div>
+                
                     </div>
                     <div className="col-span-3 border-t-4 border-blue-600">
                         {displayMode === 'followers' && (
@@ -851,7 +853,18 @@ export default function Create() {
                         )}
 
 
-
+<ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
                     </div>
                 </div>
             </main>
