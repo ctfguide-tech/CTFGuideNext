@@ -948,19 +948,7 @@ export default function Create() {
                                         <MultiColorCircularProgressBar segments={segments} />
                                         <p className=" text-center text-white mt-2">{solvedChallenges} Solved</p>
                                     </div>
-                                    <div className="w-1/2 ml-4">
-                                        {completionData.map((item, index) => (
-                                            <div key={index} className="flex justify-between mb-2">
-                                                <span
-                                                    className={`text-${item.color.split('-')[1]}-500`}
-                                                    title={`${item.name}: ${item.amount} challenges`}
-                                                >
-                                                    {item.name}
-                                                </span>
-                                                <span className="text-white">{item.amount}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                  
                                 </div>
                             </div>
                             <hr className="mt-4 border-neutral-700 px-4"></hr>
