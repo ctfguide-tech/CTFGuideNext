@@ -1,7 +1,7 @@
 export default function FreeBox() {
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-neutral-800">
+      <div className="rounded-lg  bg-neutral-800 shadow">
         <div className="w-full rounded-t-lg bg-blue-600 pb-8 text-center">
           <h5 className="pt-8 text-xl font-medium text-white">Standard plan</h5>
           <div className="flex items-baseline text-white">

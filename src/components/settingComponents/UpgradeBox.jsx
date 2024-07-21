@@ -1,7 +1,7 @@
 export default function UpgradeBox() {
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-neutral-800">
+      <div className="rounded-lg  bg-neutral-800 shadow">
         <div className="to-amber-00 w-full rounded-t-lg bg-gradient-to-br from-amber-600 via-yellow-400 via-65% to-amber-600 pb-4 text-center">
           <h5 className="pt-8 text-xl font-medium text-white">Pro plan</h5>
           <div className="text-white">

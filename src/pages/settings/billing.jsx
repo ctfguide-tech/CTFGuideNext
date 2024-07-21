@@ -143,7 +143,7 @@ export default function Billing() {
             <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
               Billing
             </h1>
-            <div className="md grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
+            <div className="w-full grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
               <FreeBox />
               <UpgradeBox />
             </div>
