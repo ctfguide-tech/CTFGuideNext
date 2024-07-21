@@ -756,6 +756,7 @@ export default function Create() {
                                                         ACTIVITY CALENDAR
                                                     </h2>
                                                     <div className="flex justify-center">
+                                                      { activityCalender && 
                                                         <ActivityCalendar
                                                             data={activityData}
                                                             showMonthLabels={true} // Ensure month labels are shown
@@ -776,7 +777,10 @@ export default function Create() {
                                                                 ],
                                                                 level4: '#3a8fff',
                                                             }}
-                                                        />{' '}
+                                                        />
+                                                        
+                                                        }
+                                                        {' '}
                                                     </div>{' '}
                                                 </div>{' '}
                                             </div>
