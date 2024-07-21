@@ -756,7 +756,7 @@ export default function Create() {
                                                         ACTIVITY CALENDAR
                                                     </h2>
                                                     <div className="flex justify-center">
-                                                      { activityCalender && 
+                                                      { activityData && 
                                                         <ActivityCalendar
                                                             data={activityData}
                                                             showMonthLabels={true} // Ensure month labels are shown
