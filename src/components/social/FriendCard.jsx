@@ -3,6 +3,8 @@ import { CardDecorator } from '../design/CardDecorator';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 import { Tooltip } from 'react-tooltip';
+import { useEffect, useState } from 'react';
+import request from '@/utils/request';
 
 const FriendCard = ({ data }, mutual) => {
   const {
@@ -15,6 +17,18 @@ const FriendCard = ({ data }, mutual) => {
     followedBy,
     role,
   } = data;
+  const [rank, setRank] = useState('?');
+  useEffect(() => {
+    //call to get the rank
+    const getRank = async () => {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/rank`, 'GET', null);
+      console.log("RANK RESPONSE", response.rank);
+      if(response.rank) {
+        setRank(response.rank);
+      }
+    };
+    getRank();
+  }, []);
 
   const pfp =
     profileImage ||
@@ -108,7 +122,7 @@ const FriendCard = ({ data }, mutual) => {
             </div>
             <div>
               <p className="text-lg font-bold text-white hover:text-gray-400">
-                {points} points
+                #{rank}
               </p>
             </div>
           </div>
