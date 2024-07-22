@@ -35,11 +35,10 @@ export default function UpgradeBox() {
       });
 
       if (result.error) {
-        //toast.error(result.error.message);
         console.log(result.error.message);
       }
     } catch (error) {
-     // toast.error('Internal Error on our end please try again later');
+      console.log(error);
     }
     setLoading(-1);
   };
