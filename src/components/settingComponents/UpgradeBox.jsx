@@ -21,23 +21,27 @@ export default function UpgradeBox() {
         data: {},
       }
 
+      console.log("Making a redirect to checkout...")
       const url = `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`;
       const session = await request(url, 'POST', body);
+      console.log("Data back from the server: ", session);
 
       if (session.error) {
-        //toast.error('Payment session failed');
         console.log('Creating the stripe session failed');
         return;
       }
 
+      console.log("redirect starting now...")
       const result = await stripe.redirectToCheckout({
         sessionId: session.sessionId,
       });
+      console.log("redirect ending now...")
 
       if (result.error) {
         console.log(result.error.message);
       }
     } catch (error) {
+      console.log("INTERNAL SERVER ERRROROOROR")
       console.log(error);
     }
     setLoading(-1);
