@@ -3,7 +3,7 @@ import request from '@/utils/request';
 import { loadStripe } from '@stripe/stripe-js';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 import { useState } from 'react';
-const subscriptionTypes = ['CTFGuidePro', 'CTFGuideProYearly'];
+const subscriptionTypes = ['PRO_MONTHLY', 'PRO_YEARLY'];
 
 export default function UpgradeBox() {
   const [loading, setLoading] = useState(-1);
