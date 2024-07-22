@@ -5,6 +5,8 @@ import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import { useState, useEffect } from 'react';
 import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Preferences(){
   function loadPreferences() {
@@ -37,6 +39,7 @@ export default function Preferences(){
     xhr.send();
   }
 
+
     function savePreferences() {
         document.getElementById('savePreferences').innerHTML = 'Saving...';
     
@@ -49,6 +52,7 @@ export default function Preferences(){
     
         xhr.addEventListener('readystatechange', function() {
           if (this.readyState === 4) {
+            toast.success("Preferences saved");
             document.getElementById('savePreferences').innerHTML = 'Save';
           }
         });
@@ -65,6 +69,7 @@ export default function Preferences(){
       const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    loadPreferences();
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -75,6 +80,8 @@ export default function Preferences(){
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+
+
   }, []);
       
     return(
@@ -171,6 +178,18 @@ export default function Preferences(){
                           Save
                         </button>
                       </div>
+                      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
                     </div>
                   </div>
                 </div>

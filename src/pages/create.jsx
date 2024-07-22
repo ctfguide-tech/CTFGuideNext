@@ -14,6 +14,9 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import request from "@/utils/request";
 import Menu from '@/components/editor/Menu';
 import Skeleton from 'react-loading-skeleton';
+import { Popover as HeadlessPopover } from '@headlessui/react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 
 export default function Create() {
   const [activeTab, setActiveTab] = useState('unverified');
@@ -132,19 +135,19 @@ export default function Create() {
     try {
       switch (selection) {
         case 'unverified':
-          setTitle('Your Challenges');
+          setTitle('Unverified');
           setInfoText(
             'Please wait for admins to approve unverified challenges!'
           );
           response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, "GET", null);
           break;
         case 'pending':
-          setTitle('Your Challenges');
+          setTitle('Pending Changes');
           setInfoText('These challenges are awaiting changes!');
           response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, "GET", null);
           break;
         case 'published':
-          setTitle('Your Challenges');
+          setTitle('Published');
           setInfoText(
             'These challenges are live! Share them with your friends!'
           );
@@ -213,6 +216,35 @@ export default function Create() {
     );
   }
 
+  const [openModal, setOpenModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+
+  const handleOpenModal = (content) => {
+    setModalContent(content);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setModalContent('');
+  };
+
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/notifications`, "GET", null);
+        const challengeNotifications = response.filter(notification => notification.type === 'CHALLENGE');
+        setNotifications(challengeNotifications);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
   return (
     <>
       <Head>
@@ -252,7 +284,7 @@ export default function Create() {
 
 
                 <div className='mx-auto max-w-7xl'>
-                  <div className="hidden  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
+                  <div className="mb-4  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
                     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
                       <div
                         className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
@@ -267,17 +299,11 @@ export default function Create() {
                         />
                       </div>
                       <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
-                        <h2 className="text-base font-semibold leading-8 text-blue-600">IMPACT AT A GLANCE</h2>
-                        <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                          Your impact on cybersecurity education
-                        </p>
-                        <p className="mt-4 text-lg leading-8 text-gray-300">
-                          It's contributions from people like you that is creating a generation of cybersecurity professionals.
-                        </p>
+                   
                       </div>
-                      <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-10 text-white sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+                      <dl className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-10 text-white sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4">
                         {stats.map((stat) => (
-                          <div key={stat.id} className="flex flex-col gap-y-3 border-l border-white/10 pl-6">
+                          <div key={stat.id} className="flex text-center flex-col gap-y-3  border-white/10 pl-6">
                             <dt className="text-sm leading-6">{stat.name}</dt>
                             <dd className="order-first text-3xl font-semibold tracking-tight">{stat.value}</dd>
                           </div>
@@ -287,7 +313,7 @@ export default function Create() {
                   </div></div>
 
 
-
+                        <br></br>
                 <div className="  pb-4 xl:border-t-0 ">
                   <div className="flex items-center">
                     <h1 className="flex-1 text-2xl font-medium  text-white">
@@ -301,17 +327,16 @@ export default function Create() {
                       </div>
                     </h1>
 
-                    <a href="/create/new" className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
-                    <div className="relative">
-                      <button
+                    <HeadlessPopover className="relative inline-block text-left">
+                      <HeadlessPopover.Button
                         type="button"
-                        className="inline-flex w-full justify-center gap-x-1.5 rounded-md   px-3 py-2 text-sm font-semibold text-white shadow-sm  hover:bg-neutral-800"
+                        className="inline-flex  justify-center gap-x-1 rounded-md px-2 py-1 mr-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800"
                         id="sort-menu-button"
                         aria-expanded={isOpen}
                         aria-haspopup="true"
                         onClick={toggleDropdown}
                       >
-                        <i class="fas fa-filter -ml-0.5 mt-1.5 h-5 w-5 text-white"></i>
+                        <i className="fas fa-filter -ml-0.5 mt-1.5 h-5 w-5 text-white"></i>
                         {title}
                         <svg
                           className="-mr-1 h-5 w-5 text-white"
@@ -320,57 +345,40 @@ export default function Create() {
                           aria-hidden="true"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                           />
                         </svg>
-                      </button>
-
-
-
-                      <div
-                        className={`absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md  border border-neutral-600 bg-neutral-800  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${isOpen ? 'block' : 'hidden'
-                          }`}
-                        role="menu"
-                        aria-orientation="vertical"
-                        aria-labelledby="sort-menu-button"
-                        tabIndex="-1"
-                      >
-                        <div className="py-1" role="none">
+                      </HeadlessPopover.Button>
+                      <HeadlessPopover.Panel className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md border border-neutral-600 bg-neutral-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="py-1">
                           <a
                             href="#"
-                            className="block px-4 py-2 text-sm text-white"
-                            role="menuitem"
-                            tabIndex="-1"
+                            className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
                             onClick={async () => fetchChallenges('unverified')}
-                            id="sort-menu-item-0"
                           >
                             Unverified
                           </a>
                           <a
                             href="#"
-                            className="block px-4 py-2 text-sm text-white"
-                            role="menuitem"
-                            tabIndex="-1"
+                            className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
                             onClick={async () => fetchChallenges('pending')}
-                            id="sort-menu-item-1"
                           >
                             Pending Changes
                           </a>
                           <a
                             href="#"
-                            className="block px-4 py-2 text-sm text-white"
-                            role="menuitem"
-                            tabIndex="-1"
+                            className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
                             onClick={async () => fetchChallenges('published')}
-                            id="sort-menu-item-2"
                           >
                             Published
                           </a>
                         </div>
-                      </div>
-                    </div>
+                      </HeadlessPopover.Panel>
+                    </HeadlessPopover>
+                    <a href="/create/new" className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
+
                   </div>
 
                   {hasChallenges && (
@@ -392,6 +400,7 @@ export default function Create() {
                                 <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                                   <span className="sr-only">Edit</span>
                                 </th>
+                              
                               </tr>
                             </thead>
                             <tbody className="bg-neutral-800">
@@ -401,16 +410,29 @@ export default function Create() {
                                     {challenge.title}
                                   </td>
                                   <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3 text-white">
-                                    {challenge.verified ? 'Verified' : challenge.pending ? 'Pending' : 'Unverified'}
+                                    {challenge.state.split("_")[1].toUpperCase()}
                                   </td>
                                   <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
                                     {new Date(challenge.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                   </td>
                                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                    <a href={`/create/edit?cid=${challenge.id}`} className="text-blue-600 hover:text-blue-900">
-                                      Edit<span className="sr-only">, {challenge.title}</span>
+                                    <a href={`/create/edit?cid=${challenge.id}`} className="text-blue-600 hover:text-blue-500">
+                                    <i className="fas fa-pencil-alt mr-1"></i> Edit<span className="sr-only">, {challenge.title}</span>
+                                    </a>
+
+                                    <button
+                                      onClick={() => handleOpenModal(challenge.snote)}
+                                      className="ml-4 text-orange-600 hover:text-orange-500"
+                                    >
+                                      <i className="fas fa-comments mr-1"></i> View Feedback
+                                    </button>
+
+
+                                    <a href={`/create/edit?cid=${challenge.id}`} className="ml-4 text-red-600 hover:text-red-500">
+                                     <i className="fas fa-trash-alt mr-1"></i> Delete
                                     </a>
                                   </td>
+                                  
                                 </tr>
                               ))}
                             </tbody>
@@ -425,9 +447,9 @@ export default function Create() {
                       <div className="mx-auto mt-2 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
                         <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
                           <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
-                          <p>Looks like you have no {title.toLowerCase().split(" ")[0]} challenges yet.</p>
+                          <p>No challenges found. Try adjusting the filters.</p>
                           <a href="/guides/create" className='mx-auto'>
-                            <p className='mx-auto text-center text-sm text-blue-600 underline'>Want to create CTF's? Learn more here<ArrowRightIcon className='ml-1 mt-0.5 h-5 hidden' /></p>
+                            <p className='mx-auto text-center text-sm text-blue-600 '>Want to create CTF's? Learn more here<ArrowRightIcon className='ml-1 mt-0.5 h-5 hidden' /></p>
                           </a>
                         </div>
                       </div>
@@ -517,53 +539,30 @@ export default function Create() {
               </div>
             </div>
 
-            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0 hidden">
+            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0 ">
               <div className="pl-6 lg:w-80">
                 <div className="pt-6 pb-2">
-                  <h2 className="text-2xl text-white ">Notifications</h2>
+                  <h2 className="text-2xl text-white ">Challenge Notifications</h2>
                 </div>
                 <div>
-                  <ul role="list" className=" divide-y divide-neutral-800">
-                    <li className="py-4">
-                      <div className="flex space-x-3">
-                        <i className="fas fa-check-circle text-green-500 mt-4"></i>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-medium text-blue-500">CTFGuide Admin</h3>
-                            <p className="text-xs text-white">01/12/24 1:45 PM EST</p>
+                  <ul role="list" className=" divide-y divide-neutral-800 list-none">
+                    {notifications.slice(0, 3).map((notification) => (
+                      <li key={notification.id} className="py-4">
+                        <div className="flex space-x-3">
+                          <i className={`fas ${notification.status === 'approved' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-yellow-500'} mt-4`}></i>
+                          <div className="flex-1 space-y-1">
+                            <div className="flex items-center justify-between">
+                              <h3 className="text-sm font-medium text-blue-500">CTFGuide  Team</h3>
+                              <p className="text-xs text-white">{new Date(notification.createdAt).toLocaleString()}</p>
+                            </div>
+                            <p className="text-sm text-white">
+                              {notification.message}
+                            </p>
                           </div>
-                          <p className="text-sm text-white">
-                            Approved your challenge "FUNSIZE 2". Congrats!
-                          </p>
                         </div>
-                      </div>
-                    </li>
-
-
-                    <li className="py-4">
-                      <div className="flex space-x-3">
-                        <i className="fas fa-exclamation-circle text-yellow-500 mt-4"></i>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-medium text-blue-500">CTFGuide Admin</h3>
-                            <p className="text-xs text-white">01/12/24 1:45 PM EST</p>
-                          </div>
-                          <p className="text-sm text-white">
-                            Your challenge "Eggnog 12" requires changes.
-                          </p>
-                        </div>
-                      </div>
-                    </li>
+                      </li>
+                    ))}
                   </ul>
-                  <div className="border-t border-neutral-800 py-4 text-sm">
-                    <a
-                      href="#"
-                      className="font-semibold text-blue-600 hover:text-blue-900"
-                    >
-                      View all notifications
-                      <span aria-hidden="true"> &rarr;</span>
-                    </a>
-                  </div>
                 </div>
               </div>
             </div>
@@ -572,6 +571,51 @@ export default function Create() {
         <br></br>
       </main>
       <Footer />
+      <Modal
+        
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box 
+        className='border-t-4 border-blue-700 max-w-xl'
+        sx={{  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+
+  bgcolor: '#141414',
+  color: 'white',
+  boxShadow: 24,
+  p: 4,
+  }}>
+          <h1 id="modal-title" className='text-2xl font-medium text-white'>
+           <i className='fas fa-comments mr-1'></i> Challenge Feedback
+          </h1>
+          <p id="modal-description" className='mt-4'>
+            <b>Reason for change request:</b><br></br>
+           <span className='text-yellow-500'>
+           {modalContent}
+            </span>
+
+
+            <br></br>
+            <br></br>
+            <hr className='border-neutral-700'></hr>
+            <br></br>
+            If you disagree with the changes, please join our <a href='https://discord.gg/bH6gu3HCFF' className='text-blue-500 hover:text-blue-600'><i className='fab fa-discord '></i> Discord</a> and voice your opinion.
+            <br></br>
+            <br></br>
+            Thank you!
+            <br></br>
+            <i>CTFGuide Moderation Team</i>
+          </p>
+          <div className='flex justify-end mt-10'>
+          <button onClick={handleCloseModal} className='bg-blue-700 text-md shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>Dismiss</button>
+          </div>
+        </Box>
+      </Modal>
     </>
   );
 }
