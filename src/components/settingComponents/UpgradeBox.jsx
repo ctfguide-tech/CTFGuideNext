@@ -25,7 +25,7 @@ export default function UpgradeBox() {
       const session = await request(url, 'POST', body);
 
       if (session.error) {
-        toast.error('Payment session failed');
+        //toast.error('Payment session failed');
         console.log('Creating the stripe session failed');
         return;
       }
@@ -35,11 +35,11 @@ export default function UpgradeBox() {
       });
 
       if (result.error) {
-        toast.error(result.error.message);
+        //toast.error(result.error.message);
         console.log(result.error.message);
       }
     } catch (error) {
-      toast.error('Internal Error on our end please try again later');
+     // toast.error('Internal Error on our end please try again later');
     }
     setLoading(-1);
   };
