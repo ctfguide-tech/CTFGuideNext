@@ -8,6 +8,8 @@ const subscriptionTypes = ['PRO_MONTHLY', 'PRO_YEARLY'];
 export default function UpgradeBox() {
   const [loading, setLoading] = useState(-1);
 
+  console.log(STRIPE_KEY);
+
   const redirectToCheckout = async (subIdx) => {
     setLoading(subIdx);
     try {
