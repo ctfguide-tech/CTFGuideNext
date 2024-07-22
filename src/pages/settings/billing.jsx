@@ -41,7 +41,7 @@ export default function Billing() {
       }
 
       const result = await stripe.redirectToCheckout({
-        sessionId: session.sessionId,
+        sessionId: session.sessionIds,
       });
 
       if (result.error) {
