@@ -1013,12 +1013,12 @@ export default function Create() {
 
                         {displayMode === 'default' && (
                             <>
-                     <div className='col-span-3 border-t-4 border-blue-600'>
+                     <div className='col-span-3 border-t-2 border-blue-600'>
                         <div className='bg-neutral-800 px-4 py-4 '>
                           <div className="mb-2 w-full flex justify-between  ">
                             <div className="flex space-x-2  rounded-md">
                                 {user && (
-                                    <h1 className='text-2xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
+                                    <h1 className='text-xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
                                 )}
                             </div>
                             {bioViewCheck() ? renderEditButton():'' }
@@ -1041,7 +1041,7 @@ export default function Create() {
                                                     'LIKED CHALLENGES',
                                                     'WRITEUPS',
                                                     'CREATED CHALLENGES',
-                                                    'BADGES',
+                                                 
                                                 ].map((tab) => (
                                                     <li
                                                         key={tab}

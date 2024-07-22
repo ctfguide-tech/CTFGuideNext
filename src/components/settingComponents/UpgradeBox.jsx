@@ -1,17 +1,67 @@
+
+import request from '@/utils/request';
+import { loadStripe } from '@stripe/stripe-js';
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
+import { useState } from 'react';
+const subscriptionTypes = ['PRO_MONTHLY', 'PRO_YEARLY'];
+
 export default function UpgradeBox() {
+  const [loading, setLoading] = useState(-1);
+
+  console.log(STRIPE_KEY);
+
+  const redirectToCheckout = async (subIdx) => {
+    setLoading(subIdx);
+    try {
+
+      const stripe = await loadStripe(STRIPE_KEY);
+      const subscriptionType = subscriptionTypes[subIdx];
+      const body = {
+        subType: subscriptionType,
+        quantity: 1,
+        operation: 'subscription',
+        data: {},
+      }
+
+      console.log("Making a redirect to checkout...")
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`;
+      const session = await request(url, 'POST', body);
+      console.log("Data back from the server: ", session);
+
+      if (session.error) {
+        console.log('Creating the stripe session failed');
+        return;
+      }
+
+      console.log("redirect starting now...")
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+      console.log("redirect ending now...")
+
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch (error) {
+      console.log("INTERNAL SERVER ERRROROOROR")
+      console.log(error);
+    }
+    setLoading(-1);
+  };
+
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-neutral-800">
-        <div className="to-amber-00 w-full rounded-t-lg bg-gradient-to-br from-amber-600 via-yellow-400 via-65% to-amber-600 pb-4 text-center">
-          <h5 className="pt-8 text-xl font-medium text-white">Pro plan</h5>
-          <div className="text-white">
-            <span class="text-3xl font-semibold">$</span>
-            <span class="text-5xl font-extrabold tracking-tight">5</span>
-            <span class="ms-1 text-xl font-normal">/month</span>
-          </div>
-          <div className="mx-4 rounded-3xl bg-gray-600/75 py-1 text-sm text-white">
-            Yearly subscribers save $2/month
-          </div>
+    <div className="rounded-lg  bg-neutral-800 shadow">
+    <div className="to-amber-00 w-full rounded-t-lg bg-gradient-to-br from-amber-600 via-yellow-400 via-65% to-amber-600 pb-4 text-center">
+    <h5 className="pt-8 text-xl font-medium text-white">Pro plan</h5>
+    <div className="text-white">
+    <span class="text-3xl font-semibold">$</span>
+    <span class="text-5xl font-extrabold tracking-tight">5</span>
+    <span class="ms-1 text-xl font-normal">/month</span>
+    </div>
+    <div className="mx-4 rounded-3xl bg-gray-600/75 py-1 text-sm text-white">
+    Yearly subscribers save $2/month
+    </div>
         </div>
 
         <ul className="my-4 space-y-5 px-8">
@@ -115,8 +165,11 @@ export default function UpgradeBox() {
           </li>
         </ul>
         <div className="px-8 pb-8 pt-4">
-          <button className="text-md flex w-full justify-center rounded-lg bg-blue-600  py-2 text-center font-medium text-white ">
-            Subscribe
+
+          <button onClick={() => redirectToCheckout(0)} 
+            disabled={loading !== -1}
+            className="text-md flex w-full justify-center rounded-lg bg-blue-600  py-2 text-center font-medium text-white ">
+            {loading !== -1? "Redirecting..." : "Subscribe"}
           </button>
         </div>
       </div>

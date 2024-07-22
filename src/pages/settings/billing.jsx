@@ -15,7 +15,7 @@ export default function Billing() {
     try {
       const stripe = await loadStripe(STRIPE_KEY);
       const subscriptionType = document.getElementById('paymentType').value;
-      console.log(subscriptionType);
+    //  console.log(subscriptionType);
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
@@ -41,11 +41,11 @@ export default function Billing() {
       }
 
       const result = await stripe.redirectToCheckout({
-        sessionId: session.sessionId,
+        sessionId: session.sessionIds,
       });
 
       if (result.error) {
-        console.log(result.error.message);
+      //  console.log(result.error.message);
       }
     } catch (error) {
       console.log(error);
@@ -96,7 +96,7 @@ export default function Billing() {
         },
       });
       const data = await response.json();
-      console.log(data.message);
+     // console.log(data.message);
     } catch (err) {
       console.log(err);
     }
@@ -143,7 +143,7 @@ export default function Billing() {
             <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
               Billing
             </h1>
-            <div className="md grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
+            <div className="w-full grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
               <FreeBox />
               <UpgradeBox />
             </div>
