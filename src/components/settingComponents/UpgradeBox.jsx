@@ -8,8 +8,6 @@ const subscriptionTypes = ['PRO_MONTHLY', 'PRO_YEARLY'];
 export default function UpgradeBox() {
   const [loading, setLoading] = useState(-1);
 
-  console.log(STRIPE_KEY);
-
   const redirectToCheckout = async (subIdx) => {
     setLoading(subIdx);
     try {
@@ -23,21 +21,17 @@ export default function UpgradeBox() {
         data: {},
       }
 
-      console.log("Making a redirect to checkout...")
       const url = `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`;
       const session = await request(url, 'POST', body);
-      console.log("Data back from the server: ", session);
 
       if (session.error) {
         console.log('Creating the stripe session failed');
         return;
       }
 
-      console.log("redirect starting now...")
       const result = await stripe.redirectToCheckout({
         sessionId: session.sessionId,
       });
-      console.log("redirect ending now...")
 
       if (result.error) {
         console.log(result.error.message);

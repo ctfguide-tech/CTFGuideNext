@@ -11,71 +11,31 @@ import FreeBox from '@/components/settingComponents/FreeBox';
 import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
 
 export default function Billing() {
-  const redirectToCheckout = async (event) => {
-    try {
-      const stripe = await loadStripe(STRIPE_KEY);
-      const subscriptionType = document.getElementById('paymentType').value;
-    //  console.log(subscriptionType);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-checkout-session`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            subType: subscriptionType,
-            quantity: 1,
-            operation: 'subscription',
-            data: {},
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        }
-      );
-
-      const session = await response.json();
-      if (session.error) {
-        console.log('Creating the stripe session failed');
-        return;
-      }
-
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.sessionIds,
-      });
-
-      if (result.error) {
-      //  console.log(result.error.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const updateCardInfo = async () => {
     try {
+      window.location.href = 'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
+      /*
       const stripe = await loadStripe(STRIPE_KEY);
-      const subscriptionType = document.getElementById('paymentType').value;
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/update-card`,
         {
           method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            subType: subscriptionType,
-          }),
+          body: JSON.stringify({ subType: "PRO_MONTHLY" }),
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `bearer ${getCookie()}`
           },
         }
       );
-
       const session = await response.json();
+
+      console.log(session);
 
       await stripe.redirectToCheckout({
         sessionId: session.sessionId,
       });
+      */
     } catch (error) {
       console.log(error);
     }
@@ -196,41 +156,13 @@ export default function Billing() {
               </p>
             </div>
 
-            <div className="hidden">
+            <div className="">
               <hr className="mt-4 border-neutral-500"></hr>
-              <h1 className="mt-4 text-white"> Dev Testing</h1>
-
-              <select
-                id="paymentType"
-                className="mt-4 border-none bg-neutral-800 py-1 text-white"
-              >
-                <option value="CTFGuidePro">CTFGuidePro</option>
-                <option value="CTFGuideStudentEDU">CTFGuideStudentsEDU</option>
-                <option value="CTFGuideInstitutionEDU">
-                  CTFGuideInstitutionEDU
-                </option>
-              </select>
-
-              <br></br>
-              <button
-                onClick={redirectToCheckout}
-                className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
-              >
-                Stripe Checkout Demo
-              </button>
-              <br></br>
-
               <button
                 onClick={updateCardInfo}
                 className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
               >
-                Update card infomation
-              </button>
-              <button
-                onClick={cancelSubscription}
-                className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
-              >
-                cancel subscription
+                Manage Subscription
               </button>
             </div>
           </div>
