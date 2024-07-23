@@ -1,13 +1,12 @@
-import React, { forwardRef } from 'react';
+import countryList from "react-select-country-list";
 
-const Locations = forwardRef((props, ref) => {
+export function Locations() {
   return (
+
     <select
       id="location"
       name="country"
       autoComplete="country-name"
-      ref={ref}
-      {...props}
       className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
     >
 
@@ -345,6 +344,5 @@ const Locations = forwardRef((props, ref) => {
       <option value="Zimbabwe">Zimbabwe</option>
     </select>
   );
-});
 
-export { Locations };
+}   

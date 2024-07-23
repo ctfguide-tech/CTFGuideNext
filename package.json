@@ -31,7 +31,7 @@
     "asciinema-player": "3.6.3",
     "autoprefixer": "^10.4.12",
     "babel-plugin-macros": "^3.1.0",
-    "chart.js": "^4.4.3",
+    "chart.js": "^4.4.1",
     "clsx": "^1.2.1",
     "corepack": "^0.17.0",
     "dotenv": "^16.0.3",
@@ -48,18 +48,11 @@
     "postcss-focus-visible": "^6.0.4",
     "puppeteer": "^22.0.0",
     "react": "18.2.0",
-    "react-activity-calendar": "^2.2.11",
     "react-chartjs-2": "^5.2.0",
-    "react-circular-progressbar": "^2.1.0",
     "react-collapsible": "^2.10.0",
-    "react-confetti": "^6.1.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.2.0",
-    "react-easy-crop": "^5.0.7",
     "react-firebase-hooks": "^5.1.1",
     "react-google-charts": "^4.0.1",
-    "react-image-crop": "^11.0.5",
     "react-joyride": "^2.7.2",
     "react-loading-skeleton": "^3.2.0",
     "react-markdown": "^8.0.7",
@@ -89,6 +82,5 @@
     "eslint-config-prettier": "^8.8.0",
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13"
-  },
-  "packageManager": "yarn@3.4.1+sha512.a333bf9c2557d71f5ba87dd1446cde24bb9c35301ec29dd2baba577b3f9d1ab61348b66a1324de9088c40a996c5b9203794da8bf14cab9fae6a6eccc00cb8078"
+  }
 }

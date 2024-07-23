@@ -48,7 +48,6 @@ export default function Createchall() {
 
   const [newConfig, setNewConfig] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
 
   const validateNewChallege = async () => {
     for (const p of penalty) {
@@ -67,24 +66,18 @@ export default function Createchall() {
         await uploadChallenge('');
         return;
       } else {
-        try {
-          const cookie = getCookie('idToken');
-          const data = jwtDecode(cookie);
-          const token = data.id;
-          console.log('Uploading file with token:', token);
-          const fileId = await fileApi(token, selectedFile);
-          if (fileId !== null) {
-            await uploadChallenge(fileId);
-          } else {
-            toast.error('Something went wrong with the file upload');
-          }
-        } catch (error) {
-          console.error('Error during file upload:', error);
-          toast.error('An error occurred during file upload');
+        const cookie = getCookie('idToken');
+        const data = jwtDecode(cookie);
+        const token = data.id;
+        const fileId = await fileApi(token, selectedFile);
+        if(fileId !== null) {
+          await uploadChallenge(fileId);
+        } else {
+          toast.error('Something went wrong with the file upload');
         }
       }
     } else {
-      console.warn('Either the file, token, or challenge is invalid');
+      console.warn('Either the file, toke, or challenge is invalid');
     }
   };
 
@@ -93,7 +86,7 @@ export default function Createchall() {
     try {
       const nConfig = newConfig.replace('\n', ' && ');
 
-      console.log('Uploading challenge with category:', category);
+      console.log([category])
 
       const challengeInfo = {
         name: newChallengeName,
@@ -113,7 +106,6 @@ export default function Createchall() {
         challengeInfo,
         username: localStorage.getItem('username'),
       };
-      console.log('Sending request to:', url, 'with body:', body);
       const data = await request(url, "POST", body);
 
       if (data && data.success) {
@@ -123,8 +115,7 @@ export default function Createchall() {
         toast.error(data.message);
       }
     } catch (err) {
-      console.error('Error during challenge upload:', err);
-      toast.error('An error occurred during challenge upload');
+      console.log(err);
     }
     setSending(false);
   };
@@ -134,36 +125,7 @@ export default function Createchall() {
   }, []);
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (uploadedFiles.length > 0) {
-      toast.error('Only one file can be uploaded at a time. Please zip multiple files.');
-      return;
-    }
-    setSelectedFile(file);
-    setUploadedFiles([file]);
-  };
-
-  const handleFileDelete = (index) => {
-    const newFiles = uploadedFiles.filter((_, i) => i !== index);
-    setUploadedFiles(newFiles);
-    if (newFiles.length === 0) {
-      setSelectedFile(null);
-    }
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    if (uploadedFiles.length > 0) {
-      toast.error('Only one file can be uploaded at a time. Please zip multiple files.');
-      return;
-    }
-    const file = event.dataTransfer.files[0];
-    setSelectedFile(file);
-    setUploadedFiles([file]);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
+    setSelectedFile(event.target.files[0]);
   };
 
   return (
@@ -451,23 +413,19 @@ export default function Createchall() {
             <div className="px-5 py-1">
               <h1>Import files from your computer</h1>
 
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                className="mt-4 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none"
-              >
+              <label className="mt-4 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none">
                 <span className="flex items-center space-x-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-gray-300"
+                    class="h-6 w-6 text-gray-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    stroke-width="2"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
                   </svg>
@@ -486,28 +444,14 @@ export default function Createchall() {
                   onChange={(e) => handleFileChange(e)}
                   type="file"
                   name="file_upload"
-                  className="hidden"
+                  class="hidden"
                 />
-              </div>
-
-              <div className="mt-4">
-                {uploadedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 border-b border-neutral-600">
-                    <span className="text-white">{file.name}</span>
-                    <button
-                      onClick={() => handleFileDelete(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
+              </label>
 
               <div className="bg-neutral-850 mb-10 mt-10 rounded-lg border border-neutral-500 px-4 py-2 text-white">
                 <b>🗒️ A note about file uploads</b>
                 <h1>
-                  Please assume that files are placed in the home directory.
+                  Please assume that files are places in the home directory.
                 </h1>
               </div>
             </div>

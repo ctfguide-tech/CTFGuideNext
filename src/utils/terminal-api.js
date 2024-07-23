@@ -1,41 +1,20 @@
 
-async function buildDocketTerminal(challengeId, jwt) {
-  try {
-    const url = process.env.NEXT_PUBLIC_TERM_URL + 'docket/createDocket';
-    const body = {
-      jwtToken: jwt,
-      terminalUserName: localStorage.getItem('username').toLowerCase(),
-      challengeID: challengeId
-    };
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    };
-
-    const response = await fetch(url, requestOptions);
-    return await response.json();
-
-  } catch(err) {
-    console.log(err);
-    return null;
-  }
-}
-
-
-const buildTerminal = async (challenge, token, type) => {
+const buildTerminal = async (challenge, token) => {
   try {
     console.log('Creating a terminal ...');
+    let min = 1000;
+    let max = 9999;
 
-    let url = process.env.NEXT_PUBLIC_TERM_URL + 'docket/createDocket';
-    if(type === 2) {
-      url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
-    }
+    const code = Math.floor(Math.random() * (max - min + 1)) + min;
+    const url = process.env.NEXT_PUBLIC_TERM_URL + 'Terminal/createTerminal';
 
     const body = {
       jwtToken: token,
-      terminalUserName: localStorage.getItem('username').toLowerCase(),
+      TerminalGroupName: 'school-class-session',
+      TerminalID: code,
+      classID: 'psu101',
+      organizationName: 'PSU',
+      userID: localStorage.getItem('username').toLowerCase(),
       challengeID: challenge.id,
     };
 
@@ -108,30 +87,33 @@ const getStatus = async (id, jwt) => {
   }
 };
  
-async function checkUserTerminal(token, challengeId, type) { // type will be 1 or 2
+async function checkUserTerminal(token, challengeId) {
   console.log('checkUserTerminal...');
   try {
-
-    let url = null;
-    if(type === 1) {
-      url = `${process.env.NEXT_PUBLIC_TERM_URL}/docket/checkUserDocket?jwtToken=${token}&challengeID=${challengeId}`;
-    } else {
-      url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/checkUserTerminal?jwtToken=${token}&challengeID=${challengeId}`;
+    const url = `${process.env.NEXT_PUBLIC_TERM_URL}Terminal/checkUserTerminal?jwtToken=${token}&challengeID=${challengeId}`;
+    const response = await fetch(url, { method: 'GET' });
+    const readableStream = response.body;
+    const textDecoder = new TextDecoder();
+    const reader = readableStream.getReader();
+    let result = await reader.read();
+    let data = null;
+    while (!result.done) {
+      let stat = textDecoder.decode(result.value);
+      data = JSON.parse(stat);
+      result = await reader.read();
     }
 
-    const response = await fetch(url, { method: 'GET' });
-    const res = await response.json();
-    //console.log(res);
-    if(!res.url) throw("No terminal found");
-    return res;
-
+    if(data && data.url) {
+      return data;
+    }
+    return null;
   } catch(err) {
     console.log(err);
     return null;
   }
 }
 
-const api = { buildTerminal, getStatus, checkUserTerminal, buildDocketTerminal};
+const api = { buildTerminal, getStatus, checkUserTerminal};
 export default api;
 
 

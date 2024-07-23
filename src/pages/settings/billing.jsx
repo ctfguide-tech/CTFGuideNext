@@ -2,13 +2,11 @@ import { loadStripe } from '@stripe/stripe-js';
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 import Head from 'next/head';
 import { Footer } from '@/components/Footer';
-import { useState, useEffect } from 'react';
-
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import UpgradeBox from '@/components/settingComponents/UpgradeBox';
 import FreeBox from '@/components/settingComponents/FreeBox';
-import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
+import BillingBanner from '@/components/settingComponents/BillingBanner';
 
 export default function Billing() {
   const redirectToCheckout = async (event) => {
@@ -102,21 +100,6 @@ export default function Billing() {
     }
   };
 
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize(); // Check on initial render
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   return (
     <>
       <Head>
@@ -133,17 +116,19 @@ export default function Billing() {
 
       <StandardNav />
 
-      <div className="mx-auto max-w-6xl md:flex">
-
-      {isMobile ? <Dropdown tab="../settings/billing"/> : <Sidebar />}
-
+      <div className="mx-auto flex max-w-6xl">
+        <Sidebar />
 
         <div className="flex-1 xl:overflow-y-auto">
           <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
             <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
               Billing
             </h1>
-            <div className="md grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
+
+            <div className="mb-4">
+              <BillingBanner />
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-4 max-md:grid-cols-1">
               <FreeBox />
               <UpgradeBox />
             </div>

@@ -3,12 +3,37 @@ import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
-import { useState, useEffect } from 'react';
-import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
+import  request  from '@/utils/request';
+import React, { useEffect, useState } from "react";
+
+
 
 export default function Preferences(){
+  const [unsavedNotif, setOpenBio] = useState(false);
+  const [banner, bannerState] = useState(false);
+
+  const [friends, setFriendNotif] = useState(false);
+  const [creator, setCreatorNotif] = useState(false);
+
+
+  const [checkboxStates, setUnsavedNotif] = useState(false);
+
+  function closeUnsavedNotif() {
+    bannerState(false);
+}
+  const handleInputChange = (event) => {
+    setUnsavedNotif(event.target.value);
+    if (event.target.value) {
+      bannerState(true);
+    } else {
+      bannerState(false)
+    }
+  };
+
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.
+
+   
 
     var xhr = new XMLHttpRequest();
 
@@ -37,7 +62,43 @@ export default function Preferences(){
     xhr.send();
   }
 
-    function savePreferences() {
+  
+  function handleCheckBox(e){
+    const checkState = e.target.value;
+    setFriendNotif(true)
+    setCreatorNotif(true)
+    
+  }
+
+  async function saveCheckBoxData() {
+    setFriendNotif(document.getElementById('friend-notif').checked);
+    setCreatorNotif(document.getElementById('challenge-notif').checked);
+    
+    var body =  {
+      FRIEND_ACCEPT: document.getElementById('friend-notif').checked,
+      CHALLENGE_VERIFY: document.getElementById('challenge-notif').checked,
+      LESSON_COMPLETION: true,
+    };
+    const data = await request(
+       `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`,
+        'PUT',
+         body
+    ).then((response) => {
+      console.log(response)
+      document.getElementById('savePreferences').innerHTML = 'Save';
+
+    });
+    if (!data) {
+        console.log('Failed to save');
+        console.log(document.getElementById('friend-notif').checked)
+    }
+     
+    
+    setFriendNotif(body.FRIEND_ACCEPT);
+    setCreatorNotif(body.CREATOR_VERIFY);
+}
+
+    async function savePreferences() {
         document.getElementById('savePreferences').innerHTML = 'Saving...';
     
         var data = JSON.stringify({
@@ -46,13 +107,20 @@ export default function Preferences(){
         });
     
         var xhr = new XMLHttpRequest();
+
+        loadPreferences();
+        closeUnsavedNotif();
+        saveCheckBoxData();
+
     
+        /*
         xhr.addEventListener('readystatechange', function() {
           if (this.readyState === 4) {
             document.getElementById('savePreferences').innerHTML = 'Save';
           }
-        });
-    
+        });    
+       
+        
         xhr.open('PUT', `${process.env.NEXT_PUBLIC_API_URL}/account/preferences`);
     
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -61,21 +129,9 @@ export default function Preferences(){
         xhr.withCredentials = true;
     
         xhr.send(data);
+        */
       }
-      const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize(); // Check on initial render
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+    
       
     return(
         <>
@@ -92,13 +148,11 @@ export default function Preferences(){
         </Head>
   
         <StandardNav />
-
-
-        <div className="mx-auto max-w-6xl md:flex">
-
-        {isMobile ? <Dropdown tab="../settings/preferences"/> : <Sidebar />}
-
-        <div className="flex-1 xl:overflow-y-auto">
+  
+        <div className="mx-auto flex max-w-6xl">
+            <Sidebar/>
+            
+            <div className="flex-1 xl:overflow-y-auto">
                   <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                     <h1 className="text-3xl font-bold tracking-tight text-white">
                       Email Preferences
@@ -116,11 +170,12 @@ export default function Preferences(){
                                 name="comments"
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                                onChange={handleInputChange}
                               />
                             </div>
                             <div className="ml-3 text-sm leading-6">
                               <label
-                                htmlFor="comments"
+                                htmlFor="friend-notif"
                                 className="font-medium text-white"
                               >
                                 Friend Requests
@@ -142,11 +197,13 @@ export default function Preferences(){
                                 name="candidates"
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                                onChange={handleInputChange}
+
                               />
                             </div>
                             <div className="ml-3 text-sm leading-6">
                               <label
-                                htmlFor="candidates"
+                                htmlFor="challenge-notif"
                                 className="font-medium text-white"
                               >
                                 Creator Notifications
@@ -178,6 +235,29 @@ export default function Preferences(){
         </div>
   
         <Footer />
+        {banner && (
+                <div
+                    style={{ backgroundColor: '#212121' }}
+                    id="savebanner"
+                    className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                    hidden={!unsavedNotif}
+                >
+                    <p className="max-w-4xl text-2xl leading-6 text-white">
+                        You have unsaved changes.
+                    </p>
+                    <div className="flex flex-none items-center gap-x-5">
+                       
+                        <button
+                            onClick={closeUnsavedNotif}
+                            type="button"
+                            className="text-xl font-semibold leading-6 text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
       </>
     );
 }

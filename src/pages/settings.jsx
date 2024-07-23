@@ -6,29 +6,15 @@ import { useState } from 'react';
 import { getCookie } from '@/utils/request';
 import General from '@/components/settingComponents/generalPage';
 import Sidebar from '@/components/settingComponents/sidebar';
+
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
-import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
 
 const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 export default function Dashboard() {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize(); // Check on initial render
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   const [inputText, setInputText] = useState('');
 
@@ -48,20 +34,23 @@ export default function Dashboard() {
 
   const user = {};
 
-  const handleClick = () => {};
+
+  const handleClick = () => {}
   useEffect(() => {
     const fileInput = document.getElementById('fileInput');
 
     // set username
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function () {
+    xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         console.log(this.responseText);
         try {
           if (document.getElementById('first-name')) {
+
             setUsername(JSON.parse(this.responseText).username);
           }
+
         } catch (e) {
           console.log(e);
         }
@@ -82,7 +71,7 @@ export default function Dashboard() {
     console.log(router.query.loc);
     if (router.query.loc == 'general' || router.query.loc == undefined) {
       setGeneral(true);
-      //     loadGeneral();
+      loadGeneral();
     } else {
       setGeneral(false);
     }
@@ -107,12 +96,67 @@ export default function Dashboard() {
     }
   }, [router.query]);
 
+  function loadGeneral() {
+    if (router.query.loc == 'general' || router.query.loc == undefined) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.addEventListener('readystatechange', function() {
+        if (this.readyState === 4) {
+          console.log(this.responseText);
+          try {
+            if (document.getElementById('first-name')) {
+              document.getElementById('first-name').value = JSON.parse(
+                this.responseText
+              ).firstName;
+              document.getElementById('last-name').value = JSON.parse(
+                this.responseText
+              ).lastName;
+              document.getElementById('bio').value = JSON.parse(
+                this.responseText
+              ).bio;
+              document.getElementById('url').value = JSON.parse(
+                this.responseText
+              ).githubUrl;
+              document.getElementById('location').value = JSON.parse(
+                this.responseText
+              ).location;
+              document.getElementById('username').value = JSON.parse(
+                this.responseText
+              ).username;
+              document.getElementById('email').value = JSON.parse(
+                this.responseText
+              ).email;
+            }
+
+            if (pfpString == '') {
+            } else {
+              //  document.getElementById('pfp').src = pfpString;
+            }
+
+
+
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      });
+
+      xhr.open('GET', `${process.env.NEXT_PUBLIC_API_URL}/account`);
+      let token = getCookie();
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.withCredentials = true;
+      xhr.send();
+
+    }
+  }
+
+  
   function loadPreferences() {
     // WARNING: For GET requests, body is set to null by browsers.
 
     var xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', function () {
+    xhr.addEventListener('readystatechange', function() {
       if (this.readyState === 4) {
         console.log(this.responseText);
         console.log('PREFFF');
@@ -137,7 +181,8 @@ export default function Dashboard() {
     xhr.send();
   }
 
-  return (
+
+  return (        
     <>
       <Head>
         <title>User Settings</title>
@@ -153,17 +198,19 @@ export default function Dashboard() {
 
       <StandardNav />
 
-      <div className="mx-auto max-w-6xl md:flex">
-        {isMobile ? <Dropdown tab="../settings"/> : <Sidebar />}
-        {general && (
-          <div id="general" className="">
-            {/*CONTAINING THE BODY OF GENERAL SECTION*/}
-            <General />
-          </div>
-        )}
+      <div className="mx-auto flex max-w-6xl">
+          <Sidebar/>
+          
+            <div id="general" className="">
+                {/*CONTAINING THE BODY OF GENERAL SECTION*/}
+                <General/>
+            </div>
+
+         
       </div>
 
       <Footer />
     </>
   );
 }
+

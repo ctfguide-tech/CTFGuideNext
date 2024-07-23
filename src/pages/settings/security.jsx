@@ -3,97 +3,63 @@ import { Footer } from '@/components/Footer';
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import { useState } from 'react';
-import request from '@/utils/request';
-//const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
-import { Context } from '@/context';
-import { useContext, useEffect } from 'react';
+import  request  from '@/utils/request';
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
+const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 
 
 export default function Security(){
+  const [unsavedNotif, setOpenBio] = useState(false);
+  const [banner, bannerState] = useState(false);
 
-  const { accountType } = useContext(Context);
+
+function closeUnsavedNotif() {
+    bannerState(false);
+}
   const [inputText, setInputText] = useState('');
-  const [isGoogle, setIsGoogle] = useState(true);
-
-  useEffect(() => {
-    setIsGoogle(accountType === "GOOGLE");
-  },[accountType])
-
+  
   const user = {};
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
-  };
-
-  async function saveSecurity() {
-    document.getElementById('saveSecurity').innerText = 'Saving...';
-    var oldPassword = document.getElementById('oldPassword').value;
-    var newPassword = document.getElementById('password').value;
-    var confirmPassword = document.getElementById('confirm-password').value;
-
-    if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match");
-      document.getElementById('saveSecurity').innerText = 'Save';
-      return;
-    }
-
-    let valid = false;
-    if (newPassword.length < 8) {
-      toast.error('Password must be at least 8 characters long.');
-    } else if (!/[A-Z]/.test(newPassword)) {
-      toast.error('Password must contain at least one uppercase letter.');
-    } else if (!/[a-z]/.test(newPassword)) {
-      toast.error('Password must contain at least one lowercase letter.');
-    } else if (!/[0-9]/.test(newPassword)) {
-      toast.error('Password must contain at least one number.');
-    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
-      toast.error('Password must contain at least one special character.');
+    if (event.target.value !== '') {
+      bannerState(true);
     } else {
-      valid = true;
+      bannerState(false)
     }
-
-    if(!valid) {
-      document.getElementById('saveSecurity').innerText = 'Save';
-      return;
-    }
-
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/account/change-password`;
-    const response = await request(url, "POST", {oldPassword, password: newPassword});
-    if(!response || !response.success) {
-      toast.error("Something went wrong!");
-    } else {
-      toast.success("Your password has been updated");
-    }
-    
-  try {
-    document.getElementById('saveSecurity').innerText = 'Save';
-
-    document.getElementById('password').value = '';
-    document.getElementById('confirm-password').value = '';
-    document.getElementById('oldPassword').value = '';
-  } catch (error) {
-    document.getElementById('saveSecurity').innerText = 'Save';
-    window.alert(error);
-  }
-}
-const [isMobile, setIsMobile] = useState(false);
-
-useEffect(() => {
-  const handleResize = () => {
-    setIsMobile(window.innerWidth <= 768);
   };
 
-  handleResize(); // Check on initial render
-  window.addEventListener('resize', handleResize);
 
-  return () => {
-    window.removeEventListener('resize', handleResize);
-  };
-}, []);
+
+  
+  function saveSecurity(req) {
+      document.getElementById('saveSecurity').innerText = 'Saving...';
+      var oldPassword = document.getElementById('oldPassword').value;
+      var newPassword = document.getElementById('password').value;
+      var confirmPassword = document.getElementById('confirm-password').value;
+      
+        request(`${process.env.NEXT_PUBLIC_API_URL}/account/change-password`, 'POST', {oldPassword, password: newPassword})
+        .then((response) => {
+          console.log(response)
+          if (newPassword == confirmPassword) {      
+            try {
+              document.getElementById('saveSecurity').innerText = 'Save';
+  
+                document.getElementById('password').value = '';
+                document.getElementById('confirm-password').value = '';
+                document.getElementById('oldPassword').value = '';
+            } catch (error) {
+              document.getElementById('saveSecurity').innerText = 'Save';
+                window.alert(error);
+            }
+                         
+          }
+        }).catch((error) => {
+          document.getElementById('saveSecurity').innerText = 'Save';
+          window.alert(error);
+        });
+        closeUnsavedNotif();
+    }
 
     return(
         <>
@@ -111,8 +77,9 @@ useEffect(() => {
   
         <StandardNav />
   
-        <div className="mx-auto max-w-6xl md:flex">
-        {isMobile ? <Dropdown tab="../settings/security" /> : <Sidebar />}
+        <div className="mx-auto flex max-w-6xl">
+            <Sidebar/>
+            
             <div className="flex-1 xl:overflow-y-auto">
               <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
@@ -140,10 +107,11 @@ useEffect(() => {
                       <input
                         type="password"
                         name="password"
-                        disabled={isGoogle}
                         id="password"
                         autoComplete="given-name"
-                        className={`mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6 ${isGoogle? 'cursor-not-allowed' : ''}`}
+                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                       
+                        onChange={handleInputChange}
                       />
                     </div>
 
@@ -159,8 +127,8 @@ useEffect(() => {
                         name="confirm-password"
                         id="confirm-password"
                         autoComplete="family-name"
-                        disabled={isGoogle}
-                        className={`mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6 ${isGoogle? 'cursor-not-allowed' : ''}`}
+                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                        onChange={handleInputChange}
                       />
                     </div>
 
@@ -175,19 +143,19 @@ useEffect(() => {
                         type="password"
                         name="password"
                         id="oldPassword"
-                        disabled={isGoogle}
                         autoComplete="given-name"
-                        className={`mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6 ${isGoogle? 'cursor-not-allowed' : ''}`}
+                        className="mt-2 block w-full rounded-md border-none bg-neutral-800  py-1.5 text-white shadow-sm  sm:text-sm sm:leading-6"
+                
+                        onChange={handleInputChange}
                       />
                     </div>
                   </div>
 
                   <button
                     id="saveSecurity"
-              onClick={saveSecurity}
-              className={`inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${isGoogle? 'cursor-not-allowed' : ''}`}
-              disabled={isGoogle}
-              >
+                    onClick={saveSecurity}
+                    className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  >
                     Save
                   </button>
                 </div>
@@ -195,19 +163,33 @@ useEffect(() => {
             </div>
         </div>
   
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
         <Footer />
+
+        
+
+        {banner && (
+                <div
+                    style={{ backgroundColor: '#212121' }}
+                    id="savebanner"
+                    className="fixed inset-x-0 bottom-0 flex flex-col justify-between gap-x-8 gap-y-4 p-6 ring-1 ring-gray-900/10 md:flex-row md:items-center lg:px-8"
+                    hidden={!unsavedNotif}
+                >
+                    <p className="max-w-4xl text-2xl leading-6 text-white">
+                        You have unsaved changes.
+                    </p>
+                    <div className="flex flex-none items-center gap-x-5">
+                       
+                        <button
+                            onClick={closeUnsavedNotif}
+                            type="button"
+                            className="text-xl font-semibold leading-6 text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
       </>
     );
 }
+

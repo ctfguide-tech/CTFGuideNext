@@ -10,30 +10,25 @@ import { Footer } from '@/components/Footer';
 import { PracticeNav } from '@/components/practice/PracticeNav';
 import { Community } from '@/components/practice/community';
 import { MyTable } from '@/components/Table';
-import {
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableCell,
-  TableBody,
-  Table,
-} from '@/components/ui/table';
+import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import request from '@/utils/request';
+
 
 export default function Leaderboard() {
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
     // replace 'http://localhost:5000' with your backend URL
-
-    request(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard/`, 'GET', null)
-      .then((response) => {
+  
+      request(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard/`, 'GET', null).then(response => {
         setLeaderboardData(response.leaderboard);
-        console.log('leaderboards: ', response.leaderboard);
+        console.log("leaderboards: ", response.leaderboard)
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Error fetching leaderboard data: ', error);
       });
+
+
   }, []);
   return (
     <>
@@ -43,129 +38,45 @@ export default function Leaderboard() {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-     
         </style>
       </Head>
       <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
-          <div className="mx-auto mt-20 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
-            <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto podium"
-              onClick={() => {
-                window.location.href =
-                  '../users/' + leaderboardData[1].user.username;
-              }}
-            >
-              <div className="flag-top"></div>
-              <div className="absolute -top-20 left-1/2 hidden -translate-x-1/2 transform md:block">
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="100"
-                  src={
-                    leaderboardData[1]?.user?.profileImage === ''
-                      ? 'https://robohash.org/' +
-                        leaderboardData[1]?.user?.username
-                      : `${leaderboardData[1]?.user?.profileImage}`
-                  }
-                  style={{
-                    aspectRatio: '64/64',
-                    objectFit: 'cover',
-                  }}
-                  width="100"
-                />
-              </div>
-              <div className="px-4 py-5 pt-12 sm:p-6">
+          <div className="mt-20 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+            <div className=" overflow-hidden shadow bg-gradient-to-r from-yellow-500 to-orange-500">
+              <div className="px-4 py-5 sm:p-6">
                 <dl>
-                  <dd className="mt-1 text-center text-2xl font-semibold text-gray-100">
-                    <span className="text-xl">#2</span>{' '}
-                    {leaderboardData[1]?.user?.username}
+                  <dd className="mt-1 text-3xl font-semibold text-white text-center">
+                    <span className="text-3xl">#1</span> {leaderboardData[0]?.user?.username}
                   </dd>
-                  <dd className="mx-auto mt-1 w-1/3 rounded-lg border border-white text-center text-lg text-white">
-                    {leaderboardData[1]?.totalPoints} points
-                  </dd>
-                </dl>
-              </div>
-            </div>
-
-            <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600 shadow md:w-auto podium"
-              onClick={() => {
-                window.location.href =
-                  '../users/' + leaderboardData[0].user.username;
-              }}
-            >
-              <div className="flag-top"></div>
-              <div className="absolute -top-16 left-1/2 hidden -translate-x-1/2 transform md:block">
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="100"
-                  src={
-                    leaderboardData[0]?.user?.profileImage === ''
-                      ? 'https://robohash.org/' +
-                        leaderboardData[0]?.user?.username
-                      : `${leaderboardData[0]?.user?.profileImage}`
-                  }
-                  style={{
-                    aspectRatio: '80/80',
-                    objectFit: 'cover',
-                  }}
-                  width="100"
-                />
-              </div>
-              <div className="px-4 py-8 pt-16 sm:p-10">
-                <dl>
-                  <dd className="mt-1 text-center text-3xl font-semibold text-gray-100">
-                    <span className="text-2xl">#1</span>{' '}
-                    {leaderboardData[0]?.user?.username}
-
-            
-                  </dd>
-                  <dd className="mx-auto mt-1 w-1/2 rounded-lg border border-white text-center text-xl text-white">
+                  <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
                     {leaderboardData[0]?.totalPoints} points
                   </dd>
                 </dl>
               </div>
             </div>
 
-            <div
-              className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900 shadow md:w-auto podium"
-              onClick={() => {
-                window.location.href =
-                  '../users/' + leaderboardData[2].user.username;
-              }}
-            >
-              {
-                //too poopy
-              }
-              <div className="flag-top"></div>
-              <div className="absolute -top-20 left-1/2 hidden -translate-x-1/2 transform md:block">
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="100"
-                  src={
-                    leaderboardData[2]?.user?.profileImage === ''
-                      ? 'https://robohash.org/' +
-                        leaderboardData[2]?.user?.username
-                      : `${leaderboardData[2]?.user?.profileImage}`
-                  }
-                  style={{
-                    aspectRatio: '64/64',
-                    objectFit: 'cover',
-                  }}
-                  width="100"
-                />
-              </div>
-              <div className="px-4 py-5 pt-12 sm:p-6">
+            <div className="overflow-hidden  shadow bg-gradient-to-r from-gray-500 to-white">
+              <div className="px-4 py-5 sm:p-6">
                 <dl>
-                  <dd className="mt-1 text-center text-2xl font-semibold text-gray-100">
-                    <span className="text-xl">#3</span>{' '}
-                    {leaderboardData[2]?.user?.username}
+                  <dd className="mt-1 text-3xl font-semibold text-gray-100 text-center">
+                    <span className="text-3xl">#2</span> {leaderboardData[1]?.user?.username}
                   </dd>
-                  <dd className="mx-auto mt-1 w-1/3 rounded-lg border border-white text-center text-lg text-white">
+                  <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
+                    {leaderboardData[1]?.totalPoints} points
+                  </dd>
+                </dl>
+              </div>
+            </div>
+
+            <div className="overflow-hidden shadow  bg-gradient-to-r from-orange-900 to-yellow-700">
+              <div className="px-4 py-5 sm:p-6">
+                <dl>
+                  <dd className="mt-1 text-3xl font-semibold text-white text-center">
+                    <span className="text-3xl">#3</span> {leaderboardData[2]?.user?.username}
+                  </dd>
+                  <dd className="mt-1 text-lg text-white text-center border border-white w-1/3 rounded-lg mx-auto">
                     {leaderboardData[2]?.totalPoints} points
                   </dd>
                 </dl>
@@ -189,14 +100,13 @@ export default function Leaderboard() {
                       {leaderboardData.slice(3).map((entry, index) => (
                         <TableRow
                           key={index}
-                          className="hover:cursor-pointer hover:bg-neutral-700"
+                          className="hover:bg-neutral-700 hover:cursor-pointer"
                           onClick={() => {
-                            window.location.href =
-                              '../users/' + entry.user.username;
+                            window.location.href = "../users/" + entry.user.username;
                           }}
                         >
-                          <TableCell className="text-center text-lg font-medium">
-                            #{index + 4}
+                          <TableCell className="font-medium text-lg text-center">
+                            {index + 1}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -204,33 +114,18 @@ export default function Leaderboard() {
                                 alt="Avatar"
                                 className="rounded-full"
                                 height="32"
-                                src={
-                                  entry.user.profileImage === ''
-                                    ? 'https://robohash.org/' +
-                                      entry.user.username
-                                    : `${entry.user.profileImage}`
-                                }
+                                src={entry.profileImage === "" ? "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" : `${entry.profileImage}`}
                                 style={{
-                                  aspectRatio: '32/32',
-                                  objectFit: 'cover',
+                                  aspectRatio: "32/32",
+                                  objectFit: "cover",
                                 }}
                                 width="32"
                               />
                               <a
                                 className="text-lg"
-                                href={'../users/' + entry.user.username}
+                                href={"../users/" + entry.user.username}
                               >
                                 {entry.user.username}
-                                {entry.user.role === 'ADMIN' && (
-                <>
-                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
-                </>
-              )}
-                 {entry.user.role === 'PRO' && (
-                <>
-                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
-                </>
-              )}
                               </a>
                             </div>
                           </TableCell>

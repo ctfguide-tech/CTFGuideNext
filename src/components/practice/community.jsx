@@ -27,7 +27,7 @@ function getCategoryIcon(category) {
   }
 }
 
-function CategorySelect({ category, setCategory, isDifficulty }) {
+function CategorySelect({ category, setCategory }) {
   const categories = [
     { name: 'All', value: 'all' },
     { name: 'Forensics', value: 'forensics' },
@@ -39,17 +39,6 @@ function CategorySelect({ category, setCategory, isDifficulty }) {
     { name: 'Steganography', value: 'steganography' },
     { name: 'Basic', value: 'basic' },
   ];
-
-  const difficulty = [
-    { name: 'All', value: 'all' },
-    { name: 'Beginner', value: 'beginner' },
-    { name: 'Easy', value: 'easy' },
-    { name: 'Medium', value: 'medium' },
-    { name: 'Hard', value: 'hard' },
-    { name: 'Insane', value: 'insane' },
-  ];
-
-  const list = isDifficulty ? difficulty : categories;
 
   return (
     <Listbox value={category} onChange={setCategory}>
@@ -63,7 +52,7 @@ function CategorySelect({ category, setCategory, isDifficulty }) {
             >
               <span className="flex items-center">
                 <i className={`${getCategoryIcon(category)} fa-fw`} />
-                <span className="ml-3 block truncate">{list.find(c => c.value === category).name}</span>
+                <span className="ml-3 block truncate">{categories.find(c => c.value === category).name}</span>
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -78,7 +67,7 @@ function CategorySelect({ category, setCategory, isDifficulty }) {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-neutral-800 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                {list.map((category) => (
+                {categories.map((category) => (
                   <Listbox.Option
                     key={category.value}
                     className={({ active }) =>
@@ -184,16 +173,29 @@ export function Community({ challenges }) {
 
             </select>          </div>
           <div className="w-full flex-row-reverse">
-
             <label
               htmlFor="difficulty"
               className="block text-sm font-medium leading-5 text-gray-200"
             >
               Difficulty
             </label>
+            <select
+              style={{ backgroundColor: '#212121' }}
+              id="difficulty"
+              className="mt-1 block w-full rounded border border-neutral-700 text-base leading-6 text-white focus:outline-none sm:text-sm sm:leading-5"
+              onChange={(e) => {
+                setDifficulty(e.target.value);
+              }}
+              value={difficulty}
+            >
+              <option value="all">All</option>
+              <option value="beginner">Beginner</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="insane">Insane</option>
 
-            <CategorySelect category={difficulty} setCategory={setDifficulty} isDifficulty={true} />
-
+            </select>
           </div>
 
           <div className="w-full">
@@ -203,9 +205,9 @@ export function Community({ challenges }) {
             >
               Category
             </label>
-            <CategorySelect category={category} setCategory={setCategory} isDifficulty={false}/>
-
+            <CategorySelect category={category} setCategory={setCategory} />
           </div>
+
 
           <div className="w-full">
             <label
