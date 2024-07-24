@@ -16,18 +16,6 @@ const FriendCard = ({ data }, mutual) => {
     followedBy,
     role,
   } = data;
-  const [rank, setRank] = useState('?');
-  useEffect(() => {
-    //call to get the rank
-    const getRank = async () => {
-      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/rank`, 'GET', null);
-      console.log("RANK RESPONSE", response.rank);
-      if(response.rank) {
-        setRank(response.rank);
-      }
-    };
-    getRank();
-  }, []);
 
   const [rank, setRank] = useState('...');
   useEffect(() => {
