@@ -51,23 +51,26 @@ const SearchModal = ({ showSearchModal, setShowSearchModal }) => {
                   results && search && (
                     <div className='mt-5'>
                       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+
                         {results.challenges.map((result, index) => (
-                          <div style={{cursor: "pointer"}} key={index} className='p-3 bg-neutral-700 rounded-lg' onClick={() => routeToChallenge(result.id)}>
-                            <h1 className='text-md text-white font-semibold'>{result.title}</h1>
+                          <div style={{cursor: "pointer"}} key={index} className='p-3 bg-neutral-700 hover:bg-neutral-600 rounded-lg' onClick={() => routeToChallenge(result.id)}>
+                            <h1 className='text-md text-white font-semibold'><i class="fas fa-tasks fa-fw mr-2"></i>{result.title}</h1>
                           </div>
                         ))}
+
                         {results.users.map((result, index) => (
-                          <div style={{cursor: "pointer"}} key={index} className='p-3 bg-neutral-700 rounded-lg' onClick={() => routeToUser(result.username)}>
-                            <h1 className='text-md text-white font-semibold'>{result.username}</h1>
+                          <div style={{cursor: "pointer"}} key={index} className='p-3 bg-neutral-700 hover:bg-neutral-600 rounded-lg' onClick={() => routeToUser(result.username)}>
+                            <h1 className='text-md text-white font-semibold'><i class="fas fa-user fa-fw mr-2"></i>{result.username}</h1>
                           </div>
                         ))}
+
                       </div>
                     </div>
                   )
                 }
 
-                <h1 className='mt-10 text-xl text-white font-semibold mb-4'>Search by Category</h1>
-                <div className="flex flex-wrap gap-2">
+                <h1 className='mt-10 text-xl text-white font-semibold mb-4 hidden'>Search by Category</h1>
+                <div className="flex flex-wrap gap-2 hidden">
                   <button className="px-4 py-2 rounded bg-blue-500 bg-opacity-50 border border-blue-800 hover:brightness-110 text-white flex items-center gap-2">
                     <FontAwesomeIcon icon={faBug} className='w-4 h-4' />
                     <span>Web Exploitation</span>
