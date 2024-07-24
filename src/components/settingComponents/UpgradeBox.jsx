@@ -54,7 +54,7 @@ export default function UpgradeBox() {
     <span class="ms-1 text-xl font-normal">/month</span>
     </div>
     <div className="mx-4 rounded-3xl bg-gray-600/75 py-1 text-sm text-white">
-    Yearly subscribers save $2/month
+    Yearly subscribers save extra
     </div>
         </div>
 
