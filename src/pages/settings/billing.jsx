@@ -9,6 +9,8 @@ import Sidebar from '@/components/settingComponents/sidebar';
 import UpgradeBox from '@/components/settingComponents/UpgradeBox';
 import FreeBox from '@/components/settingComponents/FreeBox';
 import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
+import { motion } from 'framer-motion';
+
 
 export default function Billing() {
 
@@ -56,7 +58,7 @@ export default function Billing() {
         },
       });
       const data = await response.json();
-     // console.log(data.message);
+      // console.log(data.message);
     } catch (err) {
       console.log(err);
     }
@@ -95,76 +97,55 @@ export default function Billing() {
 
       <div className="mx-auto max-w-6xl md:flex">
 
-      {isMobile ? <Dropdown tab="../settings/billing"/> : <Sidebar />}
+        {isMobile ? <Dropdown tab="../settings/billing" /> : <Sidebar />}
 
 
-        <div className="flex-1 xl:overflow-y-auto">
-          <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div className="flex-1 px-4 max-w-3xl xl:overflow-y-auto">
+        <div className="mx-auto   mr-auto  px-4 py-10 sm:px-6 lg:px-5 lg:py-12">
             <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
               Billing
             </h1>
-            <div className="w-full grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
+            <motion.div 
+              className="flex rounded-lg bg-gradient-to-br from-blue-600 to-purple-400 to-70%"
+              whileHover={{ scale: 1.02 }}
+            >
+              <img
+                className="mb-0 mt-auto w-1/6"
+                src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/DefaultKana.png`}
+              />
+
+              <div className="ml-0  w-full mt-2 px-4 grid grid-cols-1 place-items-center ">
+
+                <div className="text-lg text-white  max-md:my-2 max-md:text-xs flex w-full">
+                  <div>
+
+                    <p  className='font-semibold'>
+                     You have an active subscription.
+
+                    </p>
+                  </div>
+
+                  <div className="ml-auto px-4 ">
+                    <motion.button onClick={updateCardInfo}
+                      className="text-sm bg-white text-purple-600 rounded-lg px-2 py-1"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >Manage Subscription</motion.button>
+                  </div>
+                </div>
+              </div>
+
+
+            </motion.div>
+
+
+            <div className="mt-4 w-full grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
               <FreeBox />
               <UpgradeBox />
             </div>
 
-            <div className="hidden items-center justify-between text-white">
-              <hr className="mb-2 mt-2 border-neutral-600 text-white" />
-              <h1 className="mt-4 text-center text-4xl">
-                Upgrade to{' '}
-                <span className="font-bold text-blue-500">CTFGuide Pro</span>
-              </h1>
-              <div className="grid grid-cols-2 gap-4">
-                <div
-                  className="hover mt-4 rounded border border-neutral-700 px-4 py-4 text-white"
-                  style={{ cursor: 'pointer' }}
-                >
-                  <h1 className="text-center text-3xl">Monthly</h1>
-                  <h1 className="text-center text-xl">$4.99/month</h1>
-                </div>
-                <div
-                  className="hover mt-4 rounded border border-neutral-700 px-4 py-4 text-white"
-                  style={{ cursor: 'pointer' }}
-                >
-                  <h1 className="text-center text-3xl">Annually</h1>
-                  <h1 className="text-center text-xl">$35.88/year</h1>
-                </div>
-              </div>
-              <h1 className="mb-1 mt-4 text-center text-xl">
-                What do you get?
-              </h1>
-              <div className="px-2 py-1 text-center">
-                <p>Access to exclusive learning content.</p>
-              </div>
-              <div className="mt-1 px-2 py-1 text-center">
-                <p>Show of an exclusive CTFGuide Pro badge</p>
-              </div>
-              <div className="mt-1 px-2 py-1 text-center">
-                <p>Animated profile pictures**</p>
-              </div>
-              <div className="mt-1 px-2 py-1 text-center">
-                <p>Increased container time</p>
-              </div>
-              <div className="mt-1 px-2 py-1 text-center">
-                <p>AI Tutor**</p>
-              </div>
-              <p className="mt-4 text-sm text-gray-500">
-                * For the features marked with a star, it means it has not been
-                released yet. For every month you have CTFGuide Pro, if the
-                feature has not been implemented yet, you'll be given an
-                additional free month of Pro.
-              </p>
-            </div>
 
-            <div className="">
-              <hr className="mt-4 border-neutral-500"></hr>
-              <button
-                onClick={updateCardInfo}
-                className="text-md mt-4 rounded-lg bg-blue-600 px-2 py-1 text-white"
-              >
-                Manage Subscription
-              </button>
-            </div>
+
           </div>
         </div>
       </div>

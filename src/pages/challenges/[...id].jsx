@@ -130,6 +130,11 @@ export default function Challenge() {
 
       // do a quick http request to that url to see if it's up
       
+      if (!data.url) {
+        toast.error("Unable to create the terminal, please try again");
+        setFetchingTerminal(false);
+        return;
+      }
 
 
       setPassword(data.terminalUserPassword);
@@ -290,6 +295,8 @@ export default function Challenge() {
                     <div>
                       <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
                       <span className="text-white text-xl">{loadingMessage}</span>
+                      <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+
                     </div>
                   </div>
                 ) : (
