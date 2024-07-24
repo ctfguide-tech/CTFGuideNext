@@ -39,9 +39,9 @@ export default function Createchall(props) {
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
   const [hints, setHints] = useState([
-    'No hints set',
-    'No hints set',
-    'No hints set',
+    'Looks like the challenge creator did not set hint 1.',
+    'Looks like the challenge creator did not set hint 2.',
+    'Looks like the challenge creator did not set hint 3.',
   ]);
 
   const [solution, setSolution] = useState('');

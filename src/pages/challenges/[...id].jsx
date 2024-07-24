@@ -130,6 +130,11 @@ export default function Challenge() {
 
       // do a quick http request to that url to see if it's up
       
+      if (!data.url) {
+        toast.error("Unable to create the terminal, please try again");
+        setFetchingTerminal(false);
+        return;
+      }
 
 
       setPassword(data.terminalUserPassword);
@@ -290,6 +295,8 @@ export default function Challenge() {
                     <div>
                       <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
                       <span className="text-white text-xl">{loadingMessage}</span>
+                      <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+
                     </div>
                   </div>
                 ) : (
@@ -428,6 +435,12 @@ function HintsPage({ cache }) {
   }, [challenge])
 
   const showHint = async (i) => {
+    // Check if the previous hint has been unlocked
+    if (i > 0 && hints[i - 1].message === `Hint ${i}`) {
+      toast.error("Please unlock the previous hint first.");
+      return;
+    }
+
     const url = `${baseUrl}/challenges/hints-update`;
 
     const body = {
@@ -442,7 +455,7 @@ function HintsPage({ cache }) {
       tmp[i].message = data.hintMessage;
       setHints(tmp);
     } else {
-      console.log('problem when feching hints');
+      console.log('problem when fetching hints');
     }
   };
 
@@ -452,25 +465,24 @@ function HintsPage({ cache }) {
         <h1 className="text-2xl font-semibold py-2 line-clamp-1">
           Hints
         </h1>
-        <div style={{ padding: "5px", margin: "5px" }}>
+        <div >
           {hints.map((hint, idx) => {
             return (
               <div
-                className="mb-2 mt-3 w-full border-l-2 border-yellow-600 hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                className="mb-2 w-full hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
                 onClick={() => showHint(idx)}
               >
-                <div style={{ maxWidth: '90%' }}>
-
-                  <p className="text-white">
-                    <span className=" ">
-                      {hint.message}
+                <div className='flex place-items-center w-full'>
+                  <h1 className='text-blue-500 px-2 mr-2 text-xl'>Hint {idx + 1}</h1>
+                  <div className='ml-auto'>
+                    <span className="mt-1 text-sm text-white bg-neutral-700 px-2 py-1 rounded-sm">
+                      {Math.abs(hint.penalty)} point penalty
                     </span>
-
-                  </p>
+                  </div>
                 </div>
-                <span className="mt-1 text-sm text-white">
-                  {Math.abs(hint.penalty)} point penalty
-                </span>
+                <div className='px-2'>
+                  {hint.message === `Hint ${idx + 1}` ? 'Click to unlock' : hint.message}
+                </div>
               </div>
             );
           })}

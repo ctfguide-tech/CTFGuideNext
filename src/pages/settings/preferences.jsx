@@ -104,9 +104,8 @@ export default function Preferences(){
         <div className="mx-auto max-w-6xl md:flex">
 
         {isMobile ? <Dropdown tab="../settings/preferences"/> : <Sidebar />}
-
-        <div className="flex-1 xl:overflow-y-auto">
-                  <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div className="flex-1 px-4 max-w-3xl xl:overflow-y-auto">
+        <div className="mx-auto   mr-auto  px-4 py-10 sm:px-6 lg:px-5 lg:py-12">
                     <h1 className="text-3xl font-bold tracking-tight text-white">
                       Email Preferences
                     </h1>
@@ -173,9 +172,9 @@ export default function Preferences(){
                         <button
                           id="savePreferences"
                           onClick={savePreferences}
-                          className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                        >
-                          Save
+                          className="rounded-md bg-blue-500 px-4 py-2 text-white"
+                          >
+                          Save Changes
                         </button>
                       </div>
                       <ToastContainer

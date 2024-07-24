@@ -70,7 +70,6 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
   const [open, setOpen] = useState(true);
 
   const router = useRouter();
-  console.log('logged in as ' + useContext(Context).username);
 
   function logout() {
     document.cookie =

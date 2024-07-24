@@ -113,9 +113,8 @@ useEffect(() => {
   
         <div className="mx-auto max-w-6xl md:flex">
         {isMobile ? <Dropdown tab="../settings/security" /> : <Sidebar />}
-            <div className="flex-1 xl:overflow-y-auto">
-              <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-                <h1 className="text-3xl font-bold tracking-tight text-white">
+        <div className="flex-1 px-4 max-w-3xl xl:overflow-y-auto">
+        <div className="mx-auto   mr-auto  px-4 py-10 sm:px-6 lg:px-5 lg:py-12">     <h1 className="text-3xl font-bold tracking-tight text-white">
                   Security
                 </h1>
 
@@ -128,9 +127,27 @@ useEffect(() => {
                       <p className="mt-1 text-sm text-white">
                         Change your password
                       </p>
+                      {isGoogle && (
+
+                <div className='bg-neutral-800 p-4 rounded-md mt-4'>
+
+
+<div className='flex justify-center items-center gap-x-4'>
+  <img src="../../google.png" alt="Google" className='w-10 h-10' />
+  <h3 className='text-white'>
+    You are using a Google Account. <b> You will not be able to set a password for your account.</b>
+    </h3>
+  </div>
+
+</div>
+  )}
+
                     </div>
 
+               
+
                     <div className="sm:col-span-3">
+                      
                       <label
                         htmlFor=""
                         className="block text-sm font-medium leading-6 text-white"
@@ -181,15 +198,19 @@ useEffect(() => {
                       />
                     </div>
                   </div>
-
-                  <button
+          <div className='flex justify-end'>
+      
+            <button
                     id="saveSecurity"
               onClick={saveSecurity}
-              className={`inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${isGoogle? 'cursor-not-allowed' : ''}`}
+              className="rounded-md bg-blue-500 px-4 py-2 text-white"
               disabled={isGoogle}
               >
-                    Save
+                    Save Changes
                   </button>
+      
+          </div>
+                  
                 </div>
               </div>
             </div>
