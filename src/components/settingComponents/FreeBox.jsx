@@ -1,4 +1,8 @@
+import { Context } from '@/context';
+import { useContext } from 'react';
+
 export default function FreeBox() {
+  const { role } = useContext(Context);
   return (
     <>
       <div className="rounded-lg  bg-neutral-800 shadow">
@@ -112,9 +116,15 @@ export default function FreeBox() {
           </li>
         </ul>
         <div className="px-8 pb-8 pt-4">
-          <div className="text-md flex w-full justify-center rounded-lg bg-gray-500  py-2 text-center font-medium text-white ">
-            Current plan
-          </div>
+          {role == 'USER' ? (
+            <div className="text-md flex w-full justify-center rounded-lg bg-gray-500  py-2 text-center font-medium text-white ">
+              Current plan
+            </div>
+          ): (
+            <div className="text-md flex w-full justify-center rounded-lg bg-gray-500  py-2 text-center font-medium text-white ">
+              Free Plan 
+            </div>
+            )}
         </div>
       </div>{' '}
     </>
