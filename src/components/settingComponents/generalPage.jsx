@@ -12,10 +12,14 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Markdown from 'react-markdown';
+import { Context } from '@/context';
+import { useContext } from 'react';
+
 
 export default function General() {
   const router = useRouter();
   const bioRef = useRef(null);
+  const { role } = useContext(Context);
 
   const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -463,6 +467,9 @@ export default function General() {
                 </div>
               </div>
 
+          {
+            role === "PRO" && (
+              <>
               <div className="sm:col-span-4">
                 <label
                   htmlFor="photo"
@@ -496,6 +503,10 @@ export default function General() {
                   </button>
                 </div>
               </div>
+
+              </>
+            )
+          }
 
               <div className="sm:col-span-6">
                 <label
