@@ -7,7 +7,7 @@ const CreatedChallenges = ({ user }) => {
   const [displayedChallenges, setDisplayedChallenges] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const challengesPerPage = 2;
+  const challengesPerPage = 4;
 
   useEffect(() => {
     if (!user) {
