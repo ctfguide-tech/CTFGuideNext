@@ -420,7 +420,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <Popover.Panel className="absolute right-0 mt-2 w-80 bg-neutral-800 rounded-md shadow-lg overflow-hidden z-20">
                               <div className="py-2">
                                 {notificationData.length > 0 ? (
-                                  notificationData.map((notification, index) => (
+                                  notificationData.slice(0, 6).map((notification, index) => (
                                     <div key={index} className="flex items-center px-4 py-3 ">
                                     
                                       <div className="ml-3 text-white">

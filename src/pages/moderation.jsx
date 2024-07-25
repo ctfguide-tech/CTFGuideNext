@@ -71,6 +71,28 @@ export default function Competitions() {
     fetchPendingChallenges();
   }, []);
 
+  const handleResetPFP = async () => {
+    const username = document.getElementById('usernameInput').value;
+    const reason = ""; // Set reason as blank for now
+
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/resetPFP`, "POST", { reason });
+      if (response.success) {
+        alert("Profile picture reset successfully!");
+      } else {
+        alert("Failed to reset profile picture.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while resetting the profile picture.");
+    }
+  };
+
   return (
     <>
       <Head>
@@ -102,11 +124,11 @@ export default function Competitions() {
 
 <div>
 <h1 className='text-xl  text-white mb-2'>USER ACTIONS</h1>
-    <input type="text" placeholder='Enter USER ID' className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
-   <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full'></textarea>
+    <input type="text" placeholder='Enter USERNAME' className='mb-2 text-white bg-neutral-800 border-none w-full' id="usernameInput"></input>
+   <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id="reasonInput"></textarea>
     <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'>Disable Account</button>
     <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Warn User</button>
-    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2'>Reset PFP</button>
+    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetPFP}>Reset PFP</button>
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2'>Reset Banner</button>
 
 </div>
