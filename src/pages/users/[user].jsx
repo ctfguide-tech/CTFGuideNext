@@ -197,7 +197,7 @@ export default function Create() {
                         <h1 className="text-xl font-bold text-white">
                             CREATED CHALLENGES
                         </h1>
-                        <CreatedChallenges />
+                        <CreatedChallenges user={user}/>
                     </>
                 );
             case 'BADGES':
