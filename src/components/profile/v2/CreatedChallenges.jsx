@@ -4,7 +4,7 @@ import ChallengeCard from '@/components/profile/ChallengeCard';
 
 const CreatedChallenges = ({ user }) => {
   const [createdChallenges, setCreatedChallenges] = useState([]);
-
+  console.log("cc user", user);
   useEffect(() => {
     if (!user) {
       return;
