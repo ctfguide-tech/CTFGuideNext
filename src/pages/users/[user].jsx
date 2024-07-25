@@ -1025,11 +1025,17 @@ export default function Create() {
                            
                          
                         </div>
-                           
+                           {user && user.bio != null ? (
                             <p className='text-neutral-400'>
                                 {bioViewCheck() ? renderUsersBio()  : user && <MarkdownViewer  content={user.bio} />}
-                           
                             </p>
+
+                           ): (
+                            <p className='text-neutral-400'>
+                                {bioViewCheck() ? renderUsersBio()  : user && <MarkdownViewer  content='Nothing to see here...' />}
+                            </p>
+                            )}
+                            
                         </div>
                     </div>
 
