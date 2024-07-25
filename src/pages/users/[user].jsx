@@ -9,7 +9,7 @@ import request from '@/utils/request';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useRouter } from 'next/router';
 import CreatedChallenges from '@/components/profile/v2/CreatedChallenges';
-import LikedChallenges from '@/components/profile/v2/LikedChallenges';
+import SolvedChallenges from '@/components/profile/v2/SolvedChallenges';
 import Badges from '@/components/profile/v2/Badges';
 import Writeups from '@/components/profile/v2/Writeups';
 import Skeleton from 'react-loading-skeleton';
@@ -177,11 +177,11 @@ export default function Create() {
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'LIKED CHALLENGES':
+            case 'SOLVED CHALLENGES':
                 return (
                     <>
-                        <h1 className="text-xl font-bold text-white">LIKED CHALLENGES</h1>
-                        {user != undefined && <LikedChallenges user={user} />}
+                        <h1 className="text-xl font-bold text-white">SOLVED CHALLENGES</h1>
+                        {user && <SolvedChallenges user={user} />}
                     </>
                 );
             case 'WRITEUPS':
@@ -241,7 +241,8 @@ export default function Create() {
                       setOwnUser(false);
                       console.log("USER IS NOT OWN USER")
                     }
-            
+                    setActiveTab('SOLVED CHALLENGES');
+                    renderContent();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -1044,7 +1045,7 @@ export default function Create() {
                                         <div className="pb-2 ">
                                             <ul className="hidden w-full list-none text-neutral-500 md:flex">
                                                 {[
-                                                    'LIKED CHALLENGES',
+                                                    'SOLVED CHALLENGES',
                                                     'WRITEUPS',
                                                     'CREATED CHALLENGES',
                                                  
