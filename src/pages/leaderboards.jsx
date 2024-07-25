@@ -186,7 +186,7 @@ export default function Leaderboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {leaderboardData.slice(3).map((entry, index) => (
+                      {leaderboardData && leaderboardData.length > 3 && leaderboardData.slice(3).map((entry, index) => (
                         <TableRow
                           key={index}
                           className="hover:cursor-pointer hover:bg-neutral-700"
