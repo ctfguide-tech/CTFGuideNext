@@ -10,13 +10,15 @@ import UpgradeBox from '@/components/settingComponents/UpgradeBox';
 import FreeBox from '@/components/settingComponents/FreeBox';
 import Dropdown from '@/components/settingComponents/dropdown'; // Import the new Dropdown component
 import { motion } from 'framer-motion';
-
+import { Context } from '@/context';
+import { useContext } from 'react';
 
 export default function Billing() {
-
   const updateCardInfo = async () => {
     try {
-      window.location.href = 'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
+      let test = "https://billing.stripe.com/p/login/test_dR6dQZdpX3Fh4ne4gg";
+      let prod = 'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
+      window.location.href =test;
       /*
       const stripe = await loadStripe(STRIPE_KEY);
       const response = await fetch(
@@ -42,6 +44,7 @@ export default function Billing() {
       console.log(error);
     }
   };
+  const { role } = useContext(Context);
 
   const cancelSubscription = async () => {
     try {
@@ -96,16 +99,15 @@ export default function Billing() {
       <StandardNav />
 
       <div className="mx-auto max-w-6xl md:flex">
-
         {isMobile ? <Dropdown tab="../settings/billing" /> : <Sidebar />}
 
-
-        <div className="flex-1 px-4 max-w-3xl xl:overflow-y-auto">
-        <div className="mx-auto   mr-auto  px-4 py-10 sm:px-6 lg:px-5 lg:py-12">
+        <div className="max-w-3xl flex-1 px-4 xl:overflow-y-auto">
+          <div className="mx-auto   mr-auto  px-4 py-10 sm:px-6 lg:px-5 lg:py-12">
             <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
               Billing
             </h1>
-            <motion.div 
+            {role != 'USER' && (
+            <motion.div
               className="flex rounded-lg bg-gradient-to-br from-blue-600 to-purple-400 to-70%"
               whileHover={{ scale: 1.02 }}
             >
@@ -113,39 +115,34 @@ export default function Billing() {
                 className="mb-0 mt-auto w-1/6"
                 src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/DefaultKana.png`}
               />
+              
+                <div className="ml-0  mt-2 grid w-full grid-cols-1 place-items-center px-4 ">
+                  <div className="flex w-full  text-lg text-white max-md:my-2 max-md:text-xs">
+                    <div>
+                      <p className="font-semibold">
+                        You have an active subscription.
+                      </p>
+                    </div>
 
-              <div className="ml-0  w-full mt-2 px-4 grid grid-cols-1 place-items-center ">
-
-                <div className="text-lg text-white  max-md:my-2 max-md:text-xs flex w-full">
-                  <div>
-
-                    <p  className='font-semibold'>
-                     You have an active subscription.
-
-                    </p>
-                  </div>
-
-                  <div className="ml-auto px-4 ">
-                    <motion.button onClick={updateCardInfo}
-                      className="text-sm bg-white text-purple-600 rounded-lg px-2 py-1"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >Manage Subscription</motion.button>
+                    <div className="ml-auto px-4 ">
+                      <motion.button
+                        onClick={updateCardInfo}
+                        className="rounded-lg bg-white px-2 py-1 text-sm text-purple-600"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Manage Subscription
+                      </motion.button>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-
             </motion.div>
+             )}
 
-
-            <div className="mt-4 w-full grid grid-cols-2 gap-x-4 max-sm:grid-cols-1">
+            <div className="mt-4 grid w-full grid-cols-2 gap-x-4 max-sm:grid-cols-1">
               <FreeBox />
               <UpgradeBox />
             </div>
-
-
-
           </div>
         </div>
       </div>
