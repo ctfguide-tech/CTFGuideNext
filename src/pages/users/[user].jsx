@@ -995,7 +995,7 @@ export default function Create() {
                             )}
                         </div>
                     </div>
-                    <div className="col-span-3 border-t-4 border-blue-600">
+                    <div className="col-span-3 border-t-2 border-blue-600">
                         {displayMode === 'followers' && (
                             <Followers
                                 followers={followers}
