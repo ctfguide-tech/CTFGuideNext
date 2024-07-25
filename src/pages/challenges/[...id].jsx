@@ -899,42 +899,55 @@ function LeaderboardPage({ cache, setCache }) {
         </div>
       </div>
 
-      {leaderboard.slice(0, 10).map((entry, index) => {
-        let color;
-        switch (index) {
-          case 0:
-            color = "from-yellow-700 to-yellow-800"; // gold
-            break;
-          case 1:
-            color = "from-gray-700 to-gray-800"; // silver
-            break;
-          case 2:
-            color = "from-orange-800 to-orange-900"; // bronze
-            break;
-          default:
-            color = "bg-neutral-700"; // default color for others
-        }
-        return (
-          <div className="px-3">
-            <div key={index} className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
-              <div className="flex items-center justify-between align-middle">
-                <img
-                  src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
-                  className="w-8 h-8 mr-2 rounded-full"
-                  alt={`${entry.user.username}'s profile`}
-                />
-                <span className="text-2xl font-bold">{index + 1}.</span>
-                <span className="ml-2 text-xl font-semibold text-white">
-                  <Link href={`/users/${entry.user.username}`}>
-                    {entry.user.username}
-                  </Link>
-                </span>
+      {leaderboard.length > 0 ? (
+        leaderboard.slice(0, 10).map((entry, index) => {
+          let color;
+          switch (index) {
+            case 0:
+              color = "from-yellow-700 to-yellow-800"; // gold
+              break;
+            case 1:
+              color = "from-gray-700 to-gray-800"; // silver
+              break;
+            case 2:
+              color = "from-orange-800 to-orange-900"; // bronze
+              break;
+            default:
+              color = "bg-neutral-700"; // default color for others
+          }
+          return (
+            <div className="px-3" key={index}>
+              <div className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
+                <div className="flex items-center justify-between align-middle">
+                  <img
+                    src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
+                    className="w-8 h-8 mr-2 rounded-full"
+                    alt={`${entry.user.username}'s profile`}
+                  />
+                  <span className="text-2xl font-bold">{index + 1}.</span>
+                  <span className="ml-2 text-xl font-semibold text-white">
+                    <Link href={`/users/${entry.user.username}`}>
+                      {entry.user.username}
+                    </Link>
+                  </span>
+                </div>
+                <div className="text-xl font-semibold">{entry.points} points</div>
               </div>
-              <div className="text-xl font-semibold">{entry.points} points</div>
+            </div>
+          )
+        })
+      ) : (
+        <div className="px-3">
+          <div className="flex justify-center items-center py-2 px-2 bg-neutral-900 rounded-lg my-2">
+            <div className="text-sm text-white">
+            
+            <p className="text-center"> <img className="w-1/6 mx-auto" src="../../lbmissing.svg"></img></p>
+    
+              <p className="text-lg mb-4"> Nobody has solved this challenge yet - be the first!</p>
             </div>
           </div>
-        )
-      })}
+        </div>
+      )}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
   )
@@ -1130,9 +1143,13 @@ function CommentsPage({ cache }) {
 
     return (
       <div>
-        {organizedComments.map((comment, index) => (
-          <Comment key={index} comment={comment} />
-        ))}
+        {organizedComments.length > 0 ? (
+          organizedComments.map((comment, index) => (
+            <Comment key={index} comment={comment} />
+          ))
+        ) : (
+          <p className="text-neutral-400">No comments yet. Be the first to comment!</p>
+        )}
       </div>
     );
   };
