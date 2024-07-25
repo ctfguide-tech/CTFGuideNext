@@ -161,7 +161,7 @@ export default function UpgradeBox() {
           </li>
         </ul>
         <div className="px-8 pb-8 pt-4">
-        {role != 'PRO' ? (
+        {role !== 'PRO' ? (
             <motion.button
               onClick={() => redirectToCheckout(0)}
               disabled={loading !== -1}

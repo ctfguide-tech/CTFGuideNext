@@ -16,8 +16,9 @@ import { useContext } from 'react';
 export default function Billing() {
   const updateCardInfo = async () => {
     try {
-      window.location.href =
-        'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
+      let test = "https://billing.stripe.com/p/login/test_dR6dQZdpX3Fh4ne4gg";
+      let prod = 'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
+      window.location.href =test;
       /*
       const stripe = await loadStripe(STRIPE_KEY);
       const response = await fetch(
