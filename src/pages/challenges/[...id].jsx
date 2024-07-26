@@ -6,7 +6,7 @@ import { DocumentTextIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import ReactMarkdown from "react-markdown";
@@ -18,6 +18,7 @@ import { getCookie } from '@/utils/request';
 import { jwtDecode } from 'jwt-decode';
 import api from '@/utils/terminal-api';
 import Confetti from 'react-confetti';
+import { Context } from '@/context';
 
 
 export default function Challenge() {
@@ -233,6 +234,45 @@ export default function Challenge() {
     router.push(`/challenges/${urlChallengeId}/writeups/${writeup.id}`);
   };
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+
+  const openDeleteModal = (commentId) => {
+    setCommentToDelete(commentId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setCommentToDelete(null);
+  };
+
+  const deleteComment = async (commentId) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/comments/${commentId}`, "DELETE", {});
+      if (response.success) {
+        setComments(comments.filter(comment => comment.id !== commentId));
+        toast.success("Comment deleted successfully.");
+      } else {
+        toast.error("Failed to delete comment.");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      closeDeleteModal();
+    }
+  };
+
+  const [expandedComments, setExpandedComments] = useState({});
+
+  const toggleReplies = (commentId) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
   return (
     <>
       <Head>
@@ -318,6 +358,11 @@ export default function Challenge() {
         draggable
         pauseOnHover
         theme="dark"
+      />
+      <DeleteCommentModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={() => deleteComment(commentToDelete)}
       />
     </>
   )
@@ -498,7 +543,7 @@ function DescriptionPage({ cache }) {
   const { challenge } = cache;
   const [challengeData, setChallengeData] = useState(null);
   const [authorPfp, setAuthorPfp] = useState(null);
-
+  const { username } = useContext(Context);
   const colorText = {
     'BEGINNER': 'bg-blue-500 text-blue-50',
     'EASY': 'bg-green-500 text-green-50',
@@ -562,6 +607,9 @@ function DescriptionPage({ cache }) {
               <i className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
               {challengeData && challengeData.downvotes !== undefined ? challengeData.downvotes : <Skeleton width={20} />}
             </div>
+            {username && username === comment.username && (
+              <button onClick={() => openDeleteModal(comment.id)} className="ml-2 text-sm text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><i className="fas fa-trash-alt"></i></button>
+            )}
           </div>
         </h1>
         <h2 className="flex flex-wrap gap-2 pb-2">
@@ -981,6 +1029,10 @@ function CommentsPage({ cache }) {
     // Implement API call to submit reply
     console.log(`Reply to ${commentId}:`, replyText);
     setReply({ ...reply, [commentId]: '' });
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: true,
+    }));
   };
 
   const replyingTo = async (commentId, username) => {
@@ -993,11 +1045,14 @@ function CommentsPage({ cache }) {
     configReply(false);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCommentSubmit = async (e) => {
     if (!newComment) return;
     e.preventDefault();
     if (!newComment.trim()) return; // Prevent empty comments
+
+    setIsSubmitting(true); // Set loading state to true
 
     try {
       let payload = { content: newComment };
@@ -1012,11 +1067,19 @@ function CommentsPage({ cache }) {
       if (response.success) {
         console.log('Comment submitted:', response);
         setNewComment(''); // Clear the input after successful submission
+        if (hasReply) {
+          setExpandedComments((prev) => ({
+            ...prev,
+            [replyingId]: true,
+          }));
+        }
       } else {
         console.error('Failed to submit comment:', response.error);
       }
     } catch (error) {
       console.error('Error submitting comment:', error);
+    } finally {
+      setIsSubmitting(false); // Set loading state to false
     }
   };
 
@@ -1080,15 +1143,25 @@ function CommentsPage({ cache }) {
     return rootComments;
   };
 
+  const [expandedComments, setExpandedComments] = useState({});
+
+  const toggleReplies = (commentId) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
   // Recursive component to render comments and their replies
   const Comment = ({ comment }) => {
-    const [showReplies, setShowReplies] = useState(false);
+    const { username } = useContext(Context);
+    const isExpanded = expandedComments[comment.id] || false;
 
     return (
-      <div className="my-2 p-2 bg-neutral-800">
+      <div className="my-2 p-2 bg-neutral-800  group transition-all duration-300">
         <div className="flex">
           <div className="flex items-center">
-            <div className="mr-2 text-md text-center text-neutral-400 bg-neutral-700/50 px-1 rounded-md">
+            <div className="mr-2 text-md text-center text-neutral-400 bg-neutral-700/10 px-1 rounded-md">
               <button className="hover:text-neutral-600" onClick={() => handleUpvote(comment.id)}>
                 <i className="fas fa-arrow-up"></i> <span>{comment.upvotes}</span>
               </button>
@@ -1111,9 +1184,9 @@ function CommentsPage({ cache }) {
                   <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
                 </>
               )}
-                 {comment.role === 'PRO' && (
+              {comment.role === 'PRO' && (
                 <>
-                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                  <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
@@ -1121,18 +1194,19 @@ function CommentsPage({ cache }) {
           </div>
         </div>
         <p className="text-neutral-200 pl-12">{comment.content}</p>
-        {showReplies && comment.replies.length > 0 && (
+        {isExpanded && comment.replies.length > 0 && (
           <div className="pl-4 border-l-2 border-neutral-700">
             {comment.replies.map((reply) => <Comment key={reply.id} comment={reply} />)}
           </div>
         )}
-        <div className="ml-12">
+        <div className="ml-12 flex">
           <button onClick={() => replyingTo(comment.id, comment.username)} className="text-sm text-blue-500">Reply</button>
           {comment.replies.length > 0 && (
-            <button onClick={() => setShowReplies(!showReplies)} className="ml-2 text-sm text-blue-500">
-              {showReplies ? 'Hide Replies' : 'Show Replies'}
+            <button onClick={() => toggleReplies(comment.id)} className="ml-2 text-sm text-blue-500">
+              {isExpanded ? 'Hide Replies' : 'Show Replies'}
             </button>
           )}
+       
         </div>
       </div>
     );
@@ -1154,22 +1228,55 @@ function CommentsPage({ cache }) {
     );
   };
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+
+  const openDeleteModal = (commentId) => {
+    setCommentToDelete(commentId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setCommentToDelete(null);
+  };
+
+  const deleteComment = async (commentId) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments/${commentId}`, "DELETE", {});
+      if (response.success) {
+        //resync comments
+        const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+        setComments(getCommentsResult.result);
+        toast.success("Comment deleted successfully.");
+      } else {
+        toast.error("Failed to delete comment.");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      closeDeleteModal();
+    }
+  };
+
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
         <h1 className="text-2xl font-semibold py-2 line-clamp-1">
           Comments
         </h1>
-        <form onSubmit={handleCommentSubmit} className="mb-4">
+        <form onSubmit={handleCommentSubmit} className="mb-4  bottom-0 left-0">
           <p className="text-red-500 hidden">Hmm, that doesn't seem very nice. Please read our terms of service. </p>
           <div className="flex w-full">
             <div className="w-full">
               <input
+                onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                 type="text"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Add a comment..."
-                className="text-black p-2 w-full bg-neutral-700 border-none text-white placeholder-white"
+                className=" text-black p-2 w-full bg-neutral-700 border-none text-white placeholder-white"
               />
               {hasReply &&
                 <div className="flex w-full text-left px-2 bg-neutral-500/10 border-none py-1">
@@ -1178,12 +1285,43 @@ function CommentsPage({ cache }) {
                 </div>
               }
             </div>
-            <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10"><i className="fas fa-paper-plane"></i></button>
+            <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10">
+              {isSubmitting ?  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                          </svg>      : <i className="fas fa-paper-plane"></i>}
+            </button>
           </div>
         </form>
-        {challenge && comments && <CommentsSection comments={comments} />}
+        {challenge && comments && (
+            <CommentsSection comments={comments} />
+    
+        )}
       </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+      <DeleteCommentModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={() => deleteComment(commentToDelete)}
+      />
     </>
+  );
+}
+
+function DeleteCommentModal({ isOpen, onClose, onConfirm }) {
+  return (
+    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="mx-auto max-w-sm rounded bg-neutral-900 text-white p-6">
+          <Dialog.Title className="text-lg font-semibold">Delete Comment</Dialog.Title>
+          <p className="mt-2">Are you sure you want to delete this comment? This action cannot be undone.</p>
+          <div className="mt-4 flex justify-end gap-2">
+            <button onClick={onClose} className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+            <button onClick={onConfirm} className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+          </div>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
   );
 }
