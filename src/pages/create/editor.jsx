@@ -50,6 +50,8 @@ export default function Create() {
         setTitle(data.title);
         setContentPreview(data.content);
         setIsPublished(data.draft);
+
+        
         setIsLoading(false);
       })
       .catch((err) => {
@@ -58,12 +60,6 @@ export default function Create() {
   }
 
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handleSave();
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
 
   const magicSnippet = () => {
@@ -83,6 +79,9 @@ export default function Create() {
   };
  
   const handleSave = () => {
+     // sometimes auto save triggers before cid is avaliable for usage.
+    // without this if -- it'll try to save data for undefined. lol.
+    if (router.query.cid) {
     console.log(`Saving ${router.query.cid}...`)
 
     setIsSaving(true);
@@ -98,14 +97,15 @@ export default function Create() {
         }, 2000);
       })
       .catch((err) => {
-        console.log(err);
-      });
+          console.log(err);
+        });
+    }
   };
 
   const handlePublish = () => {
-
-    // first save
-    handleSave();
+   if (router.query.cid) {
+      handleSave();
+    }
 
     const cid = router.query.cid;
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}/publish`, "PUT")
@@ -197,7 +197,7 @@ export default function Create() {
 </div>
 <div className='ml-auto mt-8'>
               { !isPublished &&
-<span className='text-green-400 bg-green-900 px-3 rounded-full mr-2'>published</span>
+<span className='text-green-400 bg-green-900  rounded-full mr-2'>published</span>
 }
 </div>
 </div>    
@@ -229,7 +229,7 @@ export default function Create() {
                 id="content"
                 placeholder="You can use Markdown here!"
                 style={{ height: 'calc(100vh - 200px)' }}
-                className="px-0 h-full w-full rounded-lg border-none placeholder-neutral-700 bg-neutral-900 px-5 py-4 text-white focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none"
+                className="px-0 h-full w-full rounded-lg border-none placeholder-neutral-700 w-full bg-transparent px-5 py-4 text-white focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none"
                 onChange={(event) => {
                   setContentPreview(event.target.value);
                 }}
