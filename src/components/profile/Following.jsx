@@ -65,6 +65,8 @@ const Following = ({ followings, pageData, userData }) => {
           </div>
         )}
       </div>
+      
+
     </>
   );
 };

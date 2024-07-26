@@ -62,7 +62,7 @@ const ChallengeCard = (_props) => {
 
   return (
     challenge && (
-      <Link {...props} className={`group w-full  border-l-4 ${colorBorder[challenge.difficulty]} bg-[#212121] px-5 py-6 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
+      <Link {...props} className={`group w-full  border-l-4 ${colorBorder[challenge.difficulty]} bg-[#212121] px-5 py-6 transition-all duration-300 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
         <div className="flex justify-between">
           <h1 className="truncate text-2xl font-bold text-white w-2/3">{challenge.title}</h1>
 

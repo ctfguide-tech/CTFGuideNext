@@ -19,6 +19,7 @@ import { jwtDecode } from 'jwt-decode';
 import api from '@/utils/terminal-api';
 import Confetti from 'react-confetti';
 import { Context } from '@/context';
+import { useRef } from 'react';
 
 
 export default function Challenge() {
@@ -41,10 +42,12 @@ export default function Challenge() {
   // while mainting persistence of the terminal.
   const tabs = {
     'description': { text: 'Description', element: DescriptionPage, },
-    'write-up': { text: 'Write Up', element: WriteUpPage, },
     'hints': { text: 'Hints', element: HintsPage, },
-    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
+
     'comments': { text: 'Comments', element: CommentsPage, },
+
+    'write-up': { text: 'Write Up', element: WriteUpPage, },
+    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
 
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
@@ -453,9 +456,17 @@ function PointsModal({ isOpen, setIsOpen, points }) {
 
 function TabLink({ tabName, selected, url }) {
   const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
+  const icon = {
+    'Comments': 'fas fa-comments text-green-500',
+    'Leaderboard': 'fas fa-trophy text-yellow-500',
+    'Write Up': 'fas fa-book text-blue-500',
+    'Hints': 'fas fa-question text-blue-500',
+    'Description': 'fas fa-info-circle text-blue-500'
+  }[tabName] || 'fas fa-file-alt text-blue-500';
+
   return (
-    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white px-2 hover:bg-neutral-600 rounded-sm h-full`}>
-      <DocumentTextIcon className="text-blue-500 w-6 mr-1 inline-flex" />
+    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full`}>
+      <i className={`${icon} w-6 mr-1 inline-flex`}></i>
       {tabName ?? 'This is a test button'}
     </Link>
   )
@@ -1010,6 +1021,7 @@ function CommentsPage({ cache }) {
   
   const [replyingId, setReplyingId] = useState('');
   const [comments, setComments] = useState([]);
+  const commentBoxRef = useRef(null); // Add a ref for the comment box
 
   useEffect(() => {
     if (!challenge) {
@@ -1039,6 +1051,8 @@ function CommentsPage({ cache }) {
     configReply(true);
     setReplyingTo(username);
     setReplyingId(commentId);
+    // Scroll to the comment box
+    commentBoxRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   const cancelReply = async () => {
@@ -1263,9 +1277,12 @@ function CommentsPage({ cache }) {
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-        <h1 className="text-2xl font-semibold py-2 line-clamp-1">
-          Comments
-        </h1>
+        <div className="flex items-center">
+          <h1 className="text-2xl font-semibold py-2 line-clamp-1">Comments</h1>
+          <span className="bg-neutral-600 px-1 text-sm ml-2"><i className="fas fa-flask"></i> Experimental Feature</span>
+        </div>
+
+        
         <form onSubmit={handleCommentSubmit} className="mb-4  bottom-0 left-0">
           <p className="text-red-500 hidden">Hmm, that doesn't seem very nice. Please read our terms of service. </p>
           <div className="flex w-full">
@@ -1277,6 +1294,7 @@ function CommentsPage({ cache }) {
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Add a comment..."
                 className=" text-black p-2 w-full bg-neutral-700 border-none text-white placeholder-white"
+                ref={commentBoxRef} // Attach the ref to the input
               />
               {hasReply &&
                 <div className="flex w-full text-left px-2 bg-neutral-500/10 border-none py-1">
