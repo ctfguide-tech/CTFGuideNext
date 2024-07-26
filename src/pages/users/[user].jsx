@@ -506,7 +506,7 @@ export default function Create() {
                                 onChange={handleBioChange}
                                 className=" block w-full rounded-md border-0 border-none bg-neutral-700 text-white shadow-sm placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:py-1.5 sm:text-sm sm:leading-6"
                                 ref={bioRef}
-                               
+                                style={{ maxHeight: '200px', overflowY: 'auto' }}
                            />
                            
             </div>
@@ -515,7 +515,9 @@ export default function Create() {
                        
                     </div>
                     </> : <>
-                    {user && <MarkdownViewer  content={currentUsersBio} />}
+                    {user && <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        <MarkdownViewer  content={currentUsersBio} />
+                    </div>}
                    
                     </>}
                    
