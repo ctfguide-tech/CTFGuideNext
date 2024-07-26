@@ -64,7 +64,7 @@ const ChallengeCard = (_props) => {
     challenge && (
       <Link {...props} className={`group w-full  border-l-4 ${colorBorder[challenge.difficulty]} bg-[#212121] px-5 py-6 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
         <div className="flex justify-between">
-          <h1 className="text-2xl font-bold text-white">{challenge.title}</h1>
+          <h1 className="truncate text-2xl font-bold text-white pr-1">{challenge.title}</h1>
 
           <div className="flex items-center text-gray-4000">
             <span className='text-green-300'><i className="fas fa-arrow-up text-green-300"></i> {challenge.upvotes !== undefined ? challenge.upvotes : <Skeleton width={20} />}</span>
