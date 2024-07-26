@@ -771,6 +771,7 @@ function WriteupView({ writeup, onBack, cache }) {
   const [authorPfp, setAuthorPfp] = useState('');
 
   useEffect(() => {
+    // set tab to writeup 
     async function fetchAuthorPfp(username) {
       try {
         const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;

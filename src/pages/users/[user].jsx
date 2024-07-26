@@ -815,7 +815,7 @@ export default function Create() {
                 <div className="mx-auto max-w-7xl ">
                     <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                         <div className="flex w-40">
-                            <a href="../settings">
+                            <a href={ownUser ? "../settings" : "#"}>
                                 {(user && (
                                     <img
                                         className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
