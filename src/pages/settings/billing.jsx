@@ -113,7 +113,7 @@ export default function Billing() {
             >
               <img
                 className="mb-0 mt-auto w-1/6"
-                src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/DefaultKana.png`}
+                src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/FancyKana.png`}
               />
               
                 <div className="ml-0  mt-2 grid w-full grid-cols-1 place-items-center px-4 ">
