@@ -43,7 +43,7 @@ const SolvedChallenges = ({ user }) => {
                 {solvedChallenges.map(challenge => (
                     <div onClick={() => {
                         router.push(`/challenges/${challenge.id}`);
-                    }} className='hover:bg-neutral-700/40 cursor-pointer list-none text-center text-white flex bg-neutral-700/50 px-4 py-4' key={challenge.id}>
+                    }} className='mt-2 hover:bg-neutral-700/40 cursor-pointer list-none text-center text-white flex bg-neutral-700/50 px-4 py-4' key={challenge.id}>
                      
                       <div>
                       {challenge.title} 

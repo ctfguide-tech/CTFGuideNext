@@ -11,7 +11,7 @@ const Following = ({ followings, pageData, userData }) => {
 
   return (
     <>
-      <div className="bg-neutral-800 px-4 py-4">
+      <div className="bg-neutral-800 border-t-2 border-blue-600 px-4 py-4">
         <div className="flex">
           <span>
             <i
@@ -65,6 +65,8 @@ const Following = ({ followings, pageData, userData }) => {
           </div>
         )}
       </div>
+      
+
     </>
   );
 };

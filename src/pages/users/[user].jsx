@@ -921,7 +921,7 @@ export default function Create() {
                 </div>
             </div>
 
-            <main className="mx-auto mt-10 max-w-7xl">
+            <main className="mx-auto mt-10 max-w-7xl mb-20">
                 <div className="mt-10 grid grid-cols-1 gap-y-4 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 ">
                     <div className="h-40 w-full border-t-4 border-blue-600 bg-neutral-800">
 
@@ -1138,9 +1138,39 @@ export default function Create() {
 
                     </div>
                 </div>
+
+
             </main>
 
-            <Footer />
+           {/* are you even surprised atp?  */}
+            {displayMode === 'followers' || displayMode === 'following' ? (
+                <>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                </>
+            ) : null}
+
+            <Footer />          
 
             {banner && (
                 <div ref={saveRef}
