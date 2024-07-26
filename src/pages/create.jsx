@@ -546,22 +546,28 @@ export default function Create() {
                 </div>
                 <div>
                   <ul role="list" className=" divide-y divide-neutral-800 list-none">
-                    {notifications.slice(0, 3).map((notification) => (
-                      <li key={notification.id} className="py-4">
-                        <div className="flex space-x-3">
-                          <i className={`fas ${notification.status === 'approved' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-yellow-500'} mt-4`}></i>
-                          <div className="flex-1 space-y-1">
-                            <div className="flex items-center justify-between">
-                              <h3 className="text-sm font-medium text-blue-500">CTFGuide  Team</h3>
-                              <p className="text-xs text-white">{new Date(notification.createdAt).toLocaleString()}</p>
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 3).map((notification) => (
+                        <li key={notification.id} className="py-4">
+                          <div className="flex space-x-3">
+                            <i className={`fas ${notification.status === 'approved' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-yellow-500'} mt-4`}></i>
+                            <div className="flex-1 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-medium text-blue-500">CTFGuide Team</h3>
+                                <p className="text-xs text-white">{new Date(notification.createdAt).toLocaleString()}</p>
+                              </div>
+                              <p className="text-sm text-white">
+                                {notification.message}
+                              </p>
                             </div>
-                            <p className="text-sm text-white">
-                              {notification.message}
-                            </p>
                           </div>
-                        </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li className=" text-sm text-white">
+                        You have no new notifications.
                       </li>
-                    ))}
+                    )}
                   </ul>
                 </div>
               </div>
