@@ -506,7 +506,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <a
                               href="https://ctfguide.hellonext.co/b/feedback"
                               className={classNames(
-                                'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                'hidden flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <PencilSquareIcon
@@ -518,7 +518,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <Link
                               href="/report"
                               className={classNames(
-                                'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                'hidden flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <ShieldExclamationIcon

@@ -416,17 +416,20 @@ export default function Create() {
                                     {new Date(challenge.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                   </td>
                                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                    <a href={`/create/edit?cid=${challenge.id}`} className="text-blue-600 hover:text-blue-500">
-                                    <i className="fas fa-pencil-alt mr-1"></i> Edit<span className="sr-only">, {challenge.title}</span>
-                                    </a>
+                                    {challenge.state === 'pending' && (
+                                      <>
+                                        <a href={`/create/edit?id=${challenge.id}`} className="text-blue-600 hover:text-blue-500">
+                                          <i className="fas fa-pencil-alt mr-1"></i> Edit<span className="sr-only">, {challenge.title}</span>
+                                        </a>
 
-                                    <button
-                                      onClick={() => handleOpenModal(challenge.snote)}
-                                      className="ml-4 text-orange-600 hover:text-orange-500"
-                                    >
-                                      <i className="fas fa-comments mr-1"></i> View Feedback
-                                    </button>
-
+                                        <button
+                                          onClick={() => handleOpenModal(challenge.snote)}
+                                          className="ml-4 text-orange-600 hover:text-orange-500"
+                                        >
+                                          <i className="fas fa-comments mr-1"></i> View Feedback
+                                        </button>
+                                      </>
+                                    )}
 
                                     <a href={`/create/edit?cid=${challenge.id}`} className="ml-4 text-red-600 hover:text-red-500">
                                      <i className="fas fa-trash-alt mr-1"></i> Delete

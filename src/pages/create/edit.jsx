@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
 import { useRouter } from 'next/router';
+import request from '@/utils/request';
 
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
@@ -19,84 +20,48 @@ export default function Createchall() {
   }
   useEffect(() => {
     loadChallenge();
-  }, [router.query]);
-  function loadChallenge() {
-    var xhr = new XMLHttpRequest();
+  }, [router.query.id]);
+  async function loadChallenge() {
+    try {
+      console.log(router.query.id)
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.id;
+      let challenge = await request(url, 'GET', null);
+      challenge = challenge.body
 
-    xhr.addEventListener('readystatechange', function () {
-      if (this.readyState === 4) {
-        console.log(this.responseText);
-        var challenge = JSON.parse(this.responseText);
+      if (challenge) {
         document.getElementById('challengeName').innerText = challenge.title;
         document.getElementById('content').value = challenge.content;
         document.getElementById('category').value = challenge.category;
-
         // document.getElementById("solution").value = challenge.keyword;
       }
-    });
-
-    xhr.open(
-      'GET',
-      `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.slug
-    );
-    xhr.setRequestHeader(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('idToken')
-    );
-
-    xhr.send();
+    } catch (error) {
+      console.error('Error loading challenge:', error);
+    }
   }
 
-  function uploadChallenge() {
-    // WARNING: For POST requests, body is set to null by browsers.
-    
-    var data = JSON.stringify({
+  async function uploadChallenge() {
+    let data = {
       title: document.getElementById('challengeName').innerText,
       content: document.getElementById('content').value,
-    });
-   
+    };
 
-    if (document.getElementById('solution').value == "" || document.getElementById('solution').value == null) {
-    
-    
-    
-       data = JSON.stringify({
-      title: document.getElementById('challengeName').innerText,
-      content: document.getElementById('content').value,
-    });
+    if (document.getElementById('solution').value) {
+      data.keyword = document.getElementById('solution').value;
+    }
 
-  } else {
-    data = JSON.stringify({
-      title: document.getElementById('challengeName').innerText,
-      content: document.getElementById('content').value,
-      keyword: document.getElementById('solution').value,
-    });
-  }
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.addEventListener('readystatechange', function () {
-      if (this.readyState === 4 || this.status === 201) {
-        router.push('/create')
-      }
-
-      if (this.readyState === 4 && this.status != 201) {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.id;
+      let response = await request(url, 'PUT', data);
+      console.log(response)
+      if (response.status === 200) {
+        router.push('/create');
+      } else {
         window.alert('Something went wrong.');
-        console.log(this.responseText);
       }
-    });
-
-    xhr.open(
-      'PUT',
-      `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.slug
-    );
-    xhr.setRequestHeader(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('idToken')
-    );
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    xhr.send(data);
+    } catch (error) {
+      window.alert('Something went wrong.');
+      console.error('Error updating challenge:', error);
+    }
   }
 
   return (

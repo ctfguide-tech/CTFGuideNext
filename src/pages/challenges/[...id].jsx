@@ -27,7 +27,7 @@ export default function Challenge() {
   const [selectedWriteup, setSelectedWriteup] = useState(null);
 
   // I hate this
-  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
+  const [urlChallengeId, urlSelectedTab, urlWriteupId] = (router ?? {})?.query?.id ?? [undefined, undefined, undefined];
 
 
   // Very primitive cache system
@@ -222,6 +222,8 @@ export default function Challenge() {
           const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupID}`, "GET", null);
           if (response.success) {
             setSelectedWriteup(response.writeup);
+            // Update the URL to set the selected tab to "write-up"
+            router.push(`/challenges/${urlChallengeId}/write-up/${writeupID}`, undefined, { shallow: true });
           } else {
             console.error('Failed to fetch writeup:', response.message);
           }
@@ -234,7 +236,7 @@ export default function Challenge() {
 
   const handleWriteupSelect = (writeup) => {
     setSelectedWriteup(writeup);
-    router.push(`/challenges/${urlChallengeId}/writeups/${writeup.id}`);
+    router.push(`/challenges/${urlChallengeId}/write-up/${writeup.id}`);
   };
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -276,6 +278,12 @@ export default function Challenge() {
     }));
   };
 
+  useEffect(() => {
+    if (selectedWriteup) {
+      setSelectedWriteup(null);
+    }
+  }, [urlSelectedTab]);
+
   return (
     <>
       <Head>
@@ -299,7 +307,7 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             {selectedWriteup ? (
-              <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => setSelectedWriteup(null)} />
+              <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => router.push(`/challenges/${urlChallengeId}/write-up`)} />
             ) : (
               <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
             )}
@@ -765,69 +773,69 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
 
 function WriteupView({ writeup, onBack, cache }) {
 
-  const { challenge } = cache;
-  const [upvotes, setUpvotes] = useState(writeup.upvotes);
-  const [downvotes, setDownvotes] = useState(writeup.downvotes);
-  const [authorPfp, setAuthorPfp] = useState('');
+    const { challenge } = cache;
+    const [upvotes, setUpvotes] = useState(writeup.upvotes);
+    const [downvotes, setDownvotes] = useState(writeup.downvotes);
+    const [authorPfp, setAuthorPfp] = useState('');
 
-  useEffect(() => {
+    useEffect(() => {
     // set tab to writeup 
-    async function fetchAuthorPfp(username) {
-      try {
-        const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
-        const result = await request(endPoint, "GET", null);
-        if (result) {
-          setAuthorPfp(result);
-        } else {
-          setAuthorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
+      async function fetchAuthorPfp(username) {
+        try {
+          const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
+          const result = await request(endPoint, "GET", null);
+          if (result) {
+            setAuthorPfp(result);
+          } else {
+            setAuthorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
+          }
+        } catch (err) {
+          console.log('failed to get profile picture');
         }
-      } catch (err) {
-        console.log('failed to get profile picture');
+      }
+
+      if (writeup && writeup.user && writeup.user.username) {
+        fetchAuthorPfp(writeup.user.username);
+      }
+    }, [writeup]);
+
+    async function upvoteWriteup(writeupId) {
+      try {
+        const upvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/upvote`;
+        const response = await request(upvoteEndpoint, 'POST', {
+          "message": "Upvoted writeup"
+        });
+        if (response.success) {
+          console.log("Upvoted successfully");
+          setUpvotes(response.upvotes);
+          setDownvotes(response.downvotes);
+        } else {
+          console.error("Failed to upvote:", response.message);
+        }
+      } catch (error) {
+        console.error("Error upvoting writeup:", error);
       }
     }
 
-    if (writeup && writeup.user && writeup.user.username) {
-      fetchAuthorPfp(writeup.user.username);
-    }
-  }, [writeup]);
-
-  async function upvoteWriteup(writeupId) {
-    try {
-      const upvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/upvote`;
-      const response = await request(upvoteEndpoint, 'POST', {
-        "message": "Upvoted writeup"
-      });
-      if (response.success) {
-        console.log("Upvoted successfully");
-        setUpvotes(response.upvotes);
-        setDownvotes(response.downvotes);
-      } else {
-        console.error("Failed to upvote:", response.message);
+    async function downvoteWriteup(writeupId) {
+      try {
+        const downvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`;
+        const response = await request(downvoteEndpoint, 'POST', {
+          "message": "Downvoted writeup"
+        });
+        if (response.success) {
+          console.log("Downvoted successfully");
+          setUpvotes(response.upvotes);
+          setDownvotes(response.downvotes);
+        } else {
+          console.error("Failed to downvote:", response.message);
+        }
+      } catch (error) {
+        console.error("Error downvoting writeup:", error);
       }
-    } catch (error) {
-      console.error("Error upvoting writeup:", error);
     }
-  }
 
-  async function downvoteWriteup(writeupId) {
-    try {
-      const downvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`;
-      const response = await request(downvoteEndpoint, 'POST', {
-        "message": "Downvoted writeup"
-      });
-      if (response.success) {
-        console.log("Downvoted successfully");
-        setUpvotes(response.upvotes);
-        setDownvotes(response.downvotes);
-      } else {
-        console.error("Failed to downvote:", response.message);
-      }
-    } catch (error) {
-      console.error("Error downvoting writeup:", error);
-    }
-  }
-
-  return (
+    return (
     <div className="px-4 mt-4">
       <div className="flex">
         <div>
@@ -942,9 +950,9 @@ function LeaderboardPage({ cache, setCache }) {
       <div className="flex">
 
 
-        <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
           <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
-        </div>
+            </div>
 
 
 
