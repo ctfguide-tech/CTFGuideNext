@@ -177,8 +177,8 @@ export default function Createchall() {
         return;
       } 
     } else {
-      if (file.size > 500 * 1024 * 1024) {
-        toast.error('File size is too large. Please upload a file less than 500MB.');
+      if (file.size > 100 * 1024 * 1024) {
+        toast.error('File size is too large. Please upload a file less than 100MB.');
         return;
       }
     }
