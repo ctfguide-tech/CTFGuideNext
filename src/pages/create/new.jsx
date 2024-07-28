@@ -8,6 +8,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import request, { getCookie } from '@/utils/request';
 import { jwtDecode } from 'jwt-decode';
+import { Context } from '@/context';
+import { useContext } from 'react';
 
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
@@ -28,6 +30,7 @@ const styles = {
 };
 
 export default function Createchall() {
+  const { role } = useContext(Context);
   const [contentPreview, setContentPreview] = useState('');
   const [penalty, setPenalty] = useState([0, 0, 0]);
   const [sending, setSending] = useState(false);
@@ -139,6 +142,8 @@ export default function Createchall() {
       toast.error('Only one file can be uploaded at a time. Please zip multiple files.');
       return;
     }
+
+
     setSelectedFile(file);
     setUploadedFiles([file]);
   };
@@ -157,7 +162,29 @@ export default function Createchall() {
       toast.error('Only one file can be uploaded at a time. Please zip multiple files.');
       return;
     }
+
+
+
     const file = event.dataTransfer.files[0];
+
+    console.log(file.size)
+
+
+    // handle large files 
+    if (role !== "PRO") {
+      if (file.size > 30 * 1024 * 1024) {
+        toast.error('File size is too large. Please upload a file less than 30MB or upgrade to PRO to upload larger files.');
+        return;
+      } 
+    } else {
+      if (file.size > 500 * 1024 * 1024) {
+        toast.error('File size is too large. Please upload a file less than 500MB.');
+        return;
+      }
+    }
+
+
+
     setSelectedFile(file);
     setUploadedFiles([file]);
   };
@@ -485,6 +512,7 @@ export default function Createchall() {
                   }}
                   onChange={(e) => handleFileChange(e)}
                   type="file"
+
                   name="file_upload"
                   className="hidden"
                 />
