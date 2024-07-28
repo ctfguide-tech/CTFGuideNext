@@ -28,13 +28,18 @@ export default function Leaderboard() {
 
     request(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard/`, 'GET', null)
       .then((response) => {
-        setLeaderboardData(response.leaderboard);
-        console.log('leaderboards: ', response.leaderboard);
+        if (response.leaderboard) {
+          setLeaderboardData(response.leaderboard);
+          console.log('leaderboards: ', response.leaderboard);
+        }
+        
       })
       .catch((error) => {
         console.error('Error fetching leaderboard data: ', error);
       });
   }, []);
+
+
   return (
     <>
       <Head>
@@ -49,6 +54,9 @@ export default function Leaderboard() {
       <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
+
+          { leaderboardData.length > 3 && (
+            <>
           <div className="mx-auto mt-20 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
             <div
               className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto podium"
@@ -188,7 +196,7 @@ export default function Leaderboard() {
                     <TableBody>
                       {leaderboardData && leaderboardData.length > 3 && leaderboardData.slice(3).map((entry, index) => (
                         <TableRow
-                          key={index}
+                   
                           className="hover:cursor-pointer hover:bg-neutral-700"
                           onClick={() => {
                             window.location.href =
@@ -222,15 +230,11 @@ export default function Leaderboard() {
                               >
                                 {entry.user.username}
                                 {entry.user.role === 'ADMIN' && (
-                <>
-                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
-                </>
-              )}
-                 {entry.user.role === 'PRO' && (
-                <>
-                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
-                </>
-              )}
+                                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                                )}
+                                {entry.user.role === 'PRO' && (
+                                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                                )}
                               </a>
                             </div>
                           </TableCell>
@@ -245,6 +249,23 @@ export default function Leaderboard() {
               </div>
             </div>
           </div>
+          </>
+          )
+        } else {
+          <div className="mx-auto max-w-7xl">
+            <div>
+              <div className="w-full pt-8">
+                <div className="relative w-full overflow-auto">
+                       
+            <p className="text-center"> <img className="w-1/6 mx-auto" src="../../lbmissing.svg"></img></p>
+    
+                  <p className="text-center text-white text-xl">Leaderboards are only available after at least 3 people have completed a challenge.</p>
+                  <p className="text-center text-white text-sm">error(500): leaderboard calculation failed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
         </main>
         <div className="flex h-full w-full grow basis-0"></div>
         <Footer />
