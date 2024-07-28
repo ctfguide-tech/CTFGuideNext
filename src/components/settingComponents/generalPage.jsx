@@ -477,7 +477,7 @@ export default function General() {
               </div>
 
               {
-                (role === "PRO" || role === 'ADMIN') && (
+                (role === "PRO" || role === 'ADMIN') ? (
                   <>
                     <div className="sm:col-span-4">
                       <label
@@ -515,11 +515,8 @@ export default function General() {
                     </div>
 
                   </>
-                )
-              }
+                ) : (
 
-              {
-                (role !== "PRO" || role !== 'ADMIN') && (
                   <>
                     <div className="sm:col-span-4">
                       <label
