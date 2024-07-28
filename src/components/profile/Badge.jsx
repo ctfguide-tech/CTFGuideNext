@@ -1,19 +1,19 @@
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
 
-const Badge =  ({ createdAt, badgeName, badgeTier, badgeInfo }) => {
+const Badge =  ({ active, createdAt, badgeName, badgeImage, badgeDescription, badgeReason }) => {
     
     
     return (
     <div
     className="border border-neutral-700 border-2 bg-neutral-800 align-center mx-auto w-full rounded-lg px-4 py-4 text-center duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-700/40"
-    data-tooltip-content={badgeInfo}
+    data-tooltip-content={badgeReason}
     data-tooltip-id="badge-tooltip"
     data-tooltip-place="top"
     >
     <Tooltip id="badge-tooltip" />
     <img
-      src={`../badges/level${badgeTier}/${badgeName.toLowerCase()}.png`}
+      src={badgeImage}
       width="100"
       className="mx-auto mt-2 px-1"
     />
