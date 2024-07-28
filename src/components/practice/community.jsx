@@ -22,6 +22,12 @@ function getCategoryIcon(category) {
       return 'fas fa-image';
     case 'basic':
       return 'fas fa-graduation-cap';
+    case 'easy':
+      return 'fas fa-star';
+    case 'medium':
+      return 'fas fa-star-half';
+    case 'hard':
+      return 'fas fa-star';
     default:
       return 'fas fa-question';
   }
@@ -125,6 +131,7 @@ export function Community({ challenges }) {
   const [category, setCategory] = useState('all');
   const [results, setResults] = useState([]);
   const [filter, setFilter] = useState('');
+  const [solvedFilter, setSolvedFilter] = useState('all');
 
   useEffect(() => {
     const filteredChallenges = challenges
@@ -134,6 +141,15 @@ export function Community({ challenges }) {
         }
         if (category !== 'all' && challenge.category[0].toLowerCase() !== category.toLowerCase()) {
           return false;
+        }
+        if (solvedFilter !== 'all') {
+          const isSolved = challenge.solved; // Assuming `solved` property exists on challenge
+          if (solvedFilter === 'solved' && !isSolved) {
+            return false;
+          }
+          if (solvedFilter === 'unsolved' && isSolved) {
+            return false;
+          }
         }
         return true;
       })
@@ -151,7 +167,7 @@ export function Community({ challenges }) {
       });
 
     setResults(filteredChallenges);
-  }, [difficulty, category, challenges]);
+  }, [difficulty, category, challenges, solvedFilter]);
 
   const search = (event) => {
     setFilter(event.target.value);
@@ -159,12 +175,10 @@ export function Community({ challenges }) {
 
   return (
     <>
-
       <div className="mt-6 max-w-7xl text-left">
         <h1 className="text-3xl font-semibold text-white mb-4"> Practice Problems </h1>
         <div className="flex flex-col md:flex-row max-w-7xl gap-4">
-
-          <div className="w-full">
+          <div className="w-full hidden">
             <label
               htmlFor="sort-category"
               className="block text-sm font-medium leading-5 text-gray-200"
@@ -181,21 +195,32 @@ export function Community({ challenges }) {
               value={difficulty}
             >
               <option value="all">-</option>
-
-            </select>          </div>
+            </select>
+          </div>
           <div className="w-full flex-row-reverse">
-
             <label
               htmlFor="difficulty"
               className="block text-sm font-medium leading-5 text-gray-200"
             >
               Difficulty
             </label>
-
-            <CategorySelect category={difficulty} setCategory={setDifficulty} isDifficulty={true} />
-
+            <select
+              style={{ backgroundColor: '#212121' }}
+              id="difficulty"
+              className="mt-1 block w-full rounded border border-neutral-700 text-base leading-6 text-white focus:outline-none sm:text-sm sm:leading-5"
+              onChange={(e) => {
+                setDifficulty(e.target.value);
+              }}
+              value={difficulty}
+            >
+              <option value="all">All</option>
+              <option value="beginner">Beginner</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="insane">Insane</option>
+            </select>
           </div>
-
           <div className="w-full">
             <label
               htmlFor="sort-category"
@@ -203,11 +228,9 @@ export function Community({ challenges }) {
             >
               Category
             </label>
-            <CategorySelect category={category} setCategory={setCategory} isDifficulty={false}/>
-
+            <CategorySelect category={category} setCategory={setCategory} isDifficulty={false} />
           </div>
-
-          <div className="w-full">
+          <div className="w-full hidden">
             <label
               htmlFor="sort-category"
               className="block text-sm font-medium leading-5 text-gray-200"
@@ -224,8 +247,29 @@ export function Community({ challenges }) {
               value={difficulty}
             >
               <option value="all">-</option>
-
-            </select>       </div>
+            </select>
+          </div>
+          <div className="w-full">
+            <label
+              htmlFor="solved-filter"
+              className="block text-sm font-medium leading-5 text-gray-200"
+            >
+              Solved
+            </label>
+            <select
+              style={{ backgroundColor: '#212121' }}
+              id="solved-filter"
+              className="mt-1 block w-full rounded border border-neutral-700 text-base leading-6 text-white focus:outline-none sm:text-sm sm:leading-5"
+              onChange={(e) => {
+                setSolvedFilter(e.target.value);
+              }}
+              value={solvedFilter}
+            >
+              <option value="all">All</option>
+              <option value="solved">Solved</option>
+              <option value="unsolved">Unsolved</option>
+            </select>
+          </div>
           <div className="w-full">
             <label
               htmlFor="search"
@@ -281,4 +325,3 @@ export function Community({ challenges }) {
     </>
   );
 }
-
