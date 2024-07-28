@@ -204,7 +204,7 @@ export default function Create() {
                 return (
                     <>
                         <h1 className="text-xl font-bold text-white">BADGES</h1>
-                        <Badges />
+                        {user && <Badges user={user} />}
                     </>
                 );
             default:
@@ -1028,7 +1028,7 @@ export default function Create() {
                            
                          
                         </div>
-                           {user && user.bio != null ? (
+                           {(user && user.bio != null ) ? (
                             <p className='text-neutral-400'>
                                 {bioViewCheck() ? renderUsersBio()  : user && <MarkdownViewer  content={user.bio} />}
                             </p>
@@ -1050,6 +1050,7 @@ export default function Create() {
                                                     'SOLVED CHALLENGES',
                                                     'WRITEUPS',
                                                     'CREATED CHALLENGES',
+                                                    'BADGES'
                                                  
                                                 ].map((tab) => (
                                                     <li
