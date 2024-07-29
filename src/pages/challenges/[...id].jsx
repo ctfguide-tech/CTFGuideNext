@@ -91,7 +91,8 @@ export default function Challenge() {
       try {
         const submitChallengeEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/submissions`;
         const submitChallengeResult = await request(submitChallengeEndpoint, 'POST', { keyword: flag });
-        console.log(submitChallengeResult)
+        console.log(submitChallengeResult);
+
         const { success, incorrect, error, points } = submitChallengeResult ?? {};
         if (error || !submitChallengeResult) {
           // An error occurred >:(
@@ -540,7 +541,7 @@ function HintsPage({ cache }) {
                   <h1 className='text-blue-500 px-2 mr-2 text-xl'>Hint {idx + 1}</h1>
                   <div className='ml-auto'>
                     <span className="mt-1 text-sm text-white bg-neutral-700 px-2 py-1 rounded-sm">
-                      {Math.abs(hint.penalty)} point penalty
+                      {Math.abs(hint.penalty)}% penalty
                     </span>
                   </div>
                 </div>

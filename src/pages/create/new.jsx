@@ -54,11 +54,21 @@ export default function Createchall() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
   const validateNewChallege = async () => {
+    let sum = 0;
     for (const p of penalty) {
-      if (p > 0) {
-        toast.error('Please enter negative values for the points');
+      if(p != 0 && !p) {
+        toast.error('Enter in all penalty fields');
         return false;
       }
+      sum += p;
+      if (p < 0 || p > 100) {
+        toast.error('Please enter positive values from 0 - 100');
+        return false;
+      }
+    }
+    if(sum > 100) {
+      toast.error('The sum of all penalties must be between 0 - 100');
+      return false;
     }
     return true;
   };
@@ -123,7 +133,7 @@ export default function Createchall() {
         toast.success(data.message);
         window.location.href = '/create';
       } else {
-        toast.error(data.message);
+        //toast.error(data.message);
       }
     } catch (err) {
       console.error('Error during challenge upload:', err);
@@ -369,8 +379,9 @@ export default function Createchall() {
                                 return newState;
                               });
                             }}
-                            max={0}
-                            placeholder={-idx * 5}
+                            max={100}
+                            min={0}
+                            placeholder={idx * 5}
                             type="number"
                             className={
                               penaltyErr === ''

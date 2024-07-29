@@ -126,7 +126,7 @@ export default function Dashboard() {
     });
     const intervalId = setInterval(() => {
       request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
-        console.log(response)
+        //console.log(response)
         setActivities(response.activityFeed);
       })
       .catch(error => {
