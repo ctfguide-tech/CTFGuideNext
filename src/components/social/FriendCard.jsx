@@ -18,6 +18,7 @@ const FriendCard = ({ data }, mutual) => {
   } = data;
 
   const [rank, setRank] = useState('...');
+
   useEffect(() => {
     const getRank = async () => {
       const response = await request(
@@ -34,12 +35,37 @@ const FriendCard = ({ data }, mutual) => {
   }, []);
 
   const getRankColor = (rank) => {
-    if (rank === 1) return 'text-transparent text-lg font-bold bg-clip-text bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600';
-    if (rank === 2) return 'text-transparent text-lg font-bold bg-clip-text bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600';
-    if (rank === 3) return 'text-transparent text-lg font-bold bg-clip-text bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900';
+    if (rank === 1)
+      return 'text-transparent text-lg font-bold bg-clip-text bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600';
+    if (rank === 2)
+      return 'text-transparent text-lg font-bold bg-clip-text bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600';
+    if (rank === 3)
+      return 'text-transparent text-lg font-bold bg-clip-text bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900';
     return 'text-lg font-bold text-white';
   };
 
+  const getNameColor = (role) => {
+    if (role == 'PRO')
+      return 'bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-lg font-bold text-transparent';
+    if (role == 'ADMIN') return 'text-lg font-bold text-red-600';
+    return 'text-lg font-bold text-white';
+  };
+
+  const getIcon = (role) => {
+    if (role == 'PRO')
+      return (
+        <span className="ml-1 flex items-center rounded-lg text-yellow-500">
+          <i className="fas fa-crown fa-fw"></i>
+        </span>
+      );
+    if (role == 'ADMIN')
+      return (
+        <span className="ml-1 flex items-center rounded-lg text-red-600">
+          <i className="fas fa-code fa-fw mt-0.5"></i>
+        </span>
+      );
+    return '';
+  };
 
   const pfp =
     profileImage ||
@@ -103,20 +129,10 @@ const FriendCard = ({ data }, mutual) => {
                       </div>
                     )}
                     {/* CTFGuide Badge */}
-                    {proUser && (
-                      <span className="ml-1 flex items-center rounded-lg text-yellow-500">
-                        <i className="fas fa-crown fa-fw"></i>
-                      </span>
-                    )}
+                    {getIcon(role)}
                   </div>
                   {/* bottom row */}
-                  {proUser ? (
-                    <h1 className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-600 bg-clip-text text-lg font-bold text-transparent">
-                      {username}
-                    </h1>
-                  ) : (
-                    <h1 className="text-lg font-bold text-white">{username}</h1>
-                  )}
+                  <h1 className={getNameColor(role)}>{username}</h1>
                 </div>
               </div>
               {/* <button>
@@ -131,9 +147,7 @@ const FriendCard = ({ data }, mutual) => {
                 <p className="ml-1 font-bold ">{followers}</p>
               </div>
               <div>
-                <p className={`${getRankColor(rank)}`}>
-                  # {rank} 
-                </p>
+                <p className={`${getRankColor(rank)}`}># {rank}</p>
               </div>
             </div>
           </div>
