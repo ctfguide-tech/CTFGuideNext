@@ -627,7 +627,7 @@ export default function Create() {
             };
             fetchFollowers();
         }
-    }, [user, followerPage]);
+    }, [user, followerPage, followedUser]);
 
     // Following useEffect
     useEffect(() => {
@@ -851,7 +851,7 @@ export default function Create() {
                                 <div className="mt-6 ">
                                     <div className="mt-6  flex w-full">
                                         <div>
-                                            <h1 className="f mt-8 truncate text-2xl font-bold text-white">
+                                            <h1 className="flex items-center mt-8 truncate text-2xl font-bold text-white">
                                                 {(user && user.username) || (
                                                     <Skeleton
                                                         baseColor="#262626"
@@ -867,13 +867,13 @@ export default function Create() {
 
 
                                                 {user && user.role === 'ADMIN' && (
-                                                    <span className="bg-red-600 px-1 text-sm ml-4">
+                                                    <span className="bg-red-600 px-1 text-sm ml-2 rounded-sm">
                                                         <i className="fas fa-code fa-fw"></i> developer
                                                     </span>
                                                 )}
 
                                                 {user && user.role === 'PRO' && (
-                                                    <span className="bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm ml-4">
+                                                    <span className="bg-gradient-to-br from-orange-400 to-yellow-600 p-1 text-sm ml-2 rounded-sm">
                                                         <i className="fas fa-crown fa-fw"></i> pro
                                                     </span>
                                                 )}
