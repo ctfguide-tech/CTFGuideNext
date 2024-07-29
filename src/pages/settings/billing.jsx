@@ -89,14 +89,9 @@ export default function Billing() {
 
     useEffect(() => {
       const params = new URLSearchParams(window.location.search);
-      const subscribed = params.get('subscribed') === 'true';
-      console.log('URL Parameter - Subscribed:', subscribed); // Debug log
+      const subscribed = params.get('payment') === 'true';
       setIsSubscribed(subscribed);
     }, []);
-
-    useEffect(() => {
-      console.log('State - isSubscribed:', isSubscribed); // Debug log
-    }, [isSubscribed]);
 
     return (
       <>
