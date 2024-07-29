@@ -16,7 +16,6 @@ import { Context } from '@/context';
 import { useContext } from 'react';
 import { CheckIcon } from '@heroicons/react/20/solid';
 
-
 export default function General() {
   const router = useRouter();
   const bioRef = useRef(null);
@@ -26,25 +25,40 @@ export default function General() {
     'Machines with GUI',
     'Access to more operating systems',
     'Longer machine times',
-    'CTFGuide Pro flair on your profile, comments, and created content'
+    'CTFGuide Pro flair on your profile, comments, and created content',
+  ];
 
-  ]
-  const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
   const [username, setUsername] = useState('');
   const [inputText, setInputText] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
+
+  // Profile Picture Related
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
-  const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [pfp, setPfp] = useState('');
+  const [zoom, setZoom] = useState(1);
+
+  // Banner Picture Related
+  const [isBannerPopupOpen, setIsBannerPopupOpen] = useState(false);
+  const [selectedBanner, setSelectedBanner] = useState(null);
+  const [bannerUrl, setBannerUrl] = useState(null);
+  const [bannerCrop, setBannerCrop] = useState({ x: 0, y: 0 });
+  const [bannerRotation, setBannerRotation] = useState(0);
+  const [bannerCroppedPixels, setBannerCroppedPixels] = useState(null);
+  const [croppedBanner, setCroppedBanner] = useState(null);
+  const [banner, setBanner] = useState(
+    'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80&quote'
+  );
+  const [bannerZoom, setBannerZoom] = useState(1);
+
   const [open, setOpen] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,9 +66,6 @@ export default function General() {
   const [tempBio, setTempBio] = useState(bio);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showBioPreview, setShowBioPreview] = useState(false);
-  const [banner, setBanner] = useState(
-    'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80&quote'
-  );
 
   const insertText = (text) => {
     const textarea = bioRef.current;
@@ -79,6 +90,11 @@ export default function General() {
     showCroppedImage();
   };
 
+  const onBannerCropComplete = (croppedArea, croppedAreaPixels) => {
+    setBannerCroppedPixels(croppedAreaPixels);
+    showCroppedBanner();
+  };
+
   const showCroppedImage = async () => {
     try {
       const croppedImage = await getCroppedImg(
@@ -92,6 +108,38 @@ export default function General() {
       console.log(e);
     }
   };
+
+  useEffect(() => {
+    if (isPopupOpen) {
+      // Initialize Cropper for profile picture after modal is fully opened
+      setCrop({ x: 0, y: 0 });
+      setRotation(0);
+      setZoom(1);
+    }
+  }, [isPopupOpen]);
+
+  const showCroppedBanner = async () => {
+    try {
+      const croppedBanner = await getCroppedImg(
+        URL.createObjectURL(selectedBanner),
+        bannerCroppedPixels,
+        bannerRotation
+      );
+      console.log('done', { croppedBanner });
+      setCroppedBanner(croppedBanner);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (isBannerPopupOpen) {
+      // Initialize Cropper for banner after modal is fully opened
+      setBannerCrop({ x: 0, y: 0 });
+      setBannerRotation(0);
+      setBannerZoom(1);
+    }
+  }, [isBannerPopupOpen]);
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
@@ -107,8 +155,8 @@ export default function General() {
 
   const handleBannerChange = (event) => {
     const file = event.target.files[0];
-    setSelectedImage(file); // Ensure selectedImage is set for banner as well
-    setImageUrl(URL.createObjectURL(file));
+    setSelectedBanner(file); // Ensure selectedImage is set for banner as well
+    setBannerUrl(URL.createObjectURL(file));
     setBanner(URL.createObjectURL(file)); // Set the banner URL
     setIsBannerPopupOpen(true); // Open the banner popup
   };
@@ -133,15 +181,22 @@ export default function General() {
         setBio(userData.bio || '');
         setTempBio(userData.bio || '');
         setLocation(userData.location || '');
-        setBanner(userData.bannerImage || 'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80');
+        setBanner(
+          userData.bannerImage ||
+            'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
+        );
 
         const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${userData.username}/pfp`;
         const result = await request(endPoint, 'GET', null);
         console.log('Profile Picture Result:', result); // Debugging statement
         if (result) {
           setPfp(result);
+          setImageUrl(result);
         } else {
           setPfp(
+            `https://robohash.org/${userData.username}.png?set=set1&size=150x150`
+          );
+          setImageUrl(
             `https://robohash.org/${userData.username}.png?set=set1&size=150x150`
           );
         }
@@ -210,13 +265,17 @@ export default function General() {
     }
   };
 
-
   const handleBannerSaveChanges = async () => {
     setIsSaving(true);
 
+    if (!croppedBanner) {
+      console.log('No cropped banner available');
+      setIsBannerPopupOpen(false);
+      return;
+    }
 
     try {
-      const response = await fetch(banner);
+      const response = await fetch(croppedBanner);
       const blob = await response.blob();
       const file = new File([blob], 'banner.png', {
         type: 'image/png',
@@ -441,7 +500,6 @@ export default function General() {
                     disabled
                   />
                 </div>
-
               </div>
 
               <div className="sm:col-span-2">
@@ -476,87 +534,87 @@ export default function General() {
                 </div>
               </div>
 
-              {
-                (role === "PRO" || role === 'ADMIN') ? (
-                  <>
-                    <div className="sm:col-span-4">
-                      <label
-                        htmlFor="photo"
-                        className="block flex text-sm font-medium leading-6 text-white"
-                      >
-                        Banner Picture      <span className=" font-bold text-xs ml-2 bg-gradient-to-br from-amber-600 via-yellow-700 via-75% to-amber-600 py-[-1px] px-2 text-sm"><i className="fas fa-crown fa-fw"></i> Exclusive to Pro</span>
-
-                      </label>
-                      <div className="mt-2 flex items-center">
-                        {banner && (
-                          <img
-
-                            className="h-12 w-full object-cover"
-                            id="banner"
-                            src={banner || "https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"}
-                            alt="banner"
-                          />
-
-                        )}
-                        <input
-                          className="hidden"
-                          type="file"
-                          id="bannerImageInput"
-                          onChange={handleBannerChange}
-                          accept="image/*"
+              {role === 'PRO' || role === 'ADMIN' ? (
+                <>
+                  <div className="sm:col-span-4">
+                    <label
+                      htmlFor="photo"
+                      className="block flex text-sm font-medium leading-6 text-white"
+                    >
+                      Banner Picture{' '}
+                      <span className="ml-2 rounded-sm bg-gradient-to-br from-amber-600 via-yellow-700 via-75% to-amber-600 px-2 py-[-1px] text-sm text-xs font-bold">
+                        <i className="fas fa-crown fa-fw"></i> Exclusive to Pro
+                      </span>
+                    </label>
+                    <div className="mt-2 flex items-center">
+                      {banner && (
+                        <img
+                          className="h-12 w-full object-cover"
+                          id="banner"
+                          src={
+                            banner ||
+                            'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
+                          }
+                          alt="banner"
                         />
-                        <button
-                          onClick={handleBannerPopupOpen}
-                          className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
-                        >
-                          Change
-                        </button>
-                      </div>
-                    </div>
-
-                  </>
-                ) : (
-
-                  <>
-                    <div className="sm:col-span-4">
-                      <label
-                        htmlFor="photo"
-                        className="block flex text-sm font-medium leading-6 text-white"
+                      )}
+                      <input
+                        className="hidden"
+                        type="file"
+                        id="bannerImageInput"
+                        onChange={handleBannerChange}
+                        accept="image/*"
+                      />
+                      <button
+                        onClick={handleBannerPopupOpen}
+                        className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
                       >
-                        Banner Picture      <span className=" font-bold text-xs ml-2 bg-gradient-to-br from-amber-600 via-yellow-700 via-75% to-amber-600 py-[-1px] px-2 text-sm"><i className="fas fa-crown fa-fw"></i> Exclusive to Pro</span>
-
-
-                      </label>
-                      <div className="mt-2 flex items-center">
-                        {banner && (
-                          <img
-
-                            className="h-12 w-full object-cover"
-                            id="banner"
-                            src={banner || "https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"}
-                            alt="banner"
-                          />
-
-                        )}
-                        <input
-                          className="hidden"
-                          type="file"
-                          id="bannerImageInput"
-                          onChange={handleBannerChange}
-                          accept="image/*"
-                        />
-                        <button
-                          onClick={() => setShowUpgradeModal(true)}
-                          className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
-                        >
-                          Change
-                        </button>
-                      </div>
+                        Change
+                      </button>
                     </div>
-
-                  </>
-                )
-              }
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="sm:col-span-4">
+                    <label
+                      htmlFor="photo"
+                      className="block flex text-sm font-medium leading-6 text-white"
+                    >
+                      Banner Picture{' '}
+                      <span className=" ml-2 bg-gradient-to-br from-amber-600 via-yellow-700 via-75% to-amber-600 px-2 py-[-1px] text-sm text-xs font-bold">
+                        <i className="fas fa-crown fa-fw"></i> Exclusive to Pro
+                      </span>
+                    </label>
+                    <div className="mt-2 flex items-center">
+                      {banner && (
+                        <img
+                          className="h-12 w-full object-cover"
+                          id="banner"
+                          src={
+                            banner ||
+                            'https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
+                          }
+                          alt="banner"
+                        />
+                      )}
+                      <input
+                        className="hidden"
+                        type="file"
+                        id="bannerImageInput"
+                        onChange={handleBannerChange}
+                        accept="image/*"
+                      />
+                      <button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="bg-neutral cursor:pointer ml-4 block rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-neutral-800 peer-focus:ring-2 peer-focus:ring-blue-600"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="sm:col-span-6">
                 <label
@@ -605,7 +663,7 @@ export default function General() {
                     </button>
                     <button
                       onClick={() => setShowBioPreview(!showBioPreview)}
-                      className="ml-auto rounded-md text-sm px-2 text-white"
+                      className="ml-auto rounded-md px-2 text-sm text-white"
                     >
                       {showBioPreview ? 'Hide Preview' : 'Preview Bio'}
                     </button>
@@ -625,10 +683,9 @@ export default function General() {
                 </p>
               </div>
 
-
               {showBioPreview && (
                 <div className=" sm:col-span-full">
-                  <label className="block text-md font-medium leading-6 text-white">
+                  <label className="text-md block font-medium leading-6 text-white">
                     Bio Preview
                   </label>
                   <div className="mt-2 rounded-lg bg-neutral-800 p-4 text-white">
@@ -705,179 +762,181 @@ export default function General() {
             </div>
 
             {/* Profile Picture Popup */}
-            <Transition.Root show={isPopupOpen} as={Fragment}>
-              <Dialog
-                as="div"
-                className="fixed inset-0 z-10 overflow-y-auto"
-                onClose={handlePopupClose}
-              >
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <div
-                    onClick={() => {
-                      handlePopupClose();
-                      localStorage.setItem('22-18-update', false);
-                    }}
-                    className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
-                  />
-                </Transition.Child>
-                <div className="mt-20 flex min-h-screen items-center justify-center px-4 pt-4 text-center sm:block sm:p-0">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-0 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                  >
-                    <div className="relative inline-block w-full max-w-xl transform overflow-hidden border-t-4 border-blue-500 bg-neutral-800 px-10 pb-10 pb-4 pt-10 pt-5 text-left align-middle shadow-xl transition-all sm:my-8 sm:align-middle">
-                      <h1 className="mt-4 text-xl text-white">
-                        Upload a profile picture
-                      </h1>
-                      <p className="mt-2 pb-8 text-sm text-white">
-                        Your profile picture will be used as your avatar on the
-                        platform. So make sure it's a good representation of
-                        you! Make sure your profile picture follows CTFGuide's{' '}
-                        <a
-                          href="https://ctfguide.com/terms"
-                          className="font-semibold text-blue-500"
-                        >
-                          terms of service
-                        </a>
-                        .
-                      </p>
-                      <div className="mx-auto mt-4 w-auto text-center text-white">
-                        <label
-                          htmlFor="profileImageInput"
-                          className="cursor-pointer rounded-md bg-neutral-600 px-3 py-2 text-white"
-                        >
-                          Choose a file
-                        </label>
-                      </div>
-                      {imageUrl && (
-                        <div
-                          className="mx-auto mt-4"
-                          style={{
-                            height: '300px',
-                            width: '300px',
-                            position: 'relative',
-                          }}
-                        >
-                          <Cropper
-                            image={imageUrl}
-                            crop={crop}
-                            rotation={rotation}
-                            zoom={zoom}
-                            aspect={1}
-                            onCropChange={setCrop}
-                            onRotationChange={setRotation}
-                            onZoomChange={setZoom}
-                            onCropComplete={onCropComplete}
-                            style={{
-                              containerStyle: { height: '100%', width: '100%' },
-                            }}
-                          />
-                        </div>
-                      )}
-                      <div className="mt-4 flex justify-end">
-                        <button
-                          onClick={handleSaveChanges}
-                          className="rounded-md bg-blue-500 px-4 py-2 text-white"
-                        >
-                          Save
-                        </button>
-                      </div>
+            <Dialog
+              as="div"
+              className="fixed inset-0 z-10 overflow-y-auto"
+              onClose={handlePopupClose}
+              open={isPopupOpen}
+            >
+              <div
+                onClick={() => {
+                  handlePopupClose();
+                  localStorage.setItem('22-18-update', false);
+                }}
+                className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
+              />
+              <div className="mt-20 flex min-h-screen items-center justify-center px-4 pt-4 text-center sm:block sm:p-0">
+                <div className="relative inline-block w-full max-w-xl transform overflow-hidden border-t-4 border-blue-500 bg-neutral-800 px-10 pb-10 pb-4 pt-10 pt-5 text-left align-middle shadow-xl transition-all sm:my-8 sm:align-middle">
+                  <h1 className="mt-4 text-xl text-white">
+                    Upload a profile picture
+                  </h1>
+                  <p className="mt-2 pb-8 text-sm text-white">
+                    Your profile picture will be used as your avatar on the
+                    platform. So make sure it's a good representation of you!
+                    Make sure your profile picture follows CTFGuide's{' '}
+                    <a
+                      href="https://ctfguide.com/terms"
+                      className="font-semibold text-blue-500"
+                    >
+                      terms of service
+                    </a>
+                    .
+                  </p>
+
+                  {imageUrl && (
+                    <div
+                      className="mx-auto mt-4"
+                      style={{
+                        height: '300px',
+                        width: '300px',
+                        position: 'relative',
+                      }}
+                    >
+                      <Cropper
+                        image={imageUrl}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={1}
+                        onCropChange={setCrop}
+                        onZoomChange={setZoom}
+                        onCropComplete={onCropComplete}
+                        style={{
+                          containerStyle: { height: '100%', width: '100%' },
+                        }}
+                      />
                     </div>
-                  </Transition.Child>
+                  )}
+                  <div className="flex justify-center py-4">
+                    <input
+                      type="range"
+                      value={zoom}
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      onChange={(e) => {
+                        setZoom(e.target.value);
+                      }}
+                      className="w-1/2 cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="mx-auto mt-6 w-auto text-center text-white">
+                    <label
+                      htmlFor="profileImageInput"
+                      className={`cursor-pointer rounded-md bg-neutral-600 px-3 py-2 text-white ${
+                        imageUrl ? 'cursor-default' : ''}`}
+                    >
+                      {imageUrl ? 'Choose a different picture' : 'Choose a file'}
+                    </label>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={handleSaveChanges}
+                      className="rounded-md bg-blue-500 px-4 py-2 text-white"
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
-              </Dialog>
-            </Transition.Root>
+              </div>
+            </Dialog>
 
             {/* Banner Popup */}
+            <Dialog
+              as="div"
+              className="fixed inset-0 z-10 overflow-y-auto"
+              onClose={() => setIsBannerPopupOpen(false)} // Ensure the popup can be closed
+              open={isBannerPopupOpen}
+            >
+              <div
+                onClick={() => setIsBannerPopupOpen(false)}
+                className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
+              />
+              <div className="mt-20 flex min-h-screen items-center justify-center px-4 pt-4 text-center sm:block sm:p-0">
+                <div className="relative inline-block w-full max-w-xl transform overflow-hidden border-t-4 border-blue-500 bg-neutral-800 px-10 pb-10 pb-4 pt-10 pt-5 text-left align-middle shadow-xl transition-all sm:my-8 sm:align-middle">
+                  <h1 className="mt-4 text-xl text-white">
+                    Upload a banner image
+                  </h1>
+                  <p className="mt-2 pb-8 text-sm text-white">
+                    Your banner will replace the default banner on your profile.
+                    All images must follow CTFGuide's{' '}
+                    <a
+                      href="https://ctfguide.com/terms"
+                      className="font-semibold text-blue-500"
+                    >
+                      terms of service
+                    </a>
+                    .
+                  </p>
 
-            <Transition.Root show={isBannerPopupOpen} as={Fragment}>
-              <Dialog
-                as="div"
-                className="fixed inset-0 z-10 overflow-y-auto"
-                onClose={() => setIsBannerPopupOpen(false)} // Ensure the popup can be closed
-              >
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <div
-                    onClick={() => setIsBannerPopupOpen(false)}
-                    className="fixed inset-0 bg-neutral-900 bg-opacity-75 transition-opacity"
-                  />
-                </Transition.Child>
-                <div className="mt-20 flex min-h-screen items-center justify-center px-4 pt-4 text-center sm:block sm:p-0">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-0 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                  >
-                    <div className="relative inline-block w-full max-w-xl transform overflow-hidden border-t-4 border-blue-500 bg-neutral-800 px-10 pb-10 pb-4 pt-10 pt-5 text-left align-middle shadow-xl transition-all sm:my-8 sm:align-middle">
-                      <h1 className="mt-4 text-xl text-white">
-                        Upload a banner image
-                      </h1>
-                      <p className="mt-2 pb-8 text-sm text-white">
-                        Your banner will replace the default banner on your profile. All images must follow CTFGuide's{' '}
-                        <a
-                          href="https://ctfguide.com/terms"
-                          className="font-semibold text-blue-500"
-                        >
-                          terms of service
-                        </a>
-                        .
-                      </p>
-
-                      {banner && (
-                        <div
-                          className="mx-auto mt-4"
-
-                        >
-                          <img src={banner} className="h-20 w-full object-cover" alt="banner" />
-                        </div>
-                      )}
-
-                      <div className="mx-auto mt-4 w-auto text-center text-white">
-                        <label
-                          htmlFor="bannerImageInput"
-                          className={`cursor-pointer rounded-md bg-neutral-600 px-3 py-2 text-white ${banner ? 'cursor-default' : ''}`}
-                        >
-                          {banner ? 'Choose a different picture' : 'Choose a file'}
-                        </label>
-                      </div>
-                      <div className="mt-4 flex justify-end">
-                        <button
-                          onClick={handleBannerSaveChanges}
-                          className="rounded-md bg-blue-500 px-4 py-2 text-white"
-                        >
-                          Save
-                        </button>
-                      </div>
+                  {banner && (
+                    <div
+                      className="mx-auto mt-4"
+                      style={{
+                        height: '300px',
+                        width: '400px',
+                        position: 'relative',
+                      }}
+                    >
+                      <Cropper
+                        image={banner}
+                        crop={bannerCrop}
+                        zoom={bannerZoom}
+                        aspect={6}
+                        onCropChange={setBannerCrop}
+                        onZoomChange={setBannerZoom}
+                        onCropComplete={onBannerCropComplete}
+                        style={{
+                          containerStyle: { height: '100%', width: '100%' },
+                        }}
+                      />
                     </div>
-                  </Transition.Child>
+                  )}
+                  <div className="flex justify-center py-4">
+                    <input
+                      type="range"
+                      value={bannerZoom}
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      onChange={(e) => {
+                        setBannerZoom(e.target.value);
+                      }}
+                      className="w-1/2 cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="mx-auto mt-6 w-auto text-center text-white">
+                    <label
+                      htmlFor="bannerImageInput"
+                      className={`cursor-pointer rounded-md bg-neutral-600 px-3 py-2 text-white ${
+                        banner ? 'cursor-default' : ''
+                      }`}
+                    >
+                      {banner ? 'Choose a different picture' : 'Choose a file'}
+                    </label>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={handleBannerSaveChanges}
+                      className="rounded-md bg-blue-500 px-4 py-2 text-white"
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
-              </Dialog>
-            </Transition.Root>
+              </div>
+            </Dialog>
 
             <div className="flex justify-end">
               <button
@@ -891,73 +950,93 @@ export default function General() {
           </div>
         )}
 
-        {showUpgradeModal && <div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 ${open ? '' : 'hidden'}`}>
-          <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
-            <div className="bg-neutral-900 bg-opacity-70  w-full h-full py-24 sm:py-32">
-              <div className="mx-auto max-w-7xl px-6 lg:px-8 animate__animated animate__slideInDown">
-                <div className="mx-auto max-w-3xl sm:text-center">
-                  <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Upgrade to CTFGuide <span className='text-yellow-500'>Pro</span></h2>
-
-                </div>
-                <div className="mx-auto mt-10 max-w-2xl rounded-3xl sm:mt-10 lg:mx-0 lg:flex lg:max-w-none bg-neutral-800 border-none">
-                  <div className="p-8 sm:p-10 lg:flex-auto">
-                    <h3 className="text-2xl font-bold tracking-tight text-white">Monthly Subscription</h3>
-                    <p className="mt-6 text-base leading-7 text-white">
-                      Enjoy our core features for free and upgrade to get perks like priority access to terminals, custom container images, customization perks, and more!
-
-                    </p>
-                    <div className="mt-10 flex items-center gap-x-4">
-                      <h4 className="flex-none text-lg font-semibold leading-6 text-blue-600">What's included</h4>
-                      <div className="h-px flex-auto bg-gray-100" />
-                    </div>
-                    <ul
-                      role="list"
-                      className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-white sm:grid-cols-2 sm:gap-6"
-                    >
-                      {includedFeatures.map((feature) => (
-                        <li key={feature} className="flex gap-x-3">
-                          <CheckIcon className="h-6 w-5 flex-none text-blue-600" aria-hidden="true" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button onClick={() => setShowUpgradeModal(false)} className=" mt-6 px-4 py-1 bg-neutral-900 hover:bg-neutral-700 text-white">
-                      No, thanks.
-                    </button>
+        {showUpgradeModal && (
+          <div
+            className={`fixed inset-0 z-50 bg-black bg-opacity-70 backdrop-blur-sm ${
+              open ? '' : 'hidden'
+            }`}
+          >
+            <div className="modal-content  animate__animated animate__fadeIn h-full  w-full">
+              <div className="h-full w-full  bg-neutral-900 bg-opacity-70 py-24 sm:py-32">
+                <div className="animate__animated animate__slideInDown mx-auto max-w-7xl px-6 lg:px-8">
+                  <div className="mx-auto max-w-3xl sm:text-center">
+                    <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                      Upgrade to CTFGuide{' '}
+                      <span className="text-yellow-500">Pro</span>
+                    </h2>
                   </div>
-
-                  <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0 ">
-                    <div className="rounded-2xl bg-neutral-850 h-full text-center ring-1 ring-inset ring-gray-900/5 bg-neutral-700 lg:flex lg:flex-col lg:justify-center">
-                      <div className="mx-auto max-w-xs px-8">
-                        <p className="text-base font-semibold text-white">Billed monthly</p>
-                        <p className="mt-6 flex items-baseline justify-center gap-x-2">
-                          <span className="text-5xl font-bold tracking-tight text-white">$5</span>
-                          <span className="text-sm font-semibold leading-6 tracking-wide text-white">USD</span>
-                        </p>
-                        <a
-                          href="../settings/billing"
-                          className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                        >
-                          Subscribe
-                        </a>
-                        <p className="mt-6 text-xs leading-5 text-white">
-                          Invoices and receipts available for easy company reimbursement
-                        </p>
-
-
-
+                  <div className="mx-auto mt-10 max-w-2xl rounded-3xl border-none bg-neutral-800 sm:mt-10 lg:mx-0 lg:flex lg:max-w-none">
+                    <div className="p-8 sm:p-10 lg:flex-auto">
+                      <h3 className="text-2xl font-bold tracking-tight text-white">
+                        Monthly Subscription
+                      </h3>
+                      <p className="mt-6 text-base leading-7 text-white">
+                        Enjoy our core features for free and upgrade to get
+                        perks like priority access to terminals, custom
+                        container images, customization perks, and more!
+                      </p>
+                      <div className="mt-10 flex items-center gap-x-4">
+                        <h4 className="flex-none text-lg font-semibold leading-6 text-blue-600">
+                          What's included
+                        </h4>
+                        <div className="h-px flex-auto bg-gray-100" />
                       </div>
+                      <ul
+                        role="list"
+                        className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-white sm:grid-cols-2 sm:gap-6"
+                      >
+                        {includedFeatures.map((feature) => (
+                          <li key={feature} className="flex gap-x-3">
+                            <CheckIcon
+                              className="h-6 w-5 flex-none text-blue-600"
+                              aria-hidden="true"
+                            />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
 
+                      <button
+                        onClick={() => setShowUpgradeModal(false)}
+                        className=" mt-6 bg-neutral-900 px-4 py-1 text-white hover:bg-neutral-700"
+                      >
+                        No, thanks.
+                      </button>
+                    </div>
 
+                    <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0 ">
+                      <div className="bg-neutral-850 h-full rounded-2xl bg-neutral-700 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center">
+                        <div className="mx-auto max-w-xs px-8">
+                          <p className="text-base font-semibold text-white">
+                            Billed monthly
+                          </p>
+                          <p className="mt-6 flex items-baseline justify-center gap-x-2">
+                            <span className="text-5xl font-bold tracking-tight text-white">
+                              $5
+                            </span>
+                            <span className="text-sm font-semibold leading-6 tracking-wide text-white">
+                              USD
+                            </span>
+                          </p>
+                          <a
+                            href="../settings/billing"
+                            className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                          >
+                            Subscribe
+                          </a>
+                          <p className="mt-6 text-xs leading-5 text-white">
+                            Invoices and receipts available for easy company
+                            reimbursement
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
-        </div>}
+        )}
       </div>
 
       <ToastContainer
