@@ -55,7 +55,7 @@ export default function Leaderboard() {
         <StandardNav />
         <main>
 
-          { leaderboardData.length > 3 && (
+          { leaderboardData[0]  && leaderboardData[1]    && leaderboardData[2] && leaderboardData.length > 3 ? (
             <>
           <div className="mx-auto mt-20 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
             <div
@@ -250,8 +250,7 @@ export default function Leaderboard() {
             </div>
           </div>
           </>
-          )
-        } else {
+          ) : (
           <div className="mx-auto max-w-7xl">
             <div>
               <div className="w-full pt-8">
@@ -265,7 +264,7 @@ export default function Leaderboard() {
               </div>
             </div>
           </div>
-        }
+        )}
         </main>
         <div className="flex h-full w-full grow basis-0"></div>
         <Footer />
