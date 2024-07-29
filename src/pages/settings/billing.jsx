@@ -3,7 +3,6 @@ const STRIPE_KEY = process.env.NEXT_PUBLIC_APP_STRIPE_KEY;
 import Head from 'next/head';
 import { Footer } from '@/components/Footer';
 import { useState, useEffect } from 'react';
-
 import { StandardNav } from '@/components/StandardNav';
 import Sidebar from '@/components/settingComponents/sidebar';
 import UpgradeBox from '@/components/settingComponents/UpgradeBox';
@@ -12,13 +11,15 @@ import Dropdown from '@/components/settingComponents/dropdown'; // Import the ne
 import { motion } from 'framer-motion';
 import { Context } from '@/context';
 import { useContext } from 'react';
+import { Dialog } from '@headlessui/react';
+import Confetti from 'react-confetti';
 
 export default function Billing() {
   const updateCardInfo = async () => {
     try {
-      let test = "https://billing.stripe.com/p/login/test_dR6dQZdpX3Fh4ne4gg";
+      let test = 'https://billing.stripe.com/p/login/test_dR6dQZdpX3Fh4ne4gg';
       let prod = 'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
-      window.location.href =test;
+      window.location.href = test;
       /*
       const stripe = await loadStripe(STRIPE_KEY);
       const response = await fetch(
@@ -82,6 +83,77 @@ export default function Billing() {
     };
   }, []);
 
+  function SubscribeDialog() {
+    const [isOpen, setIsOpen] = useState(true);
+    const [isSubscribed, setIsSubscribed] = useState(false);
+
+    useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
+      const subscribed = params.get('payment') === 'true';
+      setIsSubscribed(subscribed);
+    }, []);
+
+    return (
+      <>
+        {isSubscribed ? (
+          <Dialog
+            open={isOpen}
+            onClose={() => setIsOpen(false)}
+            className={`relative z-50 transition-opacity duration-500 ${
+              isOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+            <div className="fixed inset-0 w-screen overflow-y-auto">
+              <Confetti
+                width={window.innerWidth}
+                height={window.innerHeight}
+                recycle={false}
+                numberOfPieces={800}
+              />
+              <div className="flex min-h-full items-center justify-center p-4">
+                <Dialog.Panel className="mx-auto max-w-6xl rounded bg-neutral-900 px-32 text-white">
+                  <div className="flex gap-x-10 max-sm:mx-auto">
+                    <div className="my-14 w-5/6 max-sm:w-full">
+                      <Dialog.Title
+                        className={
+                          'mt-12 text-3xl font-semibold max-sm:text-2xl'
+                        }
+                      >
+                        Thank you for upgrading to{' '}
+                        <br className="max-sm:hidden" />
+                        <span className="bg-gradient-to-br from-amber-600 via-yellow-400 via-65% to-amber-600 bg-clip-text text-transparent">
+                          CTFGuide Pro!
+                        </span>
+                      </Dialog.Title>
+                      <p className="my-4 text-xl">
+                        Your perks are now available!
+                      </p>
+                      <button
+                        onClick={() => setIsOpen(false)}
+                        className="mt-4 rounded bg-blue-600 px-24 py-2 text-white hover:bg-blue-400"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    <div className="mb-0 mt-auto w-1/3 max-sm:hidden">
+                      <div className="ml-44 mt-36 rotate-12 text-xl italic">
+                        meow
+                      </div>
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/FancyKana.png`}
+                      />
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </div>
+            </div>
+          </Dialog>
+        ) : null}
+      </>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -107,15 +179,15 @@ export default function Billing() {
               Billing
             </h1>
             {role != 'USER' && (
-            <motion.div
-              className="flex rounded-lg bg-gradient-to-br from-blue-600 to-purple-400 to-70%"
-              whileHover={{ scale: 1.02 }}
-            >
-              <img
-                className="mb-0 mt-auto w-1/6"
-                src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/FancyKana.png`}
-              />
-              
+              <motion.div
+                className="flex rounded-lg bg-gradient-to-br from-blue-600 to-purple-400 to-70%"
+                whileHover={{ scale: 1.02 }}
+              >
+                <img
+                  className="mb-0 mt-auto w-1/6"
+                  src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/FancyKana.png`}
+                />
+
                 <div className="ml-0  mt-2 grid w-full grid-cols-1 place-items-center px-4 ">
                   <div className="flex w-full  text-lg text-white max-md:my-2 max-md:text-xs">
                     <div>
@@ -136,8 +208,10 @@ export default function Billing() {
                     </div>
                   </div>
                 </div>
-            </motion.div>
-             )}
+              </motion.div>
+            )}
+
+            <SubscribeDialog />
 
             <div className="mt-4 grid w-full grid-cols-2 gap-x-4 max-sm:grid-cols-1">
               <FreeBox />
