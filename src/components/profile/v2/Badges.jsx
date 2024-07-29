@@ -5,7 +5,7 @@ import Badge from '@/components/profile/Badge.jsx';
 import { useRouter } from 'next/router';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-
+import CusTooltip from '../BadgeOnhover';
 const Badges = ({ user }) => {
 
   const router = useRouter();
@@ -23,9 +23,7 @@ const Badges = ({ user }) => {
   }, [user]);
   if (loading) return <div className='text-neutral-400'><Skeleton width="100%" baseColor="#363535" highlightColor="#615f5f"  /></div>;
   console.log("USER BADGES:", badges);
-  console.log("BADGE 1 NAME", badges[0]);
-  console.log("CREATED AT 1", badges[0].createdAt);
-
+  
 
   /*
   Badge object returned:
@@ -76,7 +74,9 @@ const Badges = ({ user }) => {
   return (
   <div className="grid grid-cols-5 gap-x-2 gap-y-2 rounded-sm bg-neutral-800 mt-4">
           {badges && badges.length > 0 ? (
+            
             badges.map((badge) => (
+             
               <Badge
                 key={badge.id}
                 active={badge.badge.active}

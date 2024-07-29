@@ -25,9 +25,8 @@ import 'react-circular-progressbar/dist/styles.css';
 //toast
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
-// Register the necessary chart components
+import CusTooltip from '@/components/profile/BadgeOnhover';
+// Register the necessary chart component
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, ArcElement);
 
 const mockActivityData = [
@@ -819,6 +818,14 @@ export default function Create() {
                         <div className="flex w-40">
                             <a href={ownUser ? "../settings" : "#"}>
                                 {(user && (
+                                    <CusTooltip description="rssssssssssssssssss" icon={ <img
+                                        className="rounded-full hover:bg-[#212121]  w-20"
+                                        src={
+                                            user.profileImage ||
+                                            'https://robohash.org/' + user.username
+                                        }
+                                        alt=""
+                                    />}>
                                     <img
                                         className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
                                         src={
@@ -827,6 +834,7 @@ export default function Create() {
                                         }
                                         alt=""
                                     />
+                                    </CusTooltip>
                                 )) || (
                                         <Skeleton
                                             circle={true}
@@ -1021,7 +1029,8 @@ export default function Create() {
                           <div className="mb-2 w-full flex justify-between  ">
                             <div className="flex space-x-2  rounded-md">
                                 {user && (
-                                    <h1 className='text-xl text-white font-bold uppercase mb-1'>ABOUT {user.username}</h1>
+                                    <h1 className='text-xl text-white font-bold uppercase mb-1'>ABOUT {user.username}
+                                    </h1>
                                 )}
                             </div>
                             {bioViewCheck() ? renderEditButton():'' }
