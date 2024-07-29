@@ -1,9 +1,6 @@
-import { Head, Html, Main, NextScript } from 'next/document';
-import { useRouter } from 'next/router';
+import { Head, Html } from 'next/document';
 
-export default function Document(props) {
-  let pageProps = props.__NEXT_DATA__?.props?.pageProps;
-
+export default function Document() {
   return (
     <Html
       style={{ backgroundColor: '#161716' }}
@@ -32,11 +29,12 @@ export default function Document(props) {
           crossorigin="anonymous"
         />
         <script defer data-domain="ctfguide.com" src="https://plausible.io/js/script.js"></script>
-
       </Head>
-      <body className="flex h-full flex-col">
-        <Main />
-        <NextScript />
+      <body className="flex h-full flex-col items-center justify-center text-center">
+        <div>
+          <h1 className="text-3xl font-bold">We'll be back soon!</h1>
+          <p className="mt-4">Sorry for the inconvenience. We're performing some maintenance at the moment. We'll be back online shortly!</p>
+        </div>
       </body>
     </Html>
   );
