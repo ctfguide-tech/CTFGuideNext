@@ -30,7 +30,7 @@ export default function Dashboard() {
   const [activities, setActivities] = useState([]);
   const [popular, setPopular] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const exampleObjectives = [
@@ -139,10 +139,8 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    const onboardingState = localStorage.getItem('showOnboarding');
-    if (onboardingState !== null) {
-      setShowOnboarding(JSON.parse(onboardingState));
-    }
+ 
+    setShowOnboarding(false);
   }, []);
 
   const handleHideOnboarding = () => {

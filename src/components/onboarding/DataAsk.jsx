@@ -53,7 +53,7 @@ export function DataAsk(props) {
 
     const parts = birthday.split('-');
     const newDateStr = `${parts[1]}-${parts[2]}-${parts[0]}`;
-    localStorage.setItem('username', document.getElementById('username').value);
+    localStorage.setItem('username', document.getElementById('username').value.toLowerCase());
     localStorage.setItem('birthday', newDateStr);
     localStorage.setItem(
       'firstname',
