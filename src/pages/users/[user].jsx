@@ -834,8 +834,10 @@ export default function Create() {
   }));
 
   const getNameColor = (role) => {
-    if (role == 'PRO') return 'mt-8 flex items-center truncate text-2xl text-transparent font-bold bg-clip-text bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600';
-    if (role == 'ADMIN') return 'mt-8 font-bold flex items-center truncate text-2xl text-red-600';
+    if (role == 'PRO')
+      return 'mt-8 flex items-center truncate text-2xl text-transparent font-bold bg-clip-text bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600';
+    if (role == 'ADMIN')
+      return 'mt-8 font-bold flex items-center truncate text-2xl text-red-600';
     return 'mt-8 flex items-center truncate text-2xl font-bold text-white';
   };
 
@@ -868,21 +870,9 @@ export default function Create() {
         <div className="mx-auto max-w-7xl ">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
             <div className="flex w-40">
-              <a href={ownUser ? '../settings' : '#'}>
-                {(user && (
-                  <CusTooltip
-                    description="rssssssssssssssssss"
-                    icon={
-                      <img
-                        className="w-20 rounded-full  hover:bg-[#212121]"
-                        src={
-                          user.profileImage ||
-                          'https://robohash.org/' + user.username
-                        }
-                        alt=""
-                      />
-                    }
-                  >
+              {
+                <a href={ownUser ? '../settings' : '#'}>
+                  {(user && (
                     <img
                       className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
                       src={
@@ -891,17 +881,17 @@ export default function Create() {
                       }
                       alt=""
                     />
-                  </CusTooltip>
-                )) || (
-                  <Skeleton
-                    circle={true}
-                    height={128}
-                    width={128}
-                    baseColor="#262626"
-                    highlightColor="#3a3a3a"
-                  />
-                )}
-              </a>
+                  )) || (
+                    <Skeleton
+                      circle={true}
+                      height={128}
+                      width={128}
+                      baseColor="#262626"
+                      highlightColor="#3a3a3a"
+                    />
+                  )}
+                </a>
+              }
             </div>
             <div className="mt-4 w-full">
               <div className="">
@@ -923,13 +913,13 @@ export default function Create() {
                         )}
 
                         {user && user.role === 'ADMIN' && (
-                          <span className="ml-2 rounded-sm text-white bg-red-600 px-1 text-sm">
+                          <span className="ml-2 rounded-sm bg-red-600 px-1 text-sm text-white">
                             <i className="fas fa-code fa-fw"></i> developer
                           </span>
                         )}
 
                         {user && user.role === 'PRO' && (
-                          <span className="ml-2 rounded-sm text-white bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
+                          <span className="ml-2 rounded-sm bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm text-white">
                             <i className="fas fa-crown fa-fw"></i> pro
                           </span>
                         )}
