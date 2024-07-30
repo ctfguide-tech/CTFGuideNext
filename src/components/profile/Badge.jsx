@@ -14,11 +14,7 @@ const Badge = ({
     <CusTooltip
       name={badgeName}
       description={badgeDescription}
-      icon={
-        <img
-          src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/badges/group2.png`}
-        />
-      }
+      icon={<img src={badgeImage} />}
       reason={badgeReason}
       date={createdAt}
     >

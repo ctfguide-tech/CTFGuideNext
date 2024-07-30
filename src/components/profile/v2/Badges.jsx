@@ -55,7 +55,7 @@ const Badges = ({ user }) => {
               key={badge.id}
               active={badge.badge.active}
               badgeName={badge.badge.badgeName}
-              badgeImage={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/badges/group2.png`}
+              badgeImage={badge.badge.badgeImage}
               badgeDescription={badge.badge.badgeDescription}
               badgeReason={badge.badge.badgeReason}
               createdAt={badge.createdAt}
