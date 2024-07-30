@@ -51,7 +51,7 @@ export default function Login() {
 
         router.push('/dashboard');
       } else {
-        toast.error(data.message);
+        toast.error("There was a problem logging in, try again later");
       }
     } catch(error) {
       console.log(error);
