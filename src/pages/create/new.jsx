@@ -83,7 +83,10 @@ export default function Createchall() {
         try {
           const cookie = getCookie('idToken');
           const data = jwtDecode(cookie);
-          const token = data.id;
+          console.log(data)
+          toast.info('Uploading file...');
+          toast.info(data)
+          const token = cookie;
           console.log('Uploading file with token:', token);
           const fileId = await fileApi(token, selectedFile);
           if (fileId !== null) {

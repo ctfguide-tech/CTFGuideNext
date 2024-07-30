@@ -20,6 +20,7 @@ import api from '@/utils/terminal-api';
 import Confetti from 'react-confetti';
 import { Context } from '@/context';
 import { useRef } from 'react';
+import WriteupModal from '@/components/WriteupModal';
 
 
 export default function Challenge() {
@@ -46,8 +47,9 @@ export default function Challenge() {
 
     'comments': { text: 'Comments', element: CommentsPage, },
 
-    'write-up': { text: 'Write Up', element: WriteUpPage, },
+    'write-up': { text: 'Writeups', element: WriteUpPage, },
     'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
+    'AI': { text: 'AI', element: AIPage, },
 
   }
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
@@ -134,7 +136,7 @@ export default function Challenge() {
     if (data) {
 
       // do a quick http request to that url to see if it's up
-      
+
       if (!data.url) {
         toast.error("Unable to create the terminal, please try again");
         setFetchingTerminal(false);
@@ -308,7 +310,7 @@ export default function Challenge() {
               {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
             </div>
             {selectedWriteup ? (
-              <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => router.push(`/challenges/${urlChallengeId}/write-up`)} />
+              <WriteupModal isOpen={true} onClose={() => setSelectedWriteup(null)} writeup={selectedWriteup} />
             ) : (
               <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
             )}
@@ -326,13 +328,13 @@ export default function Challenge() {
                 {foundTerminal && (
                   <div className="flex">
                     <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
-                      Username: {userName} 
+                      Username: {userName}
                       <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
                         <i className="fas fa-copy"></i>
                       </button>
                     </h1>
                     <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
-                      Password: {password} 
+                      Password: {password}
                       <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
                         <i className="fas fa-copy"></i>
                       </button>
@@ -468,9 +470,10 @@ function TabLink({ tabName, selected, url }) {
   const icon = {
     'Comments': 'fas fa-comments text-green-500',
     'Leaderboard': 'fas fa-trophy text-yellow-500',
-    'Write Up': 'fas fa-book text-blue-500',
+    'Writeups': 'fas fa-book text-blue-500',
     'Hints': 'fas fa-question text-blue-500',
-    'Description': 'fas fa-info-circle text-blue-500'
+    'Description': 'fas fa-info-circle text-blue-500',
+    'AI': 'fas fa-robot text-blue-500',
   }[tabName] || 'fas fa-file-alt text-blue-500';
 
   return (
@@ -575,7 +578,7 @@ function DescriptionPage({ cache }) {
   async function upvote() {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/upvote`;
     const response = await request(url, "POST", {});
-    if(!response || !response.success) {
+    if (!response || !response.success) {
       console.log("unable to upvote");
       return;
     }
@@ -585,7 +588,7 @@ function DescriptionPage({ cache }) {
   async function downvote() {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/downvote`;
     const response = await request(url, "POST", {});
-    if(!response || !response.success) {
+    if (!response || !response.success) {
       console.log("unable to upvote");
       return;
     }
@@ -593,11 +596,11 @@ function DescriptionPage({ cache }) {
   }
 
   useEffect(() => {
-    if(challenge){
+    if (challenge) {
       setChallengeData(challenge);
       fetchAuthorPfp(challenge.creator);
     }
-  },[challenge]);
+  }, [challenge]);
 
   async function fetchAuthorPfp(username) {
     try {
@@ -637,7 +640,7 @@ function DescriptionPage({ cache }) {
             </>)
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
         </h2>
-        
+
         <h2 className="flex gap-2 pb-8">
           {challenge ? <>
             <div className="flex items-center">
@@ -647,7 +650,7 @@ function DescriptionPage({ cache }) {
             <p className="flex text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
               {challenge.views}
-            
+
             </p>
           </>
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
@@ -670,91 +673,128 @@ function Tag({ bgColor = 'bg-neutral-700', textColor = 'text-neutral-50', childr
 function WriteUpPage({ cache, setCache, onWriteupSelect }) {
   const { challenge } = cache;
   const router = useRouter();
-  const [selectedWriteup, setSelectedWriteup] = useState(null);
-  const [urlChallengeId, urlSelectedTab] = (router ?? {})?.query?.id ?? [undefined, undefined];
-
-  useEffect(() => {
-    (async () => {
-      if (cache['write-page']) {
-        return;
-      }
-      setCache('write-page', {});
-    })();
-  });
-
-  // START OF CREATE FUNCTIONALITY
+  const [writeups, setWriteups] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [solvedChallenges, setSolvedChallenges] = useState([]);
-  useEffect(() => {
-    try {
-      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null)
-        .then((data) => {
-          request(`${process.env.NEXT_PUBLIC_API_URL}/users/${data.username}/solvedChallenges`, "GET", null).then(challenges => {
-            setSolvedChallenges(challenges);
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (error) { }
-  }, []);
-  // END OF CREATE FUNCTIONALITY
 
-  // START OF FETCH WRITEUP FUNCTIONALITY
-  const [writeUp, setWriteUp] = useState([]);
   useEffect(() => {
-    try {
-      request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}/writeups`, "GET", null)
-        .then((data) => {
-          setWriteUp(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (error) { }
+    if (!challenge) return;
+
+    // Fetch writeups for the challenge
+    const fetchWriteups = async () => {
+      //toast.info('Fetching writeups...');
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/writeups`, "GET", null);
+        if (response.length > 0) {
+          setWriteups(response);
+          //   toast.success('Successfully fetched writeups');
+        } else {
+          // toast.error('Failed to fetch writeups: SEE CONSOLE', response);
+          console.error('Failed to fetch writeups:', response);
+        }
+
+      } catch (error) {
+        //  console.error('Error fetching writeups:', error);
+      }
+    };
+
+    fetchWriteups();
+  }, [challenge]);
+
+  useEffect(() => {
+    // Fetch solved challenges for the user
+    const fetchSolvedChallenges = async () => {
+      try {
+        const accountResponse = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null);
+        const solvedChallengesResponse = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${accountResponse.username}/solvedChallenges`, "GET", null);
+        setSolvedChallenges(solvedChallengesResponse);
+      } catch (error) {
+        console.error('Error fetching solved challenges:', error);
+      }
+    };
+
+    fetchSolvedChallenges();
   }, []);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWriteup, setSelectedWriteup] = useState(false);
+  const [upvotes, setUpvotes] = useState(0);
+  const [downvotes, setDownvotes] = useState(0);
+
+
+  const upvoteWriteup = async (writeupId) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/upvote`, 'POST', { "message": "Upvoted writeup" });
+      if (response.success) {
+        setUpvotes(response.upvotes);
+        setDownvotes(response.downvotes);
+      } else {
+        console.error("Failed to upvote:", response.message);
+      }
+    } catch (error) {
+      console.error("Error upvoting writeup:", error);
+    }
+  };
+
+  const downvoteWriteup = async (writeupId) => {
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`, 'POST', { "message": "Downvoted writeup" });
+      if (response.success) {
+        setUpvotes(response.upvotes);
+        setDownvotes(response.downvotes);
+      } else {
+        console.error("Failed to downvote:", response.message);
+      }
+    } catch (error) {
+      console.error("Error downvoting writeup:", error);
+    }
+  };
+
+
+
+  const openModal = (writeup) => {
+    setSelectedWriteup(writeup);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedWriteup(null);
+  };
   return (
     <>
       <div className="flex">
-        {!selectedWriteup && (
-          <>
-            <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-              <h2 className="text-2xl font-semibold pt-2">Write Ups</h2>
-            </div>
-            <div className="ml-auto">
-              <button onClick={() => { setIsCreating(true) }} className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-5  text-sm mr-4">New Draft</button>
-            </div>
-          </>
-        )}
+        <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+          <h2 className="text-2xl font-semibold pt-2 flex items-center">Writeups           <span className="bg-neutral-600 px-1 text-sm ml-2"><i className="fas fa-flask"></i> Experimental Feature</span>
+          </h2>
+        </div>
+        <div className="ml-auto">
+          <button onClick={() => setIsCreating(true)} className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-2 py-1 mt-5 text-sm mr-4">New Draft</button>
+        </div>
       </div>
-      {selectedWriteup ? (
-        <WriteupView writeup={selectedWriteup} cache={cache} onBack={() => setSelectedWriteup(null)} />
-      ) : (
-        <div className="px-4 overflow-auto">
-          {writeUp.map((writeup, index) => (
-            <div key={index} onClick={() => onWriteupSelect(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
-              <div className='w-full flex'>
-                <div className="">
-                  <h3 className="text-2xl">{writeup.title} </h3>
-                  <p className="text-sm">Authored by {writeup.user.username}</p>
-                </div>
-                <div className="ml-auto mt-2">
-                  <p className="text-sm text-right">{writeup.views} views</p>
+      <div className="px-4 overflow-auto">
+        {writeups.map((writeup, index) => (
+          <div key={index} onClick={() => openModal(writeup)} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
+            <div className='w-full flex'>
+              <div>
+                <h3 className="text-xl">{writeup.title}</h3>
+                <p className="text-sm text-blue-500 font-semibold" onClick={() => window.location.href = `../../users/${writeup.user.username}`}>@{writeup.user.username}</p>
 
-                  <div className=" space-x-2 text-right text-lg">
-                    <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
-                    <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i>  {writeup.downvotes}
-                  </div>
+              </div>
+              <div className="ml-auto mt-2">
+                <p className="text-sm text-right hidden">{writeup.views} views</p>
+                <div className="space-x-2 text-right text-lg">
+                  <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
+                  <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i> {writeup.downvotes}
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-      {!writeUp.length && (
+          </div>
+        ))}
+      </div>
+      {!writeups.length && (
         <div className="px-3">
-          <div className=" w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5 ">
+          <div className="w-full mx-auto mt-2 flex rounded-sm bg-neutral-900 py-2.5">
             <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
               <i className="text-4xl fas fa-exclamation-circle mx-auto text-center text-neutral-700/80"></i>
               <p className="text-xl">Looks like no writeups have been made for this challenge yet.</p>
@@ -764,115 +804,63 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
         </div>
       )}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
+
+      {selectedWriteup && (
+        <Dialog
+          open={isModalOpen}
+          onClose={closeModal}
+          className="fixed inset-0 z-10 overflow-y-auto"
+        >
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+            <div className="relative bg-neutral-800 text-white w-full  rounded max-w-3xl mx-auto p-6">
+
+
+              <div className="flex">
+
+                <div>
+                  <h1 className='text-2xl'>{selectedWriteup.title}</h1>
+                  <p>
+                    Authored by <span onClick={() => window.location.href = `../../users/${selectedWriteup.user.username}`} className='text-blue-500 cursor-pointer'>{selectedWriteup.user.username}</span> for challenge <span onClick={() => window.location.href = `../../challenges/${selectedWriteup.challengeId}`} className='text-yellow-500 cursor-pointer'>{selectedWriteup.title}</span>.
+                  </p>
+                </div>
+                <div className="ml-auto">
+                  <button className="px-2 rounded-full bg-green-700 hover:bg-green-600" onClick={() => upvoteWriteup(selectedWriteup.id)}>
+                    <i className="fas fa-arrow-up"></i> {upvotes}
+                  </button>
+                  <button className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2" onClick={() => downvoteWriteup(selectedWriteup.id)}>
+                    <i className="fas fa-arrow-down"></i> {downvotes}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-2 text-white">
+                <MarkdownViewer content={selectedWriteup.content} />
+              </div>
+
+
+
+
+
+
+
+              <button className='mt-6 bg-neutral-700 hover:bg-neutral-600 px-4 py-2 rounded-sm' onClick={closeModal}>Close</button>
+
+
+
+
+
+            </div>
+
+
+          </div>
+        </Dialog>
+      )}
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
     </>
   );
 }
 
-function WriteupView({ writeup, onBack, cache }) {
-
-    const { challenge } = cache;
-    const [upvotes, setUpvotes] = useState(writeup.upvotes);
-    const [downvotes, setDownvotes] = useState(writeup.downvotes);
-    const [authorPfp, setAuthorPfp] = useState('');
-
-    useEffect(() => {
-    // set tab to writeup 
-      async function fetchAuthorPfp(username) {
-        try {
-          const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
-          const result = await request(endPoint, "GET", null);
-          if (result) {
-            setAuthorPfp(result);
-          } else {
-            setAuthorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
-          }
-        } catch (err) {
-          console.log('failed to get profile picture');
-        }
-      }
-
-      if (writeup && writeup.user && writeup.user.username) {
-        fetchAuthorPfp(writeup.user.username);
-      }
-    }, [writeup]);
-
-    async function upvoteWriteup(writeupId) {
-      try {
-        const upvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/upvote`;
-        const response = await request(upvoteEndpoint, 'POST', {
-          "message": "Upvoted writeup"
-        });
-        if (response.success) {
-          console.log("Upvoted successfully");
-          setUpvotes(response.upvotes);
-          setDownvotes(response.downvotes);
-        } else {
-          console.error("Failed to upvote:", response.message);
-        }
-      } catch (error) {
-        console.error("Error upvoting writeup:", error);
-      }
-    }
-
-    async function downvoteWriteup(writeupId) {
-      try {
-        const downvoteEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/writeups/${writeupId}/downvote`;
-        const response = await request(downvoteEndpoint, 'POST', {
-          "message": "Downvoted writeup"
-        });
-        if (response.success) {
-          console.log("Downvoted successfully");
-          setUpvotes(response.upvotes);
-          setDownvotes(response.downvotes);
-        } else {
-          console.error("Failed to downvote:", response.message);
-        }
-      } catch (error) {
-        console.error("Error downvoting writeup:", error);
-      }
-    }
-
-    return (
-    <div className="px-4 mt-4">
-      <div className="flex">
-        <div>
-          <h1 className="text-3xl">{writeup.title} <span className="text-lg text-white">for {challenge && challenge.title}</span></h1>
-        
-          <div className="flex items-center">
-              <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 bg-neutral-700 rounded-full mr-2" />
-              <p className="text-lg ">
-                Authored by <Link href={`/users/${writeup.user.username}`} className={`text-blue-500 hover:underline ${writeup.user.role === 'PRO' ? 'bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent' : ''}`}>
-                {writeup.user.username}
-              </Link>
-              </p>
-       
-          </div>
-        </div>
-        <div className="ml-auto mt-3 text-right">
-          <button className="hover:text-neutral-200 mb-2" onClick={onBack}>
-            <i className="fas fa-long-arrow-alt-left"></i> View all writeups
-          </button>
-          <br />
-          <button
-            className="px-2 rounded-full bg-green-700 hover:bg-green-600"
-            onClick={() => upvoteWriteup(writeup.id)}
-          >
-            <i className="fas fa-arrow-up"></i> {upvotes !== undefined ? upvotes : <Skeleton width={20} />}
-          </button>
-          <button
-            className="px-2 rounded-full bg-red-700 hover:bg-red-600 ml-2"
-            onClick={() => downvoteWriteup(writeup.id)}
-          >
-            <i className="fas fa-arrow-down"></i> {downvotes !== undefined ? downvotes : <Skeleton width={20} />}
-          </button>
-        </div>
-      </div>
-      <br />
-      <MarkdownViewer content={writeup.content} />
-    </div>
-  );
-}
 
 function LeaderboardPage({ cache, setCache }) {
 
@@ -948,9 +936,9 @@ function LeaderboardPage({ cache, setCache }) {
       <div className="flex">
 
 
-      <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+        <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
           <h2 className="text-2xl font-semibold pt-2">Leaderboards</h2>
-            </div>
+        </div>
 
 
 
@@ -1006,9 +994,9 @@ function LeaderboardPage({ cache, setCache }) {
         <div className="px-3">
           <div className="flex justify-center items-center py-2 px-2 bg-neutral-900 rounded-lg my-2">
             <div className="text-sm text-white">
-            
-            <p className="text-center"> <img className="w-1/6 mx-auto" src="../../lbmissing.svg"></img></p>
-    
+
+              <p className="text-center"> <img className="w-1/6 mx-auto" src="../../lbmissing.svg"></img></p>
+
               <p className="text-lg mb-4"> Nobody has solved this challenge yet - be the first!</p>
             </div>
           </div>
@@ -1025,7 +1013,7 @@ function CommentsPage({ cache }) {
   const [hasReply, configReply] = useState(false);
   const [reply, setReply] = useState({});
   const [replyingPerson, setReplyingTo] = useState('');
-  
+
   const [replyingId, setReplyingId] = useState('');
   const [comments, setComments] = useState([]);
   const commentBoxRef = useRef(null); // Add a ref for the comment box
@@ -1190,11 +1178,11 @@ function CommentsPage({ cache }) {
               <button className="hover:text-neutral-600" onClick={() => handleDownvote(comment.id)}>
                 <i className="fas fa-arrow-down"></i> <span>{comment.downvotes}</span>
               </button>
-        <br></br>
+              <br></br>
 
 
             </div>
-            
+
             <img
               src={comment.profilePicture || `https://robohash.org/${comment.username}.png?set=set1&size=150x150`}
               className="w-8 h-8 rounded-full"
@@ -1215,10 +1203,10 @@ function CommentsPage({ cache }) {
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
-       
+
               {username && username === comment.username && (
-              <button onClick={() => openDeleteModal(comment.id)} className="ml-2 text-sm text-red-500"><i className="fas fa-trash-alt"></i></button>
-            )}  
+                <button onClick={() => openDeleteModal(comment.id)} className="ml-2 text-sm text-red-500"><i className="fas fa-trash-alt"></i></button>
+              )}
             </span>
           </div>
         </div>
@@ -1236,8 +1224,8 @@ function CommentsPage({ cache }) {
             </button>
           )}
 
-          
-       
+
+
         </div>
       </div>
     );
@@ -1276,11 +1264,11 @@ function CommentsPage({ cache }) {
     try {
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments/${commentId}`, "DELETE", {});
 
-        //resync comments
-        const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
-        setComments(getCommentsResult.result);
-        toast.success("Comment deleted successfully.");
-   
+      //resync comments
+      const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
+      setComments(getCommentsResult.result);
+      toast.success("Comment deleted successfully.");
+
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast.error("An unexpected error occurred.");
@@ -1297,7 +1285,7 @@ function CommentsPage({ cache }) {
           <span className="bg-neutral-600 px-1 text-sm ml-2"><i className="fas fa-flask"></i> Experimental Feature</span>
         </div>
 
-        
+
         <form onSubmit={handleCommentSubmit} className="mb-4  bottom-0 left-0">
           <p className="text-red-500 hidden">Hmm, that doesn't seem very nice. Please read our terms of service. </p>
           <div className="flex w-full">
@@ -1319,16 +1307,16 @@ function CommentsPage({ cache }) {
               }
             </div>
             <button type="submit" className="bg-neutral-600 hover:bg-blue-500 border-none text-white px-4 text-xl h-10">
-              {isSubmitting ?  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                          </svg>      : <i className="fas fa-paper-plane"></i>}
+              {isSubmitting ? <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg> : <i className="fas fa-paper-plane"></i>}
             </button>
           </div>
         </form>
         {challenge && comments && (
-            <CommentsSection comments={comments} />
-    
+          <CommentsSection comments={comments} />
+
         )}
       </div>
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
@@ -1338,6 +1326,15 @@ function CommentsPage({ cache }) {
         onConfirm={() => deleteComment(commentToDelete)}
       />
     </>
+  );
+}
+
+
+function AIPage() {
+  return (
+    <div>
+      <h1>AI</h1>
+    </div>
   );
 }
 
@@ -1358,3 +1355,4 @@ function DeleteCommentModal({ isOpen, onClose, onConfirm }) {
     </Dialog>
   );
 }
+

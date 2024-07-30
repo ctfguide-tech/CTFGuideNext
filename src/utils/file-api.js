@@ -114,8 +114,9 @@ const fileApi = async (token, selectedFile) => {
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('jwtToken', token);
+    formData.append('permission', '-1');
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_TERM_URL}upload`,
+      `${process.env.NEXT_PUBLIC_TERM_URL}file/upload`,
       {
         method: 'POST',
         body: formData,
