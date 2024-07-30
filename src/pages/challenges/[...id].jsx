@@ -122,7 +122,7 @@ export default function Challenge() {
   const [containerId, setContainerId] = useState("");
   const [userName, setUserName] = useState("");
   const [minutesRemaining, setMinutesRemaining] = useState(60);
-  const [fetchingTerminal, setFetchingTerminal] = useState(true);
+  const [fetchingTerminal, setFetchingTerminal] = useState(false);
   const [foundTerminal, setFoundTerminal] = useState(false);
   const [terminalUrl, setTerminalUrl] = useState("");
   const [loadingMessage, setLoadingMessage] = useState('Connecting to terminal service...');
@@ -150,6 +150,7 @@ export default function Challenge() {
       setTimeout(() => {
         setTerminalUrl(data.url);
         setFetchingTerminal(false);
+        setIsTerminalBooted(true);
       }, 5000);
     } else {
       toast.error("Unable to create the terminal, please try again");
@@ -182,7 +183,7 @@ export default function Challenge() {
       }
     } else {
       console.log("Didnt find a terminal for the user, creating a new one");
-      await createTerminal(false);
+    //  await createTerminal(false);
     }
   }
 
@@ -286,6 +287,13 @@ export default function Challenge() {
     }
   }, [urlSelectedTab]);
 
+  const [isTerminalBooted, setIsTerminalBooted] = useState(false);
+
+  const handleBootTerminal = async () => {
+    setFetchingTerminal(true);
+    await createTerminal(false);
+  };
+
   return (
     <>
       <Head>
@@ -353,7 +361,18 @@ export default function Challenge() {
                     </div>
                   </div>
                 ) : (
-                  <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                  isTerminalBooted ? (
+                    <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                  ) : (
+                    <div className="flex mx-auto text-center justify-center items-center h-full">
+                      <button
+                        onClick={handleBootTerminal}
+                        className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                      >
+                        Boot Terminal
+                      </button>
+                    </div>
+                  )
                 )}
               </div>
             </div>
