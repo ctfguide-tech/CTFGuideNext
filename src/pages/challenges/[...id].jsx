@@ -151,6 +151,8 @@ export default function Challenge() {
         setTerminalUrl(data.url);
         setFetchingTerminal(false);
         setIsTerminalBooted(true);
+        setShowMessage(true);
+
       }, 5000);
     } else {
       toast.error("Unable to create the terminal, please try again");
@@ -294,6 +296,8 @@ export default function Challenge() {
     await createTerminal(false);
   };
 
+  const [showMessage, setShowMessage] = useState(false);
+
   return (
     <>
       <Head>
@@ -348,7 +352,18 @@ export default function Challenge() {
                     </h1>
                     <h1 className="text-sm ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
                       Remaining Time: {formatTime(minutesRemaining)}
+                      <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
+                      {showMessage && (
+                        <span className="bg-neutral-800 px-2 py-1 absolute right-5 top-32 max-w-[20rem] text-sm text-yellow-500">
+                          Sometimes browsers block iframes, try opening the terminal in full screen if it the terminal is empty.
+                          <button onClick={() => setShowMessage(false)} className="ml-2 text-red-500 hover:text-red-300">
+                            Dismiss
+                          </button>
+                        </span>
+                      )}
                     </h1>
+
+                   
                   </div>
                 )}
                 {fetchingTerminal ? (
