@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Context } from '../context';
 import { useEffect, useState } from 'react';
 import request from '@/utils/request';
+import { Analytics } from "@vercel/analytics/react"
 
 export default function App({ Component, pageProps }) {
   const [username, setUsername] = useState('');
