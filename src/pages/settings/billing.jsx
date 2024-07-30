@@ -19,7 +19,7 @@ export default function Billing() {
     try {
       let test = 'https://billing.stripe.com/p/login/test_dR6dQZdpX3Fh4ne4gg';
       let prod = 'https://billing.stripe.com/p/login/28o4i86t419hh1K3cc';
-      window.location.href = test;
+      window.location.href = prod;
       /*
       const stripe = await loadStripe(STRIPE_KEY);
       const response = await fetch(
