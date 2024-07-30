@@ -627,9 +627,6 @@ function DescriptionPage({ cache }) {
               <i className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
               {challengeData && challengeData.downvotes !== undefined ? challengeData.downvotes : <Skeleton width={20} />}
             </div>
-            {username && username === comment.username && (
-              <button onClick={() => openDeleteModal(comment.id)} className="ml-2 text-sm text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><i className="fas fa-trash-alt"></i></button>
-            )}
           </div>
         </h1>
         <h2 className="flex flex-wrap gap-2 pb-2">
@@ -1193,7 +1190,11 @@ function CommentsPage({ cache }) {
               <button className="hover:text-neutral-600" onClick={() => handleDownvote(comment.id)}>
                 <i className="fas fa-arrow-down"></i> <span>{comment.downvotes}</span>
               </button>
+        <br></br>
+
+
             </div>
+            
             <img
               src={comment.profilePicture || `https://robohash.org/${comment.username}.png?set=set1&size=150x150`}
               className="w-8 h-8 rounded-full"
@@ -1214,6 +1215,10 @@ function CommentsPage({ cache }) {
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
+       
+              {username && username === comment.username && (
+              <button onClick={() => openDeleteModal(comment.id)} className="ml-2 text-sm text-red-500"><i className="fas fa-trash-alt"></i></button>
+            )}  
             </span>
           </div>
         </div>
@@ -1230,6 +1235,8 @@ function CommentsPage({ cache }) {
               {isExpanded ? 'Hide Replies' : 'Show Replies'}
             </button>
           )}
+
+          
        
         </div>
       </div>
@@ -1268,14 +1275,12 @@ function CommentsPage({ cache }) {
   const deleteComment = async (commentId) => {
     try {
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments/${commentId}`, "DELETE", {});
-      if (response.success) {
+
         //resync comments
         const getCommentsResult = await request(`${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/comments`, "GET", null);
         setComments(getCommentsResult.result);
         toast.success("Comment deleted successfully.");
-      } else {
-        toast.error("Failed to delete comment.");
-      }
+   
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast.error("An unexpected error occurred.");
