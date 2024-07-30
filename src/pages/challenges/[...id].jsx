@@ -134,24 +134,23 @@ export default function Challenge() {
     const data = await api.buildDocketTerminal(challenge.id, cookie);
     //console.log(data)
     if (data) {
-
-      // do a quick http request to that url to see if it's up
-
       if (!data.url) {
         toast.error("Unable to create the terminal, please try again");
         setFetchingTerminal(false);
         return;
       }
 
-
       setPassword(data.terminalUserPassword);
-      setTerminalUrl(data.url);
       setUserName(data.terminalUserName);
       setContainerId(data.containerId);
       setFoundTerminal(true);
       setMinutesRemaining(60);
-      setFetchingTerminal(false);
 
+      // Wait for 5 seconds before setting the terminal URL
+      setTimeout(() => {
+        setTerminalUrl(data.url);
+        setFetchingTerminal(false);
+      }, 5000);
     } else {
       toast.error("Unable to create the terminal, please try again");
       setFetchingTerminal(false);
