@@ -14,12 +14,16 @@ const Badge = ({
     <CusTooltip
       name={badgeName}
       description={badgeDescription}
-      icon={<img src={badgeImage} />}
+      icon={
+        <img
+          src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/badges/group2.png`}
+        />
+      }
       reason={badgeReason}
       date={createdAt}
     >
       <div
-        className="bg-neutral-800 py-4 text-center transition ease-in-out hover:bg-neutral-700/40"
+        className="bg-neutral-800 py-4 text-center transition ease-in-out"
         data-tooltip-id="badge-tooltip"
         data-tooltip-place="top"
       >

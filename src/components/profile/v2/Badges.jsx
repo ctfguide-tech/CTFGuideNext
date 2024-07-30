@@ -16,7 +16,7 @@ const Badges = ({ user }) => {
   useEffect(() => {
     const fetchUserBadges = async () => {
       const response = await request(
-        `${process.env.NEXT_PUBLIC_API_URL}/account/userBadges`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/userBadges`,
         'GET',
         null
       );
@@ -46,7 +46,7 @@ const Badges = ({ user }) => {
   return (
     <>
       <div
-        className="grid grid-cols-5 grid-rows-5 bg-neutral-800"
+        className="grid grid-cols-5 bg-neutral-800"
         style={{ gridTemplateRows: `repeat(${rowsNeeded}, minmax(0, 1fr))` }}
       >
         {currentBadges && currentBadges.length > 0 ? (
@@ -80,27 +80,29 @@ const Badges = ({ user }) => {
           </div>
         )}
       </div>
-      <div className="mx-auto mt-8 text-center">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="rounded-lg bg-neutral-600 p-2 text-white"
-        >
-          Previous
-        </button>
-        <span className="m-4 text-white">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-          className="rounded-lg bg-neutral-600 px-6 py-2 text-white"
-        >
-          Next
-        </button>
-      </div>
+      {badges.length > 0 && (
+        <div className="mx-auto mt-8 text-center">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="rounded-lg bg-neutral-600 p-2 text-white"
+          >
+            Previous
+          </button>
+          <span className="m-4 text-white">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="rounded-lg bg-neutral-600 px-6 py-2 text-white"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </>
   );
 };
