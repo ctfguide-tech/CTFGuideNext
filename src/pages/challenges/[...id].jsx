@@ -470,10 +470,10 @@ function TabLink({ tabName, selected, url }) {
   const icon = {
     'Comments': 'fas fa-comments text-green-500',
     'Leaderboard': 'fas fa-trophy text-yellow-500',
-    'Writeups': 'fas fa-book text-blue-500',
-    'Hints': 'fas fa-question text-blue-500',
+    'Writeups': 'fas fa-book text-indigo-500',
+    'Hints': 'fas fa-question text-red-500',
     'Description': 'fas fa-info-circle text-blue-500',
-    'AI': 'fas fa-robot text-blue-500',
+    'AI': 'fas fa-robot text-orange-500',
   }[tabName] || 'fas fa-file-alt text-blue-500';
 
   return (
@@ -619,7 +619,7 @@ function DescriptionPage({ cache }) {
   return (
     <>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
-        <h1 className="flex align-middle text-4xl font-semibold py-2 line-clamp-1">
+        <h1 className="flex align-middle text-2xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
           <div className="ml-auto rounded-sm text-right text-2xl flex items-center">
             <div onClick={upvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
@@ -1333,7 +1333,48 @@ function CommentsPage({ cache }) {
 function AIPage() {
   return (
     <div>
-      <h1>AI</h1>
+          <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+          <div>
+        <h1 className=" text-2xl font-semibold py-2">
+        CTFGuide AI
+       </h1>
+        </div>
+       <div className="flex items-center align-middle gap-x-4">
+        
+        <p className="text-white text-lg">CTFGuide AI is a powerful tool that can help you solve challenges. It can be used to help you solve challenges.</p>
+       </div>
+       
+       <p className="mx-auto text-center mt-4 bg-neutral-700 p-4 rounded-md">
+       <ul className="list-none pl-6">
+          <li className="flex items-start"><i className="fa fa-check mr-2 mt-1"></i> <span>Using CTFGuideAI is the same as using all three hints.</span></li>
+          <li className="flex items-start"><i className="fa fa-check mr-2 mt-1"></i> <span>CTFGuideAI do not have access to solutions, meaning it will only guide you.</span></li>
+          <li className="flex items-start"><i className="fa fa-check mr-2 mt-1"></i> <span>CTFGuideAI has access to your terminal.</span></li>
+        </ul>
+       </p>
+
+       <p className="mt-4">Currently, CTFGuideAI is in closed alpha. If you want to be notified when it is open to the public, please fill out the form below.</p>
+       <div className="mt-4" >
+         <div className="mb-4">
+           <label htmlFor="role" className="block text-sm font-medium text-white">Your Role</label>
+           <select id="role" name="role" className="mt-1 block bg-neutral-700 w-full pl-3 pr-10 py-2  focus:outline-none ring-0  sm:text-sm rounded-md">
+             <option value="">Select your role</option>
+             <option value="student">Student</option>
+             <option value="teacher">Teacher</option>
+             <option value="workforce">In the Workforce</option>
+           </select>
+           <label htmlFor="why" className="mt-4 block text-sm font-medium text-white">Why do you want to use CTFGuideAI?</label>
+           <textarea id="why" name="why" className="mt-1 block bg-neutral-700 w-full pl-3 pr-10 py-2  focus:outline-none ring-0  sm:text-sm rounded-md"></textarea>
+
+         </div>
+       
+         <button type="submit" onClick={() => {
+          toast.success("Thank you for your interest in CTFGuideAI! We will notify you when it is ready.");
+         }} className=" flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium  duration-100 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+           Submit
+         </button>
+       </div>
+       
+       </div>
     </div>
   );
 }
