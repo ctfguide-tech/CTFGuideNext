@@ -914,13 +914,13 @@ export default function Create() {
 
                         {user && user.role === 'ADMIN' && (
                           <span className="ml-2 rounded-sm bg-red-600 px-1 text-sm text-white">
-                            <i className="fas fa-code fa-fw"></i> developer
+                            <i className="fas fa-code fa-fw"></i> Developer
                           </span>
                         )}
 
                         {user && user.role === 'PRO' && (
                           <span className="ml-2 rounded-sm bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm text-white">
-                            <i className="fas fa-crown fa-fw"></i> pro
+                            <i className="fas fa-crown fa-fw"></i> Pro
                           </span>
                         )}
                         {!ownUser && followedUser && (

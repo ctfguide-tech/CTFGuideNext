@@ -1221,18 +1221,18 @@ function CommentsPage({ cache }) {
               className="w-8 h-8 rounded-full"
               alt={`${comment.username}'s profile`}
             />
-            <span className="ml-2 text-lg font-semibold text-white">
+            <span className="flex items-center ml-2 text-lg font-semibold text-white">
               <a href={`/users/${comment.username}`} className={`hover:text-neutral-10 ${comment.role === 'PRO' ? 'bg-gradient-to-br from-orange-300 to-yellow-300 bg-clip-text text-transparent' : ''}`}>
                 {comment.username}
               </a>
               {comment.role === 'ADMIN' && (
                 <>
-                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                  <span className="bg-red-600 px-1 rounded-sm text-sm ml-2"><i className="fas fa-code fa-fw"></i> Developer</span>
                 </>
               )}
               {comment.role === 'PRO' && (
                 <>
-                  <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                  <span className="ml-2 bg-gradient-to-br rounded-sm from-orange-400 to-yellow-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> Pro</span>
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>
