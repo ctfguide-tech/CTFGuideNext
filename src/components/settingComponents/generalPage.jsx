@@ -87,27 +87,27 @@ export default function General() {
 
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
-    showCroppedImage();
+    //showCroppedImage();
   };
 
   const onBannerCropComplete = (croppedArea, croppedAreaPixels) => {
     setBannerCroppedPixels(croppedAreaPixels);
-    showCroppedBanner();
+    //showCroppedBanner();
   };
 
-  const showCroppedImage = async () => {
-    try {
-      const croppedImage = await getCroppedImg(
-        URL.createObjectURL(selectedImage),
-        croppedAreaPixels,
-        rotation
-      );
-      console.log('donee', { croppedImage });
-      setCroppedImage(croppedImage);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const showCroppedImage = async () => {
+  //   try {
+  //     const croppedImage = await getCroppedImg(
+  //       URL.createObjectURL(imageUrl),
+  //       croppedAreaPixels,
+  //       rotation
+  //     );
+  //     console.log('donee', { croppedImage });
+  //     setCroppedImage(croppedImage);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   useEffect(() => {
     if (isPopupOpen) {
@@ -221,14 +221,14 @@ export default function General() {
 
   const handleSaveChanges = async () => {
     setIsSaving(true);
-    if (!croppedImage) {
-      console.log('No cropped image available');
-      setIsPopupOpen(false);
-      return;
-    }
 
     try {
-      const response = await fetch(croppedImage);
+      const croppedImage2 = await getCroppedImg(
+        imageUrl,
+        croppedAreaPixels,
+        rotation
+      );
+      const response = await fetch(croppedImage2);
       const blob = await response.blob();
       const file = new File([blob], 'profile_picture.png', {
         type: 'image/png',
@@ -268,14 +268,16 @@ export default function General() {
   const handleBannerSaveChanges = async () => {
     setIsSaving(true);
 
-    if (!croppedBanner) {
-      console.log('No cropped banner available');
-      setIsBannerPopupOpen(false);
-      return;
-    }
-
     try {
-      const response = await fetch(croppedBanner);
+
+      const croppedBanner2 = await getCroppedImg(
+        URL.createObjectURL(selectedBanner),
+        bannerCroppedPixels,
+        bannerRotation
+      );
+
+
+      const response = await fetch(croppedBanner2);
       const blob = await response.blob();
       const file = new File([blob], 'banner.png', {
         type: 'image/png',
@@ -793,7 +795,7 @@ export default function General() {
                     .
                   </p>
 
-                  {imageUrl && (
+                  {imageUrl && isPopupOpen && (
                     <div
                       className="mx-auto mt-4"
                       style={{
@@ -810,9 +812,6 @@ export default function General() {
                         onCropChange={setCrop}
                         onZoomChange={setZoom}
                         onCropComplete={onCropComplete}
-                        style={{
-                          containerStyle: { height: '100%', width: '100%' },
-                        }}
                       />
                     </div>
                   )}
@@ -879,7 +878,7 @@ export default function General() {
                     .
                   </p>
 
-                  {banner && (
+                  {banner && isBannerPopupOpen && (
                     <div
                       className="mx-auto mt-4"
                       style={{
@@ -896,9 +895,6 @@ export default function General() {
                         onCropChange={setBannerCrop}
                         onZoomChange={setBannerZoom}
                         onCropComplete={onBannerCropComplete}
-                        style={{
-                          containerStyle: { height: '100%', width: '100%' },
-                        }}
                       />
                     </div>
                   )}
