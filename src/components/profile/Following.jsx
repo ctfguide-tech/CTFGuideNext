@@ -47,7 +47,7 @@ const Following = ({ followings, pageData, userData }) => {
           <div className="flex items-center justify-center gap-x-5 py-4">
             <button
               onClick={prevPage}
-              className="w-24 rounded-sm bg-gray-800 px-4 py-2 font-bold text-white hover:bg-gray-700 disabled:opacity-50 "
+              className="w-24 rounded-sm bg-neutral-600 px-4 py-2 font-bold text-white hover:bg-neutral-500 disabled:opacity-50 "
               disabled={page === 0}
             >
               Previous
@@ -57,7 +57,7 @@ const Following = ({ followings, pageData, userData }) => {
             </span>
             <button
               onClick={nextPage}
-              className="w-24 rounded-sm bg-gray-800 px-4 py-2 font-bold text-white hover:bg-gray-700 disabled:opacity-50"
+              className="w-24 rounded-sm bg-neutral-600 px-4 py-2 font-bold text-white hover:bg-neutral-500 disabled:opacity-50"
               disabled={page + 1 >= totalPages}
             >
               Next
