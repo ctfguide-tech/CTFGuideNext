@@ -43,6 +43,8 @@ export default function App({ Component, pageProps }) {
   return <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID} scope="email profile openid">
     <Context.Provider value={appState}>
       <Component {...pageProps} />;
+      <Analytics />
+
     </Context.Provider>
   </GoogleOAuthProvider>
 }
