@@ -395,7 +395,7 @@ export default function Create() {
         const userData = await response;
 
         // Set the fetched data into the state
-        setCurrentUsersBio(userData.bio || '');
+        setCurrentUsersBio(userData.bio || 'Hmmm, this user has no bio yet.');
       } catch (err) {
         console.error('Failed to fetch user data', err);
       }
@@ -1096,7 +1096,7 @@ export default function Create() {
                       <p className="text-neutral-400">
                         {bioViewCheck()
                           ? renderUsersBio()
-                          : user && <MarkdownViewer content={user.bio} />}
+                          : user && <MarkdownViewer content={user.bio || "Nothing to see here..."} />}
                       </p>
                     ) : (
                       <p className="text-neutral-400">
