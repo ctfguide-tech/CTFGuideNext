@@ -34,7 +34,7 @@ export function DashboardHeader() {
         .catch((err) => {
           console.log(err);
         });
-    } catch { }
+    } catch {}
   }, []);
 
   // get user's profile picture
@@ -44,14 +44,17 @@ export function DashboardHeader() {
     }
     const fetchData = async () => {
       try {
-        const endPoint = process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
-        const result = await request(endPoint, "GET", null);
+        const endPoint =
+          process.env.NEXT_PUBLIC_API_URL + '/users/' + username + '/pfp';
+        const result = await request(endPoint, 'GET', null);
         if (result) {
-          console.log(result)
+          console.log(result);
           setPfp(result);
         } else {
-          console.log("here:" + username)
-          console.log(`https://robohash.org/${username}.png?set=set1&size=150x150`)
+          console.log('here:' + username);
+          console.log(
+            `https://robohash.org/${username}.png?set=set1&size=150x150`
+          );
           setPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);
         }
       } catch (err) {
@@ -62,23 +65,34 @@ export function DashboardHeader() {
   }, [username]);
 
   function createPopupWin(pageURL, pageTitle, popupWinWidth, popupWinHeight) {
-    var left = (screen.width);
-    var top = (screen.height);
-    var myWindow = window.open(pageURL, pageTitle,
-      'resizable=yes, width=' + popupWinWidth
-      + ', height=' + popupWinHeight + ', top='
-      + top + ', left=' + left);
+    var left = screen.width;
+    var top = screen.height;
+    var myWindow = window.open(
+      pageURL,
+      pageTitle,
+      'resizable=yes, width=' +
+        popupWinWidth +
+        ', height=' +
+        popupWinHeight +
+        ', top=' +
+        top +
+        ', left=' +
+        left
+    );
   }
 
   return (
     <div>
       <div>
         <div
-          style={{ backgroundSize: "cover", backgroundImage: 'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")' }}
+          style={{
+            backgroundSize: 'cover',
+            backgroundImage:
+              'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")',
+          }}
           className="h-20 w-full object-cover lg:h-20"
           alt=""
-        >
-        </div>
+        ></div>
       </div>
       <div className="mx-auto max-w-7xl ">
         <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -95,42 +109,50 @@ export function DashboardHeader() {
                   circle={true}
                   height={128}
                   width={128}
-                  baseColor='#262626'
-                  highlightColor='#3a3a3a'
+                  baseColor="#262626"
+                  highlightColor="#3a3a3a"
                 />
               )}
             </Link>
           </div>
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
-              <h1 className="mt-8 truncate text-2xl font-bold text-white">
+              <h1 className="flex items-center mt-8 truncate text-2xl font-bold text-white">
                 {username || (
-                  <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='15rem' />
+                  <Skeleton
+                    baseColor="#262626"
+                    highlightColor="#3a3a3a"
+                    width="15rem"
+                  />
                 )}
 
-{role === 'ADMIN' && (
-        <span className="bg-red-600 px-1 text-sm ml-2">
-          <i className="fas fa-code fa-fw"></i> developer
-        </span>
-      )}
-      {role === 'PRO' && (
-        <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
-          <i className="fas fa-crown fa-fw"></i> pro
-                </span>
-              )}
+                {role === 'ADMIN' && (
+                  <span className="ml-2 rounded-sm bg-red-600 px-1 text-sm">
+                    <i className="fas fa-code fa-fw"></i> Developer
+                  </span>
+                )}
+                {role === 'PRO' && (
+                  <span className="ml-2 rounded-sm bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
+                    <i className="fas fa-crown fa-fw"></i> Pro
+                  </span>
+                )}
               </h1>
               <p className="text-white">
                 <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                 {location || (
-                  <Skeleton width='25rem' baseColor='#262626' highlightColor='#3a3a3a' />
+                  <Skeleton
+                    width="25rem"
+                    baseColor="#262626"
+                    highlightColor="#3a3a3a"
+                  />
                 )}
               </p>
             </div>
-            <div className="justify-stretch mt-12 flex sm:px-4 px-4 md:px-0 lg:px-0 ">
+            <div className="mt-12 flex justify-stretch px-4 sm:px-4 md:px-0 lg:px-0 ">
               <div className="mr-4 hidden">
                 {github && (
-                  <a className='' href={github}>
-                    <div className="mt-9 mb-0 rounded-lg bg-[#212121] px-6 py-2 hover:bg-[#262626]">
+                  <a className="" href={github}>
+                    <div className="mb-0 mt-9 rounded-lg bg-[#212121] px-6 py-2 hover:bg-[#262626]">
                       <svg
                         viewBox="0 0 98 96"
                         width="26"
@@ -151,12 +173,14 @@ export function DashboardHeader() {
               </div>
               <a
                 href={`/users/${username}`}
-                className=" cursor-pointer ml-2 mt-8 mb-0 rounded-lg px-10 py-1 flex items-center space-x-1 duration-4000 bg-neutral-800 transition ease-in-out hover:bg-neutral-800/40"
+                className=" duration-4000 mb-0 ml-2 mt-8 flex cursor-pointer items-center space-x-1 rounded-lg bg-neutral-800 px-10 py-1 transition ease-in-out hover:bg-neutral-800/40"
               >
-                <p className="mt-0 text-white"><i className="fas fa-user mr-1"></i> View Profile</p>
-              </a >
+                <p className="mt-0 text-white">
+                  <i className="fas fa-user mr-1"></i> View Profile
+                </p>
+              </a>
               <div
-                className="ml-4 mt-8 mb-0 rounded-lg px-10 py-1 hidden"
+                className="mb-0 ml-4 mt-8 hidden rounded-lg px-10 py-1"
                 style={{ backgroundColor: '#212121', borderWidth: '0px' }}
               >
                 <h1 className="mx-auto  mt-0 text-center text-xl font-semibold text-white">
@@ -170,7 +194,7 @@ export function DashboardHeader() {
         <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
           <h1 className="truncate text-2xl font-bold text-gray-900">
             {username || (
-              <Skeleton baseColor='#262626' highlightColor='#3a3a3a' />
+              <Skeleton baseColor="#262626" highlightColor="#3a3a3a" />
             )}
           </h1>
         </div>
