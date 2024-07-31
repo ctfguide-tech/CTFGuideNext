@@ -615,6 +615,7 @@ export default function Create() {
 
   useEffect(() => {
     if (router.query.user) loadStreakChart();
+    setDisplayMode('default');
   }, [router.query.user]);
 
   // Get the Username from Local Storage
