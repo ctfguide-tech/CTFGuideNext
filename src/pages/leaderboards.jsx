@@ -230,10 +230,10 @@ export default function Leaderboard() {
                               >
                                 {entry.user.username}
                                 {entry.user.role === 'ADMIN' && (
-                                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                                  <span className="bg-red-600 rounded-sm px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> Developer</span>
                                 )}
                                 {entry.user.role === 'PRO' && (
-                                  <span className=" ml-2 bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
+                                  <span className=" ml-2 rounded-sm bg-gradient-to-br from-orange-400 to-yellow-600    px-1 text-sm"><i className="fas fa-crown fa-fw"></i> Pro</span>
                                 )}
                               </a>
                             </div>
