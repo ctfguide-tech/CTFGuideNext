@@ -841,6 +841,16 @@ export default function Create() {
     return 'mt-8 flex items-center truncate text-2xl font-bold text-white';
   };
 
+  const getRankColor = (rank) => {
+    if (rank === 1)
+      return 'ml-2 text-transparent text-2xl font-bold bg-clip-text bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600';
+    if (rank === 2)
+      return 'ml-2 text-transparent text-2xl font-bold bg-clip-text bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600';
+    if (rank === 3)
+      return 'ml-2 text-transparent text-2xl font-bold bg-clip-text bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900';
+    return 'text-2xl ml-2 text-white';
+  };
+
   return (
     <>
       <Head>
@@ -907,7 +917,7 @@ export default function Create() {
                           />
                         )}
                         {user && rank && (
-                          <span className="ml-2 text-2xl  text-neutral-400">
+                          <span className={getRankColor(rank)}>
                             #{rank}
                           </span>
                         )}
