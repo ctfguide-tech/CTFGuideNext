@@ -93,6 +93,27 @@ export default function Competitions() {
     }
   };
 
+  const handleResetBanner = async () => {
+    const username = document.getElementById('usernameInput').value;
+    const reason = ""; // Set reason as blank for now
+
+    if(!username) {
+      alert("Please enter a username.");
+      return;
+    }
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/resetBanner`, "POST", {reason});
+      if(response.success){
+        alert("Banner reset successfully!");
+      }else {
+        alert("Failed to reset banner.");
+      }
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while resetting the banner.");
+    }
+  };
+
   return (
     <>
       <Head>
@@ -129,7 +150,7 @@ export default function Competitions() {
     <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'>Disable Account</button>
     <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Warn User</button>
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetPFP}>Reset PFP</button>
-    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2'>Reset Banner</button>
+    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBanner}>Reset Banner</button>
 
 </div>
 
