@@ -431,9 +431,6 @@ export default function Create() {
                                       </>
                                     )}
 
-                                    <a href={`/create/edit?cid=${challenge.id}`} className="ml-4 text-red-600 hover:text-red-500">
-                                     <i className="fas fa-trash-alt mr-1"></i> Delete
-                                    </a>
                                   </td>
                                   
                                 </tr>
