@@ -6,6 +6,10 @@ import { Footer } from '@/components/Footer';
 import request from "@/utils/request";
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { useRouter } from 'next/router';
+import { Dialog } from '@headlessui/react';
+import { Fragment } from 'react';
+import { Transition } from '@headlessui/react';
+
 export default function Create() {
   const [isOpen, setIsOpen] = useState(false);
   const [contentPreview, setContentPreview] = useState('');
@@ -17,6 +21,7 @@ export default function Create() {
   const [isPublishSaved, setPublishSaved] = useState(false);
   const router = useRouter();
   const [isPublished, setIsPublished] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     try {
@@ -124,6 +129,37 @@ export default function Create() {
       });
   };
 
+  const handleDelete = () => {
+    if (router.query.cid) {
+      console.log(`Deleting ${router.query.cid}...`);
+      request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${router.query.cid}`, "DELETE", null)
+        .then((data) => {
+          if (data.message) {
+            console.log("Writeup deleted successfully");
+            router.push("/create?wdeleted=true"); // Update with the actual path
+          } else {
+            console.log("Failed to delete writeup:", data.message);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteModal(false);
+    handleDelete();
+  };
+
   return (
     <>
       <Head>
@@ -171,7 +207,7 @@ export default function Create() {
           </div>
 
           <div className='ml-auto text-sm '>
-            <button className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
+            <button onClick={handleDeleteClick} className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
 
             <button onClick={handleSave} className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
 
@@ -259,7 +295,7 @@ export default function Create() {
 
 
 { publishView &&
-<div className={`fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 `}
+<div className={`fixed inset-0 bg-black bg-opacity-70  backdrop-blur-sm z-50 `}
         >
         <div className="modal-content  w-full h-full animate__animated  animate__fadeIn">
             <div className="bg-neutral-900 bg-opacity-70  w-full h-full py-24 sm:py-32">
@@ -320,6 +356,66 @@ className=" pb-10 pt-4 px-4 shadow sm:px-10  bg-neutral-800"
         </div>
 
 }
+<Transition appear show={showDeleteModal} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={handleCancelDelete}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-white"
+                  >
+                    Confirm Deletion
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-300">
+                      Are you sure you want to delete this writeup? This action cannot be undone.
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="duration-100 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={handleConfirmDelete}
+                    >
+                      Yes, Delete
+                    </button>
+                    <button
+                      type="button"
+                      className="duration-100 ml-2 inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={handleCancelDelete}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
       <div className=' flex w-full h-full grow basis-0'></div>
       <Footer />
     </>

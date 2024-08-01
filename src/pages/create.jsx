@@ -17,8 +17,12 @@ import Skeleton from 'react-loading-skeleton';
 import { Popover as HeadlessPopover } from '@headlessui/react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import { useRouter } from 'next/router';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Create() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('unverified');
   const [challenges, setChallenges] = useState([]);
   const [hasChallenges, setHasChallenges] = useState(false);
@@ -43,6 +47,11 @@ export default function Create() {
     const success = urlParams.get('success');
     if (success === 'true') {
       document.getElementById('saved').classList.remove('hidden');
+    }
+
+    const deleted = urlParams.get('wdeleted');
+    if (deleted === 'true') {
+      toast.success('Writeup deleted successfully');
     }
   }, []);
 
@@ -622,6 +631,20 @@ export default function Create() {
           </div>
         </Box>
       </Modal>
+
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 }
