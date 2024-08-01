@@ -10,7 +10,8 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
         "title": "Loading...",
         "content": "Loading...",
         "solution": "Loading...",
-        "difficulty": "Loading..."
+        "difficulty": "Loading...",
+        "snote": "No previous notes"
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +116,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                      <h1 className='font-bold text-blue-600 mb-1'>Moderator Notes</h1> 
       
       <textarea placeholder="Challenge creators can see these notes if you request changes!" className='bg-neutral-800 w-full border-neutral-700'>
-      
+      {challenge && challenge.snote}
       </textarea>
       
       <br></br><br></br>

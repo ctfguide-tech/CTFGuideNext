@@ -1,92 +1,458 @@
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useState, useEffect, Fragment, useContext } from 'react';
 import { StandardNav } from '@/components/StandardNav';
 import { Footer } from '@/components/Footer';
+import { MarkdownViewer } from '@/components/MarkdownViewer';
+import fileApi from '@/utils/file-api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import request, { getCookie } from '@/utils/request';
+import { jwtDecode } from 'jwt-decode';
+import { Context } from '@/context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faServer, faPenFancy, faEye, faChevronUp, faChevronDown, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { Listbox, Transition } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { Dialog } from '@headlessui/react';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
-import request from '@/utils/request';
+
+
 
 const pages = [
-  { name: 'Creator Dashboard', href: '../create', current: false },
-  { name: 'Challenge Edit', href: './', current: true },
+  { name: 'Creator Dashboard', href: '../create', current: false, click: () => window.location.href = '../create' },
+  { name: 'Challenge Edit', href: './', current: true, click: () => window.location.href = './' },
 ];
 
+
+const styles = {
+  h1: { fontSize: '2.4rem' },
+  h2: { fontSize: '2rem' },
+  h3: { fontSize: '1.8rem' },
+  h4: { fontSize: '1.6rem' },
+  h5: { fontSize: '1.4rem' },
+  h6: { fontSize: '1.2rem' },
+};
+
+function getCategoryIcon(category) {
+  switch (category.toLowerCase()) {
+    case 'forensics':
+      return 'fas fa-binoculars';
+    case 'cryptography':
+      return 'fas fa-lock';
+    case 'web':
+      return 'fas fa-globe';
+    case 'reverse engineering':
+      return 'fas fa-tools';
+    case 'programming':
+      return 'fas fa-code';
+    case 'pwn':
+      return 'fas fa-skull-crossbones';
+    case 'steganography':
+      return 'fas fa-image';
+    case 'basic':
+      return 'fas fa-graduation-cap';
+    case 'easy':
+      return 'fas fa-star';
+    case 'medium':
+      return 'fas fa-star-half';
+    case 'hard':
+      return 'fas fa-star';
+    default:
+      return 'fas fa-question';
+  }
+}
+
+function CategorySelect({ category, setCategory }) {
+  const categories = [
+    { name: 'Forensics', value: 'forensics' },
+    { name: 'Cryptography', value: 'cryptography' },
+    { name: 'Web', value: 'web' },
+    { name: 'Reverse Engineering', value: 'reverse engineering' },
+    { name: 'Programming', value: 'programming' },
+    { name: 'Pwn', value: 'pwn' },
+    { name: 'Basic', value: 'basic' },
+    { name: 'Other', value: 'other' },
+  ];
+
+  return (
+    
+    <Listbox value={category} onChange={setCategory}>
+      {({ open }) => (
+        <>
+          <div className="relative mt-1">
+            <Listbox.Button
+              style={{ backgroundColor: '#212121' }}
+              className="py-2 px-2 border border-neutral-700 block w-full rounded text-base leading-6 text-white focus:outline-none sm:text-sm sm:leading-5"
+            >
+              <span className="flex items-center">
+                <i className={`${getCategoryIcon(category)} fa-fw`} />
+                <span className="ml-3 block truncate">{categories.find(c => c.value === category).name}</span>
+              </span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </span>
+            </Listbox.Button>
+            <Transition
+              show={open}
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-neutral-800 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {categories.map((category) => (
+                  <Listbox.Option
+                    key={category.value}
+                    className={({ active }) =>
+                      `relative cursor-default select-none py-2 pl-3 pr-9 ${active ? 'bg-blue-600 text-white' : 'text-white'}`
+                    }
+                    value={category.value}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <div className="flex items-center">
+                          <i className={`${getCategoryIcon(category.value)} fa-fw`} />
+                          <span className={`ml-3 block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
+                            {category.name}
+                          </span>
+                        </div>
+                        {selected ? (
+                          <span className={`absolute inset-y-0 right-0 flex items-center pr-4 ${active ? 'text-white' : 'text-blue-600'}`}>
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </>
+      )}
+    </Listbox>
+  );
+}
+
+function DifficultySelect({ difficulty, setDifficulty }) {
+  const difficulties = [
+    { name: 'Beginner', value: 'beginner' },
+    { name: 'Easy', value: 'easy' },
+    { name: 'Medium', value: 'medium' },
+    { name: 'Hard', value: 'hard' },
+    { name: 'Insane', value: 'insane' },
+  ];
+
+  const badgeColor = {
+    beginner: 'bg-blue-500',
+    easy: 'bg-green-500',
+    medium: 'bg-yellow-500',
+    hard: 'bg-red-500',
+    insane: 'bg-purple-500',
+  };
+
+  return (
+    <Listbox value={difficulty} onChange={setDifficulty}>
+      {({ open }) => (
+        <>
+          <div className="relative mt-1">
+            <Listbox.Button
+              style={{ backgroundColor: '#212121' }}
+              className="py-2 px-2 border border-neutral-700 block w-full rounded text-base leading-6 text-white focus:outline-none sm:text-sm sm:leading-5"
+            >
+              <span className="flex items-center">
+                <span className="ml-3 block truncate">
+                  {difficulties.find(d => d.value === difficulty)?.name || 'Select Difficulty'}
+                </span>
+              </span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </span>
+            </Listbox.Button>
+            <Transition
+              show={open}
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-neutral-800 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {difficulties.map((difficulty) => (
+                  <Listbox.Option
+                    key={difficulty.value}
+                    className={({ active }) =>
+                      `relative cursor-default select-none py-2 pl-3 pr-9 ${active ? `${badgeColor[difficulty.value]} text-white` : 'text-white'}`
+                    }
+                    value={difficulty.value}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <div className="flex items-center">
+                          <span className={`ml-3 block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
+                            {difficulty.name}
+                          </span>
+                        </div>
+                        {selected ? (
+                          <span className={`absolute inset-y-0 right-0 flex items-center pr-4 ${active ? 'text-white' : 'text-blue-600'}`}>
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </>
+      )}
+    </Listbox>
+  );
+}
+
 export default function Createchall() {
+  const { role } = useContext(Context);
+  const [contentPreview, setContentPreview] = useState('');
+  const [penalty, setPenalty] = useState([0, 0, 0]);
+  const [sending, setSending] = useState(false);
+  const [hints, setHints] = useState(['No hints set', 'No hints set', 'No hints set']);
+  const [solution, setSolution] = useState('');
+  const [difficulty, setDifficulty] = useState('easy');
+  const [category, setCategory] = useState('forensics');
+  const [newChallengeName, setNewChallengeName] = useState('');
+  const [errMessage, setErrMessage] = useState('');
+  const [penaltyErr, setPenaltyErr] = useState('');
+  const [username, setUsername] = useState('anonymous');
+  const [newConfig, setNewConfig] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   const router = useRouter();
-  var ogFlag = ""
-  const [activeTab, setActiveTab] = useState('created');
 
-  function handleTabClick(tab) {
-    setActiveTab(tab);
-  }
-  useEffect(() => {
-    loadChallenge();
-  }, [router.query.id]);
-  async function loadChallenge() {
-    try {
-      console.log(router.query.id)
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.id;
-      let challenge = await request(url, 'GET', null);
-      challenge = challenge.body
+  const openConfirmModal = () => setIsConfirmModalOpen(true);
+  const closeConfirmModal = () => setIsConfirmModalOpen(false);
 
-      if (challenge) {
-        document.getElementById('challengeName').innerText = challenge.title;
-        document.getElementById('content').value = challenge.content;
-        document.getElementById('category').value = challenge.category;
-        // document.getElementById("solution").value = challenge.keyword;
+  const handleConfirmSubmit = () => {
+    closeConfirmModal();
+    sendToFileApi();
+  };
+
+  const validateNewChallege = async () => {
+    let sum = 0;
+    for (const p of penalty) {
+      if(p != 0 && !p) {
+        toast.error('Enter in all penalty fields');
+        return false;
       }
-    } catch (error) {
-      console.error('Error loading challenge:', error);
+      sum += p;
+      if (p < 0 || p > 100) {
+        toast.error('Please enter positive values from 0 - 100');
+        return false;
+      }
     }
-  }
+    if(sum > 100) {
+      toast.error('The sum of all penalties must be between 0 - 100');
+      return false;
+    }
+    return true;
+  };
 
-  async function uploadChallenge() {
-    let data = {
-      title: document.getElementById('challengeName').innerText,
-      content: document.getElementById('content').value,
+  const sendToFileApi = async () => {
+    const isValid = await validateNewChallege();
+    if (isValid) {
+      if (!selectedFile) {
+        await uploadChallenge('');
+        return;
+      } else {
+        try {
+          const cookie = getCookie('idToken');
+          const data = jwtDecode(cookie);
+          console.log(data)
+          toast.info('Uploading file...');
+          toast.info(data)
+          const token = cookie;
+          console.log('Uploading file with token:', token);
+          const fileId = await fileApi(token, selectedFile);
+          if (fileId !== null) {
+            await uploadChallenge(fileId);
+          } else {
+            toast.error('Something went wrong with the file upload');
+          }
+        } catch (error) {
+          console.error('Error during file upload:', error);
+          toast.error('An error occurred during file upload');
+        }
+      }
+    } else {
+      console.warn('Either the file, token, or challenge is invalid');
+    }
+  };
+
+  const insertText = (text) => {
+    const textarea = document.getElementById('content');
+    const startPos = textarea.selectionStart;
+    const endPos = textarea.selectionEnd;
+    const newValue =
+      textarea.value.substring(0, startPos) +
+      text +
+      textarea.value.substring(endPos, textarea.value.length);
+    setContentPreview(newValue);
+    textarea.focus();
+    textarea.selectionEnd = startPos + text.length;
+  };
+
+  const magicSnippet = () => {
+    const id = Math.random().toString(36).substring(7);
+    insertText(`[Click to run: ${id}](https://ctfguide.com/magic/)`);
+  };
+
+  const uploadChallenge = async (fileId) => {
+    setSending(true);
+    try {
+      const nConfig = newConfig.replace('\n', ' && ');
+
+      console.log('Uploading challenge with category:', category);
+
+      const challengeInfo = {
+        title: newChallengeName,
+        category: [`${category}`],
+        content: contentPreview,
+        difficulty: difficulty.toUpperCase(),
+      };
+
+      console.log("updating with this info...")
+      console.log(challengeInfo)
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${router.query.id}`;
+      const body = challengeInfo;
+
+      console.log('Sending request to:', url, 'with body:', body);
+      const data = await request(url, "PUT", body);
+
+      if (data && data.slug) {
+        toast.success('Challenge updated successfully');
+        window.location.href = '/create';
+      } else {
+        toast.error('An error occurred while updating the challenge');
+      }
+    } catch (err) {
+      console.error('Error during challenge upload:', err);
+      toast.error('An error occurred during challenge upload');
+    }
+    setSending(false);
+  };
+
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'));
+  }, []);
+
+  useEffect(() => {
+    const loadChallengeData = async () => {
+      try {
+        const challengeId = router.query.id;
+        console.log(challengeId)
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}`;
+
+        const data = await request(url, 'GET', null);
+        if (data && data.success) {
+          const challenge = data.body;
+          setNewChallengeName(challenge.title);
+          setCategory(challenge.category[0]);
+          //setHints(challenge.hints);
+         // setPenalty(challenge.penalty);
+          setContentPreview(challenge.content);
+          setSolution(challenge.solution);
+          setDifficulty(challenge.difficulty);
+          setNewConfig(challenge.commands.replace(/ && /g, '\n'));
+        }
+      } catch (error) {
+        console.error('Error loading challenge data:', error);
+        toast.error('An error occurred while loading challenge data');
+      }
     };
 
-    if (document.getElementById('solution').value) {
-      data.keyword = document.getElementById('solution').value;
+    loadChallengeData();
+  }, [router.query.id]);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (uploadedFiles.length > 0) {
+      toast.error('Only one file can be uploaded at a time. Please zip multiple files.');
+      return;
     }
 
-    try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/` + router.query.id;
-      let response = await request(url, 'PUT', data);
-      console.log(response)
-      if (response.status === 200) {
-        router.push('/create');
-      } else {
-        window.alert('Something went wrong.');
-      }
-    } catch (error) {
-      window.alert('Something went wrong.');
-      console.error('Error updating challenge:', error);
+    setSelectedFile(file);
+    setUploadedFiles([file]);
+  };
+
+  const handleFileDelete = (index) => {
+    const newFiles = uploadedFiles.filter((_, i) => i !== index);
+    setUploadedFiles(newFiles);
+    if (newFiles.length === 0) {
+      setSelectedFile(null);
     }
-  }
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    if (uploadedFiles.length > 0) {
+      toast.error('Only one file can be uploaded at a time. Please zip multiple files.');
+      return;
+    }
+
+    const file = event.dataTransfer.files[0];
+
+    console.log(file.size)
+
+    // handle large files 
+    if (role !== "PRO") {
+      if (file.size > 30 * 1024 * 1024) {
+        toast.error('File size is too large. Please upload a file less than 30MB or upgrade to PRO to upload larger files.');
+        return;
+      } 
+    } else {
+      if (file.size > 100 * 1024 * 1024) {
+        toast.error('File size is too large. Please upload a file less than 100MB.');
+        return;
+      }
+    }
+
+    setSelectedFile(file);
+    setUploadedFiles([file]);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+  const router2 = useRouter();
 
   return (
     <>
       <Head>
         <title>Create - CTFGuide</title>
         <style>
-          @import
-          url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+          @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
       <StandardNav />
-
-      <main>
-  
-        <nav
-          className="mx-auto mt-10 flex max-w-7xl text-center"
-          aria-label="Breadcrumb"
-        >
+      <main style={styles}>
+        <nav className="mx-auto px-20 mt-10 flex text-center" aria-label="Breadcrumb">
           <ol role="list" className="flex items-center space-x-4">
             <li>
               <div>
                 <a href="#" className=" text-white hover:text-gray-200">
                   <i className="fas fa-home"></i>
-
                   <span className="sr-only">Home</span>
                 </a>
               </div>
@@ -94,146 +460,166 @@ export default function Createchall() {
             {pages.map((page) => (
               <li key={page.name}>
                 <div className="flex items-center">
-                  <svg
-                    className="h-5 w-5 flex-shrink-0 text-gray-200"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
+                  <svg className="h-5 w-5 flex-shrink-0 text-gray-200" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
                   </svg>
-                  <a
-                    href={page.href}
-                    className="ml-4 text-sm font-medium text-gray-100 hover:text-gray-200"
-                    aria-current={page.current ? 'page' : undefined}
-                  >
+                  <span style={{ cursor: 'pointer' }} onClick={page.click} className="ml-4 text-sm font-medium text-gray-100 hover:text-gray-200">
                     {page.name}
-                  </a>
+                  </span>
                 </div>
               </li>
             ))}
           </ol>
         </nav>
+        <div id="createChallenges" className="mx-auto mt-10  px-20 text-white">
 
-        <div
-          id="createChallenges"
-          className="mx-auto mt-10 max-w-7xl text-white"
-        >
-          {/*/ Create a new challenge */}
-
-          <h1
+          <div className='flex justify-center'>
+         <div className='w-3/4 '>
+         <input
+            value={newChallengeName}
             id="challengeName"
-            className="w-3/4 rounded-lg bg-neutral-800 py-2 px-4 text-3xl font-semibold text-white"
-            contentEditable
-          >
-            Untitled Challenge
-          </h1>
+            onChange={(event) => setNewChallengeName(event.target.value)}
+            className={errMessage !== '' ? 'w-full rounded-lg border border-red-600 bg-neutral-900/90  py-2 text-3xl font-semibold text-white ' : 'hover:bg-neutral-800 cursor-pointer w-full placeholder:text-neutral-600 rounded-lg border-none bg-neutral-900/90  py-2 text-3xl font-semibold text-white'}
+            placeholder="Untitled Challenge"
+          />
+         </div>
+        
+          <div className="w-full flex justify-end gap-4">
+            <div className="w-1/4">
+              <h1 className="text-lg font-medium text-white">Difficulty</h1>
+              <DifficultySelect difficulty={difficulty} setDifficulty={setDifficulty} />
+            </div>
+            <div className="w-1/4">
+              <h1 className="text-lg font-medium text-white">Category</h1>
+              <CategorySelect category={category} setCategory={setCategory} />
+            </div>
+          </div>
+            </div>
 
-          <div className=" mt-4 flex hidden flex-shrink-0">
-            <select
-              id="difficulty"
-              name="difficulty"
-              className="mt-1 mb-4  w-1/3 rounded-md border-neutral-900 bg-neutral-800 py-2 pl-3 pr-20 text-base  text-white  focus:outline-none sm:text-sm"
-              defaultValue="easy"
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-
-            <select
-              id="category"
-              name="category"
-              className="ml-4 mt-1 mb-4  w-1/3 rounded-md border-neutral-900  bg-neutral-800 py-2 pl-3 pr-20  text-base  text-white  focus:outline-none sm:text-sm"
-              defaultValue="forensics"
-            >
-              <option value="forensics">forensics</option>
-              <option value="cryptography">cryptography</option>
-              <option value="web">web</option>
-              <option value="reverse engineering">reverse engineering</option>
-              <option value="programming">programming</option>
-              <option value="pwn">pwn</option>
-              <option value="steganography">steganography</option>
-              <option value="basic">basic</option>
-
-              <option value="other">other</option>
-            </select>
+            <div style={{ color: '#ff4c4c', fontWeight: 'bold' }}>{errMessage}</div>
+          <div id="error" className="mt-4 hidden rounded-md bg-red-500 px-4 py-1">
+            Something went wrong on our end. Your changes have not been saved. You can try again now or later.
           </div>
 
-          <div
-                        className="mt-5 rounded-sm shadow-lg border border-gray-900 bg-neutral-800/40  shadow-lg ring-1 ring-black ring-opacity-5">
-                        <h3 className=" rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
-                            Challenge Content
-                        </h3>
-                        <div className="px-5 py-5 ">
-              <textarea
+          <div className="grid grid-cols-6 gap-x-1 mt-6">
+            <div className={`rounded-sm bg-neutral-800/40 ${isExpanded ? 'col-span-4' : 'col-span-2'}`}>
+              <h3 className="flex items-center text-xl bg-blue-800 px-4 py-r text-xl bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white">
+                <FontAwesomeIcon icon={faPenFancy} className='mr-2 text-sm w-4 h-4' />
+                Challenge Content Editor
+                <button onClick={toggleExpand} className="ml-auto text-white">
+                  <FontAwesomeIcon icon={isExpanded ? faArrowLeft : faArrowRight} className='text-sm w-4 h-4'/>
+                </button>
+              </h3>
+              <div className="px-5 py-5 ">
+                <dt className="truncate text-xl font-medium text-white">
+                  Challenge Instructions
+                  <div className="mt-2">
+                  <div className="toolbar flex py-1">
+                    <button
+                      onClick={() => insertText('**Enter bold here**')}
+                      className="toolbar-button mr-1 pr-2 text-white"
+                    >
+                      <i className="fas fa-bold"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('*Enter italic here*')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-italic"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('# Enter Heading here')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-heading"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('[Name](url)')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-link"></i>
+                    </button>
+                    <button
+                      onClick={() => insertText('```Enter Code here```')}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-code"></i>
+                    </button>
+                    <button
+                      onClick={() => magicSnippet()}
+                      className="toolbar-button mr-1 px-2 text-white"
+                    >
+                      <i className="fas fa-terminal"></i>
+                    </button>
+                
+                  </div>
+              
+                </div></dt>
+
+                <textarea
+                  value={contentPreview}
                   id="content"
-                  className="h-40 w-full rounded-sm shadow-lg  border-none bg-neutral-900 px-5 py-4 text-white"
-              ></textarea>
-                        </div>
-                    </div>
+                  placeholder="You can use Markdown here! "
+                  className="mt-2 h-40 w-full rounded-lg border-neutral-800 bg-neutral-900 px-5 py-4 text-white shadow-lg"
+                  onChange={(event) => {
+                    setContentPreview(event.target.value);
+                  }}
+                ></textarea>
 
-          <div className="mt-5 hidden   rounded-lg bg-neutral-800">
-            <h3 className="mt-6 rounded-t-lg bg-neutral-700 px-4 py-5  text-3xl font-medium leading-6 text-white">
-              <i class="far fa-lightbulb"></i> Challenge Hints
-            </h3>
-            <div className="px-5 py-5">
-              <dt className="truncate text-xl font-medium text-white">
-                Hint 1
-              </dt>
-              <textarea
-                id="hint1"
-                className="mt-1 w-full rounded-lg border-none bg-neutral-900 text-white"
-              >
-                No hint set
-              </textarea>
+              </div>
+            </div>
 
-              <dt className="mt-4 truncate text-xl font-medium text-white">
-                Hint 2
-              </dt>
-              <textarea
-                id="hint2"
-                className="mt-1 w-full rounded-lg border-none bg-neutral-900   text-white"
-              >
-                No hint set
-              </textarea>
+            <div className={`rounded-sm bg-neutral-800/40  transition ${isExpanded ? 'duration-400 col-span-2' : 'duration-400 col-span-4'}`}>
+              <h3 className="flex items-center bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white">
+                <FontAwesomeIcon icon={faEye} className='mr-2 text-sm w-4 h-4' />
+                Challenge Content Preview
+                <button onClick={toggleExpand} className="ml-auto text-white">
+                  <FontAwesomeIcon icon={isExpanded ? faChevronUp : faChevronDown} />
+                </button>
+              </h3>
+              <div className='px-4'>
+              <div className="mt-5 ">
+                <h1 className='text-xl font-medium text-white mb-1'>Challenge Instructions</h1>
+                  <hr className='mb-3 border-neutral-700'></hr>
+                <div contentEditable={false}>
+                  <MarkdownViewer content={contentPreview || '#### Using the editor\n\nStart writing and this preview will update automatically. Descriptions support Markdown, you can learn more about it [here](https://www.markdownguide.org/).\n\n ##### A note about files and links... \n\nPlease upload files into the terminal, do not reference non-approved links in the challenge description itself.'} />
+                </div>
+              </div>
 
-              <dt className="mt-4 truncate text-xl font-medium text-white">
-                Hint 3
-              </dt>
-              <textarea
-                id="hint3"
-                className="mt-1 w-full rounded-lg border-none bg-neutral-900  text-white"
-              >
-                No hint set
-              </textarea>
+
+         
+            </div>
             </div>
           </div>
 
-       
-          <div className="mt-5 rounded-sm shadow-lg   900 bg-neutral-800/40">
-                        <h3 className="mt-6 rounded-t-lg bg-blue-800 px-4 py-1.5 text-xl font-medium leading-6 text-white">
-                            Challenge Solution
-                        </h3>
-                        <div className="px-5 py-5">
-                            <textarea
-                                id="solution"
-                                placeholder="Leave this blank if you do not want to change the solution."
-                                className="mb-4 mt-1 w-full rounded-sm shadow-lg border-none bg-neutral-900 px-2 py-2  text-white"
-                            ></textarea>
-                        </div>
-                    </div>
+          <div className="900 mt-5 rounded-sm  hidden  bg-neutral-800/40 shadow-lg">
+            <h3 className="mt-6 flex items-center bg-green-700 px-4 py-4 text-xl font-medium leading-6 text-white">
+            <FontAwesomeIcon icon={faCheckCircle} className='mr-2 text-sm w-4 h-4' />
+              Challenge Solution
+            </h3>
+            <div className="px-5 py-5">
+              <textarea
+                value={solution}
+                onChange={(e) => setSolution(e.target.value)}
+                id="solution"
+                placeholder="Not having a solution, is a different kinda evil."
+                className="mt-1 w-full rounded-lg border-neutral-800 bg-neutral-900 text-white shadow-lg"
+              ></textarea>
+            </div>
+          </div>
+
+
+
 
           <button
-            onClick={uploadChallenge}
-            className="mr-2 mt-6 rounded-lg border-green-600 bg-green-700 px-4 py-2 text-2xl text-white hover:bg-green-800"
+            onClick={openConfirmModal}
+            disabled={sending}
+            className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-lg text-white shadow-lg hover:bg-green-800"
           >
-            Save
+            <i class="fas fa-send"></i> Save & Submit for Review
           </button>
 
-          <button className="mr-2 mt-6 hidden rounded-lg border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white hover:bg-blue-800">
-            <i class="fas fa-save"></i> Save as draft
-          </button>
+        
         </div>
 
         <div
@@ -242,7 +628,7 @@ export default function Createchall() {
           className="pointer-events-none fixed inset-0 flex hidden items-end px-4 py-6 sm:items-start sm:p-6"
         >
           <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
-            <div className="pointer-events-auto w-full  max-w-sm overflow-hidden rounded-lg border border-gray-700 shadow-lg ring-1 ring-black ring-opacity-5">
+            <div className="pointer-events-auto w-full  max-w-sm overflow-hidden rounded-sm border border-gray-700 shadow-lg shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
@@ -276,7 +662,141 @@ export default function Createchall() {
           </div>
         </div>
       </main>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
+
+      <Transition appear show={isModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-bold leading-6 text-white"
+                  >
+                    Environment Container Configuration
+                  </Dialog.Title>
+                  <div className="mt-4">
+                    <img src='/cycle.png' className='w-2/3 mx-auto'></img>
+                    <p className="text-lg text-white mt-4">
+                      When we spin up your container, we will run the commands in
+                      this configuration file. If you are modifying a fork, you
+                      should assume their configuration file will be run first, then
+                      yours is run afterwards.
+
+                      <br></br><br></br>
+                      If you still have questions, please join our <a href='https://discord.gg/bH6gu3HCFF' className='text-blue-500 hover:text-blue-700'>Discord</a> server.
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <Transition appear show={isConfirmModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeConfirmModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-white"
+                  >
+                    Confirm Submission
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-300">
+                      Are you sure you want to save and submit this challenge for review?
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={handleConfirmSubmit}
+                    >
+                      Yes, Submit
+                    </button>
+                    <button
+                      type="button"
+                      className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                      onClick={closeConfirmModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 }

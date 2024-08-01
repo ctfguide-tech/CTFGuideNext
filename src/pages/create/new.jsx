@@ -14,6 +14,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faServer, faPenFancy, faEye, faChevronUp, faChevronDown, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { Dialog } from '@headlessui/react';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 const pages = [
   { name: 'Creator Dashboard', href: '../create', current: false },
@@ -220,6 +224,19 @@ export default function Createchall() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const openConfirmModal = () => setIsConfirmModalOpen(true);
+  const closeConfirmModal = () => setIsConfirmModalOpen(false);
+
+  const handleConfirmSubmit = () => {
+    closeConfirmModal();
+    sendToFileApi();
+  };
 
   const validateNewChallege = async () => {
     let sum = 0;
@@ -608,10 +625,13 @@ export default function Createchall() {
             </div>
           </div>
 
-          <div className="900 mt-5 rounded-sm   bg-neutral-800/40 shadow-lg">
-            <h3 className="mt-6 flex items-center bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white">
+<div className='grid grid-cols-2 mt-5 gap-x-1'>
+          <div className="900 rounded-sm   bg-neutral-800/40 shadow-lg ">
+            <h3 className="m flex items-center bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white flex">
             <FontAwesomeIcon icon={faServer} className='mr-2 text-sm w-4 h-4' />
  Environment Container Configuration
+
+ <button onClick={openModal} className='ml-auto bg-white hover:bg-neutral-200 text-blue-600 px-2 py-1.5 rounded-sm flex items-center'><FontAwesomeIcon icon={faQuestionCircle} className='mr-2 text-sm w-6 h-6' />What is this?</button>
             </h3>
             <div className="grid w-full grid-cols-1 gap-x-8 px-5 py-5">
               <div className="text-lg">
@@ -643,6 +663,7 @@ export default function Createchall() {
               <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                onClick={() => document.getElementById('fileInput').click()} // Added onClick event
                 className="mt-4 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none"
               >
                 <span className="flex items-center space-x-2">
@@ -666,6 +687,7 @@ export default function Createchall() {
                   </span>
                 </span>
                 <input
+                  id="fileInput" // Added id to the input
                   style={{
                     position: 'absolute',
                     width: '57%',
@@ -674,7 +696,6 @@ export default function Createchall() {
                   }}
                   onChange={(e) => handleFileChange(e)}
                   type="file"
-
                   name="file_upload"
                   className="hidden"
                 />
@@ -702,18 +723,81 @@ export default function Createchall() {
               </div>
             </div>
           </div>
+          <div className="900 rounded-sm   bg-neutral-800/40 shadow-lg ">
+          <h3 className="m flex items-center bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white flex">
+            <FontAwesomeIcon icon={faGlobe} className='mr-2 text-sm w-4 h-4' />
+ Hosted Web Challenges
+
+ <button onClick={openModal} className='ml-auto bg-white hover:bg-neutral-200 text-blue-600 px-2 py-1.5 rounded-sm flex items-center'><FontAwesomeIcon icon={faQuestionCircle} className='mr-2 text-sm w-6 h-6' />What is this?</button>
+            </h3>
+
+            <div className='text-left px-4 mt-4 relative'>
+              <h1 className='text-white text-lg '>
+                Hosted web challenges allow you to host CTF's related to web exploitation. Upload a zip file containing your website, and we will host it 24/7 for you.
+              </h1>
+
+              <div className='blur-xl'>
+                <div
+                  className="mt-4 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed border-neutral-600 bg-neutral-800 px-4 transition hover:border-neutral-500 focus:outline-none"
+                >
+                  <span className="flex items-center space-x-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-gray-300"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
+                    </svg>
+                    <span className="font-medium text-gray-300">
+                      Drop files to Attach, or
+                      <span className="ml-1 text-blue-600 underline">browse</span>
+                    </span>
+                  </span>
+                </div>
+
+                   <textarea
+                  className="mt-10 w-full h-40 border-none bg-black text-white"
+                ></textarea>
+
+                <button className='mt-10 bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-lg'>Test Deployment</button>
+              </div>
+
+              <div className="absolute inset-0 flex items-center justify-center mt-10">
+                <div className='flex flex-col items-center justify-center'>
+                <FontAwesomeIcon icon={faExclamationTriangle} className='text-yellow-500 mr-2 text-sm w-10 h-10 ' />
+                  <h1 className='text-white text-2xl font-bold mt-2'>This feature isn't ready just yet.</h1>
+                <p className='text-white text-lg'>We may still be able to host your challenge. Reach out to us on our Discord.</p>
+                </div>
+              </div>
+            </div>
+
+            </div>
+</div>
+
+
+<p className='text-yellow-500 text-lg mt-10'>Note, saving this challenge will not save any files you may have uploaded. <b className='text-red-500'>Files will only be uploaded when you submit for review</b>.</p>
+
+          <button className="mr-2 mt-6  rounded-lg border-blue-800 bg-blue-800 px-4 py-2 text-lg text-white shadow-lg hover:bg-blue-800">
+            <i class="fas fa-save"></i> Save
+          </button>
+
 
           <button
-            onClick={sendToFileApi}
+            onClick={openConfirmModal}
             disabled={sending}
-            className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-2xl text-white shadow-lg hover:bg-green-800"
+            className="mr-2 mt-6 rounded-lg border-green-600 bg-green-900 px-4 py-2 text-lg text-white shadow-lg hover:bg-green-800"
           >
-            <i class="fas fa-send"></i> Create Challenge
+            <i class="fas fa-send"></i> Save & Submit for Review
           </button>
 
-          <button className="mr-2 mt-6 hidden rounded-sm border-blue-600 bg-blue-700 px-4 py-2 text-2xl text-white shadow-lg hover:bg-blue-800">
-            <i class="fas fa-save"></i> Save as draft
-          </button>
+        
         </div>
 
         <div
@@ -769,6 +853,129 @@ export default function Createchall() {
         theme="dark"
       />
       <Footer />
+
+      <Transition appear show={isModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-bold leading-6 text-white"
+                  >
+                    Environment Container Configuration
+                  </Dialog.Title>
+                  <div className="mt-4">
+                  <img src='/cycle.png' className='w-2/3 mx-auto'></img>
+                    <p className="text-lg text-white mt-4">
+                     
+                      When we spin up your container, we will run the commands in
+                      this configuration file. If you are modifying a fork, you
+                      should assume their configuration file will be run first, then
+                      yours is run afterwards.
+
+                      <br></br><br></br>
+                      If you still have questions, please join our <a href='https://discord.gg/bH6gu3HCFF' className='text-blue-500 hover:text-blue-700'>Discord</a> server.
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <Transition appear show={isConfirmModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeConfirmModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-white"
+                  >
+                    Confirm Submission
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-300">
+                      Are you sure you want to save and submit this challenge for review?
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={handleConfirmSubmit}
+                    >
+                      Yes, Submit
+                    </button>
+                    <button
+                      type="button"
+                      className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                      onClick={closeConfirmModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 }
