@@ -93,6 +93,70 @@ export default function Competitions() {
     }
   };
 
+  const handleResetBanner = async () => {
+    const username = document.getElementById('usernameInput').value;
+    const reason = ""; // Set reason as blank for now
+
+    if(!username) {
+      alert("Please enter a username.");
+      return;
+    }
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/resetBanner`, "POST", {reason});
+      if(response.success){
+        alert("Banner reset successfully!");
+      }else {
+        alert("Failed to reset banner.");
+      }
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while resetting the banner.");
+    }
+  };
+
+  const handleDisableAccount = async () => {
+    const username = document.getElementById('usernameInput').value;
+    const reason = "";
+
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/disableAccount`, "POST", { reason });
+      if (response.success) {
+        alert("Account disabled successfully!");
+      } else {
+        alert("Failed to disable account.");
+      }
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while disabling the account.");
+    }
+  };
+
+  const handleEnableAccount = async () => {
+    const username = document.getElementById('usernameInput').value;
+    const reason = "";
+
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/enableAccount`, "POST", {reason});
+      if(response.success){
+        alert("Account enabled successfully!");
+      }else {
+        alert("Failed to enable account.");
+      }
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while enabling the account.");
+    }
+  };
+
   return (
     <>
       <Head>
@@ -126,10 +190,11 @@ export default function Competitions() {
 <h1 className='text-xl  text-white mb-2'>USER ACTIONS</h1>
     <input type="text" placeholder='Enter USERNAME' className='mb-2 text-white bg-neutral-800 border-none w-full' id="usernameInput"></input>
    <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id="reasonInput"></textarea>
-    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'>Disable Account</button>
+    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'onClick={handleDisableAccount}>Disable Account</button>
+    <button className='ml-2 px-2 py-1 bg-green-600 text-white mt-2'onClick={handleEnableAccount}>Enable Account</button>
     <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Warn User</button>
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetPFP}>Reset PFP</button>
-    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2'>Reset Banner</button>
+    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBanner}>Reset Banner</button>
 
 </div>
 

@@ -17,11 +17,11 @@ const SolvedChallenges = ({ user }) => {
                     setSolvedChallenges(response);
                     setLoading(false);
            
-           
         };
 
         setLoading(true);
         fetchSolvedChallenges();
+        
     }, [user]);
 
     if (loading) return <div className='text-neutral-400'><Skeleton width="100%" baseColor="#363535" highlightColor="#615f5f"  /></div>;
@@ -42,19 +42,19 @@ const SolvedChallenges = ({ user }) => {
             <div>
                 {solvedChallenges.map(challenge => (
                     <div onClick={() => {
-                        router.push(`/challenges/${challenge.id}`);
-                    }} className='mt-2 hover:bg-neutral-700/40 cursor-pointer list-none text-center text-white flex bg-neutral-700/50 px-4 py-4' key={challenge.id}>
+                        router.push(`/challenges/${challenge.challenge.id}`);
+                    }} className='mt-2 hover:bg-neutral-700/40 cursor-pointer list-none text-center text-white flex bg-neutral-700/50 px-4 py-4' key={challenge.challenge.id}>
                      
                       <div>
-                      {challenge.title} 
+                      {challenge.challenge.title} 
                       </div>
 
                         <div className='ml-auto '>
-                        <span className={`text-sm ${colorBG[challenge.difficulty]} px-2 py-1 rounded-sm ml-4 lowercase`}> {challenge.difficulty}</span>&nbsp;&nbsp;<span className={`text-sm bg-neutral-700 px-2 py-1 rounded-sm mr-4`}> {challenge.category}</span>
+                        <span className={`text-sm ${colorBG[challenge.challenge.difficulty]} px-2 py-1 rounded-sm ml-4 lowercase`}> {challenge.challenge.difficulty}</span>&nbsp;&nbsp;<span className={`text-sm bg-neutral-700 px-2 py-1 rounded-sm mr-4`}> {challenge.challenge.category}</span>
 
                        
-                                <span className="text-sm text-white">{challenge.upvotes} <i className="fas fa-arrow-up text-green-500"></i></span>
-                                <span className="ml-2 text-sm text-white">{challenge.downvotes} <i className="fas fa-arrow-down text-red-500"></i></span>
+                                <span className="text-sm text-white">{challenge.challenge.upvotes} <i className="fas fa-arrow-up text-green-500"></i></span>
+                                <span className="ml-2 text-sm text-white">{challenge.challenge.downvotes} <i className="fas fa-arrow-down text-red-500"></i></span>
                             </div>
                     
                     
