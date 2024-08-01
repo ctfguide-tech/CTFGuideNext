@@ -728,7 +728,6 @@ export default function Createchall() {
             <FontAwesomeIcon icon={faGlobe} className='mr-2 text-sm w-4 h-4' />
  Hosted Web Challenges
 
- <button onClick={openModal} className='ml-auto bg-white hover:bg-neutral-200 text-blue-600 px-2 py-1.5 rounded-sm flex items-center'><FontAwesomeIcon icon={faQuestionCircle} className='mr-2 text-sm w-6 h-6' />What is this?</button>
             </h3>
 
             <div className='text-left px-4 mt-4 relative'>
