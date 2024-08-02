@@ -13,12 +13,16 @@ import request from '@/utils/request';
 import { MyTable } from '@/components/Table';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import ViewChallenge from '@/components/moderation/ViewChallenge';
+import { MarkdownViewer } from '@/components/MarkdownViewer';
+
+
 
 export default function Competitions() {
   const [selectedChallenges, setSelectedChallenges] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [pendingChallenges, setPendingChallenges] = useState([]);
   const [challengeIsOpen, setChallengeIsOpen] = useState(false);
+  const [contentPreview, setContentPreview] = useState('');
 
 
   const [reports, setReports] = useState([]);
@@ -157,6 +161,31 @@ export default function Competitions() {
     }
   };
 
+  const handleUploadPatchnote = async () => {
+    const title = document.getElementById('titleInput').value;
+    const version = document.getElementById('versionInput').value;
+    const content = document.getElementById('content').value;
+    const author = "CTFGuide";
+
+    if (!title || !version || !content) {
+      alert("Please fill in all fields.");
+      return;
+    }
+  
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/createPatchNote`, "POST", {title, version, content});
+      if(response.success){
+        alert("Patchnote uploaded successfully!");
+      }else {
+        alert("Failed to upload the patchnote.");
+      }
+
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while uploading the patchnote.");
+    }
+  };
+
   return (
     <>
       <Head>
@@ -261,9 +290,38 @@ export default function Competitions() {
             <textarea value={selectedChallenges.join(", ") || "N/A"} className='hidden text-white bg-neutral-800 border-none w-full'>
             </textarea>
 
-
+            <div className='border border-neutral-700 px-4 py-4 mt-3'>
+          
+          <div className='grid grid-cols-2 gap-x-4'>
+            <div className='pr-2'>
+            <h1 className='text-white text-xl mb-2'>
+                Create a Patchnote
+          </h1>
+          <input type="text" placeholder='Title' id="titleInput" className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
+          <input type="text" placeholder='Version' id="versionInput" className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
+          <textarea value={contentPreview} className='mb-2 text-white bg-neutral-800 border-none w-full'
+          id="content"
+          placeholder="Enter your description here..."
+          onChange={(event) => {
+            setContentPreview(event.target.value);
+          }}
+          ></textarea>
+          <button className='px-2 py-1 bg-blue-600 text-white' onClick={handleUploadPatchnote}>Upload Patchnote</button>
+          </div>
+          
+          <div>
+          <h1 className="text-xl font-medium text-white mb-2">
+              Patchnote Content Preview
+              </h1>
+              <div className='bg-neutral-800 rounded-lg py-2 px-2'>
+              <MarkdownViewer className="text-white"content={contentPreview}/>
+              </div>
+              </div>
+          </div>
 
           </div>
+          </div>
+          
         </main>
         <div className='flex w-full h-full grow basis-0'></div>
         <ViewChallenge open={challengeIsOpen} setOpen={setChallengeIsOpen} selected={selectedId} />
