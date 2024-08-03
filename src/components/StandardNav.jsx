@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import { Disclosure, Menu, Popover, Transition } from '@headlessui/react';
 import { Dialog } from '@headlessui/react';
 
@@ -218,6 +218,21 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
         : 'text-gray-300 hover:text-gray-50 border-transparent'
     }`;
 
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (panelRef.current && !panelRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [panelRef]);
+
   return (
     <>
       {isPopoverOpen && (
@@ -242,16 +257,16 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                 <div className="flex">
                   <div className="-ml-2 mr-2 flex items-center md:hidden">
                     {/* Mobile menu button */}
-                    <Disclosure.Button className="hover-bg-neutral-900 inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                    <Disclosure.Button className="transition-transform duration-300 hover-bg-neutral-900 inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                       <span className="sr-only">Open main menu</span>
                       {open ? (
                         <XMarkIcon
-                          className="block h-6 w-6"
+                          className={`block h-6 w-6 transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
                           aria-hidden="true"
                         />
                       ) : (
                         <Bars3Icon
-                          className="block h-6 w-6"
+                          className={`block h-6 w-6 transition-opacity duration-300 ${open ? 'opacity-0' : 'opacity-100'}`}
                           aria-hidden="true"
                         />
                       )}
@@ -565,72 +580,86 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
               </div>
             </div>
 
-            <Disclosure.Panel className="md:hidden">
-              <div className="space-y-1 bg-neutral-800/50 pb-3 pt-2">
-                {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300  hover:text-white" */}
-                <Disclosure.Button
-                  as="a"
-                  href="../dashboard"
-                  className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
-                >
-                  Dashboard
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="../learn"
-                  className=" block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
-                >
-                  Learn
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="../groups"
-                  className="block hidden border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
-                >
-                  Classes
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="../practice"
-                  className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
-                >
-                  Practice
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="../live"
-                  className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-700 sm:pl-5 sm:pr-6"
-                >
-                  Live
-                </Disclosure.Button>
-              </div>
-              <div className="border-t border-neutral-800 bg-neutral-800/50 pb-3 pt-4">
-                <div className="space-y-1">
+            <Transition
+              show={open}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 transform -translate-y-1"
+              enterTo="opacity-100 transform translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 transform translate-y-0"
+              leaveTo="opacity-0 transform -translate-y-1"
+            >
+              <Disclosure.Panel ref={panelRef} className="md:hidden">
+                <div className="space-y-1 bg-neutral-800/50 pb-3 pt-2">
+                  {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-300  hover:text-white" */}
                   <Disclosure.Button
                     as="a"
-                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
-                    className="hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-800 sm:px-6"
+                    href="../dashboard"
+                    className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
                   >
-                    Profile
+                    Dashboard
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
-                    href="#"
-                    className="hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-800 sm:px-6"
+                    href="../practice"
+                    className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
                   >
-                    Settings
+                    Practice
                   </Disclosure.Button>
-
                   <Disclosure.Button
                     as="a"
-                    onClick={logout}
-                    className="hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-800 sm:px-6"
+                    href="../groups"
+                    className="block  border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
                   >
-                    Sign out
+                    Classes
                   </Disclosure.Button>
                 </div>
-              </div>
-            </Disclosure.Panel>
+                <div className="border-t border-neutral-800 bg-neutral-800/50 pb-3 pt-4">
+                  <div className="space-y-1">
+                    <Disclosure.Button
+                      as="a"
+                      href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/users/${username}`}
+                      className="flex hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-100 sm:px-6"
+                    >
+                      <UserCircleIcon className="mr-4 block h-6 w-6" aria-hidden="true" />
+                      Profile
+                    </Disclosure.Button>
+                    <Disclosure.Button
+                      as="a"
+                      href="#"
+                      className="flex hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-100 sm:px-6"
+                    >
+                      <Cog6ToothIcon className="mr-4 block h-6 w-6" aria-hidden="true" />
+                      Settings
+                    </Disclosure.Button>
+
+                    <Disclosure.Button
+                      as="a"
+                      onClick={logout}
+                      className="flex cursor-pointer block px-4 py-2 text-base font-medium text-red-500 hover:text-red-400 sm:px-6"
+                    >
+                      <ArrowRightIcon className="mr-4 block h-6 w-6" aria-hidden="true" />
+                      Sign out
+                    </Disclosure.Button>
+                  </div>
+                </div>
+                <div className="border-t border-neutral-800 bg-neutral-800/50 pb-3 pt-4">
+                  <div className="px-4">
+                    <div
+                      type="text"
+                      className="flex w-full items-center rounded-lg border border-transparent bg-neutral-800 px-4 py-2 text-sm font-semibold text-neutral-500 placeholder-gray-300 hover:cursor-pointer hover:text-neutral-50 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onClick={() => setShowSearchModal(true)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faSearch}
+                        className="mr-1 h-3 w-3"
+                      />
+                      <span>Search for anything</span>
+                    </div>
+                  </div>
+                </div>
+              </Disclosure.Panel>
+            </Transition>
           </>
         )}
       </Disclosure>
