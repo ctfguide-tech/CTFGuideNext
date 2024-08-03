@@ -35,6 +35,8 @@ import 'react-circular-progressbar/dist/styles.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CusTooltip from '@/components/profile/BadgeOnhover';
+import { useSwipeable } from 'react-swipeable';
+
 // Register the necessary chart component
 ChartJS.register(
   RadialLinearScale,
@@ -157,6 +159,13 @@ export default function Create() {
 
   const [categoryChallenges, setCategoryChallenges] = useState([]);
   const [rank, setRank] = useState(null);
+
+  const [currentSwipeView, setCurrentSwipeView] = useState('skillChart');
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => setCurrentSwipeView('difficultyBreakdown'),
+    onSwipedRight: () => setCurrentSwipeView('skillChart'),
+  });
 
   function closeUnsavedNotif() {
     bannerState(false);
@@ -879,13 +888,13 @@ export default function Create() {
           ></div>
         </div>
         <div className="mx-auto max-w-7xl ">
-          <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
-            <div className="flex w-40">
+          <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 sm:justify-start justify-center text-center sm:text-left">
+            <div className="flex w-40 justify-center mx-auto sm:mx-0">
               {
                 <a href={ownUser ? '../settings' : '#'}>
                   {(user && (
                     <img
-                      className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
+                      className="rounded-full hover:bg-[#212121] sm:h-32 sm:w-32 h-24 w-24"
                       src={
                         user.profileImage ||
                         'https://robohash.org/' + user.username
@@ -904,10 +913,10 @@ export default function Create() {
                 </a>
               }
             </div>
-            <div className="mt-4 w-full">
+            <div className="sm:mt-12 w-full">
               <div className="">
-                <div className="mt-6 ">
-                  <div className="mt-6  flex w-full">
+                <div className="">
+                  <div className=" flex w-full flex-col sm:flex-row items-center sm:items-start">
                     <div>
                       <h1 className={`${getNameColor(user && user.role)}`}>
                         {(user && user.username) || (
@@ -951,7 +960,7 @@ export default function Create() {
                           </span>
                         )}
                       </h1>
-                      <p className="text-white  ">
+                      <p className="text-white">
                         <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                         {(user && user.location) || (
                           <Skeleton
@@ -962,8 +971,8 @@ export default function Create() {
                         )}
                       </p>
                     </div>
-                    <div className="ml-auto  mt-14 flex text-white">
-                      <p>
+                    <div className="sm:ml-auto mt-4 sm:mt-14 flex text-white justify-center sm:justify-end">
+                      <p className="text-center sm:text-right w-full sm:w-auto">
                         {user && (
                           <>
                             <span
@@ -994,7 +1003,8 @@ export default function Create() {
         </div>
       </div>
 
-      <main className="mx-auto mb-20 mt-10 max-w-7xl">
+      {/* Main layout for larger screens */}
+      <main className="hidden md:block mx-auto mb-20 mt-10 max-w-7xl">
         <div className="mt-10 grid grid-cols-1 gap-y-4 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 lg:gap-x-4 ">
           <div className="h-40 w-full border-t-4 border-blue-600 bg-neutral-800">
             <div className="col-span-2 bg-neutral-800 px-4 pt-4">
@@ -1217,6 +1227,211 @@ export default function Create() {
             />
           </div>
         </div>
+      
+      
+      </main>
+
+      {/* Mobile layout */}
+      <main className="block md:hidden mx-auto mb-20 mt-10 max-w-7xl px-6">
+        <div className="mt-10 grid grid-cols-1 gap-y-4">
+          <div className="border-t-4 border-blue-600">
+            <div className="bg-neutral-800 px-4 py-4 ">
+              <div className="mb-2 flex w-full justify-between  ">
+                <div className="flex space-x-2  rounded-md">
+                  {user && (
+                    <h1 className="mb-1 text-xl font-bold uppercase text-white">
+                      ABOUT {user.username}
+                    </h1>
+                  )}
+                </div>
+                {bioViewCheck() ? renderEditButton() : ''}
+              </div>
+              {user && user.bio != null ? (
+                <p className="text-neutral-400">
+                  {bioViewCheck()
+                    ? renderUsersBio()
+                    : user && <MarkdownViewer content={user.bio || "Nothing to see here..."} />}
+                </p>
+              ) : (
+                <p className="text-neutral-400">
+                  {bioViewCheck()
+                    ? renderUsersBio()
+                    : user && (
+                        <MarkdownViewer content="Nothing to see here..." />
+                      )}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="h-40 w-full border-t-4 border-blue-600 bg-neutral-800" {...handlers}>
+            {currentSwipeView === 'skillChart' ? (
+              <div className="bg-neutral-800 px-4 pt-4">
+                <h1 className="text-xl font-bold text-white">SKILL CHART</h1>
+                {categoryChallenges.length > 0 &&
+                categoryChallenges.some(
+                  (category) => category.completed > 0
+                ) ? (
+                  <div className="">
+                  <Radar data={radarData} options={{ ...radarOptions }}   />
+                  </div>
+                ) : (
+                  <h1 className="mx-auto my-auto text-neutral-400">
+                    It seems that {user && user.username} hasn't solved any
+                    challenges yet.
+                  </h1>
+                )}
+                <hr className="mt-4 border-neutral-700 px-4"></hr>
+              </div>
+            ) : (
+              <div className="bg-neutral-800 px-4 pt-4">
+                <h1 className="text-xl font-bold text-white">
+                  DIFFICULTY BREAKDOWN
+                </h1>
+                {solvedChallenges > 0 ? (
+                  <div className="mt-4 flex items-center justify-center">
+                    <div className="w-1/2">
+                      <MultiColorCircularProgressBar segments={segments} />
+                      <p className=" mt-2 text-center text-white">
+                        {solvedChallenges} Solved
+                      </p>
+                    </div>
+                    <div className="ml-4 w-1/2">
+                      {completionData.map((item, index) => (
+                        <div key={index} className="mb-2 flex justify-between">
+                          <span
+                            className={`text-${item.color.split('-')[1]}-500`}
+                            title={`${item.name}: ${item.amount} challenges`}
+                          >
+                            {item.name}
+                          </span>
+                          <span className="text-white">{item.amount}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-neutral-400">
+                    Hmm, {user && user.username} hasn't solved any challenges
+                    yet.
+                  </p>
+                )}
+                <hr className="mt-4 border-neutral-700 px-4"></hr>
+              </div>
+            )}
+          </div>
+
+          <div className="">
+            {displayMode === 'followers' && (
+              <Followers
+                followers={followers}
+                pageData={followerPageData}
+                userData={userData}
+              />
+            )}
+            {displayMode === 'following' && (
+              <Following
+                followings={following}
+                pageData={followingPageData}
+                userData={userData}
+              />
+            )}
+
+            {displayMode === 'default' && (
+              <>
+                <div className="mt-4 hidden">
+                  <div className="pb-2 ">
+                    <ul className="hidden w-full list-none text-neutral-500 md:flex">
+                      {[
+                        'SOLVED CHALLENGES',
+                        'WRITEUPS',
+                        'CREATED CHALLENGES',
+                        'BADGES',
+                      ].map((tab) => (
+                        <li
+                          key={tab}
+                          className={`mr-4 cursor-pointer ${
+                            activeTab === tab
+                              ? ' border-blue-600 font-semibold text-blue-600'
+                              : ''
+                          }`}
+                          onClick={() => setActiveTab(tab)}
+                        >
+                          {tab}
+                        </li>
+                      ))}
+                    </ul>
+                    <select
+                      className="w-1/2 w-full rounded border-none bg-neutral-800 px-4 text-neutral-50 md:hidden"
+                      value={activeTab}
+                      onChange={(e) => setActiveTab(e.target.value)}
+                    >
+                      {[
+                        'LIKED CHALLENGES',
+                        'WRITEUPS',
+                        'CREATED CHALLENGES',
+                        'BADGES',
+                      ].map((tab) => (
+                        <option key={tab} value={tab}>
+                          {tab}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="border-t-4 hiborder-blue-600 bg-neutral-800 px-4 py-4">
+                    {user != undefined && renderContent()}
+                  </div>
+
+                  <div className="w-full">
+                    <div className="text-white">
+                      <div className="mt-4 w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4">
+                        <h2 className="mb-4 text-xl font-bold text-white">
+                          ACTIVITY CALENDAR
+                        </h2>
+                        <div className="flex justify-center">
+                          {activityData && (
+                            <ActivityCalendar
+                              data={activityData}
+                              showMonthLabels={true} // Ensure month labels are shown
+                              theme={{
+                                light: [
+                                  '#1f1f1f',
+                                  '#c0d7ff',
+                                  '#93bfff',
+                                  '#66a7ff',
+                                  '#3a8fff',
+                                ],
+                                dark: [
+                                  '#1f1f1f',
+                                  '#c0d7ff',
+                                  '#93bfff',
+                                  '#66a7ff',
+                                  '#3a8fff',
+                                ],
+                                level4: '#3a8fff',
+                              }}
+                            />
+                          )}{' '}
+                        </div>{' '}
+                      </div>{' '}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
+          </div>
+        </div>
       </main>
 
       {/* are you even surprised atp?  */}
@@ -1247,6 +1462,9 @@ export default function Create() {
         </>
       ) : null}
 
+      <div className="mt-4"></div>
+
+      <div className="flex h-full w-full grow basis-0"></div>
       <Footer />
 
       {banner && (

@@ -26,6 +26,8 @@ import WriteupModal from '@/components/WriteupModal';
 export default function Challenge() {
   const router = useRouter();
   const [selectedWriteup, setSelectedWriteup] = useState(null);
+  const [isTerminalFullscreen, setIsTerminalFullscreen] = useState(false);
+  const [isChallengeFullscreen, setIsChallengeFullscreen] = useState(true);
 
   // I hate this
   const [urlChallengeId, urlSelectedTab, urlWriteupId] = (router ?? {})?.query?.id ?? [undefined, undefined, undefined];
@@ -313,27 +315,123 @@ export default function Challenge() {
       </Head>
       <FlagDialog />
       <PointsModal isOpen={isPointsModalOpen} setIsOpen={setIsPointsModalOpen} points={awardedPoints} />
-      <div className='flex flex-col min-w-[64rem] text-white overflow-x-auto overflow-y-hidden min-h-0 h-screen'>
+      <div className='flex flex-col text-white overflow-x-auto overflow-y-hidden min-h-0 h-screen md:min-w-[64rem]'>
         <StandardNav alignCenter={false} />
-        <main className="flex flex-grow p-2 gap-2 overflow-y-hidden">
-          <div className="flex flex-col flex-1 bg-neutral-800 overflow-y-hidden rounded-md">
-            <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full">
-              {Object.entries(tabs).map(([url, tab]) => <TabLink tabName={tab.text} selected={selectedTab === tab} url={`/challenges/${urlChallengeId}/${url}`} key={url} />)}
+        <main className="flex flex-grow p-2 gap-2 overflow-y-hidden flex-col md:flex-row">
+          {isChallengeFullscreen && (
+            <div className={`flex flex-col flex-1 bg-neutral-800 overflow-y-hidden rounded-md`}>
+              <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full overflow-x-auto">
+                {Object.entries(tabs).map(([url, tab]) => (
+                  <TabLink 
+                    tabName={tab.text} 
+                    selected={selectedTab === tab} 
+                    url={`/challenges/${urlChallengeId}/${url}`} 
+                    key={url} 
+                    className="text-sm md:text-base px-2 md:px-4"
+                  />
+                ))}
+              </div>
+              {selectedWriteup ? (
+                <WriteupModal isOpen={true} onClose={() => setSelectedWriteup(null)} writeup={selectedWriteup} />
+              ) : (
+                <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
+              )}
+              <div className='flex w-full h-full grow basis-0'></div>
+              <div className="shrink-0 bg-neutral-800 h-12 w-full">
+                <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
+                  <input 
+                    name="flag" 
+                    type="text" 
+                    required 
+                    placeholder="Enter flag submission here" 
+                    className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2 text-sm md:text-base" 
+                  />
+                  <input 
+                    name="submitFlag" 
+                    type="submit" 
+                    value="Submit Flag" 
+                    disabled={loadingFlagSubmit} 
+                    className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm text-sm md:text-base" 
+                  />
+                </form>
+              </div>
+              <button
+                onClick={() => {
+                  setIsChallengeFullscreen(false);
+                }}
+                className="bg-neutral-700/50 hover:bg-neutral-700 text-white px-4 py-1 rounded mt-2 md:hidden"
+              >
+                <i className="fas fa-exchange-alt"></i> Switch to Terminal
+              </button>
             </div>
-            {selectedWriteup ? (
-              <WriteupModal isOpen={true} onClose={() => setSelectedWriteup(null)} writeup={selectedWriteup} />
-            ) : (
-              <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
-            )}
-            <div className='flex w-full h-full grow basis-0'></div>
-            <div className="shrink-0 bg-neutral-800 h-12 w-full">
-              <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
-                <input name="flag" type="text" required placeholder="Enter flag submission here" className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2" />
-                <input name="submitFlag" type="submit" value="Submit Flag" disabled={loadingFlagSubmit} className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm" />
-              </form>
+          )}
+          {!isChallengeFullscreen && (
+            <div className={`flex md:hidden flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md`}>
+              <div className="grow bg-neutral-950 w-full overflow-hidden">
+                <div className="h-full">
+                  {foundTerminal && (
+                    <div className="flex py-1  mb-4 text-xs">
+                      <h1 className="text-xs font-semibold py-2  pl-2">
+                        Username: {userName}
+                        <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
+                          <i className="fas fa-copy"></i>
+                        </button>
+                      </h1>
+                      <h1 className="text-xs font-semibold py-2  pl-2">
+                        Password: {password}
+                        <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
+                          <i className="fas fa-copy"></i>
+                        </button>
+                      </h1>
+                      <h1 className="text-xs ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
+                        Remaining Time: {formatTime(minutesRemaining)}
+                        <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
+                        {showMessage && (
+                          <span className="bg-neutral-800 px-2 py-1 absolute right-5 top-32 max-w-[20rem] text-sm text-yellow-500">
+                            Sometimes browsers block iframes, try opening the terminal in full screen if it the terminal is empty.
+                            <button onClick={() => setShowMessage(false)} className="ml-2 text-red-500 hover:text-red-300">
+                              Dismiss
+                            </button>
+                          </span>
+                        )}
+                      </h1>
+                    </div>
+                  )}
+                  {fetchingTerminal ? (
+                    <div className="flex mx-auto text-center justify-center items-center h-full">
+                      <div>
+                        <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
+                        <span className="text-white text-xl">{loadingMessage}</span>
+                        <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    isTerminalBooted ? (
+                      <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                    ) : (
+                      <div className="flex mx-auto text-center justify-center items-center h-full">
+                        <button
+                          onClick={handleBootTerminal}
+                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                        >
+                          Boot Terminal
+                        </button>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsChallengeFullscreen(true);
+                }}
+                className="bg-neutral-700/50 hover:bg-neutral-700 text-white px-4 py-1 rounded mt-2 md:hidden"
+              >
+                <i className="fas fa-exchange-alt"></i> Switch to Challenge
+              </button>
             </div>
-          </div>
-          <div className="flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
+          )}
+          <div className="hidden md:flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
               <div className="h-full">
                 {foundTerminal && (
@@ -362,8 +460,6 @@ export default function Challenge() {
                         </span>
                       )}
                     </h1>
-
-                   
                   </div>
                 )}
                 {fetchingTerminal ? (
@@ -372,7 +468,6 @@ export default function Challenge() {
                       <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
                       <span className="text-white text-xl">{loadingMessage}</span>
                       <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
-
                     </div>
                   </div>
                 ) : (
@@ -472,17 +567,17 @@ function PointsModal({ isOpen, setIsOpen, points }) {
                 numberOfPieces={800}
               />
               <div className="flex min-h-full items-center justify-center p-4">
-                <Dialog.Panel className="mx-auto px-32 py-14 max-w-6xl rounded bg-neutral-900 text-white">
-                  <div className="flex gap-x-10">
-                    <div className=" ">
-                      <Dialog.Title className={'text-3xl font-semibold'}>Nice work!</Dialog.Title>
+                <Dialog.Panel className="mx-auto px-20 py-14 max-w-6xl rounded bg-neutral-900 text-white">
+                  <div className="flex flex-col md:flex-row gap-x-10">
+                    <div className="mb-4 md:mb-0">
+                      <Dialog.Title className="text-3xl font-semibold">Nice work!</Dialog.Title>
                       <p className="text-xl">You have been awarded {points} points.</p>
                       <button onClick={() => setIsOpen(false)} className="mt-4 bg-blue-600 hover:bg-blue-400 text-white px-4 py-2 rounded">
                         Close
                       </button>
                     </div>
-                    <div className="border-l border-neutral-700 px-4">
-                      <h1 className="text-xl font-semibold">BADGES</h1>
+                    <div className="border-t md:border-t-0 md:border-l border-neutral-700 px-4">
+                      <h1 className="mt-4 md:mt-0 text-xl font-semibold">BADGES</h1>
                       <p className="text-lg">You did not receive any new badges.</p>
                       <h1 className="text-xl mt-2 font-semibold">REWARD SUMMARY</h1>
                       <p className="text-lg"><span className="text-green-500">+{points}</span> points</p>
@@ -498,7 +593,7 @@ function PointsModal({ isOpen, setIsOpen, points }) {
   );
 }
 
-function TabLink({ tabName, selected, url }) {
+function TabLink({ tabName, selected, url, className }) {
   const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
   const icon = {
     'Comments': 'fas fa-comments text-green-500',
@@ -510,7 +605,7 @@ function TabLink({ tabName, selected, url }) {
   }[tabName] || 'fas fa-file-alt text-blue-500';
 
   return (
-    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full`}>
+    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full ${className}`}>
       <i className={`${icon} w-6 mr-1 inline-flex`}></i>
       {tabName ?? 'This is a test button'}
     </Link>
@@ -1221,18 +1316,18 @@ function CommentsPage({ cache }) {
               className="w-8 h-8 rounded-full"
               alt={`${comment.username}'s profile`}
             />
-            <span className="flex items-center ml-2 text-lg font-semibold text-white">
+            <span className="ml-2 text-lg font-semibold text-white">
               <a href={`/users/${comment.username}`} className={`hover:text-neutral-10 ${comment.role === 'PRO' ? 'bg-gradient-to-br from-orange-300 to-yellow-300 bg-clip-text text-transparent' : ''}`}>
                 {comment.username}
               </a>
               {comment.role === 'ADMIN' && (
                 <>
-                  <span className="bg-red-600 px-1 rounded-sm text-sm ml-2"><i className="fas fa-code fa-fw"></i> Developer</span>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
                 </>
               )}
               {comment.role === 'PRO' && (
                 <>
-                  <span className="ml-2 bg-gradient-to-br rounded-sm from-orange-400 to-yellow-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> Pro</span>
+                  <span className="ml-2 bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm"><i className="fas fa-crown fa-fw"></i> pro</span>
                 </>
               )}
               <span className="ml-2 text-sm font-medium"> {new Date(comment.createdAt).toLocaleString()}</span>

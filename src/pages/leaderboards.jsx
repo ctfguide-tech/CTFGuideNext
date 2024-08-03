@@ -54,10 +54,51 @@ export default function Leaderboard() {
       <div className="flex min-h-screen flex-col">
         <StandardNav />
         <main>
-
+      {/*simple mobile podium*/}
+      <div className="sm:hidden mt-4flex flex-col w-full items-center justify-center gap-4 px-2">
+           
+           <div className="flex flex-col gap-2 w-full">
+             {leaderboardData.slice(0, 3).map((entry, index) => (
+               <div
+                 onClick={() => {
+                   window.location.href = '../users/' + entry.user.username;
+                 }}
+                 key={index}
+                 className={`cursor-pointer flex items-center gap-2 p-2 rounded-lg w-full ${
+                   index === 0
+                     ? 'bg-gradient-to-br from-amber-600 via-yellow-400 via-75% to-amber-600'
+                     : index === 1
+                     ? 'bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600'
+                     : 'bg-gradient-to-br from-orange-900 via-orange-400 via-65% to-orange-900'
+                 }`}
+               >
+                 <span className="text-lg font-semibold text-white">{index + 1}.</span>
+                 <img
+                   alt="Avatar"
+                   className="rounded-full"
+                   height="40"
+                   src={
+                     entry.user.profileImage === ''
+                       ? 'https://robohash.org/' + entry.user.username
+                       : `${entry.user.profileImage}`
+                   }
+                   style={{
+                     aspectRatio: '40/40',
+                     objectFit: 'cover',
+                   }}
+                   width="40"
+                 />
+                 <div className="flex w-full">
+                   <div className="text-white">{entry.user.username}</div>
+                   <div className="ml-auto text-sm text-white bg-neutral-900/50 px-2 py-1 text-center  w-fit rounded-lg">{entry.totalPoints} points</div>
+                 </div>
+               </div>
+             ))}
+           </div>
+         </div>
           { leaderboardData[0]  && leaderboardData[1]    && leaderboardData[2] && leaderboardData.length > 3 ? (
             <>
-          <div className="mx-auto mt-20 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
+          <div className="mx-auto sm:mt-32 flex max-w-7xl flex-col items-end gap-5 md:flex-row">
             <div
               className="relative w-full flex-1 cursor-pointer bg-gradient-to-br from-gray-600 via-gray-400 via-65% to-gray-600 shadow md:w-auto podium"
               onClick={() => {
@@ -66,7 +107,7 @@ export default function Leaderboard() {
               }}
             >
               <div className="flag-top"></div>
-              <div className="absolute -top-20 left-1/2 hidden -translate-x-1/2 transform md:block">
+              <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 md:block">
                 <img
                   alt="Avatar"
                   className="rounded-full"
@@ -105,7 +146,7 @@ export default function Leaderboard() {
               }}
             >
               <div className="flag-top"></div>
-              <div className="absolute -top-16 left-1/2 hidden -translate-x-1/2 transform md:block">
+              <div className="absolute -top-16 left-1/2  -translate-x-1/2 transform md:block">
                 <img
                   alt="Avatar"
                   className="rounded-full"
@@ -149,7 +190,7 @@ export default function Leaderboard() {
                 //too poopy
               }
               <div className="flag-top"></div>
-              <div className="absolute -top-20 left-1/2 hidden -translate-x-1/2 transform md:block">
+              <div className="absolute -top-20 left-1/2  -translate-x-1/2 transform md:block">
                 <img
                   alt="Avatar"
                   className="rounded-full"
@@ -180,6 +221,8 @@ export default function Leaderboard() {
               </div>
             </div>
           </div>
+
+    
 
           <div className="mx-auto max-w-7xl">
             <div>

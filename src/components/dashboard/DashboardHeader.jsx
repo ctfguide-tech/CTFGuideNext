@@ -90,17 +90,17 @@ export function DashboardHeader() {
             backgroundImage:
               'url("https://images.unsplash.com/photo-1633259584604-afdc243122ea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80")',
           }}
-          className="h-20 w-full object-cover lg:h-20"
+          className="h-20 w-full object-cover lg:h-20 "
           alt=""
         ></div>
       </div>
-      <div className="mx-auto max-w-7xl ">
-        <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
-          <div className="flex">
+      <div className="mx-auto max-w-7xl">
+        <div className="-mt-12  sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+          <div className="flex justify-center sm:justify-start">
             <Link href={`${baseUrl}/users/${username}`}>
               {(pfp && (
                 <img
-                  className="h-24 w-24 rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
+                  className="h-32 w-32    rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"
                   src={pfp}
                   alt=""
                 />
@@ -116,8 +116,8 @@ export function DashboardHeader() {
             </Link>
           </div>
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-            <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
-              <h1 className="flex items-center mt-8 truncate text-2xl font-bold text-white">
+            <div className="mt-6 min-w-0 flex-1 sm:hidden md:block  text-center sm:text-left">
+              <div className="items-center mt-8 truncate text-3xl sm:text-3xl lg:text-2xl font-bold text-white">
                 {username || (
                   <Skeleton
                     baseColor="#262626"
@@ -127,17 +127,19 @@ export function DashboardHeader() {
                 )}
 
                 {role === 'ADMIN' && (
-                  <span className="ml-2 rounded-sm bg-red-600 px-1 text-sm">
-                    <i className="fas fa-code fa-fw"></i> Developer
+                  <span className="ml-2 rounded-sm bg-red-600 px-1 text-sm hidden sm:inline">
+                    <i className="fas fa-code fa-fw"></i>
+                    <span className="hidden sm:inline"> Developer</span>
                   </span>
                 )}
                 {role === 'PRO' && (
-                  <span className="ml-2 rounded-sm bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm">
-                    <i className="fas fa-crown fa-fw"></i> Pro
+                  <span className="ml-2 rounded-sm bg-gradient-to-br from-orange-400 to-yellow-600 px-1 text-sm hidden sm:inline">
+                    <i className="fas fa-crown fa-fw"></i>
+                    <span className="hidden sm:inline"> Pro</span>
                   </span>
                 )}
-              </h1>
-              <p className="text-white">
+              </div>
+              <p className="text-white hidden sm:block">
                 <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                 {location || (
                   <Skeleton
@@ -148,7 +150,7 @@ export function DashboardHeader() {
                 )}
               </p>
             </div>
-            <div className="mt-12 flex justify-stretch px-4 sm:px-4 md:px-0 lg:px-0 ">
+            <div className="hidden mt-12 flex justify-center sm:justify-stretch px-4 sm:px-4 md:px-0 lg:px-0 ">
               <div className="mr-4 hidden">
                 {github && (
                   <a className="" href={github}>
@@ -173,7 +175,7 @@ export function DashboardHeader() {
               </div>
               <a
                 href={`/users/${username}`}
-                className=" duration-4000 mb-0 ml-2 mt-8 flex cursor-pointer items-center space-x-1 rounded-lg bg-neutral-800 px-10 py-1 transition ease-in-out hover:bg-neutral-800/40"
+                className="duration-400 mb-0 ml-2 flex cursor-pointer items-center space-x-1 rounded-lg bg-neutral-800 px-10 py-1 transition ease-in-out hover:bg-neutral-800/40 sm:block hidden"
               >
                 <p className="mt-0 text-white">
                   <i className="fas fa-user mr-1"></i> View Profile
@@ -191,13 +193,7 @@ export function DashboardHeader() {
             </div>
           </div>
         </div>
-        <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
-          <h1 className="truncate text-2xl font-bold text-gray-900">
-            {username || (
-              <Skeleton baseColor="#262626" highlightColor="#3a3a3a" />
-            )}
-          </h1>
-        </div>
+   
       </div>
     </div>
   );
