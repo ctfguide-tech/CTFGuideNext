@@ -608,6 +608,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
+                    href="../leaderboards"
+                    className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
+                  >
+                    Leaderboards
+                  </Disclosure.Button>
+                  <Disclosure.Button
+                    as="a"
                     href="../groups"
                     className="block  border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
                   >
@@ -626,7 +633,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Disclosure.Button>
                     <Disclosure.Button
                       as="a"
-                      href="#"
+                      href="/settings"
                       className="flex hover-bg-neutral-900 block px-4 py-2 text-base font-medium text-gray-300 hover:text-gray-100 sm:px-6"
                     >
                       <Cog6ToothIcon className="mr-4 block h-6 w-6" aria-hidden="true" />

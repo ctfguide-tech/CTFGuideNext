@@ -432,7 +432,14 @@ ul {
   position: relative;
   transition: transform 0.3s ease-in-out, height 0.3s ease-in-out;
 }
-
+@media (max-width: 768px) {
+  .podium {
+    display: none;
+  }
+  .top-three {
+    background-color: var(--color);
+  }
+}
 .podium:hover {
   transform: translateY(-5px);
   height: calc(100% + 200px)
