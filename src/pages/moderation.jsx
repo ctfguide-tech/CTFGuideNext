@@ -95,6 +95,29 @@ export default function Competitions() {
 
   };
 
+  const handleUnapproveChallenge = async () => {
+    const challengeId = document.getElementById('challengeIdInput').value;
+    const reason = document.getElementById('challengeReasonInput').value;
+
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${challengeId}/unapproveChallenge`, "POST", {reason});
+      if(response.success){
+        alert("Challenge unapproved successfully!");
+      }else {
+        alert("Failed to unapprove challenge.");
+      }
+
+      document.getElementById('challengeIdInput').value = "";
+      document.getElementById('challengeReasonInput').value = "";
+
+
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while unapproving the challenge.");
+    }
+
+  };
+
   const handleResyncLeaderboard = async () => {
     try{
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/syncLeaderboard`, "POST");
@@ -306,7 +329,7 @@ export default function Competitions() {
     <input type="text" placeholder='Enter CHALLENGE ID' className='mb-2 text-white bg-neutral-800 border-none w-full' id = "challengeIdInput"></input>
    <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id ="challengeReasonInput"></textarea>
     <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2' onClick={handleDeleteChallenge}>Delete Challenge</button>
-    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Unapprove Challenge</button>
+    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2' onClick={handleUnapproveChallenge}>Unapprove Challenge</button>
     <button className='ml-2 px-2 py-1 bg-red-600 text-white mt-2' onClick={handleResyncLeaderboard}>Resync Leaderboard</button>
     </div>
   </div>
