@@ -1,32 +1,120 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router'; // Import useRouter
 
 export default function Forgot() {
-  const [session, setSession] = useState();
-  const [logoutUrl, setLogoutUrl] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [validToken, setValidToken] = useState(false);
+  const [token, setToken] = useState("");
+  const [tokenId, setTokenId] = useState("");
 
-  function resetPassword() {
-    if (document.getElementById("email").value == "") {
-        document.getElementById("error").classList.remove("hidden");
+  const router = useRouter();
+  async function resetPassword() {
+    try {
+      if(!email) {
+        toast.error("Please enter a valid email");
         return;
-    }
-    sendPasswordResetEmail(auth, document.getElementById("email").value)
-  .then(() => {
-    document.getElementById("good").classList.remove("hidden");
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ..
-    if (document.getElementById("email").value == "") {
-        document.getElementById("error").classList.remove("hidden");
-        return;
-    }
-  });
+      }
 
+      const opt = { 
+        method: 'POST', 
+        body: JSON.stringify({ email }), 
+        headers: { 'Content-Type': 'application/json' }
+      };
+
+      const url = process.env.NEXT_PUBLIC_API_URL + '/email/reset-password';
+      const response = await fetch(url, opt);
+      const data = await response.json();
+
+      if(data.success) {
+        toast.success("Email was send to", email);
+      } else {
+        toast.error("Email failed to send try again later");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
+  async function validateCode(token) {
+    try {
+
+      const opt = { 
+        method: 'POST', 
+        body: JSON.stringify({ token }), 
+        headers: { 'Content-Type': 'application/json' }
+      };
+
+      const url = process.env.NEXT_PUBLIC_API_URL + '/email/reset-password-validate';
+      const response = await fetch(url, opt);
+      const data = await response.json();
+
+      if(data.success) {
+        setValidToken(true);
+        setToken(data.body.code);
+        setTokenId(data.body.id);
+        setEmail(data.body.email);
+      }
+
+      else toast.error("Your token is expired, enter your email again");
+
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+
+  async function reset() {
+    if(password !== confirmPassword) {
+      toast.error("passwords do not match");
+      return;
+    }
+
+    let valid = false;
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
+    } else if (!/[A-Z]/.test(password)) {
+      toast.error('Password must contain at least one uppercase letter.');
+    } else if (!/[a-z]/.test(password)) {
+      toast.error('Password must contain at least one lowercase letter.');
+    } else if (!/[0-9]/.test(password)) {
+      toast.error('Password must contain at least one number.');
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      toast.error('Password must contain at least one special character.');
+    } else {
+      valid = true;
+    }
+
+    if(!valid) return;
+
+    const opt = { 
+      method: 'POST', 
+      body: JSON.stringify({ email, password, token, tokenId }), 
+      headers: { 'Content-Type': 'application/json' }
+    };
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/email/change-password`;
+    const response = await fetch(url, opt);
+    const data = await response.json();
+
+    if(data.success) {
+      toast.success("Password has been reset");
+    } else {
+      toast.error("Unable to reset the password, try again later");
+    }
+  }
+
+
+  useEffect(() => {
+    if(router.query.token) {
+      validateCode(router.query.token);
+    }
+  }, [router.query]);
 
   return (
     <>
@@ -81,6 +169,48 @@ export default function Forgot() {
                   Password reset email has been sent. It should arrive within a few minutes.
                 </h1>
               </div>
+
+            {
+              validToken ? 
+              <>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-200"
+                >
+                New Password
+                </label>
+                <div className="mt-1">
+                  <input
+                    style={{ backgroundColor: '#161716', borderWidth: '0px' }}
+                    type="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-200"
+                >
+                Confirm Password
+                </label>
+                <div className="mt-1">
+                  <input
+                    style={{ backgroundColor: '#161716', borderWidth: '0px' }}
+                    type="password"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+
+              </>
+
+              : 
               <div>
                 <label
                   htmlFor="email"
@@ -94,14 +224,27 @@ export default function Forgot() {
                     id="email"
                     name="email"
                     type="text"
+                    onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
                     required
                     className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
+            }
 
-
+            {
+              validToken ? 
+              <div>
+                <button
+                onClick={reset}
+                  type="submit"
+                  className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Reset Password
+                </button>
+              </div>
+                :
               <div>
                 <button
                 onClick={resetPassword}
@@ -110,9 +253,9 @@ export default function Forgot() {
                 >
                   Send Password Reset Email
                 </button>
-
-
               </div>
+            }
+
 <div className='text-center mx-auto'> 
 <a href="./login"  className='text-center text-sm  mx-auto text-white mt-10 hover:text-gray-300'>← Return to login?</a>
 
@@ -122,6 +265,19 @@ export default function Forgot() {
           </div>
         </div>
       </div>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 }
