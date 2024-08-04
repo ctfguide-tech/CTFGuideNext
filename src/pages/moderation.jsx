@@ -72,6 +72,20 @@ export default function Competitions() {
     }
   };
 
+  const handleResyncLeaderboard = async () => {
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/syncLeaderboard`, "POST");
+      if(response.success){
+        alert("Leaderboard resynced successfully!");
+      }else {
+        alert("Failed to resync leaderboard.");
+      }
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while resyncing the leaderboard.");
+    }
+  };
+
   useEffect(() => {
     fetchPendingChallenges();
   }, []);
@@ -260,6 +274,7 @@ export default function Competitions() {
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBanner}>Reset Banner</button>
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBio}>Reset Bio</button>
 
+
 </div>
 
 
@@ -269,6 +284,7 @@ export default function Competitions() {
    <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full'></textarea>
     <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'>Delete Challenge</button>
     <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Unapprove Challenge</button>
+    <button className='ml-2 px-2 py-1 bg-red-600 text-white mt-2' onClick={handleResyncLeaderboard}>Resync Leaderboard</button>
     </div>
   </div>
             <div className='grid grid-cols-2 mt-4 gap-x-5 border border-neutral-700 px-4 py-4'>
