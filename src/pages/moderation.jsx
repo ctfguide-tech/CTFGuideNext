@@ -72,6 +72,29 @@ export default function Competitions() {
     }
   };
 
+  const handleDeleteChallenge = async () => {
+    const challengeId = document.getElementById('challengeIdInput').value;
+    const reason = document.getElementById('challengeReasonInput').value;
+
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${challengeId}/deleteChallenge`, "POST", {reason});
+      if(response.success){
+        alert("Challenge deleted successfully!");
+      }else {
+        alert("Failed to delete challenge.");
+      }
+
+      document.getElementById('challengeIdInput').value = "";
+      document.getElementById('challengeReasonInput').value = "";
+
+
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while deleting the challenge.");
+    }
+
+  };
+
   const handleResyncLeaderboard = async () => {
     try{
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/syncLeaderboard`, "POST");
@@ -280,9 +303,9 @@ export default function Competitions() {
 
 <div>
     <h1 className='text-xl  text-white mb-2'>CHALLENGE ACTIONS</h1>
-    <input type="text" placeholder='Enter CHALLENGE ID' className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
-   <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full'></textarea>
-    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'>Delete Challenge</button>
+    <input type="text" placeholder='Enter CHALLENGE ID' className='mb-2 text-white bg-neutral-800 border-none w-full' id = "challengeIdInput"></input>
+   <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id ="challengeReasonInput"></textarea>
+    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2' onClick={handleDeleteChallenge}>Delete Challenge</button>
     <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Unapprove Challenge</button>
     <button className='ml-2 px-2 py-1 bg-red-600 text-white mt-2' onClick={handleResyncLeaderboard}>Resync Leaderboard</button>
     </div>
