@@ -242,7 +242,7 @@ export default function Create() {
       (!saveRef.current ||
         (saveRef.current && !saveRef.current.contains(event.target)))
     ) {
-      setIsBioExpanded(false);
+    //  setIsBioExpanded(false);
       bannerState(false);
     }
   };
