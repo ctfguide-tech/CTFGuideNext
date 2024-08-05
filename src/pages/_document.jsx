@@ -30,14 +30,8 @@ class MyDocument extends Document {
             integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
             crossorigin="anonymous"
           />
-          <meta property="og:title" content="CTFGuide" />
-          <meta property="og:description" content="The data-driven simulation platform for finding and building cybersecurity talent." />
-          <meta property="og:image" content="/siteBanner.png" />
-          <meta property="og:url" content="https://ctfguide.com" />
-          <meta property="og:type" content="website" />
-          <meta property="og:locale" content="en_US" />
-          <meta property="og:locale:alternate" content="en_US" />
-          
+
+
           <script defer data-domain="ctfguide.com" src="https://plausible.io/js/script.js"></script>
           <link rel="manifest" href="/manifest.json" />
           <link rel="icon" href="/icons/icon-192x192.png" />
