@@ -30,6 +30,8 @@ class MyDocument extends Document {
             integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
             crossorigin="anonymous"
           />
+
+
           <script defer data-domain="ctfguide.com" src="https://plausible.io/js/script.js"></script>
           <link rel="manifest" href="/manifest.json" />
           <link rel="icon" href="/icons/icon-192x192.png" />
