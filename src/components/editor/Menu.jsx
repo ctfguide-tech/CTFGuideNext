@@ -70,7 +70,7 @@ className=" pb-10 pt-4 px-4 shadow sm:px-10  bg-neutral-800"             onClick
     <select className='bg-neutral-900 text-white border-none text-sm py-1 w-full'>
       {
         solvedChallenges.map((challenge, index) => (
-          <option key={index} value={challenge.id} className="text-white">{challenge.challenge.title}</option>
+          <option key={index} value={challenge.challenge.id} className="text-white">{challenge.challenge.title}</option>
         ))
       }
     </select>
