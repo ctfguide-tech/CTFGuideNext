@@ -16,13 +16,13 @@ export default function Home() {
 
         <title>CTFGuide</title>
         <meta property="og:description" content="The data-driven simulation platform for finding and building cybersecurity talent." />
-        <meta property="og:image" content="/siteBanner.png" />
+        <meta property="og:image" content="/newSiteBanner.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://ctfguide.com/" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="CTFGuide" />
         <meta name="twitter:description" content="The data-driven simulation platform for finding and building cybersecurity talent." />
-        <meta name="twitter:image" content="/siteBanner.png" />
+        <meta name="twitter:image" content="/newSiteBanner.png" />
 
 
 
