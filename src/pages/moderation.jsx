@@ -46,6 +46,11 @@ export default function Competitions() {
     });
   };
 
+  const resetFields = () => {
+    document.getElementById('usernameInput').value = "";
+    document.getElementById('reasonInput').value = "";
+  };
+
   const fetchPendingChallenges = async () => {
     try {
       const response = await request(process.env.NEXT_PUBLIC_API_URL + '/pending', "GET");
@@ -67,13 +72,74 @@ export default function Competitions() {
     }
   };
 
+  const handleDeleteChallenge = async () => {
+    const challengeId = document.getElementById('challengeIdInput').value;
+    const reason = document.getElementById('challengeReasonInput').value;
+
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${challengeId}/deleteChallenge`, "POST", {reason});
+      if(response.success){
+        alert("Challenge deleted successfully!");
+      }else {
+        alert("Failed to delete challenge.");
+      }
+
+      document.getElementById('challengeIdInput').value = "";
+      document.getElementById('challengeReasonInput').value = "";
+
+
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while deleting the challenge.");
+    }
+
+  };
+
+  const handleUnapproveChallenge = async () => {
+    const challengeId = document.getElementById('challengeIdInput').value;
+    const reason = document.getElementById('challengeReasonInput').value;
+
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${challengeId}/unapproveChallenge`, "POST", {reason});
+      if(response.success){
+        alert("Challenge unapproved successfully!");
+      }else {
+        alert("Failed to unapprove challenge.");
+      }
+
+      document.getElementById('challengeIdInput').value = "";
+      document.getElementById('challengeReasonInput').value = "";
+
+
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while unapproving the challenge.");
+    }
+
+  };
+
+  const handleResyncLeaderboard = async () => {
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/syncLeaderboard`, "POST");
+      if(response.success){
+        alert("Leaderboard resynced successfully!");
+      }else {
+        alert("Failed to resync leaderboard.");
+      }
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while resyncing the leaderboard.");
+    }
+  };
+
   useEffect(() => {
     fetchPendingChallenges();
   }, []);
 
   const handleResetPFP = async () => {
     const username = document.getElementById('usernameInput').value;
-    const reason = ""; // Set reason as blank for now
+    const reason = document.getElementById('reasonInput').value;
+    console.log('REASON: ', reason);
 
     if (!username) {
       alert("Please enter a username.");
@@ -87,6 +153,9 @@ export default function Competitions() {
       } else {
         alert("Failed to reset profile picture.");
       }
+
+      resetFields();
+
     } catch (error) {
       console.error(error);
       alert("An error occurred while resetting the profile picture.");
@@ -95,7 +164,7 @@ export default function Competitions() {
 
   const handleResetBanner = async () => {
     const username = document.getElementById('usernameInput').value;
-    const reason = ""; // Set reason as blank for now
+    const reason = document.getElementById('reasonInput').value;
 
     if(!username) {
       alert("Please enter a username.");
@@ -108,6 +177,9 @@ export default function Competitions() {
       }else {
         alert("Failed to reset banner.");
       }
+
+      resetFields();
+
     }catch(err){
       console.log(err);
       alert("An error occurred while resetting the banner.");
@@ -116,7 +188,7 @@ export default function Competitions() {
 
   const handleDisableAccount = async () => {
     const username = document.getElementById('usernameInput').value;
-    const reason = "";
+    const reason = document.getElementById('reasonInput').value;
 
     if (!username) {
       alert("Please enter a username.");
@@ -130,15 +202,41 @@ export default function Competitions() {
       } else {
         alert("Failed to disable account.");
       }
+
+      resetFields();
+
     }catch(err){
       console.log(err);
       alert("An error occurred while disabling the account.");
     }
   };
+  const handleResetBio = async () => {
+
+    const username = document.getElementById('usernameInput').value;
+    const reason = document.getElementById('reasonInput').value;
+
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/resetBio`, "POST", {reason});
+      if(response.success){
+        alert("Bio reset successfully!");
+      }else{
+        alert("Failed to reset bio.");
+      }
+
+      resetFields();
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while resetting the bio.");
+    }
+  };
 
   const handleEnableAccount = async () => {
     const username = document.getElementById('usernameInput').value;
-    const reason = "";
+    const reason = document.getElementById('reasonInput').value;
 
     if (!username) {
       alert("Please enter a username.");
@@ -151,9 +249,34 @@ export default function Competitions() {
       }else {
         alert("Failed to enable account.");
       }
+
+      resetFields();
     }catch(err){
       console.log(err);
       alert("An error occurred while enabling the account.");
+    }
+  };
+
+  const handleWarnUser = async () => {
+    const username = document.getElementById('usernameInput').value;
+    const reason = document.getElementById('reasonInput').value;
+
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+    try{
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/${username}/warnUser`, "POST", {reason});
+      if(response.success){
+        alert("User warned successfully!");
+      }else {
+        alert("Failed to warn user.");
+      }
+
+      resetFields();
+    }catch(err){
+      console.log(err);
+      alert("An error occurred while warning the user.");
     }
   };
 
@@ -192,19 +315,22 @@ export default function Competitions() {
    <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id="reasonInput"></textarea>
     <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'onClick={handleDisableAccount}>Disable Account</button>
     <button className='ml-2 px-2 py-1 bg-green-600 text-white mt-2'onClick={handleEnableAccount}>Enable Account</button>
-    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Warn User</button>
+    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2' onClick={handleWarnUser}>Warn User</button>
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetPFP}>Reset PFP</button>
     <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBanner}>Reset Banner</button>
+    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBio}>Reset Bio</button>
+
 
 </div>
 
 
 <div>
     <h1 className='text-xl  text-white mb-2'>CHALLENGE ACTIONS</h1>
-    <input type="text" placeholder='Enter CHALLENGE ID' className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
-   <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full'></textarea>
-    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'>Delete Challenge</button>
-    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2'>Unapprove Challenge</button>
+    <input type="text" placeholder='Enter CHALLENGE ID' className='mb-2 text-white bg-neutral-800 border-none w-full' id = "challengeIdInput"></input>
+   <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id ="challengeReasonInput"></textarea>
+    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2' onClick={handleDeleteChallenge}>Delete Challenge</button>
+    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2' onClick={handleUnapproveChallenge}>Unapprove Challenge</button>
+    <button className='ml-2 px-2 py-1 bg-red-600 text-white mt-2' onClick={handleResyncLeaderboard}>Resync Leaderboard</button>
     </div>
   </div>
             <div className='grid grid-cols-2 mt-4 gap-x-5 border border-neutral-700 px-4 py-4'>
