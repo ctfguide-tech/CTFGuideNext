@@ -20,6 +20,8 @@ function getCategoryIcon(category) {
       return 'fas fa-skull-crossbones';
     case 'steganography':
       return 'fas fa-image';
+    case 'other':
+      return 'fas fa-question';
     case 'basic':
       return 'fas fa-graduation-cap';
     case 'easy':

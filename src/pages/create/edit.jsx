@@ -70,6 +70,7 @@ function CategorySelect({ category, setCategory }) {
     { name: 'Forensics', value: 'forensics' },
     { name: 'Cryptography', value: 'cryptography' },
     { name: 'Web', value: 'web' },
+    { name: 'Steganography', value: 'steganography' },
     { name: 'Reverse Engineering', value: 'reverse engineering' },
     { name: 'Programming', value: 'programming' },
     { name: 'Pwn', value: 'pwn' },
