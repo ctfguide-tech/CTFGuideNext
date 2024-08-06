@@ -882,6 +882,8 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
 
   const openModal = (writeup) => {
     setSelectedWriteup(writeup);
+    setUpvotes(writeup.upvotes); // Set initial upvotes
+    setDownvotes(writeup.downvotes); // Set initial downvotes
     setIsModalOpen(true);
   };
 

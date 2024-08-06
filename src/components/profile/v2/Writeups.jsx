@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import request from '@/utils/request';
 import { Dialog } from '@headlessui/react';
+import { MarkdownViewer } from '@/components/MarkdownViewer';
 
 const Writeups = ({ user }) => {
     const [writeups, setWriteups] = useState([]);
@@ -47,14 +48,14 @@ const Writeups = ({ user }) => {
             {writeups.length > 0 ? (
                 <div className="overflow-auto">
                     {writeups.map((writeup, index) => (
-                        <div key={index} onClick={() => openModal(writeup)} className='mb-1 bg-neutral-700 hover:bg-neutral-600 hover:cursor-pointer px-5 py-3 w-full text-white flex mx-auto border border-neutral-600'>
+                        <div key={index} onClick={() => openModal(writeup)} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto'>
                             <div className='w-full flex'>
-                                <div className="">
-                                    <h3 className="text-2xl">{writeup.title}</h3>
-                                    <p className="text-sm">Authored by <span onClick={() => window.location.href = `../../users/${user.username}`} className='text-blue-500 cursor-pointer'>{user.username}</span></p>
+                                <div>
+                                    <h3 className="text-xl">{writeup.title}</h3>
+                                    <p className="text-sm text-blue-500 font-semibold" onClick={() => window.location.href = `../../users/${user.username}`}>@{user.username}</p>
                                 </div>
                                 <div className="ml-auto mt-2">
-                                    <p className="text-sm text-right">{writeup.views} views</p>
+                                    <p className="text-sm text-right hidden">{writeup.views} views</p>
                                     <div className="space-x-2 text-right text-lg">
                                         <i className="fas fa-arrow-up text-green-500 cursor-pointer"></i> {writeup.upvotes}
                                         <i className="fas fa-arrow-down text-red-500 cursor-pointer"></i> {writeup.downvotes}
@@ -86,10 +87,10 @@ const Writeups = ({ user }) => {
                     
                                <h1 className='text-2xl'>{selectedWriteup.title}</h1>
                             <p>
-                                Authored by <span onClick={() => window.location.href = `../../users/${user.username}`} className='text-blue-500 cursor-pointer'>{user.username}</span> for challenge <span onClick={() => window.location.href = `../../challenges/${selectedWriteup.challengeId}`} className='text-yellow-500 cursor-pointer'>{selectedWriteup.title}</span>.
+                                Authored by <span onClick={() => window.location.href = `../../users/${user.username}`} className='text-blue-500 cursor-pointer'>{user.username}</span> for challenge <span onClick={() => window.location.href = `../../challenges/${selectedWriteup.challengeId}`} className='text-yellow-500 cursor-pointer'>{selectedWriteup.challenge.title}</span>.
                             </p>
                             <div className="mt-2">
-                                <p>{selectedWriteup.content}</p>
+                                <MarkdownViewer content={selectedWriteup.content} />
                             </div>
 
 
