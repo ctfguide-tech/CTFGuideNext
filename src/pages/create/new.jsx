@@ -39,6 +39,8 @@ function getCategoryIcon(category) {
       return 'fas fa-binoculars';
     case 'cryptography':
       return 'fas fa-lock';
+    case 'other':
+      return 'fas fa-question';
     case 'web':
       return 'fas fa-globe';
     case 'reverse engineering':
