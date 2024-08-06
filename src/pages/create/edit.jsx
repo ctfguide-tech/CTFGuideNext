@@ -369,7 +369,7 @@ export default function Createchall() {
          // setPenalty(challenge.penalty);
           setContentPreview(challenge.content);
           setSolution(challenge.solution);
-          setDifficulty(challenge.difficulty);
+          setDifficulty(challenge.difficulty.toLowerCase());
           setNewConfig(challenge.commands.replace(/ && /g, '\n'));
         }
       } catch (error) {

@@ -307,6 +307,7 @@ export default function Createchall() {
         category,
         commands: nConfig,
         fileId: fileId,
+        isRoot: document.getElementById('root').checked,
       };
 
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/create`;
@@ -625,7 +626,7 @@ export default function Createchall() {
             </div>
           </div>
 
-<div className='grid grid-cols-2 mt-5 gap-x-1'>
+<div className='grid grid-cols-1 mt-5 gap-x-1'>
           <div className="900 rounded-sm   bg-neutral-800/40 shadow-lg ">
             <h3 className="m flex items-center bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white flex">
             <FontAwesomeIcon icon={faServer} className='mr-2 text-sm w-4 h-4' />
@@ -721,9 +722,16 @@ export default function Createchall() {
                   Please assume that files are placed in the home directory.
                 </h1>
               </div>
+
+              <div>
+               <input id='root' type='checkbox' defaultChecked={true} />
+               <label className='ml-2 '>Make user login have root access. By default, we suggest giving users root.</label>
+              </div>
+
+              <br></br>
             </div>
           </div>
-          <div className="900 rounded-sm   bg-neutral-800/40 shadow-lg ">
+          <div className="900 rounded-sm   bg-neutral-800/40 shadow-lg hidden ">
           <h3 className="m flex items-center bg-blue-800 px-4 py-4 text-xl font-medium leading-6 text-white flex">
             <FontAwesomeIcon icon={faGlobe} className='mr-2 text-sm w-4 h-4' />
  Hosted Web Challenges

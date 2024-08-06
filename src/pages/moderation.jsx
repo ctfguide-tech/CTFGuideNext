@@ -162,6 +162,31 @@ export default function Competitions() {
     }
   };
 
+  const deleteBulk = async () => {
+    if (selectedChallenges.length === 0) {
+      alert("No challenges selected.");
+      return;
+    }
+  
+    if (!confirm("Are you sure you want to delete the selected challenges?")) {
+      return;
+    }
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/deleteChallenges`, "POST", { challengeIds: selectedChallenges });
+      if (response.success) {
+        alert("Selected challenges deleted successfully!");
+        setSelectedChallenges([]); // Clear selected challenges
+        fetchPendingChallenges(); // Refresh pending challenges
+      } else {
+        alert("Failed to delete selected challenges.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while deleting the selected challenges.");
+    }
+  };
+  
+
   const handleResetBanner = async () => {
     const username = document.getElementById('usernameInput').value;
     const reason = document.getElementById('reasonInput').value;
@@ -280,6 +305,21 @@ export default function Competitions() {
     }
   };
 
+  // Fetch platform stats
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/stats`, "GET");
+        setStats(response);
+      } catch (error) {
+        console.error("Failed to fetch platform stats", error);
+      }
+    };
+    fetchStats();
+  }, []);
+
   return (
     <>
       <Head>
@@ -310,16 +350,31 @@ export default function Competitions() {
             <div className='grid grid-cols-2 gap-x-5 border border-neutral-700 px-4 py-4'>
 
 <div>
+
 <h1 className='text-xl  text-white mb-2'>USER ACTIONS</h1>
     <input type="text" placeholder='Enter USERNAME' className='mb-2 text-white bg-neutral-800 border-none w-full' id="usernameInput"></input>
    <textarea placeholder='Reason' className='mb-2 text-white bg-neutral-800 border-none w-full' id="reasonInput"></textarea>
-    <button className='ml-auto px-2 py-1 bg-red-600 text-white mt-2'onClick={handleDisableAccount}>Disable Account</button>
-    <button className='ml-2 px-2 py-1 bg-green-600 text-white mt-2'onClick={handleEnableAccount}>Enable Account</button>
-    <button className='ml-2 px-2 py-1 bg-yellow-600 text-white mt-2' onClick={handleWarnUser}>Warn User</button>
-    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetPFP}>Reset PFP</button>
-    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBanner}>Reset Banner</button>
-    <button className='ml-2 px-2 py-1 bg-blue-600 text-white mt-2' onClick={handleResetBio}>Reset Bio</button>
+ <div className='grid grid-cols-3  gap-x-2'>
+ <button className=' px-2 py-1 bg-red-600 hover:bg-red-500 duration-300 text-white mt-2'onClick={handleDisableAccount}>
+   <i className='fa fa-ban mr-2'></i>Disable Account
+ </button>
+    <button className=' px-2 py-1 bg-green-600 hover:bg-green-500 duration-300 text-white mt-2'onClick={handleEnableAccount}>
+      <i className='fa fa-check mr-2'></i>Enable Account
+    </button>
+    <button className=' px-2 py-1 bg-yellow-600 hover:bg-yellow-500 duration-300 text-white mt-2' onClick={handleWarnUser}>
+      <i className='fa fa-exclamation-triangle mr-2'></i>Warn User
+    </button>
+    <button className=' px-2 py-1 bg-blue-600 hover:bg-blue-500 duration-300 text-white mt-2' onClick={handleResetPFP}>
+      <i className='fa fa-user-circle mr-2'></i>Reset PFP
+    </button>
+    <button className='px-2 py-1 bg-blue-600 hover:bg-blue-500 duration-300 text-white mt-2' onClick={handleResetBanner}>
+      <i className='fa fa-image mr-2'></i>Reset Banner
+    </button>
+    <button className=' px-2 py-1 bg-blue-600 hover:bg-blue-500 duration-300 text-white mt-2' onClick={handleResetBio}>
+      <i className='fa fa-info-circle mr-2'></i>Reset Bio
+    </button>
 
+ </div>
 
 </div>
 
@@ -336,11 +391,13 @@ export default function Competitions() {
             <div className='grid grid-cols-2 mt-4 gap-x-5 border border-neutral-700 px-4 py-4'>
               <div className='text-white text-xl'>
                 <h1>Challenges Pending Approval</h1>
+                {selectedChallenges.length > 0 && <button className='ml-auto px-2 py-1 bg-red-600 text-sm text-white mt-2' onClick={deleteBulk}><i className='fa fa-trash mr-2'></i>Delete Selected</button>}
                 <div className='mt-2'>
                   {pendingChallenges.length > 0 ? (
                     pendingChallenges.map((challenge) => (
                       <div key={challenge.id} onClick={() => {setSelectedId(challenge.id); setChallengeIsOpen(true);}} className='bg-neutral-800 w-full mb-2 border focus:bg-blue-900 focus:border-blue-500 border-neutral-700 hover:bg-neutral-700/50 cursor-pointer px-2 py-1 flex items-center text-sm'>
                         <input
+                          onClick={(e) => e.stopPropagation()} // Prevent click event propagation
                           type="checkbox"
                           checked={selectedChallenges.includes(challenge.id)}
                           onChange={() => handleSelectChallenge(challenge.id)}
@@ -383,6 +440,43 @@ export default function Competitions() {
               </div>
             </div>
 
+            <div className='mt-4 grid  gap-x-5 border border-neutral-700 px-4 py-4'>
+                <h1 className='text-xl  text-white mb-2'>Platform Stats</h1>
+                {stats ? (
+                  <div className='text-white'>
+                    <div className='grid grid-cols-3 gap-4'>
+                      <div className='bg-neutral-800 p-4 rounded-lg text-center'>
+                        <p className='text-white text-xl font-bold'>{stats.userCount}</p>
+                        <p className='text-gray-400'>Total Users</p>
+                      </div>
+                      <div className='bg-neutral-800 p-4 rounded-lg text-center'>
+                        <p className='text-white text-xl font-bold'>{stats.challengeCount}</p>
+                        <p className='text-gray-400'>Total Challenges</p>
+                      </div>
+                      <div className='bg-neutral-800 p-4 rounded-lg text-center'>
+                        <p className='text-white text-xl font-bold'>{stats.verifiedChallengeCount}</p>
+                        <p className='text-gray-400'>Verified Challenges</p>
+                      </div>
+                     
+                    </div>
+                    
+                    <h2 className='mt-4 text-white text-lg '>Recent Sign-Ups</h2>
+                    <div className='mt-2 grid grid-cols-3 gap-4'>
+                      {stats.recentSignUps.map((user) => (
+                        <div key={user.id} className='hover:bg-neutral-700 duration-100 bg-neutral-800  cursor-pointer p-4 rounded-lg flex items-center' onClick={() => window.open(`/users/${user.username}`, '_blank')}>
+                          <img src={user.profileImage || 'https://robohash.org/' + user.username} alt={`${user.username}'s profile`} className='w-12 h-12 rounded-full mr-4' />
+                          <div>
+                            <p className='text-white font-bold'>{user.username}</p>
+                            <p className='text-gray-400 text-sm'>{new Date(user.createdAt).toLocaleString()}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className='text-red-500'>Failed to load stats</p>
+                )}
+            </div>
             <h1 className='mt-20 text-white hidden'>Selected Content ID's</h1>
             <textarea value={selectedChallenges.join(", ") || "N/A"} className='hidden text-white bg-neutral-800 border-none w-full'>
             </textarea>
