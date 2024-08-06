@@ -10,6 +10,11 @@
   overflow: hidden;
   border: 2px solid;
 }
+/* styles.css */
+.custom-markdown-viewer {
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
 .loader::before {
   content: "";
   position: absolute;

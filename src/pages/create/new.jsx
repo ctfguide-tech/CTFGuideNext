@@ -66,6 +66,7 @@ function CategorySelect({ category, setCategory }) {
   const categories = [
     { name: 'Forensics', value: 'forensics' },
     { name: 'Cryptography', value: 'cryptography' },
+    { name: 'Steganography', value: 'steganography' },
     { name: 'Web', value: 'web' },
     { name: 'Reverse Engineering', value: 'reverse engineering' },
     { name: 'Programming', value: 'programming' },

@@ -550,7 +550,7 @@ export default function Create() {
               <>
                 {user && (
                   <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                    <MarkdownViewer content={currentUsersBio} />
+                    <MarkdownViewer content={currentUsersBio} style={{ maxHeight: '200px', overflowY: 'auto', important: true }} />
                   </div>
                 )}
               </>
@@ -1117,14 +1117,14 @@ export default function Create() {
                       <p className="text-neutral-400">
                         {bioViewCheck()
                           ? renderUsersBio()
-                          : user && <MarkdownViewer content={user.bio || "Nothing to see here..."} />}
+                          : user && <MarkdownViewer content={user.bio || "Nothing to see here..."} style={{ maxHeight: '200px', overflowY: 'auto', important: true }} />}
                       </p>
                     ) : (
                       <p className="text-neutral-400">
                         {bioViewCheck()
                           ? renderUsersBio()
                           : user && (
-                              <MarkdownViewer content="Nothing to see here..." />
+                              <MarkdownViewer content="Nothing to see here..." style={{ maxHeight: '200px', overflowY: 'auto', important: true }} />
                             )}
                       </p>
                     )}
@@ -1250,14 +1250,14 @@ export default function Create() {
                 <p className="text-neutral-400">
                   {bioViewCheck()
                     ? renderUsersBio()
-                    : user && <MarkdownViewer content={user.bio || "Nothing to see here..."} />}
+                    : user && <MarkdownViewer content={user.bio || "Nothing to see here..."} style={{ maxHeight: '200px', overflowY: 'auto', important: true }} />}
                 </p>
               ) : (
                 <p className="text-neutral-400">
                   {bioViewCheck()
                     ? renderUsersBio()
                     : user && (
-                        <MarkdownViewer content="Nothing to see here..." />
+                        <MarkdownViewer content="Nothing to see here..." style={{ maxHeight: '200px', overflowY: 'auto', important: true }} />
                       )}
                 </p>
               )}
