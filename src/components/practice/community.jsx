@@ -45,6 +45,7 @@ function CategorySelect({ category, setCategory, isDifficulty }) {
     { name: 'Programming', value: 'programming' },
     { name: 'Pwn', value: 'pwn' },
     { name: 'Steganography', value: 'steganography' },
+    { name: 'Other', value: 'other' },
     { name: 'Basic', value: 'basic' },
   ];
 
