@@ -116,30 +116,82 @@ export default function Careers() {
       </Head>
 
       <Header />
-      <main >
-        <div style={{ backgroundImage: "url('https://formlabs-media.formlabs.com/filer_public_thumbnails/filer_public/67/16/67160d62-3040-4c77-9eca-a0be6bfa919a/pennstate_render_exterior.jpg__1354x0_q85_subsampling-2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="   py-20 w-full  text-left" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className='max-w-7xl mx-auto'>
-          <p className=" text-4xl font-bold text-white sm:text-4xl">
-            careers@
-            <span className="mt-2 text-4xl text-blue-600 font-bold tracking-tight  sm:text-4xl">
-              CTFGuide
-            </span>
-          </p>
-          <p className="mt-1 text-xl  text-white ">
-            Join the company that's building the modern cybersecurity upskilling platform.
-          </p>
+      <main>
+        <div className="bg-cover bg-center" style={{ backgroundImage: "url('https://formlabs-media.formlabs.com/filer_public_thumbnails/filer_public/67/16/67160d62-3040-4c77-9eca-a0be6bfa919a/pennstate_render_exterior.jpg__1354x0_q85_subsampling-2.jpg')" }}>
+          <div className="py-20 w-full text-left bg-black bg-opacity-70">
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <p className="text-4xl font-bold text-white sm:text-4xl">
+                careers@
+                <span className="mt-2 text-4xl text-blue-600 font-bold tracking-tight sm:text-4xl">
+                  CTFGuide
+                </span>
+              </p>
+              <p className="mt-1 text-xl text-white">
+                Join the company that's building the modern cybersecurity upskilling platform.
+              </p>
+            </div>
           </div>
         </div>
-    </div>
-        {/*
-         sm is for "smaller" devices
-         */}
 
-      <div  className='max-w-7xl mx-auto text-white mt-10 grid sm:grid-cols-6  grid-cols-1 gap-x-8'>
-         <div className='col-span-2 w-full'>
-          <p className='text-2xl font-bold'>Our Team</p>
-          <div className='mt-4 flex flex-col gap-1 text-lg'>
+      <div  className='max-w-7xl w-full  sm:px-2 px-4 mx-auto text-white mt-10 grid sm:grid-cols-6  grid-cols-1 sm:gap-x-8 gap-0'>
+      
+         
+     
+         <div className='col-span-4 '>
+        <h1 className='text-2xl font-bold text-blue-500'>Working with us</h1>
+        <p className=' mt-4'>
+        We're all about open, collaborative, and inclusive culture. We believe in learning from each other and the power of community.
+<br></br><br></br>
+Our team? Learners, not know-it-alls. We're after people who want to grow, not those who think they've got it all figured out.
+<br></br><br></br>
+We're remote-friendly, but a lot of us are in State College, PA. Work where you work best - remote, in-office, or a mix of both.
+
+</p>
+
+<h1 className='text-2xl font-bold mt-10 text-blue-500'>Backed by the best</h1>
+<p className='mt-4'> CTFGuide is funded by the best of the best. We're backed by investors like Penn State University and Bullmont Capital.</p>
+
+        <h1 className='mt-10 text-2xl font-bold text-blue-500'>Open Positions</h1>
+        <p className='text-sm'>
+          Applications require you to login with your Google account. You can also email your resume to staff@ctfguide.com.
+        </p>
+         <div className='mt-4 bg-neutral-800 p-4  flex justify-between items-center'>
+          <div className='flex flex-col'>
+          <h1 className='text-xl font-bold'>Backend SWE</h1> 
+          <p className='text-sm'>Remote</p>
+          </div>
+
+          <div className='ml-auto'>
+          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 hover:bg-blue-600 duration-100 px-4 py-2 rounded-md '>Apply</a>
+          </div>
+         </div>
+
+         <div className='mt-2 bg-neutral-800 p-4  flex justify-between items-center'>
+          <div className='flex flex-col'>
+          <h1 className='text-xl font-bold'>Content Writer</h1> 
+          <p className='text-sm'>Remote</p>
+          </div>
+
+          <div className='ml-auto'>
+          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 hover:bg-blue-600 duration-100 px-4 py-2 rounded-md '>Apply</a>
+          </div>
+         </div>
+
+         <div className='mt-2 bg-neutral-800 p-4  flex justify-between items-center'>
+          <div className='flex flex-col'>
+          <h1 className='text-xl font-bold'>Infrastructure Engineer</h1> 
+          <p className='text-sm'>Remote</p>
+          </div>
+
+          <div className='ml-auto'>
+          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 hover:bg-blue-600 duration-100 px-4 py-2 rounded-md '>Apply</a>
+          </div>
+         </div>
+        </div>
+
+        <div className='col-span-2 w-full mt-10 sm:mt-0 sm:px-2 px-1 '>
+          <p className='text-2xl font-bold text-blue-500'>Our Team</p>
+          <div className='mt-4 flex flex-col gap-1 w-full text-lg  '>
           <div className='w-full bg-neutral-800 py-4 px-4 flex'>
             <p>Pranav Ramesh</p>
             <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Founder, CEO</p>
@@ -196,55 +248,6 @@ export default function Careers() {
           </div>
           </div>
    
-         
-     
-         <div className='col-span-4'>
-        <h1 className='text-2xl font-bold'>Working with us</h1>
-        <p className='text-xl mt-4'>
-        We're all about open, collaborative, and inclusive culture. We believe in learning from each other and the power of community.
-<br></br><br></br>
-Our team? Learners, not know-it-alls. We're after people who want to grow, not those who think they've got it all figured out.
-<br></br><br></br>
-We're remote-friendly, but a lot of us are in State College, PA. Work where you work best - remote, in-office, or a mix of both.
-
-</p>
-        <h1 className='mt-10 text-2xl font-bold'>Open Positions</h1>
-        <p>
-          Applications require you to login with your Google account.
-        </p>
-         <div className='mt-4 bg-neutral-800 p-4 rounded-md flex justify-between items-center'>
-          <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Backend SWE</h1> 
-          <p className='text-sm'>Remote</p>
-          </div>
-
-          <div className='ml-auto'>
-          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 px-4 py-2 rounded-md '>Apply</a>
-          </div>
-         </div>
-
-         <div className='mt-2 bg-neutral-800 p-4 rounded-md flex justify-between items-center'>
-          <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Content Writer</h1> 
-          <p className='text-sm'>Remote</p>
-          </div>
-
-          <div className='ml-auto'>
-          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 px-4 py-2 rounded-md '>Apply</a>
-          </div>
-         </div>
-
-         <div className='mt-2 bg-neutral-800 p-4 rounded-md flex justify-between items-center'>
-          <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Infrastructure Engineer</h1> 
-          <p className='text-sm'>Remote</p>
-          </div>
-
-          <div className='ml-auto'>
-          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 px-4 py-2 rounded-md '>Apply</a>
-          </div>
-         </div>
-        </div>
 
         
       </div>
@@ -253,7 +256,7 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
 
       </main>
 
-      <div className="flex h-full w-full grow basis-0"></div>
+      <div className="flex h-[12vh] w-full grow basis-0"></div>
 
       <Footer />
     </>
