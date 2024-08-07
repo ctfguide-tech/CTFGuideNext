@@ -157,7 +157,7 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
         </p>
          <div className='mt-4 bg-neutral-800 p-4  flex justify-between items-center'>
           <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Backend SWE</h1> 
+          <h1 className='text-xl font-bold'>Frontend SWE</h1> 
           <p className='text-sm'>Remote</p>
           </div>
 
