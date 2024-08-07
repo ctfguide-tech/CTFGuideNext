@@ -119,7 +119,7 @@ export default function Careers() {
       <main>
         <div className="bg-cover bg-center" style={{ backgroundImage: "url('https://formlabs-media.formlabs.com/filer_public_thumbnails/filer_public/67/16/67160d62-3040-4c77-9eca-a0be6bfa919a/pennstate_render_exterior.jpg__1354x0_q85_subsampling-2.jpg')" }}>
           <div className="py-20 w-full text-left bg-black bg-opacity-70">
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='max-w-7xl mx-auto px-4'>
               <p className="text-4xl font-bold text-white sm:text-4xl">
                 careers@
                 <span className="mt-2 text-4xl text-blue-600 font-bold tracking-tight sm:text-4xl">
@@ -157,7 +157,7 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
         </p>
          <div className='mt-4 bg-neutral-800 p-4  flex justify-between items-center'>
           <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Backend SWE</h1> 
+          <h1 className='text-xl font-bold'>Frontend SWE</h1> 
           <p className='text-sm'>Remote</p>
           </div>
 
