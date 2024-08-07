@@ -55,16 +55,9 @@ export function DataAsk(props) {
     const newDateStr = `${parts[1]}-${parts[2]}-${parts[0]}`;
     localStorage.setItem('username', document.getElementById('username').value.toLowerCase());
     localStorage.setItem('birthday', newDateStr);
-    localStorage.setItem(
-      'firstname',
-      document.getElementById('firstname').value
-    );
-    localStorage.setItem(
-      'lastname',
-      document.getElementById('lastname').value
-    );
+ 
 
-    if (!username || !birthday || !firstname || !lastname || !termsAgreement) {
+    if (!username || !birthday || !termsAgreement) {
 
       toast.error("Fill all fields.");
       setIsLoading(false);
@@ -109,8 +102,8 @@ export function DataAsk(props) {
         password: props.password,
         username,
         birthday,
-        firstName: firstname,
-        lastName: lastname,
+        firstName: firstname || "???",
+        lastName: lastname || "???",
         location: "???",
         accountType: props.accountType
       }
@@ -217,7 +210,7 @@ export function DataAsk(props) {
                         htmlFor="job-title"
                         className="block text-xs font-medium text-white"
                       >
-                        Full Name
+                        Full Name (Optional)
                       </label>
                       <div className='flex gap-x-4'>
                         <input
@@ -285,7 +278,7 @@ export function DataAsk(props) {
                       }
                     </button>
 
-                    <p className='text-sm text-neutral-500 hover:text-white hover:cursor-pointer mt-4' onClick={logout}><i className="fas fa-sign-out-alt"></i> Logout</p>
+                    <p className='text-sm text-neutral-500 hover:text-white hover:cursor-pointer mt-4' onClick={() => window.location.href = '/login'}><i className="fas fa-sign-out-alt"></i> Logout</p>
                   </div>
                 </div>
               </div>

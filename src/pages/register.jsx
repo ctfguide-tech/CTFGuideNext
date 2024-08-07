@@ -70,8 +70,6 @@ function Register() {
       setValidationMessage('Password must contain at least one lowercase letter.');
     } else if (!/[0-9]/.test(password)) {
       setValidationMessage('Password must contain at least one number.');
-    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      setValidationMessage('Password must contain at least one special character.');
     } else {
       setValidationMessage('Looks good!');
       // make message green

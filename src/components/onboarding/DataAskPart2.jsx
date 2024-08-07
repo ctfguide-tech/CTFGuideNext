@@ -2,8 +2,7 @@ import { Container } from '@/components/Container';
 export function DataAskPart2() {
   function submitData() {
     if (
-      !document.getElementById('legal').value ||
-      !document.getElementById('country').value
+      !document.getElementById('legal').value
     ) {
       window.alert('Please fill out all fields.');
       return;
