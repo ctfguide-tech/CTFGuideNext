@@ -677,28 +677,12 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       />
       <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
-      {!['/groups', '/assignments', '/submissions'].some(
-        (path) => router.pathname.includes(path) || !showBanner
-      ) && (
-        <div className="mx-auto hidden w-full bg-neutral-800 py-1 text-center  text-sm text-white ">
+        <div className="mx-auto  w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
           <h1 className="mx-auto  px-4 text-left">
-            Limited feature availability for GP. View entire site status{' '}
-            <a
-              className="font-semibold text-blue-500"
-              href="https://status.ctfguide.com"
-            >
-              here
-            </a>
-            .{' '}
-            <i
-              onClick={dismissStatus}
-              className="float-right cursor-pointer text-right text-neutral-500 hover:text-neutral-300"
-            >
-              Dismiss
-            </i>
+              Our terminal infrastructure is experiencing issues due to hardware faults. We are taking steps to resolve this and get things working again as possible.
           </h1>
         </div>
-      )}
+     
 
       <SpawnTerminal open={terminaIsOpen} setOpen={setTerminalIsOpen} />
     </>
