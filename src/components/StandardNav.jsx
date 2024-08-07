@@ -677,7 +677,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       />
       <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
-        <div className="mx-auto  w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
+        <div className="mx-auto hidden w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
           <h1 className="mx-auto  px-4 text-left">
               Our terminal infrastructure is experiencing issues due to hardware faults. We are taking steps to resolve this and get things working again as possible.
           </h1>
