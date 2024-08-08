@@ -278,6 +278,14 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Link>
                   </div>
                   <div className=" vertical-align md:ml-6 md:flex  ">
+                  <Link
+                      href="/learn/modules"
+                      className={
+                        linkClass('/learn') + ' hidden lg:inline-flex'
+                      }
+                    >
+                      Learn
+                    </Link>
                     <Link
                       href="/practice"
                       className={
@@ -598,6 +606,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
                   >
                     Dashboard
+                  </Disclosure.Button>
+                  <Disclosure.Button
+                    as="a"
+                    href="../practice"
+                    className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
+                  >
+                    Learn
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
