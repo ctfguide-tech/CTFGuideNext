@@ -1,10 +1,13 @@
 import React from 'react';
-
-const UpNext = () => {
+import UpNextCard from './cards/UpNextCard';
+const UpNext = ({ className }) => {
   return (
-    <div>
-      <h1>Up Next Component</h1>
-      <p>This component is a placeholder for future content.</p>
+    <div className={className}>
+      <h1 className='text-3xl font-bold'>Up next for you</h1>
+      <div className='grid grid-cols-2 gap-2 mt-2'>
+        <UpNextCard title="Where am I?" description="Linux Basics" type="lab" image="../../whereami.jpeg" />
+        <UpNextCard title="Mastery Task" description="Linux Basics" type="task"/>
+      </div>
     </div>
   );
 };
