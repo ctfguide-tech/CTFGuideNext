@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowRightIcon,
   QuestionMarkCircleIcon,
@@ -23,14 +23,30 @@ export default function Competitions() {
   const [pendingChallenges, setPendingChallenges] = useState([]);
   const [challengeIsOpen, setChallengeIsOpen] = useState(false);
   const [contentPreview, setContentPreview] = useState('');
-
+  const textRef = useRef(null);
 
   const [reports, setReports] = useState([]);
   
   
   const [bonusPoints, setBonusPoints] = useState(0);
 
-  
+  const insertText = (text) => {
+    const textarea = textRef.current;
+    const startPos = textarea.selectionStart;
+    const endPos = textarea.selectionEnd;
+    const newValue =
+      textarea.value.substring(0, startPos) +
+      text +
+      textarea.value.substring(endPos, textarea.value.length);
+    setContentPreview(newValue);
+    textarea.focus();
+    textarea.selectionEnd = startPos + text.length;
+  };
+  const magicSnippet = () => {
+    const id = Math.random().toString(36).substring(7);
+    insertText(`[Click to run: ${id}](https://ctfguide.com/magic/)`);
+  };
+
   // get reports
   useEffect(() => {
     const fetchReports = async () => {
@@ -297,15 +313,67 @@ export default function Competitions() {
             <h1 className='text-white text-xl mb-2'>
                 Create a Patchnote
           </h1>
+          
           <input type="text" placeholder='Title' id="titleInput" className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
           <input type="text" placeholder='Version' id="versionInput" className='mb-2 text-white bg-neutral-800 border-none w-full'></input>
-          <textarea value={contentPreview} className='mb-2 text-white bg-neutral-800 border-none w-full'
+          
+          <div
+                      className="mb-2 flex w-full justify-between "
+                    >
+                      <div className="flex space-x-2 rounded-md bg-neutral-900">
+                        <button
+                          onClick={() => insertText('**Enter bold here**')}
+                          className="toolbar-button ml-2 mr-1 pr-2 text-white"
+                        >
+                          <i className="fas fa-bold text-sm"></i>
+                        </button>
+
+                        <button
+                          onClick={() => insertText('*Enter italic here*')}
+                          className="toolbar-button mr-1 px-2 text-white"
+                        >
+                          <i className="fas fa-italic text-sm"></i>
+                        </button>
+
+                        <button
+                          onClick={() => insertText('# Enter Heading here')}
+                          className="toolbar-button mr-1 px-2 text-white"
+                        >
+                          <i className="fas fa-heading text-sm"></i>
+                        </button>
+
+                        <button
+                          onClick={() => insertText('[Name](url)')}
+                          className="toolbar-button mr-1 px-2 text-white"
+                        >
+                          <i className="fas fa-link text-sm"></i>
+                        </button>
+
+                        <button
+                          onClick={() => insertText('```Enter Code here```')}
+                          className="toolbar-button mr-1 px-2 text-white"
+                        >
+                          <i className="fas fa-code text-sm"></i>
+                        </button>
+
+                        <button
+                          onClick={() => magicSnippet()}
+                          className="toolbar-button mr-1 px-2 text-white"
+                        >
+                          <i className="fas fa-terminal text-sm"></i>
+                        </button>
+                      </div>
+                     
+          </div>
+
+          <textarea value={contentPreview} ref={textRef} className='mb-2 text-white bg-neutral-800 border-none w-full h-36'
           id="content"
           placeholder="Enter your description here..."
           onChange={(event) => {
             setContentPreview(event.target.value);
           }}
           ></textarea>
+          
           <button className='px-2 py-1 bg-blue-600 text-white' onClick={handleUploadPatchnote}>Upload Patchnote</button>
           </div>
           
@@ -313,7 +381,7 @@ export default function Competitions() {
           <h1 className="text-xl font-medium text-white mb-2">
               Patchnote Content Preview
               </h1>
-              <div className='bg-neutral-800 rounded-lg py-2 px-2'>
+              <div className='bg-neutral-800 rounded-lg py-2 px-2' style={{height:'272px',  overflowY: 'auto' }}>
               <MarkdownViewer className="text-white"content={contentPreview}/>
               </div>
               </div>
