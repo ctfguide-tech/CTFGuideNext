@@ -880,10 +880,17 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
 
 
 
-  const openModal = (writeup) => {
-    setSelectedWriteup(writeup);
-    setUpvotes(writeup.upvotes); // Set initial upvotes
-    setDownvotes(writeup.downvotes); // Set initial downvotes
+  const openModal = async (writeup) => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${writeup.id}`;
+      const response = await request(url, "GET", null);
+      writeup.content = response.content;
+      setUpvotes(response.upvotes);
+      setDownvotes(response.downvotes);
+      setSelectedWriteup(writeup);
+    } catch(err) {
+      console.log(err);
+    }
     setIsModalOpen(true);
   };
 
