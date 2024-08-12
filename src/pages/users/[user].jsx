@@ -944,20 +944,26 @@ export default function Create() {
                           </span>
                         )}
                         {!ownUser && followedUser && (
-                          <span className="ml-2 text-lg text-white">
-                            <i
-                              className="fas fa-user-slash text-lg hover:text-gray-400"
-                              onClick={handleUnfollowUser}
+                          <button 
+                            className="border rounded-sm border-neutral-500 ml-2 px-1 text-sm text-white hover:bg-neutral-600"
+                            onClick={handleUnfollowUser}>
+                              <i
+                              className="fas fa-user-slash text-xs"
                             ></i>
-                          </span>
+                            {' '}
+                            Unfollow
+                          </button>
                         )}
                         {!ownUser && !followedUser && (
-                          <span className="ml-2 text-lg text-white">
-                            <i
-                              className="fas fa-user-plus text-lg hover:text-gray-400"
-                              onClick={handleFollowUser}
+                          <button 
+                            className="border rounded-sm border-neutral-500 ml-2 px-1 text-sm text-white hover:bg-neutral-600"
+                            onClick={handleFollowUser}>
+                              <i
+                              className="fas fa-user-plus text-xs"
                             ></i>
-                          </span>
+                            {' '}
+                            Follow
+                          </button>
                         )}
                       </h1>
                       <p className="text-white">
@@ -976,21 +982,25 @@ export default function Create() {
                         {user && (
                           <>
                             <span
-                              className="cursor-pointer font-bold hover:text-gray-400"
+                              className={`border border-neutral-500 rounded-sm px-2 py-1 cursor-pointer font-bold hover:bg-neutral-600 ${
+                                displayMode === 'followers' ? 'bg-neutral-500' : ''
+                              }`}
                               onClick={() => setDisplayMode('followers')}
                             >
-                              {' '}
                               Followers
-                            </span>{' '}
+                              {' '}
                             {followerNum || '0'}
+                            </span>
                             <span
-                              className="ml-4 cursor-pointer font-bold hover:text-gray-400"
+                              className={`border border-neutral-500 rounded-sm px-2 py-1 ml-4 cursor-pointer font-bold hover:bg-neutral-600 ${
+                                displayMode === 'following' ? 'bg-neutral-500' : ''
+                              }`}
                               onClick={() => setDisplayMode('following')}
                             >
-                              {' '}
                               Following
-                            </span>{' '}
+                              {' '}
                             {followingNum || '0'}
+                            </span>
                           </>
                         )}
                       </p>
