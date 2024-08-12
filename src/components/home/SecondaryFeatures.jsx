@@ -296,14 +296,14 @@ export function SecondaryFeatures() {
     <section
       id="secondary-features"
       aria-label="Features for simplifying everyday business tasks"
-      className="pb-14 pt-20 sm:pb-20 sm:pt-32 lg:pb-32"
+      className="pb-14 pt-20 sm:pb-20 sm:pt-32 lg:pb-32 "
     >
       <Container>
         <div className="mx-auto max-w-6xl md:text-center">
-        <h2 className="text-base font-semibold leading-7 text-blue-600">CTFGuide Education</h2>
+        <h2 className="text-base font-semibold leading-7 text-blue-600 hidden">CTFGuide for K-12 and Universities</h2>
 
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
-            We're the best platform for teaching cybersecurity.
+           An all-in-one platform for teaching cybersecurity.
           </h2>
 
         </div>
