@@ -92,9 +92,11 @@ export function Header() {
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <Link href="../" aria-label="Home">
-              <Logo className="h-10 w-auto" />
+              <Logo className="h-10 w-auto" /> 
             </Link>
+            
           </div>
+          
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div>
               <NavLink className="text-white" href="/login">
