@@ -393,7 +393,7 @@ export default function Competitions() {
                 <h1>Challenges Pending Approval</h1>
                 {selectedChallenges.length > 0 && <button className='ml-auto px-2 py-1 bg-red-600 text-sm text-white mt-2' onClick={deleteBulk}><i className='fa fa-trash mr-2'></i>Delete Selected</button>}
                 <div className='mt-2'>
-                  {pendingChallenges.length > 0 ? (
+                  {pendingChallenges && pendingChallenges.length > 0 ? (
                     pendingChallenges.map((challenge) => (
                       <div key={challenge.id} onClick={() => {setSelectedId(challenge.id); setChallengeIsOpen(true);}} className='bg-neutral-800 w-full mb-2 border focus:bg-blue-900 focus:border-blue-500 border-neutral-700 hover:bg-neutral-700/50 cursor-pointer px-2 py-1 flex items-center text-sm'>
                         <input
@@ -421,7 +421,7 @@ export default function Competitions() {
                 <h1>Submitted Reports</h1>
 
               <div className='mt-2'>
-                {reports.length > 0 ? (
+                {reports && reports.length > 0 ? (
                   reports.map((report) => (
                     <div key={report.id} className='bg-neutral-800 w-full mb-2 border focus:bg-blue-900 focus:border-blue-500 border-neutral-700 hover:bg-neutral-700/50 cursor-pointer px-2 py-1 flex items-center text-sm'>
                       <div className='flex-grow'>
