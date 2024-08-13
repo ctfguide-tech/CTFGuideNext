@@ -456,6 +456,12 @@ export default function Create() {
                                        </a>
                                      </>
                                     )}
+                                    {challenge.state === 'STANDARD_VERIFIED' &&(
+                                      <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
+                                      <i className="fas fa-external-link-alt mr-2"></i>
+                                      Go to Challenge Page
+                                    </a>
+                                    )}
 
                                   </td>
                                   
