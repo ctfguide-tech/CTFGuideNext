@@ -7,6 +7,8 @@ import { Context } from '../context';
 import { useEffect, useState } from 'react';
 import request from '@/utils/request';
 import { Analytics } from "@vercel/analytics/react"
+import { usePathname, useRouter } from 'next/navigation';
+
 
 export default function App({ Component, pageProps }) {
   const [username, setUsername] = useState('');
@@ -14,6 +16,8 @@ export default function App({ Component, pageProps }) {
   const [accountType, setAccountType] = useState('');
   const [profilePic, setProfilePic] = useState('');
   const [points, setPoints] = useState(0);
+  const path = usePathname();
+  const router = useRouter();
 
   const appState = {
     role, setRole,
@@ -26,7 +30,14 @@ export default function App({ Component, pageProps }) {
   const fetchUser = async () => {
     const url = process.env.NEXT_PUBLIC_API_URL + "/account";
     const user = await request(url, "GET", null);
-    console.log(user);
+
+    if(user && user.error && user.error === "Not authorized") {
+      const pathNames = ["/", "/login", "/careers", "/register", 
+        "/onboarding", "/forgot-password", "/education", "/userrs", 
+        "/privacy-policy","/404", "/terms-of-service", "/learn"];
+      if(!pathNames.includes(path)) router.push("/login");
+    }
+
     if (user && user.username) {
       setRole(user.role);
       setUsername(user.username);
