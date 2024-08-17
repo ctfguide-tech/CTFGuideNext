@@ -11,7 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Markdown from 'react-markdown';
+import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { Context } from '@/context';
 import { useContext } from 'react';
 import { CheckIcon } from '@heroicons/react/20/solid';
@@ -691,7 +691,7 @@ export default function General() {
                     Bio Preview
                   </label>
                   <div className="mt-2 rounded-lg bg-neutral-800 p-4 text-white">
-                    <Markdown>{tempBio}</Markdown>
+                    <MarkdownViewer content={tempBio}></MarkdownViewer>
                   </div>
                 </div>
               )}
