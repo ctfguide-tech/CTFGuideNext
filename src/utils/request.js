@@ -13,6 +13,17 @@ const request = async (url, req_method, body) => {
 
       const response = await fetch(url, requestOptions);
       const data = await response.json();
+
+      if(response.status === 401 && data.error) {
+        const parts = window.location.href.split("/");
+        const path = "/" + parts[parts.length-1];
+        const pathNames = ["/", "/login", "/careers", "/register", 
+          "/onboarding", "/forgot-password", "/education", "/userrs", 
+          "/privacy-policy","/404", "/terms-of-service", "/learn"];
+        if(!pathNames.includes(path)) window.location.href = "/login";
+        return null;
+      }
+
       return data;
     } else if(method === 'POST' || method === 'PUT') {
       const requestOptions = {
@@ -22,13 +33,17 @@ const request = async (url, req_method, body) => {
         credentials: 'include',
         body: JSON.stringify(body)
       }
-      //console.log(requestOptions)
+
       const response = await fetch(url, requestOptions);
       const data = await response.json();
 
       if(response.status === 401 && data.error) {
-        console.log("Unauthorized");
-        window.location.href = "/login";
+        const parts = window.location.href.split("/");
+        const path = "/" + parts[parts.length-1];
+        const pathNames = ["/", "/login", "/careers", "/register", 
+          "/onboarding", "/forgot-password", "/education", "/userrs", 
+          "/privacy-policy","/404", "/terms-of-service", "/learn"];
+        if(!pathNames.includes(path)) window.location.href = "/login";
         return null;
       }
 
@@ -54,3 +69,9 @@ export function getCookie() {
 }
 
 export default request;
+
+
+
+/*
+
+ * */

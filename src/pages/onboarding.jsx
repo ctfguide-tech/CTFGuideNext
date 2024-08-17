@@ -16,10 +16,9 @@ export default function Onboarding() {
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
 
 
-      if (response.username) {
+      if (response && response.username) {
         console.log('User already onboarded');
         router.push('/dashboard');
-
     }
     };
     checkUser();

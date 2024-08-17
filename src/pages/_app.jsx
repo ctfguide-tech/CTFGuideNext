@@ -31,13 +31,6 @@ export default function App({ Component, pageProps }) {
     const url = process.env.NEXT_PUBLIC_API_URL + "/account";
     const user = await request(url, "GET", null);
 
-    if(user && user.error && user.error === "Not authorized") {
-      const pathNames = ["/", "/login", "/careers", "/register", 
-        "/onboarding", "/forgot-password", "/education", "/userrs", 
-        "/privacy-policy","/404", "/terms-of-service", "/learn"];
-      if(!pathNames.includes(path)) router.push("/login");
-    }
-
     if (user && user.username) {
       setRole(user.role);
       setUsername(user.username);
