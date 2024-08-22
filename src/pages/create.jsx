@@ -437,7 +437,30 @@ export default function Create() {
                                         >
                                           <i className="fas fa-comments mr-1"></i> View Feedback
                                         </button>
+
+                                        <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
+                                          <i className="fas fa-external-link-alt mr-2"></i>
+                                          Go to Challenge Page
+                                        </a>
                                       </>
+                                    )}
+                                    {challenge.state === 'STANDARD_UNVERIFIED' &&(
+                                       <>
+                                       <a href={`/create/edit?id=${challenge.id}`} className="text-blue-600 hover:text-blue-500">
+                                         <i className="fas fa-pencil-alt mr-1"></i> Edit<span className="sr-only">, {challenge.title}</span>
+                                       </a>
+
+                                       <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
+                                         <i className="fas fa-external-link-alt mr-2"></i>
+                                         Go to Challenge Page
+                                       </a>
+                                     </>
+                                    )}
+                                    {challenge.state === 'STANDARD_VERIFIED' &&(
+                                      <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
+                                      <i className="fas fa-external-link-alt mr-2"></i>
+                                      Go to Challenge Page
+                                    </a>
                                     )}
 
                                   </td>
