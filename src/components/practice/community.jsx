@@ -175,7 +175,7 @@ export function Community({ challenges }) {
   const search = (event) => {
     setFilter(event.target.value);
   };
-
+  
   return (
     <>
       <div className="mt-6 max-w-7xl text-left">
@@ -290,8 +290,7 @@ export function Community({ challenges }) {
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {challenges && (results.length > 0 ? results : challenges)
-            .filter((challenge) => {
+          {challenges && results.filter((challenge) => {
               if (
                 difficulty.toLowerCase() !== 'all' &&
                 challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()
