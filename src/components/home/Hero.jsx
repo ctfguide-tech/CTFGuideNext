@@ -26,7 +26,7 @@ export function Hero() {
         { userName: 'laphatize', challengeName: 'Excel-lently Hidden', profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/7523c0cb-2330-443c-94f1-030cd8bde300/public' },
         { userName: 'herronjo', challengeName: 'Trading Bananas' , profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/1bd03d05-1057-48fc-3d3f-b3ed512cb500/public' },
         { userName: 'thunderbird', challengeName: 'Sneaky Cat ' , profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/3b312b5f-c90d-490d-80d0-e52b367d4400/public' },
-        { userName: 'steven', challengeName: 'Pretty Obvious', profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/3e75c7a3-dfe9-47cc-0d46-736187e62400/public' },
+        { userName: 'stevestef', challengeName: 'Pretty Obvious', profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/3e75c7a3-dfe9-47cc-0d46-736187e62400/public' },
       ]);
     };
 
