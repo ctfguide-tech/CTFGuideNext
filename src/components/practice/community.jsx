@@ -3,7 +3,8 @@ import ChallengeCard from '../profile/ChallengeCard';
 import { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 function getCategoryIcon(category) {
   switch (category.toLowerCase()) {
     case 'forensics':
@@ -290,39 +291,48 @@ export function Community({ challenges }) {
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {challenges && (results.length > 0 ? results : challenges)
-            .filter((challenge) => {
-              if (
-                difficulty.toLowerCase() !== 'all' &&
-                challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()
-              ) {
-                return false;
-              }
-              if (
-                filter !== '' &&
-                challenge.category.includes(filter.toLowerCase())
-              ) {
+          {results.length > 0 ? (
+            results
+              .filter((challenge) => {
+                if (
+                  difficulty.toLowerCase() !== 'all' &&
+                  challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()
+                ) {
+                  return false;
+                }
+                if (
+                  filter !== '' &&
+                  challenge.category.includes(filter.toLowerCase())
+                ) {
+                  return true;
+                }
+                if (
+                  filter !== '' &&
+                  !(
+                    challenge.title
+                      .toLowerCase()
+                      .includes(filter.toLowerCase()) ||
+                    challenge.content
+                      .toLowerCase()
+                      .includes(filter.toLowerCase())
+                  )
+                ) {
+                  return false;
+                }
                 return true;
-              }
-              if (
-                filter !== '' &&
-                !(
-                  challenge.title
-                    .toLowerCase()
-                    .includes(filter.toLowerCase()) ||
-                  challenge.content
-                    .toLowerCase()
-                    .includes(filter.toLowerCase())
-                )
-              ) {
-                return false;
-              }
-              return true;
-            })
-            .map((challenge) => (
-              <ChallengeCard challenge={challenge} key={challenge.challengeId} />
-            ))
-          }
+              })
+              .map((challenge) => (
+                <ChallengeCard challenge={challenge} key={challenge.challengeId} />
+              ))
+          ) : (
+            // kinda hacky but it works
+            challenges.length != 0 && (
+              <div className="bg-neutral-800/50 p-4 py-10 rounded-md w-full col-span-4 text-center">
+                <FontAwesomeIcon icon={faFolderOpen} className="w-10 h-10 mx-auto mb-4 text-neutral-400" />
+                <p className="text-white">No challenges found with the current filters. Try changing the filters or search for a different challenge.</p>
+              </div>
+            )
+          )}
         </div>
       </div>
     </>
