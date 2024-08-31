@@ -811,12 +811,10 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
             <h1 className="text-xl font-semibold mt-4">Associated Files</h1>
             {fileIDName && fileIDLink ? (
               fileIDName !== "This challenge does not have any associated files." ? (
-                <div className="mt-1 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto  items-center  ">
-                  <i className="fas fa-file-alt text-blue-500 mr-2 "></i>
-                  <a href={fileIDLink} className="text-blue-500" target="_blank" rel="noopener noreferrer">
-                    {fileIDName}
-                  </a>
-                </div>
+                <a href={fileIDLink} className="mt-1 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto items-center text-blue-500" target="_blank" rel="noopener noreferrer">
+                  <i className="fas fa-file-alt text-blue-500 mr-2"></i>
+                  {fileIDName}
+                </a>
               ) : (
                 <p>{fileIDName}</p>
               )
