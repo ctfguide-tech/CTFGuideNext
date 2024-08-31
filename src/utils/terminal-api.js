@@ -58,18 +58,21 @@ const buildTerminal = async (challenge, token, type) => {
     while (!result.done) {
       let stat = textDecoder.decode(result.value);
       if(stat.toLowerCase() !== 'terminal created') {
-        console.log('Failed to create the terminal line 40');
+        console.log('Failed to create the terminal line 60');
         return [false, null];
       }
       result = await reader.read();
     }
+
+
+
     console.log('Terminal created successfully!');
 
-    return [true, code+""];
+    return [true, code+"", fileIDs];
   } catch (err) {
     console.log('Failed to create the terminal');
     console.log(err);
-    return [false, null];
+    return [false, null, null];
   }
 };
 
