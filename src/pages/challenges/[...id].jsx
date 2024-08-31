@@ -32,6 +32,8 @@ export default function Challenge() {
   // I hate this
   const [urlChallengeId, urlSelectedTab, urlWriteupId] = (router ?? {})?.query?.id ?? [undefined, undefined, undefined];
 
+  const [fileIDName, setFileIDName] = useState("");
+  const [fileIDLink, setFileIDLink] = useState("");
 
   // Very primitive cache system
   const [cache, _setCache] = useState({});
@@ -129,6 +131,7 @@ export default function Challenge() {
   const [terminalUrl, setTerminalUrl] = useState("");
   const [loadingMessage, setLoadingMessage] = useState('Connecting to terminal service...');
 
+
   const createTerminal = async (skipToCheckStatus) => {
     const challenge = cache.challenge;
     const cookie = getCookie('idToken');
@@ -144,6 +147,17 @@ export default function Challenge() {
 
       setPassword(data.terminalUserPassword);
       setUserName(data.terminalUserName);
+      if (data.fileIDs) {
+
+        // CLEAN UP FILE IDS AS IT IS STRING AND CONVERT TO ARRAY
+        
+
+        setFileIDName(data.fileIDs.split('#')[0]);
+        setFileIDLink(data.fileIDs.split('#')[1]);
+      } else {
+        setFileIDName("This challenge does not have any associated files.");
+        setFileIDLink("https://ctfguide.com");
+      }
       setContainerId(data.containerId);
       setFoundTerminal(true);
       setMinutesRemaining(60);
@@ -334,7 +348,13 @@ export default function Challenge() {
               {selectedWriteup ? (
                 <WriteupModal isOpen={true} onClose={() => setSelectedWriteup(null)} writeup={selectedWriteup} />
               ) : (
-                <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
+                <selectedTab.element 
+                  cache={cache} 
+                  setCache={setCache} 
+                  onWriteupSelect={handleWriteupSelect} 
+                  fileIDName={fileIDName} // Pass fileIDName as prop
+                  fileIDLink={fileIDLink} // Pass fileIDLink as prop
+                />
               )}
               <div className='flex w-full h-full grow basis-0'></div>
               <div className="shrink-0 bg-neutral-800 h-12 w-full">
@@ -690,7 +710,7 @@ function HintsPage({ cache }) {
 }
 
 
-function DescriptionPage({ cache }) {
+function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   const { challenge } = cache;
   const [challengeData, setChallengeData] = useState(null);
   const [authorPfp, setAuthorPfp] = useState(null);
@@ -786,6 +806,25 @@ function DescriptionPage({ cache }) {
 
         <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
+   
+            <hr className="border-neutral-700 mt-4"></hr>
+            <h1 className="text-xl font-semibold mt-4">Associated Files</h1>
+            {fileIDName && fileIDLink ? (
+              fileIDName !== "This challenge does not have any associated files." ? (
+                <div className="mt-1 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto  items-center  ">
+                  <i className="fas fa-file-alt text-blue-500 mr-2 "></i>
+                  <a href={fileIDLink} className="text-blue-500" target="_blank" rel="noopener noreferrer">
+                    {fileIDName}
+                  </a>
+                </div>
+              ) : (
+                <p>{fileIDName}</p>
+              )
+            ) : (
+              <p>You may need to boot the terminal to see the associated files.</p>
+            )}
+            
+            
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
