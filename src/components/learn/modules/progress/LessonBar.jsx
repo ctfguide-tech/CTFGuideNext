@@ -3,7 +3,7 @@ import React from 'react';
 const LessonBar = ({ name, progress, type }) => {
     if (type === "lab") {
         return (
-            <div className="bg-neutral-700 px-2 py-1 flex">
+            <div className="bg-neutral-700 hover:bg-neutral-600 cursor-pointer px-2 py-1 flex">
              <div>
              <h1>
                 {name}
