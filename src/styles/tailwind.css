@@ -34,11 +34,7 @@
 
 @layer utilities {
   .markdown {
-    @apply break-words;
-  }
-  
-  .markdown p {
-    @apply leading-10;
+    @apply break-words space-y-2;
   }
 
   .markdown h1 {
@@ -70,7 +66,7 @@
   }
 
   .markdown p {
-    @apply leading-8;
+    @apply leading-7;
   }
 
   .markdown underline {
@@ -94,7 +90,7 @@
   }
 
   .markdown li {
-    @apply leading-10 pl-2 marker:font-bold;
+    @apply leading-7 pl-2 marker:font-bold;
   }
 
   .markdown blockquote {
@@ -455,5 +451,83 @@ ul {
   }
   100% {
     opacity: 0;
+  }
+}
+.meteor-shower {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  transform: rotate(-45deg);
+}
+
+.meteor-shower::before,
+.meteor-shower::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 50px 160px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 160px 120px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 200px 20px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 240px 100px, #eee, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 280px 60px, #ddd, rgba(0,0,0,0));
+    
+  background-repeat: repeat;
+  background-size: 400px 400px;
+  animation: meteor 10s linear infinite;
+  opacity: 0.5;
+}
+
+.meteor-shower::after {
+  animation-delay: -5s;
+  animation-duration: 15s;
+}
+
+@keyframes meteor {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50%);
+  }
+}
+
+.meteor {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background-color: #fff;
+  opacity: 0;
+  animation: meteor-fall 5s linear infinite;
+}
+
+.meteor::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, #fff, transparent);
+}
+
+@keyframes meteor-fall {
+  0% {
+    opacity: 1;
+    transform: translate(0, -100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(300px, 300px);
   }
 }

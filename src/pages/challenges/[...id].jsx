@@ -32,6 +32,8 @@ export default function Challenge() {
   // I hate this
   const [urlChallengeId, urlSelectedTab, urlWriteupId] = (router ?? {})?.query?.id ?? [undefined, undefined, undefined];
 
+  const [fileIDName, setFileIDName] = useState("");
+  const [fileIDLink, setFileIDLink] = useState("");
 
   // Very primitive cache system
   const [cache, _setCache] = useState({});
@@ -129,6 +131,7 @@ export default function Challenge() {
   const [terminalUrl, setTerminalUrl] = useState("");
   const [loadingMessage, setLoadingMessage] = useState('Connecting to terminal service...');
 
+
   const createTerminal = async (skipToCheckStatus) => {
     const challenge = cache.challenge;
     const cookie = getCookie('idToken');
@@ -144,6 +147,17 @@ export default function Challenge() {
 
       setPassword(data.terminalUserPassword);
       setUserName(data.terminalUserName);
+      if (data.fileIDs) {
+
+        // CLEAN UP FILE IDS AS IT IS STRING AND CONVERT TO ARRAY
+        
+
+        setFileIDName(data.fileIDs.split('#')[0]);
+        setFileIDLink(data.fileIDs.split('#')[1]);
+      } else {
+        setFileIDName("This challenge does not have any associated files.");
+        setFileIDLink("https://ctfguide.com");
+      }
       setContainerId(data.containerId);
       setFoundTerminal(true);
       setMinutesRemaining(60);
@@ -334,7 +348,13 @@ export default function Challenge() {
               {selectedWriteup ? (
                 <WriteupModal isOpen={true} onClose={() => setSelectedWriteup(null)} writeup={selectedWriteup} />
               ) : (
-                <selectedTab.element cache={cache} setCache={setCache} onWriteupSelect={handleWriteupSelect} />
+                <selectedTab.element 
+                  cache={cache} 
+                  setCache={setCache} 
+                  onWriteupSelect={handleWriteupSelect} 
+                  fileIDName={fileIDName} // Pass fileIDName as prop
+                  fileIDLink={fileIDLink} // Pass fileIDLink as prop
+                />
               )}
               <div className='flex w-full h-full grow basis-0'></div>
               <div className="shrink-0 bg-neutral-800 h-12 w-full">
@@ -690,7 +710,7 @@ function HintsPage({ cache }) {
 }
 
 
-function DescriptionPage({ cache }) {
+function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   const { challenge } = cache;
   const [challengeData, setChallengeData] = useState(null);
   const [authorPfp, setAuthorPfp] = useState(null);
@@ -786,6 +806,23 @@ function DescriptionPage({ cache }) {
 
         <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
+   
+            <hr className="border-neutral-700 mt-4"></hr>
+            <h1 className="text-xl font-semibold mt-4">Associated Files</h1>
+            {fileIDName && fileIDLink ? (
+              fileIDName !== "This challenge does not have any associated files." ? (
+                <a href={fileIDLink} className="mt-1 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto items-center text-blue-500" target="_blank" rel="noopener noreferrer">
+                  <i className="fas fa-file-alt text-blue-500 mr-2"></i>
+                  {fileIDName}
+                </a>
+              ) : (
+                <p>{fileIDName}</p>
+              )
+            ) : (
+              <p>You may need to boot the terminal to see the associated files.</p>
+            )}
+            
+            
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
@@ -849,6 +886,8 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
 
   const upvoteWriteup = async (writeupId) => {
     try {
@@ -879,11 +918,21 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
   };
 
 
+  const [temp, setTemp] = useState(null);
 
-  const openModal = (writeup) => {
-    setSelectedWriteup(writeup);
-    setUpvotes(writeup.upvotes); // Set initial upvotes
-    setDownvotes(writeup.downvotes); // Set initial downvotes
+
+  const openModal = async (writeup) => {
+    try {
+      
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${temp.id}`;
+      const response = await request(url, "GET", null);
+      temp.content = response.content;
+      setUpvotes(response.upvotes);
+      setDownvotes(response.downvotes);
+      setSelectedWriteup(temp);
+    } catch(err) {
+      console.log(err);
+    }
     setIsModalOpen(true);
   };
 
@@ -904,7 +953,11 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
       </div>
       <div className="px-4 overflow-auto">
         {writeups.map((writeup, index) => (
-          <div key={index} onClick={() => openModal(writeup)} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
+          <div key={index} onClick={() =>  {
+            setTemp(writeup);
+            setIsConfirmModalOpen(true);
+
+          }} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
             <div className='w-full flex'>
               <div>
                 <h3 className="text-xl">{writeup.title}</h3>
@@ -964,7 +1017,7 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
                 </div>
               </div>
 
-              <div className="mt-2 text-white">
+              <div className="mt-2 text-white overflow-auto">
                 <MarkdownViewer content={selectedWriteup.content} />
               </div>
 
@@ -986,6 +1039,30 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
           </div>
         </Dialog>
       )}
+
+      {isConfirmModalOpen && (
+        <Dialog
+          open={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          className="fixed inset-0 z-10 overflow-y-auto"
+        >
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+            <div className="relative bg-neutral-800 text-white w-full max-w-xl mx-auto p-6 rounded">
+              <Dialog.Title className="text-xl font-semibold"><i className="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Are you sure you want to view this writeup?</Dialog.Title>
+              <p className="mt-2 mb-4">You will not be able to get points for this challenge if you view this writeup. Do you want to continue?</p>
+              <button onClick={() => {
+                setIsConfirmModalOpen(false);
+                openModal(selectedWriteup);
+              }} className=" bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded border-none">Continue</button>
+                         <button onClick={() => setIsConfirmModalOpen(false)} className="ml-2 border-none bg-neutral-700 hover:bg-neutral-600 text-white px-4 py-2 rounded">Nevermind</button>
+
+            </div>
+              </div>
+            </Dialog>
+          )}
+
+      
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
     </>
   );

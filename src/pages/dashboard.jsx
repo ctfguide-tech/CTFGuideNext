@@ -257,20 +257,21 @@ export default function Dashboard() {
                 </h1>
                 <ul className='flex flex-col gap-4 [&>*]:line-clamp-2'>
              
-                {activities && activities.length > 0 ?
+           {activities && activities.length > 0 ?
   activities.slice().reverse().map((data) =>
     <div className="text-lg">
       <li>
         <a className='text-blue-500 hover:text-blue-600 cursor-pointer font-bold' href={"../users/" + data.userName}>{data.userName}</a> completed 
         <a className='text-yellow-500 hover:text-yellow-600 cursor-pointer' href={"../challenges/" + data.challengeId}> {data.challengeName}</a>
       </li>
-    </div>
+      </div>
   ) :
   <>
     <Skeleton containerClassName='col-span-2' className='mb-4' baseColor='#262626' highlightColor='#3a3a3a' count={2} />
   </>
 }
 
+                  
 
                 </ul>
               </div>

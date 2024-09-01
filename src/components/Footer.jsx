@@ -15,7 +15,10 @@ export function Footer() {
               <NavLink href="../privacy-policy">Privacy Policy</NavLink>
               <NavLink href="https://status.ctfguide.com/">Status</NavLink>
               <NavLink href="../careers">Careers</NavLink>
+      
             </div>
+
+          
           </nav>
         </div>
         <div className="mx-auto flex max-w-4xl flex-col items-center border-t border-slate-400/10 py-10 sm:flex-row-reverse sm:justify-between">
@@ -74,7 +77,7 @@ export function Footer() {
             </Link>
           </div>
           <p className="mt-6 text-sm text-white sm:mt-0">
-            Copyright &copy; {new Date().getFullYear()} CTFGuide. All rights
+            Copyright &copy; {new Date().getFullYear()} CTFGuide Corporation. All rights
             reserved. <br></br>
           </p>
         </div>

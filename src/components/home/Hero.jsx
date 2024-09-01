@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import { Dialog } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useState, useEffect } from 'react'
+import { Dialog, Popover, Transition } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon, ChevronDownIcon, AcademicCapIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline'
 import TextLoop from "react-text-loop";
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 import Banner from '@/components/home/Banner';
-
+import request from '@/utils/request';
 
 const navigation = [
 
@@ -15,7 +15,29 @@ const navigation = [
 
 export function Hero() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [visibleCards, setVisibleCards] = useState(0)
+  const [activityFeed, setActivityFeed] = useState([])
 
+  useEffect(() => {
+    const fetchActivityFeed = async () => {
+  
+      // use mock data if api is down
+      setActivityFeed([
+        { userName: 'laphatize', challengeName: 'Excel-lently Hidden', profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/7523c0cb-2330-443c-94f1-030cd8bde300/public' },
+        { userName: 'herronjo', challengeName: 'Trading Bananas' , profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/1bd03d05-1057-48fc-3d3f-b3ed512cb500/public' },
+        { userName: 'thunderbird', challengeName: 'Sneaky Cat ' , profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/3b312b5f-c90d-490d-80d0-e52b367d4400/public' },
+        { userName: 'stevestef', challengeName: 'Pretty Obvious', profilePic: 'https://imagedelivery.net/1Dym4oPRvM_5USnDWCdSCw/3e75c7a3-dfe9-47cc-0d46-736187e62400/public' },
+      ]);
+    };
+
+    fetchActivityFeed();
+
+    const timer = setInterval(() => {
+      setVisibleCards((prev) => (prev < activityFeed.length ? prev + 1 : prev))
+    }, 1000) // Adjust timing as needed
+
+    return () => clearInterval(timer)
+  }, [activityFeed.length])
 
     return (
       <div className="bg-neutral-900">
@@ -27,6 +49,59 @@ export function Hero() {
             <Link href="../" aria-label="Home">
               <Logo className="h-10 w-auto" />
             </Link>
+            
+            </div>
+            <div className="flex items-center gap-x-5 md:gap-x-8 hidden sm:flex">
+              <Popover className="relative">
+                {({ open }) => (
+                  <>
+                    <Popover.Button className="flex items-center gap-x-1 text-white focus:outline-none">
+                      Solutions
+                      <ChevronDownIcon className={`${open ? 'transform rotate-180' : ''} h-5 w-5 transition-transform duration-150 ease-in-out`} />
+                    </Popover.Button>
+                    <Transition
+                      enter="transition duration-100 ease-out"
+                      enterFrom="transform scale-95 opacity-0"
+                      enterTo="transform scale-100 opacity-100"
+                      leave="transition duration-75 ease-out"
+                      leaveFrom="transform scale-100 opacity-100"
+                      leaveTo="transform scale-95 opacity-0"
+                    >
+                      <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0">
+                        <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                          <div className="relative grid gap-6 bg-neutral-900 bg-blend-overlay px-5 py-6 sm:gap-8 sm:p-8">
+                            <Link href="/education" className="block p-3 -m-3 transition duration-150 ease-in-out rounded-md hover:bg-neutral-800">
+                              <div className="flex items-start">
+                                <AcademicCapIcon className="h-8 w-8 text-blue-500 mr-3 mt-1" />
+                                <div>
+                                  <p className="text-base font-medium text-white pb-1"><span className='font-semibold'>CTFGuide</span> Education</p>
+                                  <p className="text-sm text-white">A platform for learning and training cybersecurity skills in the classroom.</p>
+                                </div>
+                              </div>
+                            </Link>
+                            <div className="block p-3 -m-3 transition duration-150 ease-in-out rounded-md hover:bg-neutral-800">
+                              <div className="flex items-start">
+                                <BuildingOfficeIcon className="h-6 w-6 text-blue-500 mr-3 mt-1" />
+                                <div className="flex-grow">
+                                  <div className="text-base font-medium text-white flex justify-between items-center">
+                                    <span><span className='font-semibold'>CTFGuide</span> Enterprise</span>
+                                    <span className='text-xs text-white bg-blue-800 px-2 rounded-full'>Coming Soon</span>
+                                  </div>
+                                  <p className="text-sm text-white">Train your team to defend against real-world threats.</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Popover.Panel>
+                    </Transition>
+                  </>
+                )}
+              </Popover>
+              <Link href="/careers" className="text-white">
+                 Company 
+              </Link>
+          
             </div>
             <div className="flex lg:hidden">
               <button
@@ -112,22 +187,31 @@ export function Hero() {
               }}
             />
           </div>
-          <div className="py-24 sm:py-32 lg:pb-40">
+          <div className="py-24 sm:py-24 lg:pb-40">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <div className= "  animate__animated animate__fadeInUp mx-auto max-w-4xl text-center">
-                <h1 className="text-4xl font-bold tracking-normal text-white sm:text-6xl leading-relaxed ">
+              <div className= "  animate__animated animate__fadeInUp mx-auto max-w-6xl  text-left">
+              <div className='grid sm:grid-cols-6 grid-cols-1'>
+                <div className='col-span-4 '>
+                <h1 className="text-4xl font-normal tracking-normal text-white sm:text-4xl leading-relaxed ">
+             
+                <div className="mt-10 mb-2 text-3xl  text-white sm:text-2xl flex items-center justify-left">
+                <img className=" w-8 text-center ml-0 mr-2 " src="../../../../darkLogocrop.png" />
+   
+              <h1 className='text-3xl font-normal m'>        <span className="text-white font-semibold"> CTFGuide </span> 
+              </h1>
+                </div>
                   The platform that <span className="text-blue-600 leading-relaxed">
                     <TextLoop>
                       <span>grows</span>
                       <span>develops</span>
                       <span>trains</span>
                   </TextLoop>
-</span> <span className='mt-3'> cybersecurity talent.</span>
+</span> <br></br><span className='mt-3'> cybersecurity talent.</span>
                 </h1>
                 <p className="mt-6 text-lg leading-8 text-gray-300">
-                  A data-driven simulation platform that provides a realistic, hands-on experience for you to become a cybersecurity professional.
+                  The social learning platform for all things cybersecurity.
                 </p>
-                <div className="mt-10 flex items-center justify-center gap-x-6">
+                <div className="mt-10 flex items-center  gap-x-6">
                   <a
                     href="../register"
                     className="rounded-md   px-6 py-1.5 text-lg font-semibold text-white border border-white hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
@@ -137,7 +221,32 @@ export function Hero() {
                   <p onClick={() => window.scrollTo(0, 1500)} className="cursor-pointer text-lg font-semibold leading-6 text-white">
                     Learn more <span aria-hidden="true">→</span>
                   </p>
+                  </div>
                 </div>
+
+                <div className='col-span-2 mt-10 hidden sm:block'>
+                  <div className="space-y-2">
+                  {activityFeed.slice(0, visibleCards).map((card, index) => (
+  <div
+    key={card.userName}
+    className='hover:bg-neutral-700 duration-300 bg-neutral-800 cursor-pointer p-4 rounded-lg flex items-center transform transition-all ease-in-out'
+    style={{
+      opacity: 0,
+      animation: `fadeInUp 0.5s ease-out ${index * 0.2}s forwards`,
+    }}
+  >
+    <img src={card.profilePic ? card.profilePic : `https://robohash.org/${card.userName}`} className='w-12 h-12 rounded-full mr-4' alt={card.userName} />
+    <div>
+      <p className='text-white font-bold'>{card.userName}</p>
+      <p className='text-gray-400 text-sm'>
+        solved <span className='text-yellow-400'>{card.challengeName}</span>
+      </p>
+    </div>
+  </div>
+))}
+                  </div>
+                </div>
+              </div>
               </div>
               <img
              
@@ -148,7 +257,7 @@ export function Hero() {
               autoPlay
               width={2432}
               height={1442}
-              className="animate__animated animate__fadeInUp mt-16 rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10 sm:mt-24"
+              className="animate__animated animate__fadeInUp mt-16 rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10 sm:mt-28"
          
               >
                 <source src="../sample_vid.mp4" type="video/mp4" />

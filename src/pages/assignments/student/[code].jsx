@@ -147,8 +147,11 @@ export default function Slug() {
     const cookie = getCookie('idToken');
     const data = jwtDecode(cookie);
     const token = data.id;
-    const [created, termId] = await api.buildTerminal(challenge, token);
+    const [created, termId, fileIDs] = await api.buildTerminal(challenge, token);
+
+    
     console.log('Pengiouns here:', created, termId);
+    
     if (created) {
       if (skipToCheckStatus) {
         console.log('Skipping to check status', termId);
