@@ -886,6 +886,8 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
 
   const upvoteWriteup = async (writeupId) => {
     try {
@@ -916,15 +918,18 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
   };
 
 
+  const [temp, setTemp] = useState(null);
+
 
   const openModal = async (writeup) => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${writeup.id}`;
+      
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/writeups/fetch/${temp.id}`;
       const response = await request(url, "GET", null);
-      writeup.content = response.content;
+      temp.content = response.content;
       setUpvotes(response.upvotes);
       setDownvotes(response.downvotes);
-      setSelectedWriteup(writeup);
+      setSelectedWriteup(temp);
     } catch(err) {
       console.log(err);
     }
@@ -948,7 +953,11 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
       </div>
       <div className="px-4 overflow-auto">
         {writeups.map((writeup, index) => (
-          <div key={index} onClick={() => openModal(writeup)} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
+          <div key={index} onClick={() =>  {
+            setTemp(writeup);
+            setIsConfirmModalOpen(true);
+
+          }} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
             <div className='w-full flex'>
               <div>
                 <h3 className="text-xl">{writeup.title}</h3>
@@ -1008,7 +1017,7 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
                 </div>
               </div>
 
-              <div className="mt-2 text-white">
+              <div className="mt-2 text-white overflow-auto">
                 <MarkdownViewer content={selectedWriteup.content} />
               </div>
 
@@ -1030,6 +1039,30 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
           </div>
         </Dialog>
       )}
+
+      {isConfirmModalOpen && (
+        <Dialog
+          open={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          className="fixed inset-0 z-10 overflow-y-auto"
+        >
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+            <div className="relative bg-neutral-800 text-white w-full max-w-xl mx-auto p-6 rounded">
+              <Dialog.Title className="text-xl font-semibold"><i className="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Are you sure you want to view this writeup?</Dialog.Title>
+              <p className="mt-2 mb-4">You will not be able to get points for this challenge if you view this writeup. Do you want to continue?</p>
+              <button onClick={() => {
+                setIsConfirmModalOpen(false);
+                openModal(selectedWriteup);
+              }} className=" bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded border-none">Continue</button>
+                         <button onClick={() => setIsConfirmModalOpen(false)} className="ml-2 border-none bg-neutral-700 hover:bg-neutral-600 text-white px-4 py-2 rounded">Nevermind</button>
+
+            </div>
+              </div>
+            </Dialog>
+          )}
+
+      
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
     </>
   );
