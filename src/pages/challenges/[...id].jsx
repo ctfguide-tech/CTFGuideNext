@@ -1401,7 +1401,7 @@ function CommentsPage({ cache }) {
               </a>
               {comment.role === 'ADMIN' && (
                 <>
-                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> developer</span>
+                  <span className="bg-red-600 px-1 text-sm ml-2"><i className="fas fa-code fa-fw"></i> admin</span>
                 </>
               )}
               {comment.role === 'PRO' && (
