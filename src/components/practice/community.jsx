@@ -5,6 +5,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+
 function getCategoryIcon(category) {
   switch (category.toLowerCase()) {
     case 'forensics':
@@ -79,7 +80,6 @@ function CategorySelect({ category, setCategory, isDifficulty }) {
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </span>
             </Listbox.Button>
-
             <Transition
               show={open}
               as={Fragment}
@@ -136,6 +136,32 @@ export function Community({ challenges }) {
   const [results, setResults] = useState([]);
   const [filter, setFilter] = useState('');
   const [solvedFilter, setSolvedFilter] = useState('all');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDifficulty(localStorage.getItem('difficulty') || 'all');
+      setCategory(localStorage.getItem('category') || 'all');
+      setSolvedFilter(localStorage.getItem('solvedFilter') || 'all');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('difficulty', difficulty);
+    }
+  }, [difficulty]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('category', category);
+    }
+  }, [category]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('solvedFilter', solvedFilter);
+    }
+  }, [solvedFilter]);
 
   useEffect(() => {
     const filteredChallenges = challenges

@@ -567,6 +567,77 @@ export default function Create() {
                 </div>
 
 
+                <hr className='mt-4 border-neutral-700'></hr>
+                <div className=" mt-4  pb-4  ">
+                  <div className="flex items-center">
+                    <h1 className="flex-1 text-2xl font-medium  text-white">
+                      <div className="flex">
+                        Your Learn Modules
+                        <div className='ml-auto'>
+                          <button onClick={() => { setIsCreating(true) }} className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Draft Module</button>
+
+                        </div>
+
+
+
+                      </div>
+
+
+
+                      <div className="mt-4 flow-root">
+                        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
+                              <thead>
+                                <tr>
+                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                                    Module Name
+                                  </th>
+                               
+
+                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                                    Last Updated
+                                  </th>
+                                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                    <span className="sr-only">Edit</span>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-neutral-800">
+                                {writeups.map((writeup) => (
+                                  <tr key={writeup.title} className="even:bg-neutral-900">
+
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
+                                      {writeup.draft &&
+                                        <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
+                                      }
+
+                                      {!writeup.draft &&
+                                        <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
+                                      }
+
+                                      {writeup.title} </td>
+                                   
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+
+                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                                        <button className='bg-neutral-700 text-sm shadow-sm hover:bg-neutral-700/90 px-2 py-1 text-white rounded-sm mr-3'>Open in Studio</button>
+                                      </td>
+                                  </tr>
+                                )) || <Skeleton containerClassName='tbody' className='mb-4' baseColor='#999' count={2} />
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+                      </div>
+                    </h1>
+
+
+                  </div>
+                </div>
+
 
               </div>
             </div>
