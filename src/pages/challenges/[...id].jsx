@@ -21,6 +21,7 @@ import Confetti from 'react-confetti';
 import { Context } from '@/context';
 import { useRef } from 'react';
 import WriteupModal from '@/components/WriteupModal';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 
 export default function Challenge() {
@@ -711,7 +712,56 @@ function HintsPage({ cache }) {
 
 
 function DescriptionPage({ cache, fileIDName, fileIDLink }) {
+
+
   const { challenge } = cache;
+
+  const [solvesData, setSolvesData] = useState([]);
+  const [creatorMode, setCreatorMode] = useState(false); // Add state for creator mode
+
+  const [insights, setInsights] = useState({
+    solves: 0,
+    attempts: 0,
+    solvesLast30Days: 0,
+    attemptsLast30Days: 0,
+  });
+
+  useEffect(() => {
+    const fetchSolvesData = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights/solvesLast10Days`, 'GET', null);
+        setSolvesData(response);
+        console.log(response);
+      } catch (error) {
+        console.error('Failed to fetch solves data: ', error);
+      }
+    };
+
+    const fetchCreatorMode = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
+        setCreatorMode(response.creatorMode);
+        console.log(response.creatorMode);
+      } catch (error) { 
+        console.error('Failed to fetch creator mode: ', error);
+      }
+    };
+
+    const fetchInsights = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights`, 'GET', null);
+        setInsights(response);
+        console.log(response);
+      } catch (error) {
+        console.error('Failed to fetch solves data: ', error);
+      }
+    };
+
+    fetchSolvesData();
+    fetchInsights();
+    fetchCreatorMode();
+  }, [challenge]);
+
   const [challengeData, setChallengeData] = useState(null);
   const [authorPfp, setAuthorPfp] = useState(null);
   const { username } = useContext(Context);
@@ -821,8 +871,43 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
             ) : (
               <p>You may need to boot the terminal to see the associated files.</p>
             )}
-            
-            
+            <hr className="border-neutral-700 mt-4"></hr>
+            {creatorMode && (
+              <>
+                <hr className="border-neutral-700 mt-4"></hr>
+                <div className="w-full mt-10 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 rounded-sm text-white mx-auto items-center text-blue-500">
+                  <div className="bg-neutral-800/40 px-4 py-1 pb-3">
+                    <h1 className="text-lg mt-2"><i className="fas fa-lightbulb mr-2"></i>Creator Insights</h1>
+                  </div>
+                  <div className="grid grid-cols-4 w-full mt-2 px-5 py-2">
+                    <div>
+                      <h1 className="text-md">Solves</h1>
+                      <p className="text-xl">{insights.solves}</p>
+                    </div>
+                    <div>
+                      <h1 className="text-md">Attempts</h1>
+                      <p className="text-xl">{insights.attempts}</p>
+                    </div>
+                    <div>
+                      <h1 className="text-md">Solves <span className="text-neutral-500 text-sm">(30d)</span></h1>
+                      <p className="text-xl text-white">{insights.solvesLast30Days}</p>
+                    </div>
+                    <div>
+                      <h1 className="text-md">Attempts <span className="text-neutral-500 text-sm">(30d)</span></h1>
+                      <p className="text-xl text-white">{insights.attemptsLast30Days}</p>
+                    </div>
+                  </div>
+                  <br />
+                  <LineChart className="mb-3" width={600} height={300} data={solvesData}>
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <Line type="monotone" dataKey="solves" stroke="#8884d8" />
+                  </LineChart>
+                  <br />
+                </div>
+              </>
+            )}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
@@ -1603,4 +1688,3 @@ function DeleteCommentModal({ isOpen, onClose, onConfirm }) {
     </Dialog>
   );
 }
-
