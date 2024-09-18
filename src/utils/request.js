@@ -1,4 +1,3 @@
-
 const request = async (url, req_method, body) => {
   try {
     let method = req_method.toUpperCase();
@@ -20,7 +19,7 @@ const request = async (url, req_method, body) => {
         const pathNames = ["/", "/login", "/careers", "/register", 
           "/onboarding", "/forgot-password", "/education", "/userrs", 
           "/privacy-policy","/404", "/terms-of-service", "/learn"];
-        if(!pathNames.includes(path)) window.location.href = "/login";
+        if(!pathNames.includes(path) && !path.startsWith("/forgot-password")) window.location.href = "/login";
         return null;
       }
 
@@ -43,7 +42,7 @@ const request = async (url, req_method, body) => {
         const pathNames = ["/", "/login", "/careers", "/register", 
           "/onboarding", "/forgot-password", "/education", "/userrs", 
           "/privacy-policy","/404", "/terms-of-service", "/learn"];
-        if(!pathNames.includes(path)) window.location.href = "/login";
+        if(!pathNames.includes(path) && !path.startsWith("/forgot-password")) window.location.href = "/login";
         return null;
       }
 

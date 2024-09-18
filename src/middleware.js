@@ -1,20 +1,40 @@
 import { NextResponse } from 'next/server'
 
 export function middleware(req) {
- const { pathname } = req.nextUrl;
+  const { pathname } = req.nextUrl;
 
- if (
-    pathname.startsWith("/api") || // exclude all API routes
-    pathname.startsWith("/static") || // exclude static files
-    pathname.includes(".") // exclude all files in the public folder
-  )
-  return NextResponse.next();
+  // Exclude API routes and static files
+  if (
+    pathname.startsWith("/api") || // Exclude all API routes
+    pathname.startsWith("/static") || // Exclude static files
+    pathname.includes(".") // Exclude all files in the public folder
+  ) {
+    return NextResponse.next();
+  }
+
+  // List of paths that don't require authentication
+  const publicPaths = [
+    '/login',
+    '/careers',
+    '/register',
+    '/onboarding',
+    '/forgot-password',
+    '/education',
+    '/userrs',
+    '/privacy-policy',
+    '/404',
+    '/terms-of-service',
+    '/learn',
+  ];
+
+  // Allow access to public paths, even with query parameters
+  if (publicPaths.some((path) => pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
 
   const idToken = req.cookies.get('idToken');
 
-  // ensure token is valid 
-  // basic request to server to ensure that the token is valid
-
+  // Redirect to login if token is missing or invalid
   if (!idToken) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';
@@ -25,5 +45,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|favicon.ico|login|careers|register|onboarding|forgot-password|education|userrs|privacy-policy|404|terms-of-service|learn|$).*)'],
+  matcher: '/:path*',
 }

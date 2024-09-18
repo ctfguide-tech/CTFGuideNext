@@ -32,7 +32,7 @@ export default function Forgot() {
       const data = await response.json();
 
       if(data.success) {
-        toast.success("Email was send to", email);
+        toast.success("Password reset email has been sent. It should arrive within a few minutes.");
       } else {
         toast.error("Email failed to send try again later");
       }
@@ -104,6 +104,7 @@ export default function Forgot() {
 
     if(data.success) {
       toast.success("Password has been reset");
+      router.push("/login");
     } else {
       toast.error("Unable to reset the password, try again later");
     }
