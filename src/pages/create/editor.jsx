@@ -9,7 +9,8 @@ import { useRouter } from 'next/router';
 import { Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
 import { Transition } from '@headlessui/react';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function Create() {
   const [isOpen, setIsOpen] = useState(false);
   const [contentPreview, setContentPreview] = useState('');
@@ -24,6 +25,7 @@ export default function Create() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [videoLink, setVideoLink] = useState('');
+  const [hasVideo, setHasVideo] = useState(false);
 
   useEffect(() => {
     try {
@@ -57,8 +59,8 @@ export default function Create() {
         setTitle(data.title);
         setContentPreview(data.content);
         setIsPublished(data.draft);
-
-        
+        setHasVideo(data.hasVideo);
+        setVideoLink(data.videoUrl);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -166,10 +168,18 @@ export default function Create() {
 
   const handleVideoInsert = () => {
     if (videoLink) {
-      insertText(`[![YouTube Video](${videoLink})](https://www.youtube.com/watch?v=${videoLink})`);
+      toast.success('Video link mounted successfully');
+     // insertText(`[![YouTube Video](${videoLink})](https://www.youtube.com/watch?v=${videoLink})`);
       setShowVideoModal(false);
-      setVideoLink('');
+      setVideoLink(videoLink);
+      setHasVideo(true);
     }
+  };
+
+  const getEmbedUrl = (url) => {
+    const videoId = url.split('v=')[1];
+    const ampersandPosition = videoId.indexOf('&');
+    return ampersandPosition !== -1 ? videoId.substring(0, ampersandPosition) : videoId;
   };
 
   return (
@@ -274,6 +284,17 @@ export default function Create() {
   <i className="fab fa-youtube"></i>
 </button>
               </div>
+            
+              { hasVideo &&
+              <div className='text-white bg-neutral-900/50 border border-neutral-800/50 rounded-lg p-4 mt-2'>
+              
+                <p>Video binded to this writeup.</p>
+                <a href={videoLink} target="_blank" className='text-blue-400'>View on YouTube</a>
+                <button onClick={() => {
+                  setHasVideo(false); setVideoLink('');
+                }} className='text-red-400 ml-2'>Remove Video</button>
+              </div>
+}
               <textarea
                 
                 value={contentPreview}
@@ -288,6 +309,12 @@ export default function Create() {
             </div>
             <div className='border-l border-neutral-800'>
               <div contentEditable={false} className='text-white py-4 px-4'>
+                { hasVideo &&
+                <div className='text-white bg-neutral-900/50 border border-neutral-800/50 rounded-lg p-4 mt-2'>
+                  <iframe width="100%" height="315" src={`https://www.youtube.com/embed/${getEmbedUrl(videoLink)}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
+                }
+
                 <MarkdownViewer content={contentPreview} />
               </div>
             </div>
@@ -465,7 +492,7 @@ className=" pb-10 pt-4 px-4 shadow sm:px-10  bg-neutral-800"
                       type="text"
                       value={videoLink}
                       onChange={(e) => setVideoLink(e.target.value)}
-                      className="w-full px-3 py-2 bg-neutral-700 text-white rounded-md"
+                      className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800/50 text-white rounded-md"
                       placeholder="YouTube Video Link"
                     />
                   </div>
@@ -492,6 +519,19 @@ className=" pb-10 pt-4 px-4 shadow sm:px-10  bg-neutral-800"
           </div>
         </Dialog>
       </Transition>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div className=' flex w-full h-full grow basis-0'></div>
       <Footer />
     </>

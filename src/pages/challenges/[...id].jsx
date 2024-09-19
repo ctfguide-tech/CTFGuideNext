@@ -1004,6 +1004,15 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
 
 
   const [temp, setTemp] = useState(null);
+  const [hasVideo, setHasVideo] = useState(false);
+  const [videoLink, setVideoLink] = useState('');
+
+
+  const getEmbedUrl = (url) => {
+    const videoId = url.split('v=')[1];
+    const ampersandPosition = videoId.indexOf('&');
+    return ampersandPosition !== -1 ? videoId.substring(0, ampersandPosition) : videoId;
+  };
 
 
   const openModal = async (writeup) => {
@@ -1013,6 +1022,8 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
       const response = await request(url, "GET", null);
       temp.content = response.content;
       setUpvotes(response.upvotes);
+      setHasVideo(response.hasVideo);
+      setVideoLink(response.videoUrl);
       setDownvotes(response.downvotes);
       setSelectedWriteup(temp);
     } catch(err) {
@@ -1045,7 +1056,19 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
           }} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
             <div className='w-full flex'>
               <div>
-                <h3 className="text-xl">{writeup.title}</h3>
+                <div>
+                <h3 className="text-xl flex items-center">
+                {writeup.hasVideo && (
+                    <i className="fab fa-youtube text-red-500 mr-2 text-md"></i>
+                  )}
+                    {!writeup.hasVideo && (
+                    <i className="fas fa-book text-indigo-500 mr-2 text-md"></i>
+                  )}
+                  {writeup.title}
+                 
+                </h3>
+               
+                </div>
                 <p className="text-sm text-blue-500 font-semibold" onClick={() => window.location.href = `../../users/${writeup.user.username}`}>@{writeup.user.username}</p>
 
               </div>
@@ -1103,6 +1126,11 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
               </div>
 
               <div className="mt-2 text-white overflow-auto">
+                {hasVideo &&
+                <div className='text-white  rounded-lg mb-4'>
+                  <iframe width="100%" height="415" src={`https://www.youtube.com/embed/${getEmbedUrl(videoLink)}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
+                }
                 <MarkdownViewer content={selectedWriteup.content} />
               </div>
 
