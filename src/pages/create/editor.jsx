@@ -9,7 +9,8 @@ import { useRouter } from 'next/router';
 import { Dialog } from '@headlessui/react';
 import { Fragment } from 'react';
 import { Transition } from '@headlessui/react';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function Create() {
   const [isOpen, setIsOpen] = useState(false);
   const [contentPreview, setContentPreview] = useState('');
@@ -22,6 +23,9 @@ export default function Create() {
   const router = useRouter();
   const [isPublished, setIsPublished] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [videoLink, setVideoLink] = useState('');
+  const [hasVideo, setHasVideo] = useState(false);
 
   useEffect(() => {
     try {
@@ -55,8 +59,8 @@ export default function Create() {
         setTitle(data.title);
         setContentPreview(data.content);
         setIsPublished(data.draft);
-
-        
+        setHasVideo(data.hasVideo);
+        setVideoLink(data.videoUrl);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -94,6 +98,8 @@ export default function Create() {
     request(`${process.env.NEXT_PUBLIC_API_URL}/writeups/${cid}`, "PUT", {
       title: title,
       content: contentPreview,
+      hasVideo: videoLink ? true : false,
+      videoUrl: videoLink,
     })
       .then((data) => {
         
@@ -158,6 +164,22 @@ export default function Create() {
   const handleConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDelete();
+  };
+
+  const handleVideoInsert = () => {
+    if (videoLink) {
+      toast.success('Video link mounted successfully');
+     // insertText(`[![YouTube Video](${videoLink})](https://www.youtube.com/watch?v=${videoLink})`);
+      setShowVideoModal(false);
+      setVideoLink(videoLink);
+      setHasVideo(true);
+    }
+  };
+
+  const getEmbedUrl = (url) => {
+    const videoId = url.split('v=')[1];
+    const ampersandPosition = videoId.indexOf('&');
+    return ampersandPosition !== -1 ? videoId.substring(0, ampersandPosition) : videoId;
   };
 
   return (
@@ -258,7 +280,21 @@ export default function Create() {
                 <button onClick={() => magicSnippet()} className="toolbar-button text-white px-2 mr-1">
                 <i class="fas fa-terminal"></i>
                 </button>
+                <button onClick={() => setShowVideoModal(true)} className={`bg-red-600 px-4 mr-3 rounded-lg toolbar-button text-white px-2 ml-2 ${hasVideo ? 'bg-green-600' : ''}`}>
+  <i className="fab fa-youtube"></i>
+</button>
               </div>
+            
+              { hasVideo &&
+              <div className='text-white bg-neutral-900/50 border border-neutral-800/50 rounded-lg p-4 mt-2'>
+              
+                <p>Video binded to this writeup.</p>
+                <a href={videoLink} target="_blank" className='text-blue-400'>View on YouTube</a>
+                <button onClick={() => {
+                  setHasVideo(false); setVideoLink('');
+                }} className='text-red-400 ml-2'>Remove Video</button>
+              </div>
+}
               <textarea
                 
                 value={contentPreview}
@@ -273,6 +309,12 @@ export default function Create() {
             </div>
             <div className='border-l border-neutral-800'>
               <div contentEditable={false} className='text-white py-4 px-4'>
+                { hasVideo &&
+                <div className='text-white bg-neutral-900/50 border border-neutral-800/50 rounded-lg p-4 mt-2'>
+                  <iframe width="100%" height="315" src={`https://www.youtube.com/embed/${getEmbedUrl(videoLink)}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
+                }
+
                 <MarkdownViewer content={contentPreview} />
               </div>
             </div>
@@ -416,6 +458,80 @@ className=" pb-10 pt-4 px-4 shadow sm:px-10  bg-neutral-800"
           </div>
         </Dialog>
       </Transition>
+      <Transition appear show={showVideoModal} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={() => setShowVideoModal(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                    Enter YouTube Video Link
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      value={videoLink}
+                      onChange={(e) => setVideoLink(e.target.value)}
+                      className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800/50 text-white rounded-md"
+                      placeholder="YouTube Video Link"
+                    />
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="duration-100 inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={handleVideoInsert}
+                    >
+                      Insert Video
+                    </button>
+                    <button
+                      type="button"
+                      className="duration-100 ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={() => setShowVideoModal(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div className=' flex w-full h-full grow basis-0'></div>
       <Footer />
     </>
