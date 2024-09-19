@@ -677,9 +677,9 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       />
       <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
-        <div className="mx-auto hidden w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
+        <div className="mx-auto  w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
           <h1 className="mx-auto  px-4 text-left">
-              Our terminal infrastructure is experiencing issues due to hardware faults. We are taking steps to resolve this and get things working again as possible.
+              Our server hosting provider is experience issues which may result in CTFGuide not working as expected. Join our <a className="font-bold" href="https://discord.gg/BwbCYHVX">Discord</a> for updates.
           </h1>
         </div>
      
