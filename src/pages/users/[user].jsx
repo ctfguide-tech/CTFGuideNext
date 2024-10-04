@@ -1,3 +1,4 @@
+
 import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import { Context } from '@/context';
@@ -152,6 +153,8 @@ export default function Create() {
   const [followers, setFollowers] = useState(0);
   const [followerPage, setFollowerPage] = useState(0); // Initial page
   const [totalFollowerPages, setTotalFollowerPages] = useState(0); // Total pages
+
+  const [points, setPoints] = useState(0);
 
   const [following, setFollowing] = useState(0);
   const [followingPage, setFollowingPage] = useState(0); // Initial page
@@ -683,6 +686,30 @@ export default function Create() {
     }
   }, [user, followingPage]);
 
+
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      try {
+        const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/points`;
+        console.log('Fetching user points:', endPoint);
+
+        const response = await request(endPoint, 'GET');
+        if (response && response.totalPoints) {
+          setPoints(response.totalPoints);
+          console.log('User points:', response.totalPoints);
+        }
+        throw new Error('Failed to fetch user points');
+      } catch (error) {
+        console.error('Failed to fetch user points:', error);
+      }
+    };
+
+    if (user && user.username) {
+      fetchUserPoints();
+    }
+  }, [user]);
+
+
   const userData = { user, ownUser: true };
 
   // Follower
@@ -967,6 +994,13 @@ export default function Create() {
                         )}
                       </h1>
                       <p className="text-white">
+
+                        {user && points && (
+                          <span className="mr-2 font-bold rounded-sm bg-gradient-to-br from-green-400 to-blue-600 px-2 py-1 text-sm text-white">
+                            <i className=""></i> Points: {points}
+                          </span>
+                        )}
+                       
                         <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                         {(user && user.location) || (
                           <Skeleton
