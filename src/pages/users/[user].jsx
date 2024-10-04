@@ -154,7 +154,7 @@ export default function Create() {
   const [followerPage, setFollowerPage] = useState(0); // Initial page
   const [totalFollowerPages, setTotalFollowerPages] = useState(0); // Total pages
 
-  const [points, setPoints] = useState(0);
+  const [points, setPoints] = useState("0");
 
   const [following, setFollowing] = useState(0);
   const [followingPage, setFollowingPage] = useState(0); // Initial page
