@@ -7,7 +7,7 @@ const LearnEditor = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 100000);
+        }, 0);
         return () => clearTimeout(timer);
     }, []);
 
@@ -59,23 +59,16 @@ error: attempting to load editor will result in error. contact support@ctfguide.
     </div>
     ) : (
         <div className='h-full'>
-<div className='text-white text-xl px-6 py-4 w-full bg-neutral-800 flex '>
-          <div>
-            <h1>CTFGuide Studio <span className='text-red-500'>ALPHA BUILD V.0.1</span></h1>
+          <div className='text-white text-xl px-6 w-full bg-neutral-800 flex justify-between items-center'>
+            <div>
+              <h1 className='text-sm py-2'> Learn Studio <span className='ml-2 bg-blue-800 text-white text-sm px-3 rounded-full'>v.0.2</span></h1>
+            </div>
+            <div className='ml-auto text-sm flex space-x-1'>
+              <button className='text-red-600 px-2 '><i className="fas fa-trash fa-fw"></i> Delete</button>
+              <button className='text-green-600 px-2 '><i className="fas fa-save fa-fw"></i> Save</button>
+            </div>
           </div>
-
-          <div className='ml-auto text-sm '>
-            <button className='bg-red-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-trash fa-fw"></i> Delete</button>
-
-            <button className='bg-indigo-600 px-4 py-1 mr-3 rounded-lg'><i className="fas fa-save fa-fw"></i> Save</button>
-
-         
-
-          </div>
-        </div>
-
-
-        <StudioEditor/>
+          <StudioEditor/>
         </div>
     )}
     </>
