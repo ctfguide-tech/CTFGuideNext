@@ -32,7 +32,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
+  const [role, setRole] = useState(false);
   const exampleObjectives = [
     {
       completed: false,
@@ -114,9 +114,21 @@ export default function Dashboard() {
       }
     };
 
+    const fetchAccountDetails = async() => {
+      request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null)
+        .then((data) => {
+          
+          setRole(data.role);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
 
     fetchRecommendedChallenges();
     fetchPopularChallenges();
+    fetchAccountDetails();
     request(`${process.env.NEXT_PUBLIC_API_URL}/activityFeed/`, 'GET', null).then(response => {
       console.log(response)
       setActivities(response.activityFeed);
@@ -274,10 +286,13 @@ export default function Dashboard() {
                   
 
                 </ul>
-              </div>
+              </div>  
+
 
               <div className='w-full pb-4 pl-4 pr-4 relative'>
-              <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold mb-4'>
+              {  role == "USER" &&
+              <div className='mb-10'>
+              <h1 className='text-2xl  text-neutral-100 tracking-wide font-semibold mb-4'>
                   Sponsor Messaging
                 </h1>
     <div 
@@ -300,8 +315,9 @@ export default function Dashboard() {
 
         
     </div>
-
-     <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold mt-10 mb-4'>
+</div>
+}
+     <h1 className='text-2xl text-neutral-100 tracking-wide font-semibold  mb-4'>
                  Connect with CTFGuide
                 </h1>
     <div class='break-inside relative overflow-hidden flex flex-col justify-between  text-sm rounded-xl max-w-[23rem] px-6 py-4 mb-4 bg-indigo-800 text-white'>
