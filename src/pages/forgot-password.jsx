@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'; // Import useRouter
-
+import AuthFooter from '@/components/auth/AuthFooter'
 export default function Forgot() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -131,26 +131,12 @@ export default function Forgot() {
         style={{ fontFamily: 'Poppins, sans-serif' }}
         className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8"
       >
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <Link href="../">
-            <img
-              className="mx-auto h-20 w-auto"
-              src="../darkLogo.png"
-              alt="CTFGuide"
-            />
-          </Link>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-            Forgot your password?
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-200">
-                No worries - we'll get you back to your account in no time.
-          </p>
-        </div>
+        
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div
             style={{ backgroundColor: '#212121' }}
-            className=" pb-8 pt-1 px-4 shadow sm:rounded-lg sm:px-10"
+            className=" pb-8 pt-1 px-4 shadow border-t-4 border-blue-600 sm:px-10"
           >
             <div className="space-y-6">
               <div
@@ -173,8 +159,10 @@ export default function Forgot() {
 
             {
               validToken ? 
-              <>
               <div>
+              <h1 className='text-white  text-xl'>Update your credentials </h1>
+
+              <div className='mt-3'>
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-200"
@@ -187,14 +175,14 @@ export default function Forgot() {
                     type="password"
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                    className="block w-full appearance-none  border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-200"
+                  className="mt-4 block text-sm font-medium text-gray-200"
                 >
                 Confirm Password
                 </label>
@@ -204,18 +192,23 @@ export default function Forgot() {
                     type="password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                    className="block w-full appearance-none  border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
 
-              </>
+              </div>
 
               : 
               <div>
+                                <div className=''>
+
+<h1 className='text-white  text-xl'>Account Recovery </h1>
+<p className='text-white tracking-tight text-xs'>No worries - we'll get you back to your account in no time.</p>
+</div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-200"
+                  className="mt-4 block text-sm font-medium text-gray-200"
                 >
                   Email
                 </label>
@@ -228,7 +221,7 @@ export default function Forgot() {
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
                     required
-                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                    className="block w-full appearance-none  border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                   />
                 </div>
               </div>
@@ -240,7 +233,7 @@ export default function Forgot() {
                 <button
                 onClick={reset}
                   type="submit"
-                  className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="flex w-full justify-center border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Reset Password
                 </button>
@@ -250,22 +243,28 @@ export default function Forgot() {
                 <button
                 onClick={resetPassword}
                   type="submit"
-                  className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="flex w-full justify-center  border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Send Password Reset Email
                 </button>
               </div>
             }
-
-<div className='text-center mx-auto'> 
-<a href="./login"  className='text-center text-sm  mx-auto text-white mt-10 hover:text-gray-300'>← Return to login?</a>
+<div className=''> 
+<a href="./login"  className='text-center text-sm  mx-auto text-blue-500 mt-10 hover:text-blue-400'>Return to login?</a>
 
     </div>            </div>
 
 
           </div>
+          <AuthFooter/>
+
         </div>
+
+
+        
+        
       </div>
+      
 
       <ToastContainer
         position="bottom-right"
