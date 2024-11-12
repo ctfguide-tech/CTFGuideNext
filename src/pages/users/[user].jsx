@@ -995,12 +995,7 @@ export default function Create() {
                       </h1>
                       <p className="text-white">
 
-                        {user && points && (
-                          <span className="mr-2 font-bold rounded-sm bg-gradient-to-br from-green-400 to-blue-600 px-2 py-1 text-sm text-white">
-                            <i className=""></i> Points: {points}
-                          </span>
-                        )}
-                       
+                    
                         <i className="fas fa-map-marker-alt mt-2"></i>{' '}
                         {(user && user.location) || (
                           <Skeleton
