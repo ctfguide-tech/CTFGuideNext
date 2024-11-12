@@ -154,7 +154,7 @@ export default function Dashboard() {
 
   useEffect(() => {
  
-    setShowOnboarding(false);
+    //setShowOnboarding(false);
   }, []);
 
   const handleHideOnboarding = () => {
@@ -185,7 +185,7 @@ export default function Dashboard() {
           <div className="flex flex-col lg:flex-row md:mt-8 lg:mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
             <div className='w-full'>
               {showOnboarding && (
-                <div className='w-full p-4'>
+                <div className='w-full p-4 animate__animated animate__slideInDown'>
                   <h1 className='text-2xl font-semibold flex align-middle'>
                     Onboarding 
                     <span 

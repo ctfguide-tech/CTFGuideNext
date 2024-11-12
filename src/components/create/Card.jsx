@@ -4,7 +4,7 @@ export function Card({ challenge }) {
       <div className="flex items-center justify-between space-x-4">
         <div className="min-w-0 space-y-3">
           <div className="flex items-center space-x-3">
-            <h2 className="text-xl font-medium text-white">
+            <h2 className="text-xl  text-white">
               <a href="#">
                 <span className="absolute inset-0" aria-hidden="true"></span>
                 {challenge.title}
