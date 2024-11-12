@@ -1,7 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@layer utilities {
+  .font-semibold {
+    font-weight: 430;
+  }
+}
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 50px;
@@ -29,7 +33,7 @@
   50%  {background-position: 0 -9.6px ,8px 9.6px; transform:rotate(90deg)}
   100% {background-position: 0 -19.2px,8px 19.2px;transform:rotate(180deg)}
 }
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 @import "~@uiw/react-markdown-editor/markdown-editor.css";
 
 @layer utilities {

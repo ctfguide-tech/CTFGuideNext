@@ -66,7 +66,7 @@ const ChallengeCard = (_props) => {
         challenge.solved ? 'bg-green-900/50' : 'bg-[#212121]'
       } px-5 py-6 transition-all duration-300 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
         <div className="flex justify-between">
-          <h1 className="truncate text-2xl font-bold text-white w-2/3">{challenge.title}</h1>
+          <h1 className="truncate text-2xl  text-white w-2/3">{challenge.title}</h1>
 
           <div className="flex items-center text-gray-400 ">
        
