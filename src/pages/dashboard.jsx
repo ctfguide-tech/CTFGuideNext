@@ -12,6 +12,10 @@ import Skeleton from 'react-loading-skeleton';
 import Upgrade from '@/components/nav/Upgrade';
 import { useRouter } from 'next/router';
 import { CheckIcon } from '@heroicons/react/20/solid';
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment } from 'react'
+import OnboardingModal from '@/components/modals/OnboardingModal';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 const includedFeatures = [
   'Priority machine access',
@@ -43,6 +47,8 @@ export default function Dashboard() {
       description: "Eat McDonalds",
     },
   ]
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [completedTasks, setCompletedTasks] = useState(null);
 
   useEffect(() => {
     const user = localStorage.getItem('username');
@@ -125,6 +131,22 @@ export default function Dashboard() {
         });
     }
 
+    const checkCompletedTasks = async () => {
+      try {
+        const accountResponse = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
+        const hasProfilePicture = accountResponse.profileImage;
+        const hasCompletedChallenge = accountResponse.points > 0;
+
+        setCompletedTasks({
+          profilePicture: hasProfilePicture,
+          firstChallenge: hasCompletedChallenge,
+        });
+      } catch (error) {
+        console.error('Failed to check completed tasks:', error);
+      }
+    };
+
+    checkCompletedTasks();
 
     fetchRecommendedChallenges();
     fetchPopularChallenges();
@@ -153,13 +175,29 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
- 
-    //setShowOnboarding(false);
+    // Check onboarding status from API
+    const checkOnboardingStatus = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET');
+        if (!response.hasCompletedOnboarding) {
+          setIsOnboardingOpen(true);
+        }
+      } catch (error) {
+        console.error('Failed to check onboarding status:', error);
+      }
+    };
+
+    checkOnboardingStatus();
   }, []);
 
   const handleHideOnboarding = () => {
     setShowOnboarding(false);
  //   localStorage.setItem('showOnboarding', JSON.stringify(false));
+  };
+
+  const completeOnboarding = () => {
+    setIsOnboardingOpen(false);
+    // The API endpoint will handle updating the database
   };
 
   return (
@@ -184,34 +222,46 @@ export default function Dashboard() {
         <main className="animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row md:mt-8 lg:mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
             <div className='w-full'>
-              {showOnboarding && (
-                <div className='w-full p-4 animate__animated animate__slideInDown'>
+              {completedTasks && (!completedTasks.profilePicture || !completedTasks.firstChallenge) && (
+                <div className='w-full p-6 animate__animated animate_fadeIn bg-neutral-800/50 rounded-lg '>
                   <h1 className='text-2xl font-semibold flex align-middle'>
-                    Onboarding 
+                    Onboarding Tasks
                     <span 
-                      className='ml-auto text-neutral-700 text-sm cursor-pointer' 
+                      className='ml-auto text-neutral-400 text-sm cursor-pointer hover:text-neutral-200 transition-colors' 
                       onClick={handleHideOnboarding}
                     >
                       Hide
                     </span>
                   </h1>
-                  <p className='text-lg mb-6'>Looks like you're new around here. These tutorials will help you get started. You'll even get a sweet badge for completing them!</p>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div className='bg-neutral-8000 border border-neutral-700'>
-                      <div className='relative'>
-                        <img src="../welcomeBanner.svg" className='w-full h-28 object-cover banner-image'></img>
-                        <div className='absolute bottom-2 right-2'>
-                          <a href="/tutorials/welcome-to-ctfguide" className='bg-white hover:bg-neutral-200 cursor-pointer text-blue-500 font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</a>
+                  <p className='text-sm mb-6 text-neutral-300'>Looks like you're new around here. You should try to complete these tasks. Or don't.</p>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div onClick={() => {
+                      window.location.href = "./settings"
+                    }} className={`${completedTasks.profilePicture ? 'bg-green-900/20 border border-green-800' : 'bg-neutral-700/50 hover:bg-neutral-700/70 border border-neutral-600'} transition-colors p-6 rounded-lg  cursor-pointer`}>
+                      <div className='flex items-center gap-3 mb-3'>
+                        <div className='p-2 bg-blue-500/20 rounded-lg'>
+                          <UserCircleIcon className="w-6 h-6 text-blue-500" />
                         </div>
+                        <h2 className='font-semibold'>Set a profile picture</h2>
+                        {completedTasks.profilePicture && (
+                          <CheckCircleIcon className="w-6 h-6 text-green-500 ml-auto" />
+                        )}
                       </div>
+                      <p className='text-neutral-400 text-sm'>Personalize your account by adding a profile picture</p>
                     </div>
-                    <div className='bg-neutral-800 border border-neutral-700'>
-                      <div className='relative'>
-                        <img src="../gettingStartedBanner.svg" className='w-full h-28 object-cover banner-image'></img>
-                        <div className='absolute bottom-2 right-2'>
-                          <button className='bg-white text-orange-400 font-bold text-xs px-2 py-0.5 rounded'>Start Tutorial</button>
+                    <div onClick={() => {
+                      window.location.href = "./challenges/07671f2f-cd67-4f0f-a3d1-9bdea299c59c?onboarding=true"
+                    }} className={`${completedTasks.firstChallenge ? 'bg-green-900/20 border border-green-800' : 'bg-neutral-700/50 hover:bg-neutral-700/70 border border-neutral-600'} transition-colors p-6 rounded-lg  cursor-pointer`}>
+                      <div className='flex items-center gap-3 mb-3'>
+                        <div className='p-2 bg-green-500/20 rounded-lg'>
+                          <BoltIcon className="w-6 h-6 text-green-500" />
                         </div>
+                        <h2 className='font-semibold'>Complete your first challenge</h2>
+                        {completedTasks.firstChallenge && (
+                          <CheckCircleIcon className="w-6 h-6 text-green-500 ml-auto" />
+                        )}
                       </div>
+                      <p className='text-neutral-400 text-sm'>Try solving an entry-level cybersecurity challenge</p>
                     </div>
                   </div>
                 </div>
@@ -463,7 +513,11 @@ export default function Dashboard() {
                 </div>
             </div>
         </div>}
-         
+        <OnboardingModal 
+        isOpen={isOnboardingOpen}
+        onClose={completeOnboarding}
+       
+      />
     </>
   );
 }

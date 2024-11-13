@@ -22,7 +22,118 @@ import { Context } from '@/context';
 import { useRef } from 'react';
 import WriteupModal from '@/components/WriteupModal';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useSearchParams } from 'next/navigation';
 
+// Move styles to a separate useEffect
+function useHighlightStyles() {
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes highlight-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5) }
+        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0) }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0) }
+      }
+      
+      .tutorial-highlight {
+        animation: highlight-pulse 2s infinite;
+        position: relative;
+        z-index: 45;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Cleanup
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+}
+
+function TutorialOverlay({ step, onNext, onClose }) {
+  useHighlightStyles(); // Use the styles hook
+
+  const steps = {
+    1: {
+      title: "Welcome to CTFGuide!",
+      content: "Let's walk through how to solve challenges.",
+      position: "center",
+    },
+    2: {
+      title: "Challenge Description",
+      content: "Here you'll find all the details about your mission and any files you need.",
+      position: "right",
+      highlight: ".challenge-description"
+    },
+    3: {
+      title: "Terminal Environment",
+      content: "This is your hacking workspace. You'll use this terminal to solve challenges.",
+      position: "left",
+      highlight: ".challenge-terminal"
+    },
+    4: {
+      title: "Submit Your Flag",
+      content: "Once you find the flag, submit it here to complete the challenge!",
+      position: "top",
+      highlight: ".flag-submission"
+    },
+    5: {
+      title: "Ready to Start!",
+      content: "You're all set to begin solving challenges. Good luck!",
+      position: "center",
+    }
+  };
+
+  const currentStep = steps[step];
+
+  // Add highlight effect to current element
+  useEffect(() => {
+    if (currentStep.highlight) {
+      const element = document.querySelector(currentStep.highlight);
+      if (element) {
+        element.classList.add('tutorial-highlight');
+        return () => element.classList.remove('tutorial-highlight');
+      }
+    }
+  }, [step, currentStep.highlight]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/70" onClick={onClose}></div>
+      
+      <div className="relative bg-neutral-800 rounded-lg p-6 max-w-md mx-4 shadow-xl">
+        <h2 className="text-xl font-bold text-white mb-2">{currentStep.title}</h2>
+        <p className="text-gray-300 mb-6">{currentStep.content}</p>
+        
+        <div className="flex justify-center gap-2 mb-4">
+          {Object.keys(steps).map((stepNum) => (
+            <div 
+              key={stepNum}
+              className={`w-2 h-2 rounded-full ${
+                parseInt(stepNum) === step ? 'bg-blue-500' : 'bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-between">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm text-gray-300 hover:text-white"
+          >
+            Skip
+          </button>
+          <button
+            onClick={onNext}
+            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 rounded"
+          >
+            {step === Object.keys(steps).length ? "Finish" : "Next"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Challenge() {
   const router = useRouter();
@@ -315,8 +426,37 @@ export default function Challenge() {
 
   const [showMessage, setShowMessage] = useState(false);
 
+  const searchParams = useSearchParams();
+  const [tutorialStep, setTutorialStep] = useState(0);
+  
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== 'undefined') {
+      if (searchParams.get('onboarding') === 'true' && 
+          !localStorage.getItem('challengeTutorialComplete')) {
+        setTutorialStep(1);
+      }
+    }
+  }, [searchParams]);
+
+  const handleNextStep = () => {
+    if (tutorialStep === 5) {
+      handleCloseTutorial();
+    } else {
+      setTutorialStep(prev => prev + 1);
+    }
+  };
+
+  const handleCloseTutorial = () => {
+    setTutorialStep(0);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('challengeTutorialComplete', 'true');
+    }
+  };
+
   return (
     <>
+  
       <Head>
         <title>Challenge - CTFGuide</title>
         <meta
