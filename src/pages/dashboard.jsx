@@ -4,7 +4,7 @@ import { StandardNav } from '@/components/StandardNav';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/solid';
 import request from '@/utils/request';
 import ChallengeCard from '@/components/profile/ChallengeCard';
 import { BoltIcon, RocketLaunchIcon, TrophyIcon } from '@heroicons/react/20/solid';
@@ -16,6 +16,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import OnboardingModal from '@/components/modals/OnboardingModal';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
+import timeTracker from '@/utils/timeTracker';
+import Tooltip from '@/components/Tooltip';
 
 const includedFeatures = [
   'Priority machine access',
@@ -49,6 +51,7 @@ export default function Dashboard() {
   ]
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [completedTasks, setCompletedTasks] = useState(null);
+  const [timeProgress, setTimeProgress] = useState(null);
 
   useEffect(() => {
     const user = localStorage.getItem('username');
@@ -200,6 +203,20 @@ export default function Dashboard() {
     // The API endpoint will handle updating the database
   };
 
+  useEffect(() => {
+    const checkTimeProgress = async () => {
+      const progress = await timeTracker.getWeeklyProgress();
+      if (progress) {
+        setTimeProgress(progress);
+      }
+    };
+
+    checkTimeProgress();
+    const interval = setInterval(checkTimeProgress, 300000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Head>
@@ -220,10 +237,11 @@ export default function Dashboard() {
         <StandardNav />
         <DashboardHeader />
         <main className="animate__animated animate__fadeIn">
-          <div className="flex flex-col lg:flex-row md:mt-8 lg:mt-8 items-start p-4 mx-auto gap-4 max-w-7xl text-neutral-50">
+          <div className="flex flex-col lg:flex-row md:mt-8 lg:mt-8 items-start  mx-auto  max-w-7xl text-neutral-50">
             <div className='w-full'>
               {completedTasks && (!completedTasks.profilePicture || !completedTasks.firstChallenge) && (
-                <div className='w-full p-6 animate__animated animate_fadeIn bg-neutral-800/50 rounded-lg '>
+         <div className='px-4'>
+         <div className='w-full p-4 animate__animated animate_fadeIn bg-neutral-800/50 rounded-lg '>
                   <h1 className='text-2xl font-semibold flex align-middle'>
                     Onboarding Tasks
                     <span 
@@ -265,9 +283,83 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
+                </div>
               )}
 
               <div className='w-full p-4'>
+                {/* Add after the onboarding tasks section */}
+{timeProgress && (
+  <div className='w-full p-6 bg-neutral-800/50 rounded-lg mb-4'>
+    <h1 className='text-2xl font-semibold align-middle mb-4'>
+      Weekly Progress 
+      <Tooltip>
+        <div className='ml-1 text-xs text-neutral-400 cursor-help hover:text-neutral-300 transition-colors'>
+          beta
+        </div>
+        <div className="absolute z-10 bg-neutral-800 text-white text-sm w-[320px] px-4 py-2 rounded-md shadow-lg">
+          <div className="flex flex-col gap-1">
+            <p>This is an experimental feature.</p>
+            <button 
+              onClick={() => window.location.href = '/report'}
+              className="text-blue-400 hover:text-blue-300 text-left"
+            >
+              Click here to report an issue →
+            </button>
+          </div>
+        </div>
+      </Tooltip>
+    </h1>
+    
+    <div className='space-y-4'>
+      {/* Progress Bar */}
+      <div className='w-full bg-neutral-700 rounded-full h-2 overflow-hidden'>
+        <div 
+          className={`h-full rounded-full transition-all duration-500 ${
+            timeProgress.onTrack ? 'bg-green-500' : 'bg-yellow-500'
+          }`}
+          style={{ width: `${timeProgress.progressPercentage}%` }}
+        />
+      </div>
+
+      {/* Stats */}
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm'>
+        <div className='bg-neutral-700/50 p-4 rounded-lg'>
+          <p className='text-neutral-400'>Time Spent</p>
+          <p className='text-xl font-semibold'>
+            {Math.round(timeProgress.totalMinutesSpent / 60)}h {timeProgress.totalMinutesSpent % 60}m
+          </p>
+        </div>
+        
+        <div className='bg-neutral-700/50 p-4 rounded-lg'>
+          <p className='text-neutral-400'>Weekly Goal</p>
+          <p className='text-xl font-semibold'>
+            {Math.round(timeProgress.weeklyGoalMinutes / 60)}h
+          </p>
+        </div>
+
+        <div className='bg-neutral-700/50 p-4 rounded-lg'>
+          <p className='text-neutral-400'>Days Left</p>
+          <p className='text-xl font-semibold'>
+            {timeProgress.daysLeft} days
+          </p>
+        </div>
+      </div>
+
+      {/* Status Message */}
+      <div className={`p-4 rounded-lg ${
+        timeProgress.onTrack ? 'bg-green-900/20 text-green-500' : 'bg-yellow-900/20 text-yellow-500'
+      }`}>
+        <p className='font-medium'>
+          {timeProgress.onTrack 
+            ? `You're on track! ${Math.round(timeProgress.progressPercentage)}% of your weekly goal complete.`
+            : `You're behind schedule. ${Math.round(timeProgress.progressPercentage)}% complete with ${timeProgress.daysLeft} days left.`
+          }
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
                 <h1 className='text-2xl mb-6 font-semibold'>Recommended Challenges</h1>
                 <div className='flex flex-col md:flex-row lg:flex-col xl:flex-row justify-between gap-4 w-full'>
                   {loading ? <><ChallengeCard /><ChallengeCard /></> : (

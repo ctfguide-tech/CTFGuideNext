@@ -38,6 +38,7 @@ import SearchModal from './nav/SearchModal';
 import SpawnTerminal from './nav/SpawnTerminal';
 import { Context } from '@/context';
 import { useContext } from 'react';
+import timeTracker from '@/utils/timeTracker';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -232,6 +233,41 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [panelRef]);
+
+  // Add time tracking effect at the top level
+  const timeTrackerInitialized = useRef(false);
+
+  useEffect(() => {
+    // Only initialize once and only if user is logged in
+    if (!timeTrackerInitialized.current && !guestAllowed) {
+      console.log('Initializing time tracker');
+      timeTracker.startTracking();
+      timeTrackerInitialized.current = true;
+
+      // Cleanup function
+      return () => {
+        console.log('Cleaning up time tracker');
+        timeTracker.stopTracking();
+      };
+    }
+  }, [guestAllowed]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('Page hidden - syncing time');
+        timeTracker.syncWithServer();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Sync when component unmounts
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      timeTracker.syncWithServer();
+    };
+  }, []);
 
   return (
     <>
