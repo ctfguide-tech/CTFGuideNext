@@ -83,5 +83,5 @@ export function Footer() {
         </div>
       </Container>
     </footer>
-  );
+  )
 }
