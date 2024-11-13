@@ -623,7 +623,7 @@ function TabLink({ tabName, selected, url, className }) {
     'Hints': 'fas fa-question text-red-500',
     'Description': 'fas fa-info-circle text-blue-500',
     'AI': 'fas fa-robot text-orange-500',
-  }[tabName] || 'fas fa-file-alt text-blue-500';
+  }[tabName] || 'fas fa-file-alt text-blue-500'
 
   return (
     <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full ${className}`}>
@@ -1069,7 +1069,7 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
                 </h3>
                
                 </div>
-                <p className="text-sm text-blue-500 font-semibold" onClick={() => window.location.href = `../../users/${writeup.user.username}`}>@{writeup.user.username}</p>
+                <p className="text-sm text-blue-500 font-semibold">@{writeup.user.username}</p>
 
               </div>
               <div className="ml-auto mt-2">
@@ -1274,42 +1274,46 @@ function LeaderboardPage({ cache, setCache }) {
       </div>
 
       {leaderboard.length > 0 ? (
-        leaderboard.slice(0, 10).map((entry, index) => {
-          let color;
-          switch (index) {
-            case 0:
-              color = "from-yellow-700 to-yellow-800"; // gold
-              break;
-            case 1:
-              color = "from-gray-700 to-gray-800"; // silver
-              break;
-            case 2:
-              color = "from-orange-800 to-orange-900"; // bronze
-              break;
-            default:
-              color = "bg-neutral-700"; // default color for others
-          }
-          return (
-            <div className="px-3" key={index}>
-              <div className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
-                <div className="flex items-center justify-between align-middle">
-                  <img
-                    src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
-                    className="w-8 h-8 mr-2 rounded-full"
-                    alt={`${entry.user.username}'s profile`}
-                  />
-                  <span className="text-2xl font-bold">{index + 1}.</span>
-                  <span className="ml-2 text-xl font-semibold text-white">
-                    <Link href={`/users/${entry.user.username}`}>
-                      {entry.user.username}
-                    </Link>
-                  </span>
+        <div className="px-1 overflow-y-auto max-h-[calc(100vh-40px)] relative">
+          {leaderboard.slice(0, 10).map((entry, index) => {
+            let color;
+            switch (index) {
+              case 0:
+                color = "from-yellow-700 to-yellow-800"; // gold
+                break;
+              case 1:
+                color = "from-gray-700 to-gray-800"; // silver
+                break;
+              case 2:
+                color = "from-orange-800 to-orange-900"; // bronze
+                break;
+              default:
+                color = "bg-neutral-700"; // default color for others
+            }
+            return (
+              <div className="px-3" key={index}>
+                <div className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
+                  <div className="flex items-center justify-between align-middle">
+                    <img
+                      src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
+                      className="w-8 h-8 mr-2 rounded-full"
+                      alt={`${entry.user.username}'s profile`}
+                    />
+                    <span className="text-2xl font-bold">{index + 1}.</span>
+                    <span className="ml-2 text-xl font-semibold text-white">
+                      <Link href={`/users/${entry.user.username}`}>
+                        {entry.user.username}
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="text-xl font-semibold">{entry.points} points</div>
                 </div>
-                <div className="text-xl font-semibold">{entry.points} points</div>
               </div>
-            </div>
-          )
-        })
+            )
+          })}
+          {/* Add fade-out overlay that stays anchored */}
+          <div className="sticky bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-neutral-800 to-transparent pointer-events-none"></div>
+        </div>
       ) : (
         <div className="px-3">
           <div className="flex justify-center items-center py-2 px-2 bg-neutral-900 rounded-lg my-2">
