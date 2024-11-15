@@ -272,7 +272,19 @@ export default function Challenge() {
       }
       setContainerId(data.containerId);
       setFoundTerminal(true);
-      setMinutesRemaining(60);
+      try {
+        const accountResponse = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null);
+        
+        if (accountResponse.role === 'PRO') {
+          setMinutesRemaining(120);
+        } else {
+          setMinutesRemaining(60);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        
+        setMinutesRemaining(60); // Default to 60 minutes if there's an error
+      }
 
       // Wait for 5 seconds before setting the terminal URL
       setTimeout(() => {
@@ -340,9 +352,13 @@ export default function Challenge() {
   };
 
   function formatTime(minutes) {
-    const mins = Math.floor(minutes);
-    const secs = Math.floor((minutes - mins) * 60);
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    const hours = Math.floor(minutes / 60);
+    const mins = Math.floor(minutes % 60);
+    
+    if (hours > 0) {
+      return `${hours}:${String(mins).padStart(2, '0')}`;
+    }
+    return `${String(mins).padStart(2, '0')}:00`;
   }
 
   useEffect(() => {
