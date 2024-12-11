@@ -217,7 +217,7 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
             <p>Kshitij Kochhar</p>
             <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
             </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
+            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
             <p>Kristopher Hicks</p>
             <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
             </div>
@@ -229,11 +229,11 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
             <p>Anindya Das</p>
             <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
             </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
+            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
             <p>Sai Rangineeni</p>
             <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
             </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
+            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
             <p>Ben Haulk</p>
             <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
             </div>
@@ -241,7 +241,7 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
             <p>Travis Peck</p>
             <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
             </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
+            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
             <p>Ishan Voleti</p>
             <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
             </div>
