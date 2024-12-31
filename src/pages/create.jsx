@@ -146,19 +146,19 @@ export default function Create() {
     try {
       switch (selection) {
         case 'unverified':
-          setTitle('Unverified');
+          setTitle('Unverified Challenges');
           setInfoText(
             'Please wait for admins to approve unverified challenges!'
           );
           response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=unverified`, "GET", null);
           break;
         case 'pending':
-          setTitle('Pending Changes');
+          setTitle('Pending Challenges');
           setInfoText('These challenges are awaiting changes!');
           response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account/challenges?state=pending`, "GET", null);
           break;
         case 'published':
-          setTitle('Published');
+          setTitle('Published Challenges');
           setInfoText(
             'These challenges are live! Share them with your friends!'
           );
@@ -415,21 +415,21 @@ export default function Create() {
                             className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
                             onClick={async () => fetchChallenges('unverified')}
                           >
-                            Unverified
+                            Unverified Challenges
                           </a>
                           <a
                             href="#"
                             className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
                             onClick={async () => fetchChallenges('pending')}
                           >
-                            Pending Changes
+                            Pending Challenges
                           </a>
                           <a
                             href="#"
                             className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
                             onClick={async () => fetchChallenges('published')}
                           >
-                            Published
+                            Published Challenges
                           </a>
                         </div>
                       </HeadlessPopover.Panel>
@@ -557,53 +557,72 @@ export default function Create() {
                       <div className="mt-4 flow-root">
                         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
-                              <thead>
-                                <tr>
-                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Writeup Name
-                                  </th>
-                                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
-                                    Challenge Name
-                                  </th>
+                            <div className="overflow-y-auto max-h-96"> {/* Cap the height */}
+                              <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
+                                <thead>
+                                  <tr>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                                      Writeup Name
+                                    </th>
+                                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
+                                      Challenge Name
+                                    </th>
 
-                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Last Updated
-                                  </th>
-                                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                                    <span className="sr-only">Edit</span>
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody className="bg-neutral-800">
-                                {writeups.map((writeup) => (
-                                  <tr key={writeup.title} className="even:bg-neutral-900">
-
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
-                                      {writeup.draft &&
-                                        <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
-                                      }
-
-                                      {!writeup.draft &&
-                                        <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
-                                      }
-
-                                      {writeup.title} </td>
-                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
-                                      {writeup.challenge.title}
-                                    </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-
-                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                      <a href={`/create/editor?cid=${writeup.id}`} className="text-blue-600 hover:text-blue-900">
-                                        Edit<span className="sr-only">, {writeup.title}</span>
-                                      </a>
-                                    </td>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                                      Last Updated
+                                    </th>
+                                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                      <span className="sr-only">Edit</span>
+                                    </th>
                                   </tr>
-                                )) || <Skeleton containerClassName='tbody' className='mb-4' baseColor='#999' count={2} />
-                                }
-                              </tbody>
-                            </table>
+                                </thead>
+                                <tbody className="bg-neutral-800">
+                                  {currentWriteups.map((writeup) => (
+                                    <tr key={writeup.title} className="even:bg-neutral-900">
+
+                                      <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
+                                        {writeup.draft &&
+                                          <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
+                                        }
+
+                                        {!writeup.draft &&
+                                          <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
+                                        }
+
+                                        {writeup.title} </td>
+                                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
+                                        {writeup.challenge.title}
+                                      </td>
+                                      <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+
+                                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                                        <a href={`/create/editor?cid=${writeup.id}`} className="text-blue-600 hover:text-blue-900">
+                                          Edit<span className="sr-only">, {writeup.title}</span>
+                                        </a>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+
+                            <div className="flex justify-between mt-4">
+                              <button
+                                onClick={handlePreviousPage}
+                                disabled={currentPage === 1}
+                                className="bg-neutral-700/50 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm"
+                              >
+                                Previous
+                              </button>
+                              <span className="text-white text-sm">Page {currentPage} of {totalPages}</span>
+                              <button
+                                onClick={handleNextPage}
+                                disabled={currentPage === totalPages}
+                                className="bg-neutral-700/50 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm"
+                              >
+                                Next
+                              </button>
+                            </div>
                           </div>
 
                         </div>
@@ -824,7 +843,7 @@ export default function Create() {
                 <div className="pt-6 pb-2">
                   <h2 className="text-2xl text-white ">Challenge Notifications</h2>
                 </div>
-                <div>
+                <div className='hidden'>
                   <ul role="list" className=" divide-y divide-neutral-800 list-none">
                     {notifications.length > 0 ? (
                       notifications.slice(0, 3).map((notification) => (

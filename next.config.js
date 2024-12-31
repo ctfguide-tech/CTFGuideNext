@@ -6,25 +6,15 @@ const withPWA = require('next-pwa')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { dev }) => {
-    if (!dev) {
-      config.plugins = config.plugins.filter(
-        (plugin) => plugin.constructor.name !== 'ESLintWebpackPlugin'
-      );
-    }
-
-    return config;
-  },
   reactStrictMode: false,
   eslint: {
     ignoreDuringBuilds: true,
   },
   experimental: {
     scrollRestoration: true,
-    esmExternals: true, // Add this to ensure esmExternals is true
+    esmExternals: 'loose',
   },
-  ignoreDuringBuilds: true,
-  transpilePackages: ['react-md-editor']
+  transpilePackages: ['@uiw/react-md-editor', '@uiw/react-markdown-preview'],
 };
 
 module.exports = withPWA(removeImports(nextConfig));

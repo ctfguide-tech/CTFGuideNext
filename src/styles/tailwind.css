@@ -218,6 +218,7 @@ html {
 
 }
 
+
 body {
   background-color:#0A0A0A;
   font-family: 'Poppins', sans-serif;
@@ -427,7 +428,7 @@ ul {
 }
 
 .fade-in {
-  animation: fadeIn 2s forwards;
+  animation: fadeIn 0.1s forwards;
 }
 
 .fade-out {
