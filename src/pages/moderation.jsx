@@ -13,6 +13,7 @@ import request from '@/utils/request';
 import { MyTable } from '@/components/Table';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import ViewChallenge from '@/components/moderation/ViewChallenge';
+import ViewReport from '@/components/moderation/ViewReport';
 
 export default function Competitions() {
   const [selectedChallenges, setSelectedChallenges] = useState([]);
@@ -25,6 +26,8 @@ export default function Competitions() {
   
   
   const [bonusPoints, setBonusPoints] = useState(0);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [reportIsOpen, setReportIsOpen] = useState(false);
 
   
   // get reports
@@ -323,7 +326,7 @@ export default function Competitions() {
   return (
     <>
       <Head>
-        <title>Leaderboards - CTFGuide</title>
+        <title>CTFGuide Moderation Panel</title>
         <meta name="description" content="Practice Problems" />
         <style>
           @import url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
@@ -423,9 +426,33 @@ export default function Competitions() {
               <div className='mt-2'>
                 {reports && reports.length > 0 ? (
                   reports.map((report) => (
-                    <div key={report.id} className='bg-neutral-800 w-full mb-2 border focus:bg-blue-900 focus:border-blue-500 border-neutral-700 hover:bg-neutral-700/50 cursor-pointer px-2 py-1 flex items-center text-sm'>
+                    <div 
+                      key={report.id} 
+                      className={`w-full mb-2 border focus:bg-blue-900 focus:border-blue-500 border-neutral-700 hover:bg-neutral-700/50 cursor-pointer px-2 py-1 flex items-center text-sm ${
+                        JSON.parse(report.metadata).severity === 'HIGH' ? 'bg-red-900/20' :
+                        JSON.parse(report.metadata).severity === 'MEDIUM' ? 'bg-yellow-900/20' :
+                        JSON.parse(report.metadata).severity === 'LOW' ? 'bg-blue-900/20' :
+                        'bg-neutral-800'
+                      }`}
+                      onClick={() => {
+                        setSelectedReport(report);
+                        setReportIsOpen(true);
+                      }}
+                    >
                       <div className='flex-grow'>
-                        <h1 className='text-sm text-left ml-4'>{report.type} REPORT</h1>
+                        <h1 className='text-sm text-left ml-4'>
+                          {report.type} REPORT
+                          {report.metadata?.severity && (
+                            <span className={`ml-2 px-2 py-0.5 rounded text-xs ${
+                              report.metadata.severity === 'HIGH' ? 'bg-red-600 text-white' :
+                              report.metadata.severity === 'MEDIUM' ? 'bg-yellow-600 text-white' :
+                              report.metadata.severity === 'LOW' ? 'bg-blue-600 text-white' :
+                              'bg-neutral-600 text-white'
+                            }`}>
+                              {report.metadata.severity}
+                            </span>
+                          )}
+                        </h1>
                       </div>  
                       <div className='ml-auto text-right'>
                         <p className='text-sm'>Reported by <span className='font-bold'>{report.userId}</span></p>
@@ -487,6 +514,7 @@ export default function Competitions() {
         </main>
         <div className='flex w-full h-full grow basis-0'></div>
         <ViewChallenge open={challengeIsOpen} setOpen={setChallengeIsOpen} selected={selectedId} />
+        <ViewReport open={reportIsOpen} setOpen={setReportIsOpen} report={selectedReport}  />
         <Footer />
       </div>
     </>

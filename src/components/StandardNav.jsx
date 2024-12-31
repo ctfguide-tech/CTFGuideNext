@@ -38,6 +38,7 @@ import SearchModal from './nav/SearchModal';
 import SpawnTerminal from './nav/SpawnTerminal';
 import { Context } from '@/context';
 import { useContext } from 'react';
+import timeTracker from '@/utils/timeTracker';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -233,6 +234,41 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     };
   }, [panelRef]);
 
+  // Add time tracking effect at the top level
+  const timeTrackerInitialized = useRef(false);
+
+  useEffect(() => {
+    // Only initialize once and only if user is logged in
+    if (!timeTrackerInitialized.current && !guestAllowed) {
+      console.log('Initializing time tracker');
+      timeTracker.startTracking();
+      timeTrackerInitialized.current = true;
+
+      // Cleanup function
+      return () => {
+        console.log('Cleaning up time tracker');
+        timeTracker.stopTracking();
+      };
+    }
+  }, [guestAllowed]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('Page hidden - syncing time');
+        timeTracker.syncWithServer();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Sync when component unmounts
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      timeTracker.syncWithServer();
+    };
+  }, []);
+
   return (
     <>
       {isPopoverOpen && (
@@ -421,7 +457,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       className="tooltip mb-0 ml-4 flex cursor-pointer items-center space-x-2 rounded-lg px-4 py-1"
                       style={{ backgroundColor: '#212121', borderWidth: '0px' }}
                     >
-                      <h1 className="mx-auto mb-0 mt-0 text-center font-semibold text-blue-500">
+                      <h1 className="mx-auto mb-0 mt-0 text-center  text-blue-500">
                         <i className="far fa-check-circle"></i> {points}
                       </h1>
                     </div>
@@ -502,7 +538,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               <Link
                                 href={`/users/${username}`}
                                 className={classNames(
-                                  'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                  'flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <UserCircleIcon
@@ -516,7 +552,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               <Link
                                 href="/settings"
                                 className={classNames(
-                                  'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                  'flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <Cog6ToothIcon
@@ -529,7 +565,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <a
                               href="https://ctfguide.hellonext.co/b/feedback"
                               className={classNames(
-                                'hidden flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                'hidden flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <PencilSquareIcon
@@ -541,7 +577,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <Link
                               href="/report"
                               className={classNames(
-                                'hidden flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                'hidden flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <ShieldExclamationIcon
@@ -551,11 +587,24 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               Report
                             </Link>
 
+                            <Link
+                              href="/report"
+                              className={classNames(
+                                ' flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
+                              )}
+                            >
+                              <ShieldExclamationIcon
+                                className="mr-4 block h-6 w-6"
+                                aria-hidden="true"
+                              />
+                              Report an Issue
+                            </Link>
+
                             {role === 'ADMIN' && (
                               <Link
                                 href="/moderation"
                                 className={classNames(
-                                  'flex w-full px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                  'flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                                 )}
                               >
                                 <ShieldCheckIcon
@@ -569,7 +618,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             <button
                               onClick={logout}
                               className={classNames(
-                                'flex w-full cursor-pointer px-4 py-3 font-semibold text-neutral-50 hover:bg-neutral-700'
+                                'flex w-full cursor-pointer px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                               )}
                             >
                               <ArrowRightIcon
@@ -669,7 +718,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   <div className="px-4">
                     <div
                       type="text"
-                      className="flex w-full items-center rounded-lg border border-transparent bg-neutral-800 px-4 py-2 text-sm font-semibold text-neutral-500 placeholder-gray-300 hover:cursor-pointer hover:text-neutral-50 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex w-full items-center rounded-lg border border-transparent bg-neutral-800 px-4 py-2 text-sm  text-neutral-500 placeholder-gray-300 hover:cursor-pointer hover:text-neutral-50 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                       onClick={() => setShowSearchModal(true)}
                     >
                       <FontAwesomeIcon

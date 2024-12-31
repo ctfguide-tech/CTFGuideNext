@@ -8,6 +8,8 @@ const WriteupModal = ({ isOpen, onClose, writeup }) => {
   const [downvotes, setDownvotes] = useState(writeup?.downvotes || 0);
   const [authorPfp, setAuthorPfp] = useState('');
 
+
+
   useEffect(() => {
     async function fetchAuthorPfp(username) {
       try {
@@ -71,6 +73,13 @@ const WriteupModal = ({ isOpen, onClose, writeup }) => {
             </p>
           </div>
           <div className="mt-4">
+            { hasVideo &&
+            <div className='text-white bg-neutral-900/50 border border-neutral-800/50 rounded-lg p-4 mt-2'>
+              <iframe width="100%" height="315" src={`https://www.youtube.com/embed/${getEmbedUrl(videoLink)}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+            </div>
+            }
+      
+
             <MarkdownViewer content={writeup.content} />
           </div>
           <div className="mt-4 text-right">

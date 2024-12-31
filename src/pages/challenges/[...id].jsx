@@ -21,7 +21,119 @@ import Confetti from 'react-confetti';
 import { Context } from '@/context';
 import { useRef } from 'react';
 import WriteupModal from '@/components/WriteupModal';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useSearchParams } from 'next/navigation';
 
+// Move styles to a separate useEffect
+function useHighlightStyles() {
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes highlight-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5) }
+        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0) }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0) }
+      }
+      
+      .tutorial-highlight {
+        animation: highlight-pulse 2s infinite;
+        position: relative;
+        z-index: 45;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Cleanup
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+}
+
+function TutorialOverlay({ step, onNext, onClose }) {
+  useHighlightStyles(); // Use the styles hook
+
+  const steps = {
+    1: {
+      title: "Welcome to CTFGuide!",
+      content: "Let's walk through how to solve challenges.",
+      position: "center",
+    },
+    2: {
+      title: "Challenge Description",
+      content: "Here you'll find all the details about your mission and any files you need.",
+      position: "right",
+      highlight: ".challenge-description"
+    },
+    3: {
+      title: "Terminal Environment",
+      content: "This is your hacking workspace. You'll use this terminal to solve challenges.",
+      position: "left",
+      highlight: ".challenge-terminal"
+    },
+    4: {
+      title: "Submit Your Flag",
+      content: "Once you find the flag, submit it here to complete the challenge!",
+      position: "top",
+      highlight: ".flag-submission"
+    },
+    5: {
+      title: "Ready to Start!",
+      content: "You're all set to begin solving challenges. Good luck!",
+      position: "center",
+    }
+  };
+
+  const currentStep = steps[step];
+
+  // Add highlight effect to current element
+  useEffect(() => {
+    if (currentStep.highlight) {
+      const element = document.querySelector(currentStep.highlight);
+      if (element) {
+        element.classList.add('tutorial-highlight');
+        return () => element.classList.remove('tutorial-highlight');
+      }
+    }
+  }, [step, currentStep.highlight]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/70" onClick={onClose}></div>
+      
+      <div className="relative bg-neutral-800 rounded-lg p-6 max-w-md mx-4 shadow-xl">
+        <h2 className="text-xl font-bold text-white mb-2">{currentStep.title}</h2>
+        <p className="text-gray-300 mb-6">{currentStep.content}</p>
+        
+        <div className="flex justify-center gap-2 mb-4">
+          {Object.keys(steps).map((stepNum) => (
+            <div 
+              key={stepNum}
+              className={`w-2 h-2 rounded-full ${
+                parseInt(stepNum) === step ? 'bg-blue-500' : 'bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-between">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm text-gray-300 hover:text-white"
+          >
+            Skip
+          </button>
+          <button
+            onClick={onNext}
+            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 rounded"
+          >
+            {step === Object.keys(steps).length ? "Finish" : "Next"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Challenge() {
   const router = useRouter();
@@ -160,7 +272,19 @@ export default function Challenge() {
       }
       setContainerId(data.containerId);
       setFoundTerminal(true);
-      setMinutesRemaining(60);
+      try {
+        const accountResponse = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null);
+        
+        if (accountResponse.role === 'PRO') {
+          setMinutesRemaining(120);
+        } else {
+          setMinutesRemaining(60);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        
+        setMinutesRemaining(60); // Default to 60 minutes if there's an error
+      }
 
       // Wait for 5 seconds before setting the terminal URL
       setTimeout(() => {
@@ -228,9 +352,13 @@ export default function Challenge() {
   };
 
   function formatTime(minutes) {
-    const mins = Math.floor(minutes);
-    const secs = Math.floor((minutes - mins) * 60);
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    const hours = Math.floor(minutes / 60);
+    const mins = Math.floor(minutes % 60);
+    
+    if (hours > 0) {
+      return `${hours}:${String(mins).padStart(2, '0')}`;
+    }
+    return `${String(mins).padStart(2, '0')}:00`;
   }
 
   useEffect(() => {
@@ -314,8 +442,37 @@ export default function Challenge() {
 
   const [showMessage, setShowMessage] = useState(false);
 
+  const searchParams = useSearchParams();
+  const [tutorialStep, setTutorialStep] = useState(0);
+  
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== 'undefined') {
+      if (searchParams.get('onboarding') === 'true' && 
+          !localStorage.getItem('challengeTutorialComplete')) {
+        setTutorialStep(1);
+      }
+    }
+  }, [searchParams]);
+
+  const handleNextStep = () => {
+    if (tutorialStep === 5) {
+      handleCloseTutorial();
+    } else {
+      setTutorialStep(prev => prev + 1);
+    }
+  };
+
+  const handleCloseTutorial = () => {
+    setTutorialStep(0);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('challengeTutorialComplete', 'true');
+    }
+  };
+
   return (
     <>
+  
       <Head>
         <title>Challenge - CTFGuide</title>
         <meta
@@ -622,7 +779,7 @@ function TabLink({ tabName, selected, url, className }) {
     'Hints': 'fas fa-question text-red-500',
     'Description': 'fas fa-info-circle text-blue-500',
     'AI': 'fas fa-robot text-orange-500',
-  }[tabName] || 'fas fa-file-alt text-blue-500';
+  }[tabName] || 'fas fa-file-alt text-blue-500'
 
   return (
     <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full ${className}`}>
@@ -711,7 +868,56 @@ function HintsPage({ cache }) {
 
 
 function DescriptionPage({ cache, fileIDName, fileIDLink }) {
+
+
   const { challenge } = cache;
+
+  const [solvesData, setSolvesData] = useState([]);
+  const [creatorMode, setCreatorMode] = useState(false); // Add state for creator mode
+
+  const [insights, setInsights] = useState({
+    solves: 0,
+    attempts: 0,
+    solvesLast30Days: 0,
+    attemptsLast30Days: 0,
+  });
+
+  useEffect(() => {
+    const fetchSolvesData = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights/solvesLast10Days`, 'GET', null);
+        setSolvesData(response);
+        console.log(response);
+      } catch (error) {
+        console.error('Failed to fetch solves data: ', error);
+      }
+    };
+
+    const fetchCreatorMode = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
+        setCreatorMode(response.creatorMode);
+        console.log(response.creatorMode);
+      } catch (error) { 
+        console.error('Failed to fetch creator mode: ', error);
+      }
+    };
+
+    const fetchInsights = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights`, 'GET', null);
+        setInsights(response);
+        console.log(response);
+      } catch (error) {
+        console.error('Failed to fetch solves data: ', error);
+      }
+    };
+
+    fetchSolvesData();
+    fetchInsights();
+    fetchCreatorMode();
+  }, [challenge]);
+
   const [challengeData, setChallengeData] = useState(null);
   const [authorPfp, setAuthorPfp] = useState(null);
   const { username } = useContext(Context);
@@ -821,8 +1027,43 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
             ) : (
               <p>You may need to boot the terminal to see the associated files.</p>
             )}
-            
-            
+            <hr className="border-neutral-700 mt-4"></hr>
+            {creatorMode && (
+              <>
+                <hr className="border-neutral-700 mt-4"></hr>
+                <div className="w-full mt-10 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 rounded-sm text-white mx-auto items-center text-blue-500">
+                  <div className="bg-neutral-800/40 px-4 py-1 pb-3">
+                    <h1 className="text-lg mt-2"><i className="fas fa-lightbulb mr-2"></i>Creator Insights</h1>
+                  </div>
+                  <div className="grid grid-cols-4 w-full mt-2 px-5 py-2">
+                    <div>
+                      <h1 className="text-md">Solves</h1>
+                      <p className="text-xl">{insights.solves}</p>
+                    </div>
+                    <div>
+                      <h1 className="text-md">Attempts</h1>
+                      <p className="text-xl">{insights.attempts}</p>
+                    </div>
+                    <div>
+                      <h1 className="text-md">Solves <span className="text-neutral-500 text-sm">(30d)</span></h1>
+                      <p className="text-xl text-white">{insights.solvesLast30Days}</p>
+                    </div>
+                    <div>
+                      <h1 className="text-md">Attempts <span className="text-neutral-500 text-sm">(30d)</span></h1>
+                      <p className="text-xl text-white">{insights.attemptsLast30Days}</p>
+                    </div>
+                  </div>
+                  <br />
+                  <LineChart className="mb-3" width={600} height={300} data={solvesData}>
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <Line type="monotone" dataKey="solves" stroke="#8884d8" />
+                  </LineChart>
+                  <br />
+                </div>
+              </>
+            )}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
@@ -919,6 +1160,15 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
 
 
   const [temp, setTemp] = useState(null);
+  const [hasVideo, setHasVideo] = useState(false);
+  const [videoLink, setVideoLink] = useState('');
+
+
+  const getEmbedUrl = (url) => {
+    const videoId = url.split('v=')[1];
+    const ampersandPosition = videoId.indexOf('&');
+    return ampersandPosition !== -1 ? videoId.substring(0, ampersandPosition) : videoId;
+  };
 
 
   const openModal = async (writeup) => {
@@ -928,6 +1178,8 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
       const response = await request(url, "GET", null);
       temp.content = response.content;
       setUpvotes(response.upvotes);
+      setHasVideo(response.hasVideo);
+      setVideoLink(response.videoUrl);
       setDownvotes(response.downvotes);
       setSelectedWriteup(temp);
     } catch(err) {
@@ -960,8 +1212,20 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
           }} className='mb-2 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto '>
             <div className='w-full flex'>
               <div>
-                <h3 className="text-xl">{writeup.title}</h3>
-                <p className="text-sm text-blue-500 font-semibold" onClick={() => window.location.href = `../../users/${writeup.user.username}`}>@{writeup.user.username}</p>
+                <div>
+                <h3 className="text-xl flex items-center">
+                {writeup.hasVideo && (
+                    <i className="fab fa-youtube text-red-500 mr-2 text-md"></i>
+                  )}
+                    {!writeup.hasVideo && (
+                    <i className="fas fa-book text-indigo-500 mr-2 text-md"></i>
+                  )}
+                  {writeup.title}
+                 
+                </h3>
+               
+                </div>
+                <p className="text-sm text-blue-500 font-semibold">@{writeup.user.username}</p>
 
               </div>
               <div className="ml-auto mt-2">
@@ -1018,6 +1282,11 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
               </div>
 
               <div className="mt-2 text-white overflow-auto">
+                {hasVideo &&
+                <div className='text-white  rounded-lg mb-4'>
+                  <iframe width="100%" height="415" src={`https://www.youtube.com/embed/${getEmbedUrl(videoLink)}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
+                }
                 <MarkdownViewer content={selectedWriteup.content} />
               </div>
 
@@ -1161,42 +1430,46 @@ function LeaderboardPage({ cache, setCache }) {
       </div>
 
       {leaderboard.length > 0 ? (
-        leaderboard.slice(0, 10).map((entry, index) => {
-          let color;
-          switch (index) {
-            case 0:
-              color = "from-yellow-700 to-yellow-800"; // gold
-              break;
-            case 1:
-              color = "from-gray-700 to-gray-800"; // silver
-              break;
-            case 2:
-              color = "from-orange-800 to-orange-900"; // bronze
-              break;
-            default:
-              color = "bg-neutral-700"; // default color for others
-          }
-          return (
-            <div className="px-3" key={index}>
-              <div className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
-                <div className="flex items-center justify-between align-middle">
-                  <img
-                    src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
-                    className="w-8 h-8 mr-2 rounded-full"
-                    alt={`${entry.user.username}'s profile`}
-                  />
-                  <span className="text-2xl font-bold">{index + 1}.</span>
-                  <span className="ml-2 text-xl font-semibold text-white">
-                    <Link href={`/users/${entry.user.username}`}>
-                      {entry.user.username}
-                    </Link>
-                  </span>
+        <div className="px-1 overflow-y-auto max-h-[calc(100vh-40px)] relative">
+          {leaderboard.slice(0, 10).map((entry, index) => {
+            let color;
+            switch (index) {
+              case 0:
+                color = "from-yellow-700 to-yellow-800"; // gold
+                break;
+              case 1:
+                color = "from-gray-700 to-gray-800"; // silver
+                break;
+              case 2:
+                color = "from-orange-800 to-orange-900"; // bronze
+                break;
+              default:
+                color = "bg-neutral-700"; // default color for others
+            }
+            return (
+              <div className="px-3" key={index}>
+                <div className={`flex justify-between items-center py-2 px-2 bg-gradient-to-r ${color} rounded-lg my-2`}>
+                  <div className="flex items-center justify-between align-middle">
+                    <img
+                      src={entry.user.profileImage || `https://robohash.org/${entry.user.username}.png?set=set1&size=150x150`}
+                      className="w-8 h-8 mr-2 rounded-full"
+                      alt={`${entry.user.username}'s profile`}
+                    />
+                    <span className="text-2xl font-bold">{index + 1}.</span>
+                    <span className="ml-2 text-xl font-semibold text-white">
+                      <Link href={`/users/${entry.user.username}`}>
+                        {entry.user.username}
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="text-xl font-semibold">{entry.points} points</div>
                 </div>
-                <div className="text-xl font-semibold">{entry.points} points</div>
               </div>
-            </div>
-          )
-        })
+            )
+          })}
+          {/* Add fade-out overlay that stays anchored */}
+          <div className="sticky bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-neutral-800 to-transparent pointer-events-none"></div>
+        </div>
       ) : (
         <div className="px-3">
           <div className="flex justify-center items-center py-2 px-2 bg-neutral-900 rounded-lg my-2">
@@ -1603,4 +1876,3 @@ function DeleteCommentModal({ isOpen, onClose, onConfirm }) {
     </Dialog>
   );
 }
-

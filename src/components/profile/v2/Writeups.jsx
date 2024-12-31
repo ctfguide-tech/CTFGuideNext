@@ -8,7 +8,16 @@ const Writeups = ({ user }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedWriteup, setSelectedWriteup] = useState(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
+  
+
+    const getEmbedUrl = (url) => {
+        const videoId = url.split('v=')[1];
+        const ampersandPosition = videoId.indexOf('&');
+        return ampersandPosition !== -1 ? videoId.substring(0, ampersandPosition) : videoId;
+      };
+    
 
     useEffect(() => {
         const fetchWriteups = async () => {
@@ -20,6 +29,8 @@ const Writeups = ({ user }) => {
             try {
                 const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.username}/writeups`, 'GET', null);
                 setWriteups(response);
+                console.log("==========")
+                console.log(response)
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -31,8 +42,10 @@ const Writeups = ({ user }) => {
     }, [user]);
 
     const openModal = (writeup) => {
-        setSelectedWriteup(writeup);
-        setIsModalOpen(true);
+        if(window.confirm("Are you sure you want to view this writeup? You will not earn points for this challenge.")) {
+            setSelectedWriteup(writeup);
+            setIsModalOpen(true);
+        }
     };
 
     const closeModal = () => {
@@ -90,6 +103,12 @@ const Writeups = ({ user }) => {
                                 Authored by <span onClick={() => window.location.href = `../../users/${user.username}`} className='text-blue-500 cursor-pointer'>{user.username}</span> for challenge <span onClick={() => window.location.href = `../../challenges/${selectedWriteup.challengeId}`} className='text-yellow-500 cursor-pointer'>{selectedWriteup.challenge.title}</span>.
                             </p>
                             <div className="mt-2">
+                              
+                            {selectedWriteup.hasVideo &&
+                <div className='text-white  rounded-lg mb-4'>
+                  <iframe width="100%" height="415" src={`https://www.youtube.com/embed/${getEmbedUrl(selectedWriteup.videoUrl)}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
+                }
                                 <MarkdownViewer content={selectedWriteup.content} />
                             </div>
 

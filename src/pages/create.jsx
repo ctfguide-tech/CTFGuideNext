@@ -20,6 +20,8 @@ import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 
 export default function Create() {
   const router = useRouter();
@@ -254,26 +256,51 @@ export default function Create() {
     fetchNotifications();
   }, []);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of items per page
+  const [showCreatorMode, setShowCreatorMode] = useState(null);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentWriteups = writeups.slice(indexOfFirstItem, indexOfLastItem);
+  const [isEnableModalOpen, setIsEnableModalOpen] = useState(false);
+  const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
 
-  const totalPages = Math.ceil(writeups.length / itemsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+  const handleEnableCreatorMode = async () => {
+    try {
+      await request(`${process.env.NEXT_PUBLIC_API_URL}/account/creatorMode`, 'POST', { creatorMode: true });
+      setIsEnableModalOpen(false);
+      // Additional logic to enable creator mode
+      setCreatorMode(true);
+      setShowCreatorMode(true);
+      toast.success('Creator mode enabled successfully');
+    } catch (error) {
+      console.error('Error enabling creator mode:', error);
+      toast.error('Failed to enable creator mode');
     }
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+  const handleDisableCreatorMode = async () => {
+    try {
+      await request(`${process.env.NEXT_PUBLIC_API_URL}/account/creatorMode`, 'POST', { creatorMode: false });
+      setIsDisableModalOpen(false);
+      setCreatorMode(false);
+      setShowCreatorMode(true);
+      toast.success('Creator mode disabled successfully');
+    } catch (error) {
+      console.error('Error disabling creator mode:', error);
     }
   };
+
+  const [creatorMode, setCreatorMode] = useState(false);
+
+  useEffect(() => {
+    const fetchCreatorMode = async () => {
+      try {
+        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, "GET", null);
+        setCreatorMode(response.creatorMode);
+      } catch (error) {
+        console.error('Error fetching creator mode:', error);
+      }
+    };
+
+    fetchCreatorMode();
+  }, []);
 
   return (
     <>
@@ -510,6 +537,7 @@ export default function Create() {
                   )}
                 </div>
 
+                <hr className='mt-4 border-neutral-800'></hr>
                 <div className=" mt-4  pb-4  ">
                   <div className="flex items-center">
                     <h1 className="flex-1 text-2xl font-medium  text-white">
@@ -606,11 +634,211 @@ export default function Create() {
                 </div>
 
 
+                <hr className='mt-4 border-neutral-700 hidden'></hr>
+                <div className=" mt-4  pb-4 hidden ">
+                  <div className="flex items-center">
+                    <h1 className="flex-1 text-2xl font-medium  text-white">
+                      <div className="flex">
+                        Your Learn Modules
+                        <div className='ml-auto'>
+                          <button onClick={() => { setIsCreating(true) }} className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Draft Module</button>
+
+                        </div>
+
+
+
+                      </div>
+
+
+
+                      <div className="mt-4 flow-root">
+                        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
+                              <thead>
+                                <tr>
+                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                                    Module Name
+                                  </th>
+                              
+
+                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
+                                    Last Updated
+                                  </th>
+                                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                    <span className="sr-only">Edit</span>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-neutral-800">
+                                {writeups.map((writeup) => (
+                                  <tr key={writeup.title} className="even:bg-neutral-900">
+
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
+                                      {writeup.draft &&
+                                        <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
+                                      }
+
+                                      {!writeup.draft &&
+                                        <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
+                                      }
+
+                                      {writeup.title} </td>
+                                   
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+
+                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                                        <button className='bg-neutral-700 text-sm shadow-sm hover:bg-neutral-700/90 px-2 py-1 text-white rounded-sm mr-3'>Open in Studio</button>
+                                      </td>
+                                  </tr>
+                                )) || <Skeleton containerClassName='tbody' className='mb-4' baseColor='#999' count={2} />
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+                      </div>
+                    </h1>
+
+
+                  </div>
+                </div>
+
 
               </div>
             </div>
 
-            <div className="  hidden  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0 ">
+            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0 ">
+       
+              <button
+                className={`mb-4 float-right ${creatorMode ? 'bg-blue-700 hover:bg-blue-700/90' : 'bg-blue-700 hover:bg-blue-700/90'} text-sm shadow-sm px-2 py-1 text-white rounded-sm mr-3`}
+                onClick={() => creatorMode ? setIsDisableModalOpen(true) : setIsEnableModalOpen(true)}
+              >
+                {creatorMode ? 'Disable Creator Mode' : 'Enable Creator Mode'}
+              </button>
+             
+
+              <Transition appear show={isEnableModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-10" onClose={() => setIsEnableModalOpen(false)}>
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <div className="fixed inset-0 bg-black bg-opacity-25" />
+                  </Transition.Child>
+
+                  <div className="fixed inset-0 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                      >
+                        <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                          <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                            Enable Creator Mode <span className='text-sm text-gray-300'> BETA</span>
+                          </Dialog.Title>
+                          <div className="mt-2">
+                                <img src="/insightDemo.png" className='mt-4 mb-4 w-3/4 mx-auto rounded-lg shadow-lg border-none shadow-blur shadow-blue-900/50'></img>
+                            <p className="text-md text-gray-300 mt-3">
+                              Creator mode will allow you to see insights for every challenge on CTFGuide. You're welcome to leverage this data when creating challenges.
+                              <br></br>                              <br></br>
+
+                              Are you sure you want to enable creator mode?
+                            </p>
+                          </div>
+
+                          <div className="mt-4">
+                            <button
+                              type="button"
+                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                              onClick={handleEnableCreatorMode}
+                            >
+                              Yes, Enable
+                            </button>
+                            <button
+                              type="button"
+                              className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                              onClick={() => setIsEnableModalOpen(false)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </Dialog.Panel>
+                      </Transition.Child>
+                    </div>
+                  </div>
+                </Dialog>
+              </Transition>
+
+              <Transition appear show={isDisableModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-10" onClose={() => setIsDisableModalOpen(false)}>
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <div className="fixed inset-0 bg-black bg-opacity-25" />
+                  </Transition.Child>
+
+                  <div className="fixed inset-0 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                      >
+                        <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
+                          <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                            Disable Creator Mode
+                          </Dialog.Title>
+                          <div className="mt-2">
+                            <p className="text-sm text-gray-300">
+                              Are you sure you want to disable creator mode?
+                            </p>
+                          </div>
+
+                          <div className="mt-4">
+                            <button
+                              type="button"
+                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                              onClick={handleDisableCreatorMode}
+                            >
+                              Yes, Disable
+                            </button>
+                            <button
+                              type="button"
+                              className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                              onClick={() => setIsDisableModalOpen(false)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </Dialog.Panel>
+                      </Transition.Child>
+                    </div>
+                  </div>
+                </Dialog>
+              </Transition>
+
               <div className="pl-6 lg:w-80">
                 <div className="pt-6 pb-2">
                   <h2 className="text-2xl text-white ">Challenge Notifications</h2>
@@ -641,6 +869,9 @@ export default function Create() {
                     )}
                   </ul>
                 </div>
+
+
+
               </div>
             </div>
           </div>
@@ -679,7 +910,7 @@ export default function Create() {
 
             <br></br>
             <br></br>
-            <hr className='border-neutral-700'></hr>
+            <hr className='border-neutral-800'></hr>
             <br></br>
             If you disagree with the changes, please join our <a href='https://discord.gg/bH6gu3HCFF' className='text-blue-500 hover:text-blue-600'><i className='fab fa-discord '></i> Discord</a> and voice your opinion.
             <br></br>

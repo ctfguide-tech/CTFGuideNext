@@ -5,6 +5,8 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+import { useInView } from 'react-intersection-observer';
+
 function getCategoryIcon(category) {
   switch (category.toLowerCase()) {
     case 'forensics':
@@ -79,7 +81,6 @@ function CategorySelect({ category, setCategory, isDifficulty }) {
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </span>
             </Listbox.Button>
-
             <Transition
               show={open}
               as={Fragment}
@@ -136,6 +137,39 @@ export function Community({ challenges }) {
   const [results, setResults] = useState([]);
   const [filter, setFilter] = useState('');
   const [solvedFilter, setSolvedFilter] = useState('all');
+  const [displayedResults, setDisplayedResults] = useState([]);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 12;
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDifficulty(localStorage.getItem('difficulty') || 'all');
+      setCategory(localStorage.getItem('category') || 'all');
+      setSolvedFilter(localStorage.getItem('solvedFilter') || 'all');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('difficulty', difficulty);
+    }
+  }, [difficulty]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('category', category);
+    }
+  }, [category]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('solvedFilter', solvedFilter);
+    }
+  }, [solvedFilter]);
 
   useEffect(() => {
     const filteredChallenges = challenges
@@ -171,7 +205,19 @@ export function Community({ challenges }) {
       });
 
     setResults(filteredChallenges);
+    setPage(1);
+    setDisplayedResults(filteredChallenges.slice(0, itemsPerPage));
   }, [difficulty, category, challenges, solvedFilter]);
+
+  useEffect(() => {
+    if (inView && page * itemsPerPage < results.length) {
+      const startIndex = page * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const nextBatch = results.slice(0, endIndex);
+      setDisplayedResults(nextBatch);
+      setPage((prev) => prev + 1);
+    }
+  }, [inView, results, page]);
 
   const search = (event) => {
     setFilter(event.target.value);
@@ -291,39 +337,42 @@ export function Community({ challenges }) {
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {results.length > 0 ? (
-            results
-              .filter((challenge) => {
-                if (
-                  difficulty.toLowerCase() !== 'all' &&
-                  challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()
-                ) {
-                  return false;
-                }
-                if (
-                  filter !== '' &&
-                  challenge.category.includes(filter.toLowerCase())
-                ) {
+          {displayedResults.length > 0 ? (
+            <>
+              {displayedResults
+                .filter((challenge) => {
+                  if (
+                    difficulty.toLowerCase() !== 'all' &&
+                    challenge.difficulty.toLowerCase() !== difficulty.toLowerCase()
+                  ) {
+                    return false;
+                  }
+                  if (
+                    filter !== '' &&
+                    challenge.category.includes(filter.toLowerCase())
+                  ) {
+                    return true;
+                  }
+                  if (
+                    filter !== '' &&
+                    !(
+                      challenge.title
+                        .toLowerCase()
+                        .includes(filter.toLowerCase()) ||
+                      challenge.content
+                        .toLowerCase()
+                        .includes(filter.toLowerCase())
+                    )
+                  ) {
+                    return false;
+                  }
                   return true;
-                }
-                if (
-                  filter !== '' &&
-                  !(
-                    challenge.title
-                      .toLowerCase()
-                      .includes(filter.toLowerCase()) ||
-                    challenge.content
-                      .toLowerCase()
-                      .includes(filter.toLowerCase())
-                  )
-                ) {
-                  return false;
-                }
-                return true;
-              })
-              .map((challenge) => (
-                <ChallengeCard challenge={challenge} key={challenge.challengeId} />
-              ))
+                })
+                .map((challenge) => (
+                  <ChallengeCard challenge={challenge} key={challenge.challengeId} />
+                ))}
+              <div ref={ref} className="h-10 w-full col-span-full" />
+            </>
           ) : (
             // kinda hacky but it works
             challenges.length != 0 && (
