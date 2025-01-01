@@ -317,10 +317,12 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                   <Link
                       href="/learn/modules"
                       className={
-                        linkClass('/learn') + ' hidden lg:inline-flex'
+                        linkClass('/learn/modules') + ' hidden lg:inline-flex'
                       }
                     >
                       Learn
+
+                      <span className="bg-blue-600 text-xs  ml-2 text-white px-2 rounded-full">New!</span>
                     </Link>
                     <Link
                       href="/practice"

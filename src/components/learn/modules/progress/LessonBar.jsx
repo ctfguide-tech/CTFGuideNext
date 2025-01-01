@@ -1,50 +1,34 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 
 const LessonBar = ({ name, progress, type }) => {
-    if (type === "lab") {
-        return (
-            <div className="bg-neutral-700 hover:bg-neutral-600 cursor-pointer px-2 py-1 flex">
-             <div>
-             <h1>
-                {name}
-             </h1>
-             </div>
-             <div className="ml-auto">
-               {type.toUpperCase()}
-             </div>
-            </div>
-        );
-    }
+    const getTypeStyles = () => {
+        switch(type.toLowerCase()) {
+            case 'lab':
+                return "bg-[#2b2b2b] hover:bg-[#3d3d3d] text-blue-400";
+            case 'task':
+                return "bg-gradient-to-r from-yellow-600/90 to-yellow-700/80 text-white";
+            case 'final':
+                return "bg-gradient-to-r from-green-600/90 to-green-700/80 text-white";
+            default:
+                return "bg-[#2b2b2b]";
+        }
+    };
 
-    if (type === "task") {
-        return (
-            <div className="bg-gradient-to-r from-yellow-600 to-yellow-700/90 px-2 py-1 flex">
-             <div>
-             <h1>
-                {name}
-             </h1>
-             </div>
-             <div className="ml-auto">
-               {type.toUpperCase()}
-             </div>
+    return (
+        <motion.div 
+            whileHover={{ scale: 1.01 }}
+            className={`${getTypeStyles()} rounded-lg transition-all duration-200 cursor-pointer`}
+        >
+            <div className="px-4 py-3 flex items-center justify-between">
+                <h1 className="font-medium">
+                    {name}
+                </h1>
+                <span className="text-sm font-semibold">
+                    {type.toUpperCase()}
+                </span>
             </div>
-        );
-    }
-
-    if (type === "final") {
-        return (
-            <div className="bg-gradient-to-r from-green-600 to-green-700/90 px-2 py-1 flex">
-             <div>
-             <h1>
-                {name}
-             </h1>
-             </div>
-             <div className="ml-auto">
-               {type.toUpperCase()}
-             </div>
-            </div>
-        );
-    }
+        </motion.div>
+    );
 };
 
 export default LessonBar;

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import dynamic from 'next/dynamic';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { motion, AnimatePresence } from 'framer-motion';
+import request from '../../../utils/request';
 
 // Dynamic import of MonacoEditor
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
@@ -83,31 +84,77 @@ const getIconForType = (type) => {
     }
 };
 
-const StudioEditor = ({ initialProject = null }) => {
-    // Initialize pages with either imported project data or default
+const ErrorModal = ({ isOpen, onClose, error }) => (
+    <div 
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center ${
+            isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        } transition-opacity`}
+        onClick={onClose}
+    >
+        <div 
+            className="bg-neutral-800 rounded-xl border border-red-500/50 p-6 w-full max-w-md m-4"
+            onClick={e => e.stopPropagation()}
+        >
+            <div className="flex items-center space-x-2 text-red-400 mb-4">
+                <i className="fas fa-exclamation-circle text-xl"></i>
+                <h3 className="text-lg font-medium">Error Saving Lesson</h3>
+            </div>
+            <p className="text-neutral-300 mb-6">
+                {error || 'An unexpected error occurred while saving. Please try again.'}
+            </p>
+            <div className="flex justify-end">
+                <button
+                    onClick={onClose}
+                    className="px-4 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
+                >
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+);
+
+const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
+    const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState(null);
     const [pages, setPages] = useState(() => {
-        if (initialProject && initialProject.pages) {
-            return initialProject.pages;
+        if (initialLesson && initialLesson.content) {
+            try {
+                // Parse the content directly from initialLesson.content
+                const parsedPages = JSON.parse(initialLesson.content);
+                console.log('Parsed pages from content:', parsedPages);
+                return parsedPages;
+            } catch (error) {
+                console.error('Error parsing lesson content:', error);
+                return [{ id: Date.now(), title: 'Page 1', components: [] }];
+            }
         }
-        return [{ id: 1, title: 'Page 1', components: [] }];
+        return [{ id: Date.now(), title: 'Page 1', components: [] }];
     });
 
-    const [currentPageId, setCurrentPageId] = useState(() => {
-        if (initialProject && initialProject.pages && initialProject.pages.length > 0) {
-            return initialProject.pages[0].id;
-        }
-        return 1;
-    });
+    // Remove the window.alert that was showing the content
+    useEffect(() => {
+        console.log('StudioEditor initialLesson:', initialLesson);
+        console.log('StudioEditor initial pages:', pages);
+    }, [initialLesson]);
+
+    // Log whenever pages change
+    useEffect(() => {
+        console.log('Current pages state:', pages);
+    }, [pages]);
+
+    // Initialize pages state
+    const [currentPageId, setCurrentPageId] = useState(() => pages[0]?.id || null);
+    
+    // Find current page and its components
+    const currentPage = pages.find(p => p.id === currentPageId) || pages[0];
+    const currentComponents = currentPage?.components || [];
 
     const [showPageModal, setShowPageModal] = useState(false);
     const [newPageTitle, setNewPageTitle] = useState('');
     
-    const currentPage = pages.find(p => p.id === currentPageId) || pages[0];
-    const components = currentPage.components;
-
     const [menuVisible, setMenuVisible] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-    const [isSaving, setIsSaving] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [hasSeenTutorial, setHasSeenTutorial] = useState(false);
@@ -119,6 +166,14 @@ const StudioEditor = ({ initialProject = null }) => {
     const [projectJsonInput, setProjectJsonInput] = useState('');
     const [importError, setImportError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [saveError, setSaveError] = useState(null);
+
+    // Log the initial data
+    useEffect(() => {
+       // window.alert(JSON.stringify(initialLesson.content));
+        console.log('StudioEditor initialLesson:', initialLesson);
+        console.log('StudioEditor initial pages:', pages);
+    }, [initialLesson]);
 
     const handleStartFresh = () => {
         setIsLoading(false);
@@ -229,7 +284,7 @@ const StudioEditor = ({ initialProject = null }) => {
     };
 
     const insertText = (id, text) => {
-        const component = components.find(comp => comp.id === id);
+        const component = currentComponents.find(comp => comp.id === id);
         if (!component) return;
 
         const textarea = document.querySelector(`textarea[data-id="${id}"]`);
@@ -257,7 +312,7 @@ const StudioEditor = ({ initialProject = null }) => {
     const onDragEnd = (result) => {
         if (!result.destination) return;
 
-        const items = Array.from(components);
+        const items = Array.from(currentComponents);
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
 
@@ -613,7 +668,7 @@ const StudioEditor = ({ initialProject = null }) => {
                         <div className="p-4">
                             <div className="bg-neutral-900/50 rounded-xl border border-neutral-700/30 p-4 overflow-auto max-h-[60vh]">
                                 <pre className="text-sm font-mono text-white">
-                                    {JSON.stringify(components, null, 2)}
+                                    {JSON.stringify(currentComponents, null, 2)}
                                 </pre>
                             </div>
                             <div className="mt-4 flex justify-between items-center">
@@ -622,7 +677,7 @@ const StudioEditor = ({ initialProject = null }) => {
                                 </div>
                                 <button
                                     onClick={() => {
-                                        navigator.clipboard.writeText(JSON.stringify(components, null, 2));
+                                        navigator.clipboard.writeText(JSON.stringify(currentComponents, null, 2));
                                     }}
                                     className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 hover:text-blue-300 px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center space-x-2"
                                 >
@@ -905,7 +960,9 @@ const StudioEditor = ({ initialProject = null }) => {
             {/* Pages Section */}
             <div className="bg-neutral-800/90 rounded-xl border border-neutral-700/50 shadow-lg backdrop-blur-sm p-3 flex-1">
                 <div className="flex items-center justify-between mb-4">
+                  
                     <div className="flex items-center space-x-2">
+                        
                         <i className="fas fa-book text-blue-400"></i>
                         <span className="text-sm font-medium text-white">Pages</span>
                     </div>
@@ -918,43 +975,68 @@ const StudioEditor = ({ initialProject = null }) => {
                         <i className="fas fa-plus"></i>
                     </motion.button>
                 </div>
-                <div className="space-y-1 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700/50 scrollbar-track-transparent">
-                    {pages.map((page) => (
-                        <motion.div
-                            key={page.id}
-                            className={`
-                                flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer
-                                ${currentPageId === page.id ? 'bg-blue-500/20 text-blue-400' : 'hover:bg-white/5 text-white'}
-                            `}
-                            onClick={() => setCurrentPageId(page.id)}
+                <Droppable droppableId="pages-list">
+                    {(provided) => (
+                        <div 
+                            {...provided.droppableProps} 
+                            ref={provided.innerRef}
+                            className="space-y-1 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700/50 scrollbar-track-transparent"
                         >
-                            <span className="text-sm truncate max-w-[150px]">{page.title}</span>
-                            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        const newTitle = prompt('Enter new page title:', page.title);
-                                        if (newTitle) handleRenamePage(page.id, newTitle);
-                                    }}
-                                    className="p-1 hover:text-blue-400 transition-colors"
+                            {pages.map((page, index) => (
+                                <Draggable 
+                                    key={page.id} 
+                                    draggableId={`page-${page.id}`} 
+                                    index={index}
                                 >
-                                    <i className="fas fa-pen text-xs"></i>
-                                </button>
-                                {pages.length > 1 && (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (confirm('Delete this page?')) handleDeletePage(page.id);
-                                        }}
-                                        className="p-1 hover:text-red-400 transition-colors"
-                                    >
-                                        <i className="fas fa-trash text-xs"></i>
-                                    </button>
-                                )}
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                                    {(provided, snapshot) => (
+                                        <motion.div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            className={`
+                                                group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer
+                                                ${currentPageId === page.id ? 'bg-blue-500/20 text-blue-400' : 'hover:bg-white/5 text-white'}
+                                                ${snapshot.isDragging ? 'ring-2 ring-blue-500/50 shadow-lg !my-0' : 'my-0.5'}
+                                            `}
+                                            onClick={() => setCurrentPageId(page.id)}
+                                        >
+                                            <div 
+                                                {...provided.dragHandleProps}
+                                                className="flex items-center space-x-2 flex-1"
+                                            >
+                                                <i className="fas fa-grip-vertical text-neutral-500 group-hover:text-neutral-400 transition-colors"></i>
+                                                <span className="text-sm truncate max-w-[120px]">{page.title}</span>
+                                            </div>
+                                            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const newTitle = prompt('Enter new page title:', page.title);
+                                                        if (newTitle) handleRenamePage(page.id, newTitle);
+                                                    }}
+                                                    className="p-1 hover:text-blue-400 transition-colors"
+                                                >
+                                                    <i className="fas fa-pen text-xs"></i>
+                                                </button>
+                                                {pages.length > 1 && (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (confirm('Delete this page?')) handleDeletePage(page.id);
+                                                        }}
+                                                        className="p-1 hover:text-red-400 transition-colors"
+                                                    >
+                                                        <i className="fas fa-trash text-xs"></i>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
             </div>
 
             {/* Updated JSON Actions Section */}
@@ -1042,15 +1124,89 @@ const StudioEditor = ({ initialProject = null }) => {
 
     useEffect(() => {
         // Handle any additional initialization needed for imported projects
-        if (initialProject) {
+        if (initialLesson) {
             // You could add additional validation or data processing here
             console.log('Project imported successfully');
         }
-    }, [initialProject]);
+    }, [initialLesson]);
+
+    // Add this new function to handle page reordering
+    const onDragEndPages = (result) => {
+        if (!result.destination) return;
+
+        const items = Array.from(pages);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        setPages(items);
+    };
+
+    const handleSaveLesson = async () => {
+        try {
+            setIsSaving(true);
+            setError(null);
+
+            // Format the lesson data
+            const lessonData = {
+                title: initialLesson?.title || pages[0]?.title || 'Untitled Lesson',
+                description: initialLesson?.description || '',
+                content: JSON.stringify(pages.map(page => ({
+                    id: page.id,
+                    title: page.title,
+                    components: page.components || []
+                }))),
+                pages: pages.map((page, index) => ({
+                    title: page.title,
+                    content: JSON.stringify(page.components || []),
+                    order: index
+                }))
+            };
+
+            console.log('Sending lesson data:', lessonData);
+
+            let response;
+            if (initialLesson?.id) {
+                response = await request(
+                    `${process.env.NEXT_PUBLIC_API_URL}/lessons/${initialLesson.id}`, 
+                    'PUT', 
+                    lessonData
+                );
+            } else {
+                response = await request(
+                    `${process.env.NEXT_PUBLIC_API_URL}/lessons`, 
+                    'POST', 
+                    lessonData
+                );
+            }
+
+            console.log('Save response:', response);
+
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            if (!initialLesson?.id && response.id) {
+                onLessonCreated?.(response);
+            }
+
+            alert('Lesson saved successfully!');
+
+        } catch (error) {
+            console.error('Failed to save lesson:', error);
+            setError(error.message || 'Failed to save lesson. Please try again.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
+   
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-900 to-neutral-950 text-white p-6 relative">
-            <Sidebar />
+            <p>                   
+</p>
+            <DragDropContext onDragEnd={onDragEndPages}>
+                <Sidebar />
+            </DragDropContext>
             <NewPageModal />
             <JsonViewerModal />
             <LoadJsonModal />
@@ -1059,7 +1215,7 @@ const StudioEditor = ({ initialProject = null }) => {
 
             {/* Main content area */}
             <div 
-                className="ml-72  min-h-screen"
+                className="ml-72 min-h-screen"
                 onContextMenu={handleContextMenu}
             >
                 <DragDropContext onDragEnd={onDragEnd}>
@@ -1070,7 +1226,7 @@ const StudioEditor = ({ initialProject = null }) => {
                                 ref={provided.innerRef}
                                 className="min-h-[100px] pt-1"
                             >
-                                {components.map((component, index) => (
+                                {currentComponents.map((component, index) => (
                                     <Draggable
                                         key={component.id}
                                         draggableId={component.id.toString()}
@@ -1103,6 +1259,21 @@ const StudioEditor = ({ initialProject = null }) => {
                     </Droppable>
                 </DragDropContext>
             </div>
+            <div className="fixed bottom-4 right-4">
+                
+                <button 
+                    onClick={handleSaveLesson}
+                    disabled={isSaving}
+                    className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-lg"
+                >
+                    {isSaving ? 'Saving...' : 'Save Lesson'}
+                </button>
+            </div>
+            <ErrorModal 
+                isOpen={!!error}
+                onClose={() => setError(null)}
+                error={error}
+            />
         </div>
     );
 };

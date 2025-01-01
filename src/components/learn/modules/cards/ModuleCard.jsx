@@ -1,31 +1,44 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 
 const ModuleCard = ({ title, description, image, status, type, completed, active }) => {
   return (
-    <>
-    <div className={`transition-all duration-300 ease-in-out module-card py-8 ${active ? 'bg-gradient-to-b from-neutral-800 to-green-900/40' : 'cursor-pointer transition-colors duration-500 bg-neutral-800 hover:bg-gradient-to-b hover:from-neutral-800 hover:to-yellow-900/40'}`}>
-      <div className='px-10 '>
-        {
-          image && <img src={image} alt={title} className='w-full h-full object-cover' />
-        }
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <p>{description}</p>
-
-
-      </div>
-      <div className='flex px-10'>
-        <div className=' justify-between'>
-          <div>
-            <p>{completed}</p>
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      className={`rounded-xl overflow-hidden transition-all duration-300 ease-in-out
+        ${active 
+          ? 'bg-gradient-to-br from-[#2b2b2b] to-green-900/40 border-green-500/50' 
+          : 'bg-gradient-to-br from-[#2b2b2b] to-[#1c1c1c] hover:to-yellow-900/40'
+        } border border-[#3d3d3d]`}
+    >
+      <div className='p-6'>
+        {image && (
+          <div className="mb-4 rounded-lg overflow-hidden">
+            <img src={image} alt={title} className='w-full h-48 object-cover' />
           </div>
-        </div>
-        <div className='ml-auto'>
-          <p>{status}</p>
+        )}
+        <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+        <p className="text-gray-400 mb-4">{description}</p>
+
+        <div className='flex items-center justify-between'>
+          <div className="flex items-center space-x-2">
+            {completed && (
+              <span className="text-sm text-gray-400">
+                {completed}
+              </span>
+            )}
+          </div>
+          {status && (
+            <span className={`px-3 py-1 rounded-full text-sm font-medium
+              ${status === 'In Progress' ? 'bg-blue-500/20 text-blue-400' :
+                status === 'Completed' ? 'bg-green-500/20 text-green-400' :
+                'bg-gray-500/20 text-gray-400'}`}
+            >
+              {status}
+            </span>
+          )}
         </div>
       </div>
-    </div>
-   
-    </>
+    </motion.div>
   );
 };
 
