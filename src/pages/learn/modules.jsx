@@ -12,7 +12,7 @@ const ModulesPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     
     return (
-        <div className="min-h-screen bg-[#1c1c1c]">
+        <div className="min-h-screen bg-neutral-900">
             <StandardNav />
 
             <div className='flex min-h-[calc(100vh-64px)]'>

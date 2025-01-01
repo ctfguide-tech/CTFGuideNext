@@ -114,9 +114,41 @@ const ErrorModal = ({ isOpen, onClose, error }) => (
     </div>
 );
 
+// Add this Toast component near the top of the file, after other component imports
+const Toast = ({ message, type = 'success', onClose }) => {
+    // Add useEffect for auto-dismiss
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onClose();
+        }, 2000);
+
+        // Cleanup timer
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className={`fixed bottom-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg backdrop-blur-sm flex items-center space-x-2
+                ${type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 
+                 type === 'error' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 
+                 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}
+        >
+            <i className={`fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
+            <span>{message}</span>
+            <button onClick={onClose} className="ml-4 hover:text-white transition-colors">
+                <i className="fas fa-times"></i>
+            </button>
+        </motion.div>
+    );
+};
+
 const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [toast, setToast] = useState(null);
     const [pages, setPages] = useState(() => {
         if (initialLesson && initialLesson.content) {
             try {
@@ -1010,8 +1042,9 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        const newTitle = prompt('Enter new page title:', page.title);
-                                                        if (newTitle) handleRenamePage(page.id, newTitle);
+                                                        setPageToRename(page);
+                                                        setNewTitle(page.title);
+                                                        setShowRenameModal(true);
                                                     }}
                                                     className="p-1 hover:text-blue-400 transition-colors"
                                                 >
@@ -1039,22 +1072,49 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                 </Droppable>
             </div>
 
-            {/* Updated JSON Actions Section */}
+            {/* Renamed from JSON Actions to Lesson Actions */}
             <div className="bg-neutral-800/90 rounded-xl border border-neutral-700/50 shadow-lg backdrop-blur-sm p-3">
                 <div className="flex items-center space-x-2 mb-3">
-                    <i className="fas fa-code text-purple-400"></i>
-                    <span className="text-sm font-medium text-white">JSON Actions</span>
+                    <i className="fas fa-sliders-h text-purple-400"></i>
+                    <span className="text-sm font-medium text-white">Lesson Actions</span>
                 </div>
                 <div className="space-y-2">
+                    {/* Save button in green */}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleSaveLesson}
+                        disabled={isSaving}
+                        className={`w-full px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center justify-center space-x-2
+                            ${isSaving 
+                                ? 'bg-neutral-700/50 text-neutral-400 cursor-not-allowed' 
+                                : 'bg-green-500/20 hover:bg-green-500/30 text-green-400'}`}
+                    >
+                        {isSaving ? (
+                            <>
+                                <i className="fas fa-circle-notch fa-spin"></i>
+                                <span>Saving...</span>
+                            </>
+                        ) : (
+                            <>
+                                <i className="fas fa-save"></i>
+                                <span>Save Lesson</span>
+                            </>
+                        )}
+                    </motion.button>
+
+                    {/* Import button in orange */}
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setShowImportProjectModal(true)}
-                        className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-400 px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center justify-center space-x-2"
+                        className="w-full bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center justify-center space-x-2"
                     >
                         <i className="fas fa-file-import"></i>
                         <span>Import Project</span>
                     </motion.button>
+
+                    {/* Rest of the buttons remain unchanged */}
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -1115,6 +1175,67 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                             className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-all"
                         >
                             Add Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Add state for rename modal
+    const [showRenameModal, setShowRenameModal] = useState(false);
+    const [pageToRename, setPageToRename] = useState(null);
+    const [newTitle, setNewTitle] = useState('');
+
+    // Add RenamePageModal component
+    const RenamePageModal = () => {
+        if (!showRenameModal || !pageToRename) return null;
+
+        return (
+            <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+                onClick={() => {
+                    setShowRenameModal(false);
+                    setPageToRename(null);
+                    setNewTitle('');
+                }}
+            >
+                <div
+                    className="bg-neutral-800/90 rounded-xl border border-neutral-700/50 shadow-2xl backdrop-blur-sm w-full max-w-md m-4 p-4"
+                    onClick={e => e.stopPropagation()}
+                >
+                    <h3 className="text-lg font-medium text-white mb-4">Rename Page</h3>
+                    <input
+                        type="text"
+                        value={newTitle}
+                        onChange={e => setNewTitle(e.target.value)}
+                        placeholder="Enter new page title"
+                        className="w-full bg-neutral-900/50 text-white p-3 rounded-xl border border-neutral-700/30 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all mb-4"
+                        autoFocus
+                    />
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            onClick={() => {
+                                setShowRenameModal(false);
+                                setPageToRename(null);
+                                setNewTitle('');
+                            }}
+                            className="px-4 py-2 text-neutral-400 hover:text-white transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => {
+                                if (newTitle.trim()) {
+                                    handleRenamePage(pageToRename.id, newTitle.trim());
+                                    setShowRenameModal(false);
+                                    setPageToRename(null);
+                                    setNewTitle('');
+                                }
+                            }}
+                            className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-all"
+                        >
+                            Rename Page
                         </button>
                     </div>
                 </div>
@@ -1185,11 +1306,12 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                 throw new Error(response.error);
             }
 
+            // Replace alert with toast
+            setToast({ message: 'Lesson saved successfully!', type: 'success' });
+            
             if (!initialLesson?.id && response.id) {
                 onLessonCreated?.(response);
             }
-
-            alert('Lesson saved successfully!');
 
         } catch (error) {
             console.error('Failed to save lesson:', error);
@@ -1203,7 +1325,7 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
    
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-900 to-neutral-950 text-white p-6 relative">
             <p>                   
-</p>
+        </p>
             <DragDropContext onDragEnd={onDragEndPages}>
                 <Sidebar />
             </DragDropContext>
@@ -1212,8 +1334,9 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
             <LoadJsonModal />
             <ImportProjectModal />
             <ContextMenu />
+            <RenamePageModal />
 
-            {/* Main content area */}
+            {/* Main content area - remove bottom padding */}
             <div 
                 className="ml-72 min-h-screen"
                 onContextMenu={handleContextMenu}
@@ -1259,21 +1382,21 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                     </Droppable>
                 </DragDropContext>
             </div>
-            <div className="fixed bottom-4 right-4">
-                
-                <button 
-                    onClick={handleSaveLesson}
-                    disabled={isSaving}
-                    className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-lg"
-                >
-                    {isSaving ? 'Saving...' : 'Save Lesson'}
-                </button>
-            </div>
+
             <ErrorModal 
                 isOpen={!!error}
                 onClose={() => setError(null)}
                 error={error}
             />
+            <AnimatePresence>
+                {toast && (
+                    <Toast 
+                        message={toast.message} 
+                        type={toast.type} 
+                        onClose={() => setToast(null)} 
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };
