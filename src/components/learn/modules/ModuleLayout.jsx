@@ -3,6 +3,8 @@ import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { getCookie } from '@/utils/request';
+import { useRouter } from 'next/router';
+import UpNext from './UpNext';
 
 const ModuleCard = ({ title, description, progress, status, content, currentPage, onClick }) => {
   // Safely parse content and handle missing/invalid content
@@ -164,6 +166,7 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
 };
 
 const ModuleLayout = () => {
+  const router = useRouter();
   const [selectedModule, setSelectedModule] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [modules, setModules] = useState([]);
@@ -172,13 +175,13 @@ const ModuleLayout = () => {
   useEffect(() => {
     const fetchModules = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/published`, {
           headers: {
             'Authorization': `Bearer ${getCookie('idToken')}`
           }
         });
         
-        if (!response.ok) throw new Error('Failed to fetch modules');
+    //    if (!response.ok) throw new Error('Failed to fetch modules');
         
         const data = await response.json();
         const transformedModules = data.map(lesson => {
@@ -194,7 +197,6 @@ const ModuleLayout = () => {
             console.warn(`Failed to parse content for lesson: ${lesson.title}`, error);
           }
 
-          // Get progress from the progress array (should contain at most one item)
           const userProgress = lesson.progress?.[0];
           const currentPage = userProgress?.currentPage || 0;
           const percentage = userProgress?.percentage || 0;
@@ -221,6 +223,11 @@ const ModuleLayout = () => {
     fetchModules();
   }, []);
 
+  const findNextLesson = (modules) => {
+    // Find first incomplete or lowest progress lesson
+    return modules.find(module => module.progress < 100) || modules[0];
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">
       <div className="animate-spin text-4xl">⚙️</div>
@@ -228,25 +235,19 @@ const ModuleLayout = () => {
   }
 
   return (
-    <div className="mt-10">
-      <h2 className="text-3xl font-bold text-white mb-8">Learning Modules</h2>
+    <div className="mt-2">
+      <UpNext nextLesson={findNextLesson(modules)} />
+      <h2 className="text-3xl font-bold text-white mb-8 mt-10">Learning Modules</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {modules.map((module, index) => (
           <ModuleCard 
             key={index} 
             {...module} 
-            onClick={() => {
-              setSelectedModule(module);
-              setIsOpen(true);
-            }}
+            onClick={() => router.push(`/learn/${module.id}`)}
           />
         ))}
       </div>
-      <ModuleSlideOver 
-        module={selectedModule}
-        open={isOpen}
-        setOpen={setIsOpen}
-      />
+
     </div>
   );
 };

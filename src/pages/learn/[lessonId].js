@@ -9,7 +9,7 @@ export default function LessonPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const router = useRouter();
-    const { lessonId } = router.query;
+    const { lessonId, page } = router.query;
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -25,11 +25,14 @@ export default function LessonPage() {
                     throw new Error('Failed to fetch lesson');
                 }
                 
-                // Parse the content string into JSON
                 const parsedContent = JSON.parse(data.content);
+                const initialPageValue = page ? Math.max(0, parseInt(page) - 1) : 0;
+                console.log("Setting initial page to:", initialPageValue);
+
                 setLesson({
                     ...data,
-                    content: parsedContent
+                    content: parsedContent,
+                    initialPage: initialPageValue
                 });
             } catch (err) {
                 setError(err.message);
@@ -39,7 +42,7 @@ export default function LessonPage() {
         };
 
         fetchLesson();
-    }, [lessonId]);
+    }, [lessonId, page]);
 
     if (loading) {
         return (

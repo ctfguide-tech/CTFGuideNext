@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getCookie } from '@/utils/request';
 import api from '@/utils/terminal-api';
+import { useRouter } from 'next/router';
 // Dynamic import of MonacoEditor
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
     ssr: false
@@ -570,12 +571,28 @@ const UbuntuTerminal = ({ onReady }) => {
 const CompletionScreen = ({ onRestart }) => {
     const { width, height } = useWindowSize();
     const [isConfettiActive, setIsConfettiActive] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
-        // Stop confetti after 5 seconds
         const timer = setTimeout(() => setIsConfettiActive(false), 5000);
         return () => clearTimeout(timer);
     }, []);
+
+    const handleRestart = () => {
+        // Update URL to page 1
+        router.push(
+            {
+                pathname: router.pathname,
+                query: {
+                    ...router.query,
+                    page: 1
+                }
+            },
+            undefined,
+            { shallow: true }
+        );
+        onRestart();
+    };
 
     return (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -637,7 +654,7 @@ const CompletionScreen = ({ onRestart }) => {
                             className="flex space-x-4"
                         >
                             <button
-                                onClick={onRestart}
+                                onClick={handleRestart}
                                 className="flex-1 px-6 py-3 bg-neutral-700/50 hover:bg-neutral-700 rounded-xl transition-colors"
                             >
                                 <i className="fas fa-redo mr-2"></i>
@@ -659,7 +676,8 @@ const CompletionScreen = ({ onRestart }) => {
 };
 
 const LessonViewer = ({ lessonData }) => {
-    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const router = useRouter();
+    const [currentPageIndex, setCurrentPageIndex] = useState(lessonData?.initialPage || 0);
     const [pages, setPages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showLoadModal, setShowLoadModal] = useState(false);
@@ -819,6 +837,19 @@ const LessonViewer = ({ lessonData }) => {
 
     const handlePageChange = async (newIndex) => {
         setCurrentPageIndex(newIndex);
+        
+        // Update URL with new page number (add 1 for human-readable page numbers)
+        router.push(
+            {
+                pathname: router.pathname,
+                query: { 
+                    ...router.query,
+                    page: newIndex + 1 
+                }
+            },
+            undefined,
+            { shallow: true }  // Prevents full page reload
+        );
         
         try {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonData.id}/progress`, {
