@@ -4,7 +4,6 @@ import StudioEditor from '../../../components/learn/editor/StudioEditor';
 import request from '../../../utils/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useRouter } from 'next/router';
 
 const NewLessonModal = ({ 
     showModal, 
@@ -82,7 +81,6 @@ const NewLessonModal = ({
 );
 
 const LearnEditor = () => {
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [userLessons, setUserLessons] = useState([]);
     const [isLoadingLessons, setIsLoadingLessons] = useState(true);
@@ -126,12 +124,13 @@ const LearnEditor = () => {
                     request(`${process.env.NEXT_PUBLIC_API_URL}/account/modules?state=unverified`, 'GET')
                 ]);
                 
-                setUserLessons(lessonsResponse);
+                setUserLessons(lessonsResponse?.lessons || []);
                 if (Array.isArray(modulesResponse)) {
                     setModules(modulesResponse);
                 }
             } catch (error) {
                 console.error('Failed to fetch data:', error);
+                setUserLessons([]);
             } finally {
                 setIsLoadingLessons(false);
             }
@@ -148,8 +147,6 @@ const LearnEditor = () => {
                 `${process.env.NEXT_PUBLIC_API_URL}/lessons/${lesson.id}`, 
                 'GET'
             );
-            
-            router.push(`/create/learn/editor?id=${lesson.id}`, undefined, { shallow: true });
             
             console.log('Received lesson data:', response.content);
             setImportedProject(response);
@@ -375,7 +372,7 @@ const LearnEditor = () => {
                             <div className="p-6 border-b border-neutral-700/50">
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="text-white text-lg">Your Lessons</h2>
-                                    <div className="flex space-x-2 hidden">
+                                    <div className="flex space-x-2">
                                         <button
                                             onClick={() => setShowImportModal(true)}
                                             className="px-4 py-2 bg-neutral-700/20 hover:bg-neutral-700/30 text-neutral-400 rounded-lg transition-all text-sm"
@@ -393,7 +390,7 @@ const LearnEditor = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-800">
+                                <div className="space-y-3">
                                     {isLoadingLessons ? (
                                         <div className="text-center py-8">
                                             <i className="fas fa-circle-notch fa-spin text-neutral-400 text-2xl"></i>
@@ -481,7 +478,7 @@ const LearnEditor = () => {
                                         alpha v0.2
                                     </span>
                                 </div>
-                                <div className="flex items-center space-x-3 hidden">
+                                <div className="flex items-center space-x-3">
                                     <button
                                         onClick={() => setIsLoading(false)}
                                         className="text-neutral-400 hover:text-white text-sm transition-colors"
