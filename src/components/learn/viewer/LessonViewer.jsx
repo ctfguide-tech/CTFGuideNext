@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import dynamic from 'next/dynamic';
@@ -5,10 +6,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactConfetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { WebContainer } from '@webcontainer/api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { getCookie } from '@/utils/request';
+import api from '@/utils/terminal-api';
 // Dynamic import of MonacoEditor
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
     ssr: false
 });
+
+// Remove the direct xterm imports and replace with dynamic imports
+const Terminal = dynamic(() => 
+    import('xterm').then(mod => mod.Terminal), 
+    { ssr: false }
+);
+
+const FitAddon = dynamic(() => 
+    import('xterm-addon-fit').then(mod => mod.FitAddon), 
+    { ssr: false }
+);
 
 const renderComponent = (component) => {
     if (!component || !component.type) {
@@ -259,6 +275,32 @@ const CodeExecutor = ({ initialCode, language }) => {
         }
     };
 
+    // Add a function to map language aliases to Monaco editor language IDs
+    const getMonacoLanguage = (lang) => {
+        const languageMap = {
+            'python': 'python',
+            'py': 'python',
+            'javascript': 'javascript',
+            'js': 'javascript',
+            'bash': 'shell',
+            'shell': 'shell',
+            'html': 'html',
+            'css': 'css',
+            'cpp': 'cpp',
+            'c++': 'cpp',
+            'c': 'c',
+            'java': 'java',
+            'ruby': 'ruby',
+            'go': 'go',
+            'rust': 'rust',
+            'php': 'php',
+            'typescript': 'typescript',
+            'ts': 'typescript'
+        };
+        
+        return languageMap[lang.toLowerCase()] || 'plaintext';
+    };
+
     // Cleanup on component unmount
     useEffect(() => {
         return () => {
@@ -299,7 +341,7 @@ const CodeExecutor = ({ initialCode, language }) => {
             <div className="p-4">
                 <MonacoEditor
                     height="200px"
-                    language={language}
+                    language={getMonacoLanguage(language)}
                     value={code}
                     onChange={setCode}
                     theme="vs-dark"
@@ -307,6 +349,15 @@ const CodeExecutor = ({ initialCode, language }) => {
                         minimap: { enabled: false },
                         scrollBeyondLastLine: false,
                         fontSize: 14,
+                        fontFamily: 'JetBrains Mono, Menlo, Monaco, Consolas, monospace',
+                        formatOnPaste: true,
+                        formatOnType: true,
+                        autoIndent: 'full',
+                        tabSize: 4,
+                        renderWhitespace: 'selection',
+                        scrollBeyondLastLine: false,
+                        automaticLayout: true,
+                        wordWrap: 'on'
                     }}
                 />
                 {output && (
@@ -315,6 +366,203 @@ const CodeExecutor = ({ initialCode, language }) => {
                     </div>
                 )}
             </div>
+        </div>
+    );
+};
+
+const UbuntuTerminal = ({ onReady }) => {
+    const [isBooting, setIsBooting] = useState(true);
+    const [bootLogs, setBootLogs] = useState(['Initializing boot sequence...']);
+    const terminalRef = useRef(null);
+    const terminalInstance = useRef(null);
+    const webcontainerInstance = useRef(null);
+
+    const addBootLog = (message) => {
+        setBootLogs(prev => [...prev, message]);
+        console.log('Boot Log:', message);
+    };
+
+    const initializeTerminal = async () => {
+        try {
+            // 1. Initialize xterm
+            addBootLog('Setting up terminal...');
+            const { Terminal } = await import('xterm');
+            const { FitAddon } = await import('xterm-addon-fit');
+            const { WebContainer } = await import('@webcontainer/api');
+            
+            const terminal = new Terminal({
+                cursorBlink: true,
+                fontSize: 14,
+                fontFamily: 'monospace',
+                theme: {
+                    background: '#000000',
+                    foreground: '#ffffff',
+                    cursor: '#ffffff',
+                },
+                convertEol: true,
+                cursorStyle: 'block',
+            });
+
+            terminal.open(terminalRef.current);
+            
+            const fitAddon = new FitAddon();
+            terminal.loadAddon(fitAddon);
+            fitAddon.fit();
+            
+            window.addEventListener('resize', () => fitAddon.fit());
+            terminalInstance.current = terminal;
+
+            // 2. Boot WebContainer
+            addBootLog('Booting WebContainer...');
+            const webcontainer = await WebContainer.boot();
+            webcontainerInstance.current = webcontainer;
+
+            // Set up package.json first
+            await webcontainer.mount({
+                'package.json': {
+                    file: {
+                        contents: `{
+                            "name": "ctf-environment",
+                            "type": "module",
+                            "dependencies": {
+                                "python-shell": "^3.0.1",
+                                "node-fetch": "^3.3.0"
+                            }
+                        }`
+                    }
+                },
+                'setup.js': {
+                    file: {
+                        contents: `
+                            import { PythonShell } from 'python-shell';
+                            import fetch from 'node-fetch';
+                            
+                            // Your Python code can be run using PythonShell
+                            // Network requests can be made using fetch
+                            console.log('Environment ready!');
+                        `
+                    }
+                }
+            });
+
+            // Start shell
+            addBootLog('Starting shell...');
+            const shellProcess = await webcontainer.spawn('sh', {
+                terminal: {
+                    cols: terminal.cols,
+                    rows: terminal.rows,
+                }
+            });
+
+            // Get a single writer for input
+            const input = shellProcess.input.getWriter();
+
+            // Set up environment with Node.js capabilities
+            const initCommands = [
+                'npm install',
+                'export PS1="ctf$ "',
+                'alias python="node -e \'import { PythonShell } from \"python-shell\"; PythonShell.run(process.argv[1])\'"',
+                'alias curl="node -e \'import fetch from \"node-fetch\"; fetch(process.argv[1])\'"',
+                'clear',
+                'echo "=== CTF Environment Ready ==="',
+                'echo "Available commands:"',
+                'echo "  - node (JavaScript/Node.js)"',
+                'echo "  - python (via python-shell)"',
+                'echo "  - curl (via node-fetch)"',
+                'echo "  - npm install <package>"',
+                ''
+            ];
+
+            // Execute init commands
+            for (const cmd of initCommands) {
+                input.write(cmd + '\n');
+            }
+
+            // Handle terminal input
+            terminal.onData((data) => {
+                input.write(data);
+            });
+
+            // Handle shell output
+            shellProcess.output.pipeTo(
+                new WritableStream({
+                    write(data) {
+                        terminal.write(data);
+                    }
+                })
+            );
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                fitAddon.fit();
+                shellProcess.resize({
+                    cols: terminal.cols,
+                    rows: terminal.rows,
+                });
+            });
+
+            // Focus the terminal
+            terminal.focus();
+            setIsBooting(false);
+
+        } catch (error) {
+            console.error('Failed to initialize terminal:', error);
+            addBootLog(`❌ Error: ${error.message}`);
+        }
+    };
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setIsBooting(false);
+            setTimeout(() => {
+                initializeTerminal();
+            }, 500);
+        }
+
+        return () => {
+            if (terminalInstance.current) {
+                terminalInstance.current.dispose();
+            }
+            if (webcontainerInstance.current) {
+                webcontainerInstance.current.teardown();
+            }
+        };
+    }, []);
+
+    return (
+        <div className="w-full h-full min-h-[600px] bg-black flex flex-col">
+            {isBooting ? (
+                <div className="flex items-center justify-center flex-1">
+                    <div className="text-center w-full max-w-md p-6">
+                        <i className="fas fa-circle-notch fa-spin text-2xl mb-4"></i>
+                        <p className="text-lg font-semibold mb-4">Initializing Terminal...</p>
+                        <div className="bg-neutral-900/50 rounded-lg p-4 text-left h-64 overflow-y-auto">
+                            <div className="space-y-2 font-mono text-sm">
+                                {bootLogs.map((log, index) => (
+                                    <div key={index} className={`${
+                                        log.includes('❌') ? 'text-red-400' :
+                                        log.includes('✅') ? 'text-green-400' :
+                                        'text-neutral-400'
+                                    }`}>
+                                        {log}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex-1 relative">
+                    <div 
+                        ref={terminalRef} 
+                        className="absolute inset-0"
+                        style={{
+                            padding: '12px',
+                            backgroundColor: '#000',
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 };
@@ -418,65 +666,31 @@ const LessonViewer = ({ lessonData }) => {
     const [jsonInput, setJsonInput] = useState('');
     const [loadError, setLoadError] = useState('');
     const [isChallengeFullscreen, setIsChallengeFullscreen] = useState(false);
-    const [terminalUrl, setTerminalUrl] = useState('');
+    const [showMessage, setShowMessage] = useState(false);
+    const [minutesRemaining, setMinutesRemaining] = useState(60);
+    const [showCompletion, setShowCompletion] = useState(false);
     const [isTerminalBooted, setIsTerminalBooted] = useState(false);
-    const [fetchingTerminal, setFetchingTerminal] = useState(false);
-    const [foundTerminal, setFoundTerminal] = useState(false);
+    const [terminalUrl, setTerminalUrl] = useState('');
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
-    const [minutesRemaining, setMinutesRemaining] = useState(60);
-    const [showMessage, setShowMessage] = useState(false);
-    const [containerId, setContainerId] = useState(null);
-    const [showCompletion, setShowCompletion] = useState(false);
+    const [containerId, setContainerId] = useState('');
+    const [foundTerminal, setFoundTerminal] = useState(false);
+    const [fetchingTerminal, setFetchingTerminal] = useState(false);
 
     useEffect(() => {
-        console.log('Initial lessonData:', lessonData);
-        
-        if (!lessonData) {
-            console.warn('No lesson data provided');
-            setPages([]);
+        if (!lessonData || !lessonData.content) {
             setIsLoading(false);
             return;
         }
 
         try {
-            // If content is a string, parse it, otherwise use it directly
-            let parsedContent;
-            if (typeof lessonData === 'string') {
-                parsedContent = JSON.parse(lessonData);
-            } else {
-                parsedContent = lessonData;
-            }
-            
-            console.log('Parsed content:', parsedContent);
-
-            // Check if we have a pages array directly in the content
-            if (Array.isArray(parsedContent.pages)) {
-                console.log('Setting pages from content:', parsedContent.pages);
-                setPages(parsedContent.pages);
-            } 
-            // If the content itself is an array, use it as pages
-            else if (Array.isArray(parsedContent)) {
-                console.log('Setting pages from array:', parsedContent);
-                setPages(parsedContent);
-            }
-            // If we have a single page structure
-            else {
-                console.log('Creating single page from content');
-                setPages([{
-                    id: 1,
-                    title: parsedContent.title || "Lesson Content",
-                    components: parsedContent.components || []
-                }]);
-            }
+            // The content is already parsed into an array in the parent component
+            setPages(lessonData.content);
         } catch (error) {
             console.error('Error processing lesson data:', error);
-            setPages([{
-                id: 1,
-                title: "Error Loading Content",
-                components: []
-            }]);
+            setPages([]);
         }
+        
         setIsLoading(false);
     }, [lessonData]);
 
@@ -560,7 +774,7 @@ const LessonViewer = ({ lessonData }) => {
         setFetchingTerminal(true);
         try {
             const cookie = getCookie('idToken');
-            const data = await api.buildDocketTerminal("lesson", cookie);
+            const data = await api.buildDocketTerminal("e08fecf2-966e-419a-95d5-40e0a98b550e", cookie);
             
             if (data && data.url) {
                 setPassword(data.terminalUserPassword);
@@ -619,152 +833,172 @@ const LessonViewer = ({ lessonData }) => {
         return <div>No content available</div>;
     }
 
-    const currentPage = pages[currentPageIndex];
+    const currentPage = pages[currentPageIndex] || null;
     console.log('Current page index:', currentPageIndex);
     console.log('Current page:', currentPage);
     console.log('Total pages:', pages.length);
 
     return (
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-900 to-neutral-950 text-white">
-            {/* Load Lesson Modal */}
-            <LoadLessonModal />
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
+            
+            {isLoading ? (
+                <div className="flex items-center justify-center h-screen">
+                    <div className="animate-spin text-4xl">⚙️</div>
+                </div>
+            ) : (
+                <>
+                    {/* Load Lesson Modal */}
+                    <LoadLessonModal />
 
-            {/* Show completion screen when lesson is finished */}
-            {showCompletion && (
-                <CompletionScreen 
-                    onRestart={() => {
-                        setShowCompletion(false);
-                        setCurrentPageIndex(0);
-                    }}
-                />
-            )}
+                    {/* Show completion screen when lesson is finished */}
+                    {showCompletion && (
+                        <CompletionScreen 
+                            onRestart={() => {
+                                setShowCompletion(false);
+                                setCurrentPageIndex(0);
+                            }}
+                        />
+                    )}
 
-            {/* Main Content */}
-            <div className="h-[calc(100vh-4rem)]">
-                <div className="flex h-full">
-                    {/* Left side - Lesson Content */}
-                    <div className={`flex flex-col ${isChallengeFullscreen ? 'hidden md:flex' : 'flex'} w-1/2 p-10 overflow-y-auto`}>
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={currentPageIndex}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <h2 className="text-2xl font-semibold mb-8">{currentPage?.title}</h2>
-                                {currentPage?.components?.map((component, index) => (
+                    {/* Main Content */}
+                    <div className="h-[calc(100vh-4rem)]">
+                        <div className="flex h-full">
+                            {/* Left side - Lesson Content */}
+                            <div className={`flex flex-col ${isChallengeFullscreen ? 'hidden md:flex' : 'flex'} w-1/2 p-10 overflow-y-auto`}>
+                                <h1 className="text-2xl font-bold mb-4">{lessonData?.title}</h1>
+                                <AnimatePresence mode="wait">
                                     <motion.div
-                                        key={`${currentPageIndex}-${component.id || index}`}
+                                        key={currentPageIndex}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.1 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.2 }}
                                     >
-                                        {renderComponent(component)}
-                                    </motion.div>
-                                ))}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Right side - Terminal */}
-                    <div className={`flex flex-col ${!isChallengeFullscreen ? 'hidden md:flex' : 'flex'} w-1/2 bg-neutral-800 overflow-hidden`}>
-                        <div className="grow bg-neutral-950 w-full overflow-hidden">
-                            <div className="h-full">
-                                {foundTerminal && (
-                                    <div className="flex py-1 mb-4 text-xs">
-                                        <h1 className="text-xs font-semibold py-2 pl-2">
-                                            Username: {userName}
-                                            <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
-                                                <i className="fas fa-copy"></i>
-                                            </button>
-                                        </h1>
-                                        <h1 className="text-xs font-semibold py-2 pl-2">
-                                            Password: {password}
-                                            <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
-                                                <i className="fas fa-copy"></i>
-                                            </button>
-                                        </h1>
-                                        <h1 className="text-xs ml-auto px-4 font-semibold py-2 line-clamp-1 pl-2">
-                                            Remaining Time: {formatTime(minutesRemaining)}
-                                            <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
-                                        </h1>
-                                    </div>
-                                )}
-
-                                {fetchingTerminal ? (
-                                    <div className="flex mx-auto text-center justify-center items-center h-full">
-                                        <div>
-                                            <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
-                                            <span className="text-white text-xl">Loading Terminal...</span>
-                                            <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    isTerminalBooted ? (
-                                        <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden" />
-                                    ) : (
-                                        <div className="flex mx-auto text-center justify-center items-center h-full">
-                                            <button
-                                                onClick={handleBootTerminal}
-                                                className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                                        {currentPage?.components?.map((component, index) => (
+                                            <motion.div
+                                                key={`${currentPageIndex}-${component.id || index}`}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: index * 0.1 }}
                                             >
-                                                Boot Terminal
-                                            </button>
+                                                {renderComponent(component)}
+                                            </motion.div>
+                                        ))}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Right side - Ubuntu Terminal */}
+                            <div className={`flex flex-col ${!isChallengeFullscreen ? 'hidden md:flex' : 'flex'} w-1/2 bg-neutral-800 overflow-hidden`}>
+                                <div className="grow bg-neutral-950 w-full overflow-hidden">
+                                    {fetchingTerminal ? (
+                                        <div className="flex items-center justify-center h-full">
+                                            <div className="text-center">
+                                                <h1 className="text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
+                                                <span className="text-xl">Setting up your terminal...</span>
+                                                <p className="text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+                                            </div>
                                         </div>
-                                    )
-                                )}
+                                    ) : (
+                                        isTerminalBooted ? (
+                                            <>
+                                                {foundTerminal && (
+                                                    <div className="flex py-1 mb-4 text-xs">
+                                                        <h1 className="text-xs font-semibold py-2 pl-2">
+                                                            Username: {userName}
+                                                            <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
+                                                                <i className="fas fa-copy"></i>
+                                                            </button>
+                                                        </h1>
+                                                        <h1 className="text-xs font-semibold py-2 pl-2">
+                                                            Password: {password}
+                                                            <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
+                                                                <i className="fas fa-copy"></i>
+                                                            </button>
+                                                        </h1>
+                                                        <h1 className="text-xs ml-auto px-4 font-semibold py-2">
+                                                            Time: {formatTime(minutesRemaining)}
+                                                            <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand"></i>
+                                                        </h1>
+                                                    </div>
+                                                )}
+                                                <iframe src={terminalUrl} className="flex-1 w-full" />
+                                            </>
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full">
+                                                <button
+                                                    onClick={handleBootTerminal}
+                                                    className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                                                >
+                                                    Boot Terminal
+                                                </button>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                                
+                                {/* Mobile view toggle button */}
+                                <button
+                                    onClick={() => setIsChallengeFullscreen(!isChallengeFullscreen)}
+                                    className="bg-neutral-700/50 hover:bg-neutral-700 text-white px-4 py-1 rounded mt-2 md:hidden"
+                                >
+                                    <i className="fas fa-exchange-alt"></i> 
+                                    {isChallengeFullscreen ? ' Switch to Lesson' : ' Switch to Terminal'}
+                                </button>
                             </div>
                         </div>
-
-                        {/* Mobile view toggle buttons */}
-                        <button
-                            onClick={() => setIsChallengeFullscreen(!isChallengeFullscreen)}
-                            className="bg-neutral-700/50 hover:bg-neutral-700 text-white px-4 py-1 rounded mt-2 md:hidden"
-                        >
-                            <i className="fas fa-exchange-alt"></i> 
-                            {isChallengeFullscreen ? ' Switch to Lesson' : ' Switch to Terminal'}
-                        </button>
                     </div>
-                </div>
-            </div>
 
-            {/* Navigation Bar - Now at bottom */}
-            <nav className="fixed bottom-0 left-0 right-0 bg-neutral-900/90 border-t border-neutral-800/50 backdrop-blur-md z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center space-x-4">
-                            <h1 className="text-lg font-semibold">{currentPage?.title || 'Untitled Page'}</h1>
-                            <div className="text-sm text-neutral-400">
-                                Page {currentPageIndex + 1} of {pages.length}
+                    {/* Navigation Bar - Now at bottom */}
+                    <nav className="fixed bottom-0 left-0 right-0 bg-neutral-900/90 border-t border-neutral-800/50 backdrop-blur-md z-50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex items-center justify-between h-16">
+                                <div className="flex items-center space-x-4">
+                                    <h1 className="text-lg font-semibold">{currentPage?.title || 'Untitled Page'}</h1>
+                                    <div className="text-sm text-neutral-400">
+                                        Page {currentPageIndex + 1} of {pages.length}
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <button
+                                        onClick={() => setShowLoadModal(true)}
+                                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center space-x-2"
+                                    >
+                                        <i className="fas fa-file-import"></i>
+                                        <span>Load Lesson</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPageIndex(prev => Math.max(0, prev - 1))}
+                                        disabled={currentPageIndex === 0}
+                                        className="px-4 py-2 bg-neutral-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors"
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={handleNextPage}
+                                        disabled={currentPageIndex === pages.length - 1 && showCompletion}
+                                        className="px-4 py-2 bg-blue-500 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+                                    >
+                                        {currentPageIndex === pages.length - 1 ? 'Complete' : 'Next'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                            <button
-                                onClick={() => setShowLoadModal(true)}
-                                className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center space-x-2"
-                            >
-                                <i className="fas fa-file-import"></i>
-                                <span>Load Lesson</span>
-                            </button>
-                            <button
-                                onClick={() => setCurrentPageIndex(prev => Math.max(0, prev - 1))}
-                                disabled={currentPageIndex === 0}
-                                className="px-4 py-2 bg-neutral-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors"
-                            >
-                                Previous
-                            </button>
-                            <button
-                                onClick={handleNextPage}
-                                disabled={currentPageIndex === pages.length - 1 && showCompletion}
-                                className="px-4 py-2 bg-blue-500 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
-                            >
-                                {currentPageIndex === pages.length - 1 ? 'Complete' : 'Next'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+                    </nav>
+                </>
+            )}
         </div>
     );
 };
