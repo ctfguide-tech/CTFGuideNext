@@ -1,9 +1,24 @@
 import { motion } from 'framer-motion';
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { getCookie } from '@/utils/request';
 
-const ModuleCard = ({ title, description, progress, status, lessons, onClick }) => {
+const ModuleCard = ({ title, description, progress, status, content, currentPage, onClick }) => {
+  // Safely parse content and handle missing/invalid content
+  let parsedContent = [];
+  try {
+    if (content) {
+      parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
+      parsedContent = Array.isArray(parsedContent) ? parsedContent : [];
+    }
+  } catch (error) {
+    console.warn(`Failed to parse content for module: ${title}`, error);
+  }
+  
+  // Only show first 4 pages from the content
+  const previewPages = parsedContent.slice(0, 4);
+  
   return (
     <motion.div 
       whileHover={{ scale: 1.02 }}
@@ -16,23 +31,19 @@ const ModuleCard = ({ title, description, progress, status, lessons, onClick }) 
           <p className="text-gray-400">{description}</p>
         </div>
         
-        {/* Lessons List */}
+        {/* Pages Preview List */}
         <div className="space-y-2 mb-6">
-          {lessons?.map((lesson, index) => (
+          {previewPages.map((page, index) => (
             <div 
               key={index}
               className="flex items-center justify-between p-2 rounded-lg bg-[#2b2b2b]/50 hover:bg-[#2b2b2b] transition-colors"
             >
               <div className="flex items-center space-x-2">
                 <span className={`w-2 h-2 rounded-full ${
-                  lesson.completed ? 'bg-green-500' : 
-                  lesson.inProgress ? 'bg-blue-500' : 'bg-gray-500'
+                  index <= currentPage ? 'bg-green-500' : 'bg-gray-500'
                 }`} />
-                <span className="text-sm text-gray-300">{lesson.title}</span>
+                <span className="text-sm text-gray-300">{page.title}</span>
               </div>
-              <span className="text-xs px-2 py-1 rounded-full bg-[#3d3d3d] text-gray-400">
-                {lesson.type}
-              </span>
             </div>
           ))}
         </div>
@@ -63,6 +74,18 @@ const ModuleCard = ({ title, description, progress, status, lessons, onClick }) 
 };
 
 const ModuleSlideOver = ({ module, open, setOpen }) => {
+  let parsedContent = [];
+  try {
+    if (module?.content) {
+      parsedContent = typeof module.content === 'string' 
+        ? JSON.parse(module.content) 
+        : module.content;
+      parsedContent = Array.isArray(parsedContent) ? parsedContent : [];
+    }
+  } catch (error) {
+    console.warn(`Failed to parse content for module: ${module?.title}`, error);
+  }
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -109,9 +132,9 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
                     </div>
                     <div className="border-t border-[#2b2b2b]">
                       <div className="px-6 py-4">
-                        <h3 className="text-lg font-semibold text-white mb-4">Lessons</h3>
+                        <h3 className="text-lg font-semibold text-white mb-4">All Pages</h3>
                         <div className="space-y-3">
-                          {module?.lessons.map((lesson, index) => (
+                          {parsedContent.map((page, index) => (
                             <div
                               key={index}
                               className="p-4 rounded-lg bg-[#2b2b2b] hover:bg-[#3d3d3d] transition-colors cursor-pointer"
@@ -119,14 +142,10 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-3">
                                   <span className={`w-2 h-2 rounded-full ${
-                                    lesson.completed ? 'bg-green-500' : 
-                                    lesson.inProgress ? 'bg-blue-500' : 'bg-gray-500'
+                                    index <= module?.currentPage ? 'bg-green-500' : 'bg-gray-500'
                                   }`} />
-                                  <span className="text-gray-300">{lesson.title}</span>
+                                  <span className="text-gray-300">{page.title}</span>
                                 </div>
-                                <span className="text-xs px-2 py-1 rounded-full bg-[#3d3d3d] text-gray-400">
-                                  {lesson.type}
-                                </span>
                               </div>
                             </div>
                           ))}
@@ -147,34 +166,66 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
 const ModuleLayout = () => {
   const [selectedModule, setSelectedModule] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const modules = [
-    {
-      title: "Linux Basics",
-      description: "Master the fundamentals of Linux operating system",
-      progress: 10,
-      status: "In Progress",
-      lessons: [
-        { title: "Introduction to Linux", type: "LAB", completed: true },
-        { title: "Basic Commands", type: "LAB", completed: true },
-        { title: "File Navigation", type: "LAB", inProgress: true },
-        { title: "Mastery Task", type: "TASK", completed: false },
-      ]
-    },
-    {
-      title: "Linux Commands",
-      description: "Learn essential Linux commands and their usage",
-      progress: 0,
-      status: "Not Started",
-      lessons: [
-        { title: "Command Structure", type: "LAB", completed: false },
-        { title: "File Operations", type: "LAB", completed: false },
-        { title: "Text Processing", type: "LAB", completed: false },
-        { title: "Mastery Task", type: "TASK", completed: false },
-      ]
-    },
-    // ... other modules
-  ];
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons`, {
+          headers: {
+            'Authorization': `Bearer ${getCookie('idToken')}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch modules');
+        
+        const data = await response.json();
+        const transformedModules = data.map(lesson => {
+          let parsedContent = [];
+          try {
+            if (lesson.content) {
+              parsedContent = typeof lesson.content === 'string' 
+                ? JSON.parse(lesson.content) 
+                : lesson.content;
+              parsedContent = Array.isArray(parsedContent) ? parsedContent : [];
+            }
+          } catch (error) {
+            console.warn(`Failed to parse content for lesson: ${lesson.title}`, error);
+          }
+
+          // Get progress from the progress array (should contain at most one item)
+          const userProgress = lesson.progress?.[0];
+          const currentPage = userProgress?.currentPage || 0;
+          const percentage = userProgress?.percentage || 0;
+
+          return {
+            id: lesson.id,
+            title: lesson.title,
+            description: lesson.description || 'No description available',
+            content: parsedContent,
+            currentPage,
+            progress: percentage,
+            status: percentage > 0 ? 'In Progress' : 'Not Started'
+          };
+        });
+        
+        setModules(transformedModules);
+      } catch (error) {
+        console.error('Error fetching modules:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModules();
+  }, []);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin text-4xl">⚙️</div>
+    </div>;
+  }
 
   return (
     <div className="mt-10">

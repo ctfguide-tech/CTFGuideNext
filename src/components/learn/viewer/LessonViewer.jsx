@@ -817,11 +817,23 @@ const LessonViewer = ({ lessonData }) => {
         return `${hrs}:${mins.toString().padStart(2, '0')}`;
     };
 
-    const handleNextPage = () => {
-        if (currentPageIndex === pages.length - 1) {
-            setShowCompletion(true);
-        } else {
-            setCurrentPageIndex(prev => Math.min(pages.length - 1, prev + 1));
+    const handlePageChange = async (newIndex) => {
+        setCurrentPageIndex(newIndex);
+        
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonData.id}/progress`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getCookie('idToken')}`
+                },
+                body: JSON.stringify({
+                    currentPage: newIndex,
+                    totalPages: pages.length
+                })
+            });
+        } catch (error) {
+            console.error('Failed to save progress:', error);
         }
     };
 
@@ -980,14 +992,20 @@ const LessonViewer = ({ lessonData }) => {
                                         <span>Load Lesson</span>
                                     </button>
                                     <button
-                                        onClick={() => setCurrentPageIndex(prev => Math.max(0, prev - 1))}
+                                        onClick={() => handlePageChange(Math.max(0, currentPageIndex - 1))}
                                         disabled={currentPageIndex === 0}
                                         className="px-4 py-2 bg-neutral-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors"
                                     >
                                         Previous
                                     </button>
                                     <button
-                                        onClick={handleNextPage}
+                                        onClick={() => {
+                                            if (currentPageIndex === pages.length - 1) {
+                                                setShowCompletion(true);
+                                            } else {
+                                                handlePageChange(currentPageIndex + 1);
+                                            }
+                                        }}
                                         disabled={currentPageIndex === pages.length - 1 && showCompletion}
                                         className="px-4 py-2 bg-blue-500 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                                     >
