@@ -6,7 +6,9 @@ import { getCookie } from '@/utils/request';
 import { useRouter } from 'next/router';
 import UpNext from './UpNext';
 
-const ModuleCard = ({ title, description, progress, status, content, currentPage, onClick }) => {
+const ModuleCard = ({ title, description, progress, content, currentPage, id, onCardClick }) => {
+  const router = useRouter();
+  
   // Safely parse content and handle missing/invalid content
   let parsedContent = [];
   try {
@@ -20,12 +22,39 @@ const ModuleCard = ({ title, description, progress, status, content, currentPage
   
   // Only show first 4 pages from the content
   const previewPages = parsedContent.slice(0, 4);
+  const hasMorePages = parsedContent.length > 4;
   
+  const handlePageClick = (e, pageIndex) => {
+    e.stopPropagation(); // Prevent card click from triggering
+    router.push(`/learn/${id}?page=${pageIndex + 1}`);
+  };
+
+  // Determine status based on progress
+  const getStatus = () => {
+    if (progress === 100) return 'Completed';
+    if (progress > 0) return 'In Progress';
+    return 'Not Started';
+  };
+
+  // Get status color classes
+  const getStatusClasses = () => {
+    switch (getStatus()) {
+      case 'Completed':
+        return 'bg-green-500/20 text-green-400';
+      case 'In Progress':
+        return 'bg-blue-500/20 text-blue-400';
+      case 'Not Started':
+        return 'bg-gray-500/20 text-gray-400';
+      default:
+        return 'bg-gray-500/20 text-gray-400';
+    }
+  };
+
   return (
     <motion.div 
       whileHover={{ scale: 1.02 }}
       className="group relative p-6 rounded-2xl bg-[#1c1c1c] border border-[#2b2b2b] hover:border-[#3d3d3d] transition-all duration-300 cursor-pointer"
-      onClick={onClick}
+      onClick={() => onCardClick({ id, title, description, content, currentPage })}
     >
       <div className="flex flex-col h-full">
         <div className="mb-6">
@@ -39,6 +68,7 @@ const ModuleCard = ({ title, description, progress, status, content, currentPage
             <div 
               key={index}
               className="flex items-center justify-between p-2 rounded-lg bg-[#2b2b2b]/50 hover:bg-[#2b2b2b] transition-colors"
+              onClick={(e) => handlePageClick(e, index)}
             >
               <div className="flex items-center space-x-2">
                 <span className={`w-2 h-2 rounded-full ${
@@ -48,6 +78,13 @@ const ModuleCard = ({ title, description, progress, status, content, currentPage
               </div>
             </div>
           ))}
+          
+          {/* More pages indicator */}
+          {hasMorePages && (
+            <div className="flex items-center justify-center p-2 rounded-lg bg-[#2b2b2b]/30 text-gray-400 text-sm">
+              +{parsedContent.length - 4} more pages...
+            </div>
+          )}
         </div>
         
         <div className="mt-auto space-y-4">
@@ -62,11 +99,8 @@ const ModuleCard = ({ title, description, progress, status, content, currentPage
           
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-400">{progress}% Complete</span>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium 
-              ${status === 'In Progress' ? 'bg-blue-500/20 text-blue-400' : 
-                status === 'Not Started' ? 'bg-gray-500/20 text-gray-400' : 
-                'bg-green-500/20 text-green-400'}`}>
-              {status}
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusClasses()}`}>
+              {getStatus()}
             </span>
           </div>
         </div>
@@ -168,9 +202,10 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
 const ModuleLayout = () => {
   const router = useRouter();
   const [selectedModule, setSelectedModule] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSlideOverOpen, setIsSlideOverOpen] = useState(false);
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({});
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -181,10 +216,8 @@ const ModuleLayout = () => {
           }
         });
         
-    //    if (!response.ok) throw new Error('Failed to fetch modules');
-        
         const data = await response.json();
-        const transformedModules = data.map(lesson => {
+        const transformedModules = data.lessons.map(lesson => {
           let parsedContent = [];
           try {
             if (lesson.content) {
@@ -213,6 +246,7 @@ const ModuleLayout = () => {
         });
         
         setModules(transformedModules);
+        setStats(data.stats);
       } catch (error) {
         console.error('Error fetching modules:', error);
       } finally {
@@ -226,6 +260,11 @@ const ModuleLayout = () => {
   const findNextLesson = (modules) => {
     // Find first incomplete or lowest progress lesson
     return modules.find(module => module.progress < 100) || modules[0];
+  };
+
+  const handleModuleClick = (moduleData) => {
+    setSelectedModule(moduleData);
+    setIsSlideOverOpen(true);
   };
 
   if (loading) {
@@ -243,11 +282,16 @@ const ModuleLayout = () => {
           <ModuleCard 
             key={index} 
             {...module} 
-            onClick={() => router.push(`/learn/${module.id}`)}
+            onCardClick={handleModuleClick}
           />
         ))}
       </div>
 
+      <ModuleSlideOver 
+        module={selectedModule}
+        open={isSlideOverOpen}
+        setOpen={setIsSlideOverOpen}
+      />
     </div>
   );
 };
