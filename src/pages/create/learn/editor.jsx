@@ -4,6 +4,7 @@ import StudioEditor from '../../../components/learn/editor/StudioEditor';
 import request from '../../../utils/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router';
 
 const NewLessonModal = ({ 
     showModal, 
@@ -81,6 +82,7 @@ const NewLessonModal = ({
 );
 
 const LearnEditor = () => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [userLessons, setUserLessons] = useState([]);
     const [isLoadingLessons, setIsLoadingLessons] = useState(true);
@@ -268,6 +270,11 @@ const LearnEditor = () => {
         }
     };
 
+    const handlePreviewLesson = (e, lessonId) => {
+        e.stopPropagation(); // Prevent triggering the lesson load
+        router.push(`/learn/${lessonId}`);
+    };
+
     const ImportModal = () => (
         <div 
             className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center ${
@@ -410,10 +417,19 @@ const LearnEditor = () => {
                                                     <div>
                                                         <h3 className="text-white font-medium">{lesson.title}</h3>
                                                         <p className="text-neutral-400 text-sm">
-                                                            {lesson.pages.length} page{lesson.pages.length !== 1 ? 's' : ''} • {lesson.status.toLowerCase()}
+                                                            {(lesson.pages?.length || 0)} page{(lesson.pages?.length || 0) !== 1 ? 's' : ''} • {(lesson.status || 'draft').toLowerCase()}
                                                         </p>
                                                     </div>
-                                                    <i className="fas fa-chevron-right text-neutral-600 group-hover:text-neutral-400 transition-colors"></i>
+                                                    <div className="flex items-center space-x-2">
+                                                        <button
+                                                            onClick={(e) => handlePreviewLesson(e, lesson.id)}
+                                                            className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-all"
+                                                        >
+                                                            <i className="fas fa-eye mr-1"></i>
+                                                            Preview
+                                                        </button>
+                                                        <i className="fas fa-chevron-right text-neutral-600 group-hover:text-neutral-400 transition-colors"></i>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))

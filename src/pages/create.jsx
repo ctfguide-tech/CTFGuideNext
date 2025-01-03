@@ -45,6 +45,10 @@ export default function Create() {
   const [writeupState, setWriteupState] = useState('all');
   const [allWriteups, setAllWriteups] = useState([]);
 
+  const [modules, setModules] = useState([]);
+
+  const [moduleFilter, setModuleFilter] = useState('all');
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -129,6 +133,7 @@ export default function Create() {
         });
 
       fetchChallenges("unverified");
+      fetchModules("unverified");
     } catch (error) {
       setLoading(false);
     }
@@ -308,32 +313,35 @@ export default function Create() {
     fetchCreatorMode();
   }, []);
 
-  const [modules, setModules] = useState([]);
-
-  const fetchModules = async (state) => {
-    if (state) {
-      setModuleState(state);
-    }
+  const fetchModules = async (selection) => {
     try {
       const response = await request(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons`,
-        'GET',
+        `${process.env.NEXT_PUBLIC_API_URL}/lessons`, 
+        "GET", 
         null
       );
-      if (Array.isArray(response)) {
-        setModules(response);
+
+      if (response && response.lessons) {
+        // Filter modules based on selection
+        const filteredModules = response.lessons.filter(module => {
+          if (selection === 'unverified') {
+            return !module.published;
+          } else if (selection === 'published') {
+            return module.published;
+          }
+          return true;
+        });
+
+        setModules(filteredModules);
+        setModuleState(selection);
       } else {
         setModules([]);
       }
     } catch (error) {
-      console.error('Failed to fetch modules:', error);
+      console.error('Error fetching modules:', error);
       setModules([]);
     }
   };
-
-  useEffect(() => {
-    fetchModules();
-  }, []);
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState({ title: '', videoId: '' });
@@ -377,6 +385,93 @@ export default function Create() {
       });
       setWriteups(filtered);
     }
+  };
+
+  const renderModules = () => {
+    const filteredModules = modules.filter(module => {
+      if (moduleFilter === 'published') return module.published;
+      if (moduleFilter === 'draft') return !module.published;
+      return true;
+    });
+
+    return (
+      <div className="mt-4">
+        <div className="flex space-x-4 mb-4">
+          <button
+            className={`px-4 py-2 rounded ${
+              moduleFilter === 'all' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+            onClick={() => setModuleFilter('all')}
+          >
+            All
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              moduleFilter === 'published' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+            onClick={() => setModuleFilter('published')}
+          >
+            Published
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              moduleFilter === 'draft' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+            onClick={() => setModuleFilter('draft')}
+          >
+            Drafts
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredModules.map((module) => (
+            <div
+              key={module.id}
+              className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-semibold">{module.title}</h3>
+                <span
+                  className={`px-2 py-1 text-xs rounded ${
+                    module.published
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}
+                >
+                  {module.published ? 'Published' : 'Draft'}
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-2">
+                {module.description || 'No description provided'}
+              </p>
+              <div className="flex justify-between items-center text-sm text-gray-500">
+                <span>
+                  Last updated: {new Date(module.updatedAt).toLocaleDateString()}
+                </span>
+                <Link
+                  href={`/create/learn/editor?id=${module.id}`}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  Edit →
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredModules.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            No {moduleFilter !== 'all' ? moduleFilter : ''} modules found
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
