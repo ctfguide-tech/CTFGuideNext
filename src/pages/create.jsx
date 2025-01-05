@@ -40,6 +40,15 @@ export default function Create() {
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const [moduleState, setModuleState] = useState('unverified');
+
+  const [writeupState, setWriteupState] = useState('all');
+  const [allWriteups, setAllWriteups] = useState([]);
+
+  const [modules, setModules] = useState([]);
+
+  const [moduleFilter, setModuleFilter] = useState('all');
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -124,6 +133,7 @@ export default function Create() {
         });
 
       fetchChallenges("unverified");
+      fetchModules("unverified");
     } catch (error) {
       setLoading(false);
     }
@@ -133,9 +143,10 @@ export default function Create() {
     try {
       const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/writeups`, "GET", null);
       if (Array.isArray(response) && response.length > 0) {
+        setAllWriteups(response);
         setWriteups(response);
-        console.log(response)
       } else {
+        setAllWriteups([]);
         setWriteups([]);
       }
     } catch (error) { }
@@ -302,623 +313,735 @@ export default function Create() {
     fetchCreatorMode();
   }, []);
 
+  const fetchModules = async (selection) => {
+    try {
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/lessons`, 
+        "GET", 
+        null
+      );
+
+      if (response && response.lessons) {
+        // Filter modules based on selection
+        const filteredModules = response.lessons.filter(module => {
+          if (selection === 'unverified') {
+            return !module.published;
+          } else if (selection === 'published') {
+            return module.published;
+          }
+          return true;
+        });
+
+        setModules(filteredModules);
+        setModuleState(selection);
+      } else {
+        setModules([]);
+      }
+    } catch (error) {
+      console.error('Error fetching modules:', error);
+      setModules([]);
+    }
+  };
+
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [currentVideo, setCurrentVideo] = useState({ title: '', videoId: '' });
+
+  const tutorials = [
+    {
+      title: 'Challenge Creation',
+      description: 'Learn how to create engaging CTF challenges',
+      icon: 'fas fa-flag',
+      iconColor: 'text-blue-400/80',
+      gradient: 'from-blue-600/20 via-blue-800/20',
+      videoId: 'YOUR_YOUTUBE_VIDEO_ID_1'
+    },
+    {
+      title: 'Writeup Mastery',
+      description: 'Master the art of creating helpful writeups',
+      icon: 'fas fa-pen-fancy',
+      iconColor: 'text-purple-400/80',
+      gradient: 'from-purple-600/20 via-purple-800/20',
+      videoId: 'YOUR_YOUTUBE_VIDEO_ID_2'
+    },
+    {
+      title: 'Learning Modules',
+      description: 'Design educational content for CTF learners',
+      icon: 'fas fa-book',
+      iconColor: 'text-green-400/80',
+      gradient: 'from-green-600/20 via-green-800/20',
+      videoId: 'YOUR_YOUTUBE_VIDEO_ID_3'
+    }
+  ];
+
+  const filterWriteups = (state) => {
+    setWriteupState(state);
+    if (state === 'all') {
+      setWriteups(allWriteups);
+    } else {
+      const filtered = allWriteups.filter(writeup => {
+        if (state === 'draft') return writeup.draft;
+        if (state === 'published') return !writeup.draft;
+        return true;
+      });
+      setWriteups(filtered);
+    }
+  };
+
+  const renderModules = () => {
+    const filteredModules = modules.filter(module => {
+      if (moduleFilter === 'published') return module.published;
+      if (moduleFilter === 'draft') return !module.published;
+      return true;
+    });
+
+    return (
+      <div className="mt-4">
+        <div className="flex space-x-4 mb-4">
+          <button
+            className={`px-4 py-2 rounded ${
+              moduleFilter === 'all' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+            onClick={() => setModuleFilter('all')}
+          >
+            All
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              moduleFilter === 'published' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+            onClick={() => setModuleFilter('published')}
+          >
+            Published
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              moduleFilter === 'draft' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700'
+            }`}
+            onClick={() => setModuleFilter('draft')}
+          >
+            Drafts
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredModules.map((module) => (
+            <div
+              key={module.id}
+              className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-semibold">{module.title}</h3>
+                <span
+                  className={`px-2 py-1 text-xs rounded ${
+                    module.published
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}
+                >
+                  {module.published ? 'Published' : 'Draft'}
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-2">
+                {module.description || 'No description provided'}
+              </p>
+              <div className="flex justify-between items-center text-sm text-gray-500">
+                <span>
+                  Last updated: {new Date(module.updatedAt).toLocaleDateString()}
+                </span>
+                <Link
+                  href={`/create/learn/editor?id=${module.id}`}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  Edit →
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredModules.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            No {moduleFilter !== 'all' ? moduleFilter : ''} modules found
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <Head>
-        <title>Create - CTFGuide</title>
-        <style>
-          @import
-          url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-        </style>
+        <title>Creator Studio - CTFGuide</title>
       </Head>
       <StandardNav />
-      <main>
-        <br></br>
-        <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
+      <main className="min-h-screen bg-gradient-to-b from-neutral-900/50 via-neutral-900/30 to-neutral-800/20 backdrop-blur-xl">
+        {/* Secondary Navigation */}
+        <div className="border-b border-[#232323] bg-[#161616]/80 backdrop-blur-xl sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center space-x-8 h-16">
+              <Link 
+                href="/create"
+                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                  true  // Replace with actual route check
+                    ? 'border-blue-500 text-white' 
+                    : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
+                }`}
+              >
+                Home
+              </Link>
+              <Link 
+                href="/create/earnings"
+                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                  false  // Replace with actual route check
+                    ? 'border-blue-500 text-white' 
+                    : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
+                }`}
+              >
+                <i className="fas fa-wallet mr-2"></i>
+                Earnings & Analytics
+              </Link>
+              <Link 
+                href="/create/settings"
+                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                  false  // Replace with actual route check
+                    ? 'border-blue-500 text-white' 
+                    : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
+                }`}
+              >
+                <i className="fas fa-cog mr-2"></i>
+                Creator Settings
+              </Link>
+            </div>
+          </div>
+        </div>
 
-        <div
-          className="fixed top-0 left-0 mt-10 h-full w-1/2 "
-          aria-hidden="true"
-        ></div>
-
-        <div className="  top-0 right-0 h-full w-1/2 " aria-hidden="true"></div>
-
-        <div className="relative flex min-h-full flex-col">
-          <div className="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
-
-            <div className="min-w-0 flex-1 xl:flex">
-
-
-              <div className=" lg:min-w-0 lg:flex-1 mt-6 rounded-lg ">
-
-
-                <div id="saved" className='hidden mb-10 text-white text-center text-xl border  px-2 py-1 rounded-lg bg-green-900 border-green-700 '>
-                  <h1><i class="fas fa-check mr-2 "></i>  Your challenge has been created and submitted for approval.</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {/* Header Section with Creator Mode Toggle and Tutorial Cards */}
+          <div className="bg-[#161616] rounded-2xl border border-[#232323] shadow-2xl p-6 mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <h1 className="text-2xl font-bold text-white">Creator Studio</h1>
+                <p className="text-neutral-400 mt-1">Manage your challenges, modules, and writeups</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className={`flex items-center ${creatorMode ? 'text-green-400' : 'text-neutral-400'}`}>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${creatorMode ? 'bg-green-400' : 'bg-neutral-400'}`}></div>
+                  <span className="text-sm">Creator Mode</span>
                 </div>
-
-
-
-
-
-                <div className='mx-auto max-w-7xl'>
-                  <div className="mb-4  bg-black/10 shadow-2xl ring-1  ring-white/10 relative isolate overflow-hidden bg-neutral-900 py-14 sm:py-12 rounded-lg">
-                    <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-                      <div
-                        className="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10"
-                        aria-hidden="true"
-                      >
-                        <div
-                          className="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#081e75] to-[#0737f2] opacity-30"
-                          style={{
-                            clipPath:
-                              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-                          }}
-                        />
-                      </div>
-                      <div className="mx-auto max-w-6xl lg:mx-0 lg:max-w-3xl">
-                   
-                      </div>
-                      <dl className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-10 text-white sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4">
-                        {stats.map((stat) => (
-                          <div key={stat.id} className="flex text-center flex-col gap-y-3  border-white/10 pl-6">
-                            <dt className="text-sm leading-6">{stat.name}</dt>
-                            <dd className="order-first text-3xl font-semibold tracking-tight">{stat.value}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </div>
-                  </div></div>
-
-
-                        <br></br>
-                <div className="  pb-4 xl:border-t-0 ">
-                  <div className="flex items-center">
-                    <h1 className="flex-1 text-2xl font-medium  text-white">
-                      <div className="">
-                        {title} <br></br>
-                        <div className='text-sm flex-none w-2/3 hidden'>
-                          <p>
-                            {infoText}
-                          </p>
-                        </div>
-                      </div>
-                    </h1>
-
-                    <HeadlessPopover className="relative inline-block text-left">
-                      <HeadlessPopover.Button
-                        type="button"
-                        className="inline-flex  justify-center gap-x-1 rounded-md px-2 py-1 mr-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800"
-                        id="sort-menu-button"
-                        aria-expanded={isOpen}
-                        aria-haspopup="true"
-                        onClick={toggleDropdown}
-                      >
-                        <i className="fas fa-filter -ml-0.5 mt-1.5 h-5 w-5 text-white"></i>
-                        {title}
-                        <svg
-                          className="-mr-1 h-5 w-5 text-white"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </HeadlessPopover.Button>
-                      <HeadlessPopover.Panel className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md border border-neutral-600 bg-neutral-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                          <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
-                            onClick={async () => fetchChallenges('unverified')}
-                          >
-                            Unverified
-                          </a>
-                          <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
-                            onClick={async () => fetchChallenges('pending')}
-                          >
-                            Pending Changes
-                          </a>
-                          <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-white hover:bg-neutral-700"
-                            onClick={async () => fetchChallenges('published')}
-                          >
-                            Published
-                          </a>
-                        </div>
-                      </HeadlessPopover.Panel>
-                    </HeadlessPopover>
-                    <a href="/create/new" className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Challenge</a>
-
-                  </div>
-
-                  {hasChallenges && (
-                    <div className="mt-4 flow-root">
-                      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                          <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
-                            <thead>
-                              <tr>
-                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                                  Challenge Name
-                                </th>
-                                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
-                                  Status
-                                </th>
-                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                                  Last Updated
-                                </th>
-                                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                                  <span className="sr-only">Edit</span>
-                                </th>
-                              
-                              </tr>
-                            </thead>
-                            <tbody className="bg-neutral-800">
-                              {challenges.map((challenge) => (
-                                <tr key={challenge.id} className="even:bg-neutral-900">
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
-                                    {challenge.title}
-                                  </td>
-                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3 text-white">
-                                    {challenge.state.split("_")[1].toUpperCase()}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
-                                    {new Date(challenge.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                  </td>
-                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                    {challenge.state === 'STANDARD_PENDING' && (
-                                      <>
-                                        <a href={`/create/edit?id=${challenge.id}`} className="text-blue-600 hover:text-blue-500">
-                                          <i className="fas fa-pencil-alt mr-1"></i> Edit<span className="sr-only">, {challenge.title}</span>
-                                        </a>
-
-                                        <button 
-                                          onClick={() => handleOpenModal(challenge.snote)}
-                                          className="ml-4 text-orange-600 hover:text-orange-500"
-                                        >
-                                          <i className="fas fa-comments mr-1"></i> View Feedback
-                                        </button>
-
-                                        <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
-                                          <i className="fas fa-external-link-alt mr-2"></i>
-                                          Go to Challenge Page
-                                        </a>
-                                      </>
-                                    )}
-                                    {challenge.state === 'STANDARD_UNVERIFIED' &&(
-                                       <>
-                                       <a href={`/create/edit?id=${challenge.id}`} className="text-blue-600 hover:text-blue-500">
-                                         <i className="fas fa-pencil-alt mr-1"></i> Edit<span className="sr-only">, {challenge.title}</span>
-                                       </a>
-
-                                       <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
-                                         <i className="fas fa-external-link-alt mr-2"></i>
-                                         Go to Challenge Page
-                                       </a>
-                                     </>
-                                    )}
-                                    {challenge.state === 'STANDARD_VERIFIED' &&(
-                                      <a className='ml-4 text-red-600 hover:text-red-700 cursor-pointer' onClick={() => window.open(`../../challenges/${challenge.id}`, '_blank')}>
-                                      <i className="fas fa-external-link-alt mr-2"></i>
-                                      Go to Challenge Page
-                                    </a>
-                                    )}
-
-                                  </td>
-                                  
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {!hasChallenges && (
-                    <div>
-                      <div className="mx-auto mt-2 flex rounded-sm bg-neutral-800/40 w-full py-2.5 ">
-                        <div className="my-auto mx-auto text-center pt-4 pb-4 text-xl text-white">
-                          <i className="text-4xl fas fa-folder-open mx-auto text-center text-neutral-700/80"></i>
-                          <p>No challenges found. Try adjusting the filters.</p>
-                          <a href="/guides/create" className='mx-auto'>
-                            <p className='mx-auto text-center text-sm text-blue-600 '>Want to create CTF's? Learn more here<ArrowRightIcon className='ml-1 mt-0.5 h-5 hidden' /></p>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <hr className='mt-4 border-neutral-800'></hr>
-                <div className=" mt-4  pb-4  ">
-                  <div className="flex items-center">
-                    <h1 className="flex-1 text-2xl font-medium  text-white">
-                      <div className="flex">
-                        Your Writeups
-                        <div className='ml-auto'>
-                          <button onClick={() => { setIsCreating(true) }} className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Draft</button>
-
-                        </div>
-
-
-
-                      </div>
-
-
-
-                      <div className="mt-4 flow-root">
-                        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
-                              <thead>
-                                <tr>
-                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Writeup Name
-                                  </th>
-                                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">
-                                    Challenge Name
-                                  </th>
-
-                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Last Updated
-                                  </th>
-                                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                                    <span className="sr-only">Edit</span>
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody className="bg-neutral-800">
-                                {writeups.map((writeup) => (
-                                  <tr key={writeup.title} className="even:bg-neutral-900">
-
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
-                                      {writeup.draft &&
-                                        <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
-                                      }
-
-                                      {!writeup.draft &&
-                                        <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
-                                      }
-
-                                      {writeup.title} </td>
-                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
-                                      {writeup.challenge.title}
-                                    </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-
-                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                      <a href={`/create/editor?cid=${writeup.id}`} className="text-blue-600 hover:text-blue-900">
-                                        Edit<span className="sr-only">, {writeup.title}</span>
-                                      </a>
-                                    </td>
-                                  </tr>
-                                )) || <Skeleton containerClassName='tbody' className='mb-4' baseColor='#999' count={2} />
-                                }
-                              </tbody>
-                            </table>
-                          </div>
-
-                        </div>
-                      </div>
-                    </h1>
-
-
-                  </div>
-                </div>
-
-
-                <hr className='mt-4 border-neutral-700 hidden'></hr>
-                <div className=" mt-4  pb-4 hidden ">
-                  <div className="flex items-center">
-                    <h1 className="flex-1 text-2xl font-medium  text-white">
-                      <div className="flex">
-                        Your Learn Modules
-                        <div className='ml-auto'>
-                          <button onClick={() => { setIsCreating(true) }} className='bg-blue-700 text-sm shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>New Draft Module</button>
-
-                        </div>
-
-
-
-                      </div>
-
-
-
-                      <div className="mt-4 flow-root">
-                        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <table className="min-w-full divide-y divide-neutral-800 border border-neutral-800">
-                              <thead>
-                                <tr>
-                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Module Name
-                                  </th>
-                              
-
-                                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text--white">
-                                    Last Updated
-                                  </th>
-                                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                                    <span className="sr-only">Edit</span>
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody className="bg-neutral-800">
-                                {writeups.map((writeup) => (
-                                  <tr key={writeup.title} className="even:bg-neutral-900">
-
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">
-                                      {writeup.draft &&
-                                        <span className='text-yellow-400 bg-yellow-900 px-2 rounded-full mr-2'>draft</span>
-                                      }
-
-                                      {!writeup.draft &&
-                                        <span className='text-green-400 bg-green-900 px-2 rounded-full mr-2'>published</span>
-                                      }
-
-                                      {writeup.title} </td>
-                                   
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white">{new Date(writeup.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-
-                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <button className='bg-neutral-700 text-sm shadow-sm hover:bg-neutral-700/90 px-2 py-1 text-white rounded-sm mr-3'>Open in Studio</button>
-                                      </td>
-                                  </tr>
-                                )) || <Skeleton containerClassName='tbody' className='mb-4' baseColor='#999' count={2} />
-                                }
-                              </tbody>
-                            </table>
-                          </div>
-
-                        </div>
-                      </div>
-                    </h1>
-
-
-                  </div>
-                </div>
-
-
+                <button
+                  onClick={() => creatorMode ? setIsDisableModalOpen(true) : setIsEnableModalOpen(true)}
+                  className={`
+                    px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
+                    ${creatorMode 
+                      ? 'bg-[#1c1c1c] text-neutral-400 hover:bg-[#232323] hover:text-white border border-[#2a2a2a]' 
+                      : 'bg-blue-600 text-white hover:bg-blue-700'}
+                  `}
+                >
+                  {creatorMode ? 'Switch to Viewer' : 'Switch to Creator'}
+                </button>
               </div>
             </div>
 
-            <div className="  pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-neutral-700 lg:pr-8 xl:pr-0 ">
-       
-              <button
-                className={`mb-4 float-right ${creatorMode ? 'bg-blue-700 hover:bg-blue-700/90' : 'bg-blue-700 hover:bg-blue-700/90'} text-sm shadow-sm px-2 py-1 text-white rounded-sm mr-3`}
-                onClick={() => creatorMode ? setIsDisableModalOpen(true) : setIsEnableModalOpen(true)}
-              >
-                {creatorMode ? 'Disable Creator Mode' : 'Enable Creator Mode'}
-              </button>
-             
-
-              <Transition appear show={isEnableModalOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => setIsEnableModalOpen(false)}>
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 scale-95"
-                    enterTo="opacity-100 scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 scale-100"
-                    leaveTo="opacity-0 scale-95"
-                  >
-                    <div className="fixed inset-0 bg-black bg-opacity-25" />
-                  </Transition.Child>
-
-                  <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
-                      <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0 scale-95"
-                        enterTo="opacity-100 scale-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100 scale-100"
-                        leaveTo="opacity-0 scale-95"
-                      >
-                        <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
-                          <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
-                            Enable Creator Mode <span className='text-sm text-gray-300'> BETA</span>
-                          </Dialog.Title>
-                          <div className="mt-2">
-                                <img src="/insightDemo.png" className='mt-4 mb-4 w-3/4 mx-auto rounded-lg shadow-lg border-none shadow-blur shadow-blue-900/50'></img>
-                            <p className="text-md text-gray-300 mt-3">
-                              Creator mode will allow you to see insights for every challenge on CTFGuide. You're welcome to leverage this data when creating challenges.
-                              <br></br>                              <br></br>
-
-                              Are you sure you want to enable creator mode?
-                            </p>
-                          </div>
-
-                          <div className="mt-4">
-                            <button
-                              type="button"
-                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                              onClick={handleEnableCreatorMode}
-                            >
-                              Yes, Enable
-                            </button>
-                            <button
-                              type="button"
-                              className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                              onClick={() => setIsEnableModalOpen(false)}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </Dialog.Panel>
-                      </Transition.Child>
+            {/* Tutorial Cards */}
+            <div className="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              {tutorials.map((tutorial, index) => (
+                <div 
+                  key={index}
+                  className="group bg-[#1c1c1c] rounded-xl border border-[#2a2a2a] overflow-hidden hover:border-[#333333] transition-all duration-300 cursor-pointer"
+                  onClick={() => {
+                    setCurrentVideo({
+                      title: tutorial.title,
+                      videoId: tutorial.videoId
+                    });
+                    setIsVideoModalOpen(true);
+                  }}
+                >
+                  <div className={`aspect-video w-full overflow-hidden relative bg-gradient-to-br ${tutorial.gradient} to-[#1c1c1c] p-6 flex items-end`}>
+                    <div className="absolute top-6 left-6">
+                      <i className={`${tutorial.icon} text-2xl ${tutorial.iconColor}`}></i>
                     </div>
+                    <h3 className="text-lg text-white font-medium">{tutorial.title}</h3>
                   </div>
-                </Dialog>
-              </Transition>
+                  <div className="p-4">
+                    <p className="text-sm text-neutral-400 mb-3">{tutorial.description}</p>
+                    <span className="inline-flex items-center text-sm text-blue-400 hover:text-blue-300 group-hover:translate-x-1 transition-transform">
+                      Watch Tutorial
+                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-              <Transition appear show={isDisableModalOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => setIsDisableModalOpen(false)}>
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 scale-95"
-                    enterTo="opacity-100 scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 scale-100"
-                    leaveTo="opacity-0 scale-95"
+          {/* Stats Section */}
+          <div className="bg-[#161616] rounded-2xl border border-[#232323] shadow-2xl p-8 mb-8">
+            <h2 className="text-2xl font-semibold text-white mb-6">Creator Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {stats.map((stat) => (
+                <div 
+                  key={stat.id} 
+                  className="bg-[#1c1c1c] rounded-xl p-6 border border-[#2a2a2a] hover:border-[#333333] transition-all duration-300 hover:transform hover:-translate-y-1"
+                >
+                  <dt className="text-neutral-400 text-sm font-medium">{stat.name}</dt>
+                  <dd className="text-3xl font-semibold text-white mt-2">{stat.value}</dd>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Content Sections Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Challenges Section */}
+            <div className="bg-[#161616] rounded-2xl border border-[#232323] shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-[#232323]">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-white">Challenges</h2>
+                  <a href="/create/new" className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition-all duration-300 hover:transform hover:-translate-y-0.5">
+                    New Challenge
+                  </a>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex space-x-2 mb-4">
+                  <button 
+                    onClick={() => fetchChallenges('unverified')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      title === 'Unverified' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-[#1c1c1c] text-neutral-400 hover:bg-[#232323] hover:text-white'
+                    }`}
                   >
-                    <div className="fixed inset-0 bg-black bg-opacity-25" />
-                  </Transition.Child>
-
-                  <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
-                      <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0 scale-95"
-                        enterTo="opacity-100 scale-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100 scale-100"
-                        leaveTo="opacity-0 scale-95"
+                    Unverified
+                  </button>
+                  <button 
+                    onClick={() => fetchChallenges('pending')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      title === 'Pending Changes' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    Pending
+                  </button>
+                  <button 
+                    onClick={() => fetchChallenges('published')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      title === 'Published' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    Published
+                  </button>
+                </div>
+                {hasChallenges ? (
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-800/50 pr-2">
+                    {challenges.map((challenge) => (
+                      <div 
+                        key={challenge.id}
+                        className="flex items-center justify-between p-4 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a] hover:border-[#333333] transition-all duration-300 hover:transform hover:-translate-y-0.5"
                       >
-                        <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
-                          <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
-                            Disable Creator Mode
-                          </Dialog.Title>
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-300">
-                              Are you sure you want to disable creator mode?
-                            </p>
-                          </div>
-
-                          <div className="mt-4">
-                            <button
-                              type="button"
-                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                              onClick={handleDisableCreatorMode}
-                            >
-                              Yes, Disable
-                            </button>
-                            <button
-                              type="button"
-                              className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-red-900 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                              onClick={() => setIsDisableModalOpen(false)}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </Dialog.Panel>
-                      </Transition.Child>
-                    </div>
+                        <div>
+                          <h3 className="text-white font-medium">{challenge.title}</h3>
+                          <p className="text-sm text-neutral-400 mt-1">
+                            Last updated {new Date(challenge.updatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex space-x-3">
+                          <a 
+                            href={`/create/edit?id=${challenge.id}`}
+                            className="text-blue-400 hover:text-blue-300 transition-colors p-2 hover:bg-blue-600/10 rounded-lg"
+                          >
+                            <i className="fas fa-pencil-alt"></i>
+                          </a>
+                          <a 
+                            href={`/challenges/${challenge.id}`}
+                            target="_blank"
+                            className="text-neutral-400 hover:text-neutral-300 transition-colors p-2 hover:bg-white/10 rounded-lg"
+                          >
+                            <i className="fas fa-external-link-alt"></i>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </Dialog>
-              </Transition>
+                ) : (
+                  <div className="text-center py-12 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a]">
+                    <i className="fas fa-folder-open text-4xl text-neutral-600 mb-3"></i>
+                    <p className="text-neutral-400">No challenges found</p>
+                  </div>
+                )}
+              </div>
+            </div>
 
-              <div className="pl-6 lg:w-80">
-                <div className="pt-6 pb-2">
-                  <h2 className="text-2xl text-white ">Challenge Notifications</h2>
+            {/* Learn Modules Section */}
+            <div className="bg-[#161616] rounded-2xl border border-[#232323] shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-[#232323]">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-white">Learn Modules</h2>
+                  <a href="/create/learn/editor" className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition-all duration-300 hover:transform hover:-translate-y-0.5">
+                    New Module
+                  </a>
                 </div>
-                <div>
-                  <ul role="list" className=" divide-y divide-neutral-800 list-none">
-                    {notifications.length > 0 ? (
-                      notifications.slice(0, 3).map((notification) => (
-                        <li key={notification.id} className="py-4">
-                          <div className="flex space-x-3">
-                            <i className={`fas ${notification.status === 'approved' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-yellow-500'} mt-4`}></i>
-                            <div className="flex-1 space-y-1">
-                              <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-medium text-blue-500">CTFGuide Team</h3>
-                                <p className="text-xs text-white">{new Date(notification.createdAt).toLocaleString()}</p>
-                              </div>
-                              <p className="text-sm text-white">
-                                {notification.message}
-                              </p>
-                            </div>
-                          </div>
-                        </li>
-                      ))
-                    ) : (
-                      <li className=" text-sm text-white">
-                        You have no new notifications.
-                      </li>
-                    )}
-                  </ul>
+              </div>
+              <div className="p-4">
+                <div className="flex space-x-2 mb-4">
+                  <button 
+                    onClick={() => fetchModules('unverified')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      moduleState === 'unverified' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    Unverified
+                  </button>
+                  <button 
+                    onClick={() => fetchModules('published')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      moduleState === 'published' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    Published
+                  </button>
                 </div>
 
+                {modules.length > 0 ? (
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-800/50 pr-2">
+                    {modules.map((module) => (
+                      <div 
+                        key={module.id}
+                        className="flex items-center justify-between p-4 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a] hover:border-[#333333] transition-all duration-300 hover:transform hover:-translate-y-0.5"
+                      >
+                        <div>
+                          <h3 className="text-white font-medium">{module.title}</h3>
+                          <p className="text-sm text-neutral-400 mt-1">
+                            Last updated {new Date(module.updatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex space-x-3">
+                          <a 
+                            href={`/create/learn/editor/${module.id}`}
+                            className="text-blue-400 hover:text-blue-300 transition-colors p-2 hover:bg-blue-600/10 rounded-lg"
+                          >
+                            <i className="fas fa-pencil-alt"></i>
+                          </a>
+                          <a 
+                            href={`/learn/${module.id}`}
+                            target="_blank"
+                            className="text-neutral-400 hover:text-neutral-300 transition-colors p-2 hover:bg-white/10 rounded-lg"
+                          >
+                            <i className="fas fa-external-link-alt"></i>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a]">
+                    <i className="fas fa-book text-4xl text-neutral-600 mb-3"></i>
+                    <p className="text-neutral-400">No modules found</p>
+                  </div>
+                )}
+              </div>
+            </div>
 
+            {/* Writeups Section */}
+            <div className="bg-[#161616] rounded-2xl border border-[#232323] shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-[#232323]">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-white">Writeups</h2>
+                  <button 
+                    onClick={() => setIsCreating(true)}
+                    className="bg-blue-600/90 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg transition-all duration-300 hover:transform hover:-translate-y-0.5 backdrop-blur-xl"
+                  >
+                    New Writeup
+                  </button>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex space-x-2 mb-4">
+                  <button 
+                    onClick={() => filterWriteups('all')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      writeupState === 'all' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button 
+                    onClick={() => filterWriteups('draft')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      writeupState === 'draft' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    Drafts
+                  </button>
+                  <button 
+                    onClick={() => filterWriteups('published')}
+                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      writeupState === 'published' 
+                        ? 'bg-blue-600/90 text-white shadow-lg shadow-blue-600/20' 
+                        : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    Published
+                  </button>
+                </div>
 
+                {writeups.length > 0 ? (
+                  <div className="space-y-3 h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-800/50 p-4">
+                    {writeups.map((writeup) => (
+                      <div 
+                        key={writeup.id}
+                        className="flex items-center justify-between p-3 bg-neutral-800/30 rounded-lg hover:bg-neutral-800/50 transition-colors"
+                      >
+                        <div>
+                          <h3 className="text-white font-medium">{writeup.title}</h3>
+                          <p className="text-sm text-neutral-400">
+                            {writeup.draft ? (
+                              <span className="text-yellow-500">Draft</span>
+                            ) : (
+                              <span className="text-green-500">Published</span>
+                            )}
+                            {' · '}
+                            Last updated {new Date(writeup.updatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <a 
+                            href={`/create/editor?cid=${writeup.id}`}
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
+                          >
+                            <i className="fas fa-pencil-alt"></i>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-[500px] flex items-center justify-center p-4">
+                    <i className="fas fa-pen-fancy text-4xl text-neutral-700 mb-3"></i>
+                    <p className="text-neutral-400">No writeups yet</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
-        <br></br>
       </main>
       <Footer />
-      <Modal
-        
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-      >
-        <Box 
-        className='border-t-4 border-blue-700 max-w-xl'
-        sx={{  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
 
-  bgcolor: '#141414',
-  color: 'white',
-  boxShadow: 24,
-  p: 4,
-  }}>
-          <h1 id="modal-title" className='text-2xl font-medium text-white'>
-           <i className='fas fa-comments mr-1'></i> Challenge Feedback
-          </h1>
-          <p id="modal-description" className='mt-4'>
-            <b>Reason for change request:</b><br></br>
-           <span className='text-yellow-500'>
-           {modalContent}
-            </span>
-
-
-            <br></br>
-            <br></br>
-            <hr className='border-neutral-800'></hr>
-            <br></br>
-            If you disagree with the changes, please join our <a href='https://discord.gg/bH6gu3HCFF' className='text-blue-500 hover:text-blue-600'><i className='fab fa-discord '></i> Discord</a> and voice your opinion.
-            <br></br>
-            <br></br>
-            Thank you!
-            <br></br>
-            <i>CTFGuide Moderation Team</i>
-          </p>
-          <div className='flex justify-end mt-10'>
-          <button onClick={handleCloseModal} className='bg-blue-700 text-md shadow-sm hover:bg-blue-700/90 px-2 py-1 text-white rounded-sm mr-3'>Dismiss</button>
-          </div>
+      {/* Keep existing modals and notifications */}
+      <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: '#1a1a1a',
+          border: '1px solid #333',
+          borderRadius: '8px',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <Typography variant="h6" component="h2" sx={{ color: 'white', mb: 2 }}>
+            {modalContent}
+          </Typography>
         </Box>
       </Modal>
+      <ToastContainer position="bottom-right" theme="dark" />
 
+      <Transition appear show={isEnableModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setIsEnableModalOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
+          </Transition.Child>
 
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#161616] border border-[#232323] p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                    Enable Creator Mode
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-neutral-400">
+                      Are you sure you want to enable creator mode? This will allow you to create and manage content on CTFGuide.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex space-x-3">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none"
+                      onClick={handleEnableCreatorMode}
+                    >
+                      Enable
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-lg border border-[#232323] bg-[#1c1c1c] px-4 py-2 text-sm font-medium text-neutral-400 hover:bg-[#232323] focus:outline-none"
+                      onClick={() => setIsEnableModalOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <Transition appear show={isDisableModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setIsDisableModalOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#161616] border border-[#232323] p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                    Disable Creator Mode
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-neutral-400">
+                      Are you sure you want to disable creator mode? You won't be able to create new content until you enable it again.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex space-x-3">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none"
+                      onClick={handleDisableCreatorMode}
+                    >
+                      Disable
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-lg border border-[#232323] bg-[#1c1c1c] px-4 py-2 text-sm font-medium text-neutral-400 hover:bg-[#232323] focus:outline-none"
+                      onClick={() => setIsDisableModalOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Video Modal */}
+      <Transition appear show={isVideoModalOpen} as={Fragment}>
+        <Dialog 
+          as="div" 
+          className="relative z-50" 
+          onClose={() => setIsVideoModalOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/75 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-[#161616] border border-[#232323] p-6 text-left align-middle shadow-xl transition-all">
+                  <div className="flex justify-between items-center mb-4">
+                    <Dialog.Title as="h3" className="text-lg font-medium text-white">
+                      {currentVideo.title}
+                    </Dialog.Title>
+                    <button
+                      onClick={() => setIsVideoModalOpen(false)}
+                      className="text-neutral-400 hover:text-white transition-colors"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <div className="relative aspect-video w-full">
+                    <iframe
+                      className="absolute inset-0 w-full h-full rounded-lg"
+                      src={`https://www.youtube.com/embed/${currentVideo.videoId}?autoplay=1`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 }
