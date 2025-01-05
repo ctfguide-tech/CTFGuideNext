@@ -107,7 +107,7 @@ const ModulesPage = () => {
 
             {showBetaModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <div className="bg-white p-6 rounded-lg shadow-lg bg-neutral-900 text-white">
                         <h2 className="text-xl font-bold mb-4">Beta Feature</h2>
                         <p>This feature is heavily in development and is currently in beta.</p>
                         <button 
