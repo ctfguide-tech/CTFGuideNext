@@ -110,6 +110,7 @@ const ModuleCard = ({ title, description, progress, content, currentPage, id, on
 };
 
 const ModuleSlideOver = ({ module, open, setOpen }) => {
+  const router = useRouter();
   let parsedContent = [];
   try {
     if (module?.content) {
@@ -121,6 +122,11 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
   } catch (error) {
     console.warn(`Failed to parse content for module: ${module?.title}`, error);
   }
+
+  const handlePageClick = (pageIndex) => {
+    router.push(`/learn/${module.id}?page=${pageIndex + 1}`);
+    setOpen(false); // Close the slide over after navigation
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -174,6 +180,7 @@ const ModuleSlideOver = ({ module, open, setOpen }) => {
                             <div
                               key={index}
                               className="p-4 rounded-lg bg-[#2b2b2b] hover:bg-[#3d3d3d] transition-colors cursor-pointer"
+                              onClick={() => handlePageClick(index)}
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-3">
@@ -285,6 +292,17 @@ const ModuleLayout = () => {
             onCardClick={handleModuleClick}
           />
         ))}
+        <motion.div 
+          whileHover={{ scale: 1.02 }}
+          className="group relative p-6 rounded-2xl bg-[#1c1c1c] border border-[#2b2b2b] hover:border-[#3d3d3d] transition-all duration-300 cursor-pointer"
+        >
+          <div className="flex flex-col h-full ">
+            <h3 className="text-2xl font-bold text-white mb-2">More Lessons Coming Soon</h3>
+            <p className="text-gray-400">This feature is in beta.</p>
+            <p className="text-gray-400 mt-4">Fun Fact: You can actually create your own lessons and share them with the community. <br/><br/><a href="/create" className="text-blue-500 hover:text-blue-600 mt-4">Visit the create page to get started.</a></p>
+
+          </div>
+        </motion.div>
       </div>
 
       <ModuleSlideOver 

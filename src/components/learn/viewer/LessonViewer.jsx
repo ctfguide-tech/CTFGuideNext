@@ -661,7 +661,7 @@ const CompletionScreen = ({ onRestart }) => {
                                 Restart Lesson
                             </button>
                             <button
-                                onClick={() => window.location.href = '/learn'}
+                                onClick={() => window.location.href = '/learn/modules'}
                                 className="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-xl transition-colors"
                             >
                                 <i className="fas fa-arrow-right mr-2"></i>
@@ -1017,7 +1017,7 @@ const LessonViewer = ({ lessonData }) => {
                                 <div className="flex items-center space-x-2">
                                     <button
                                         onClick={() => setShowLoadModal(true)}
-                                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center space-x-2"
+                                        className="hidden px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center space-x-2"
                                     >
                                         <i className="fas fa-file-import"></i>
                                         <span>Load Lesson</span>

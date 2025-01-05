@@ -524,7 +524,7 @@ export default function Create() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* Header Section with Creator Mode Toggle and Tutorial Cards */}
           <div className="bg-[#161616] rounded-2xl border border-[#232323] shadow-2xl p-6 mb-8">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-2">
               <div>
                 <h1 className="text-2xl font-bold text-white">Creator Studio</h1>
                 <p className="text-neutral-400 mt-1">Manage your challenges, modules, and writeups</p>
@@ -549,7 +549,7 @@ export default function Create() {
             </div>
 
             {/* Tutorial Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               {tutorials.map((tutorial, index) => (
                 <div 
                   key={index}

@@ -10,28 +10,32 @@ export default function Sidebar() {
     >
       <ul className="mr-2 py-2">
         <li className="py-1">
-          <button className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base"
-            onClick={() => router.push('../settings', null, { shallow: true })}>
-            General
-          </button>
+          <Link href="../settings" passHref>
+            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+              General
+            </a>
+          </Link>
         </li>
         <li className="py-1">
-          <button className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base"
-            onClick={() => router.push('../settings/security', null, { shallow: true })}>
-            Security
-          </button>
+          <Link href="../settings/security" passHref>
+            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+              Security
+            </a>
+          </Link>
         </li>
         <li className="py-1">
-          <button className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base"
-            onClick={() => router.push('../settings/preferences', null, { shallow: true })}>
-            Email Preferences
-          </button>
+          <Link href="../settings/preferences" passHref>
+            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+              Email Preferences
+            </a>
+          </Link>
         </li>
         <li className="py-1">
-          <button className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base"
-            onClick={() => router.push('../settings/billing', null, { shallow: true })}>
-            Billing
-          </button>
+          <Link href="../settings/billing" passHref>
+            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+              Billing
+            </a>
+          </Link>
         </li>
       </ul>
     </div>
