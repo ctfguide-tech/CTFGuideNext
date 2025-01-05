@@ -45,6 +45,24 @@ export default function Earnings() {
     fetchEarningsHistory();
   }, []);
 
+  const updatePaymentDetails = async () => {
+    try {
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-account-link`,
+        'POST'
+      );
+      
+      if (response?.url) {
+        window.location.href = response.url;
+      } else {
+        throw new Error('No account link URL received');
+      }
+    } catch (error) {
+      console.error('Failed to update payment details:', error);
+      // Add error notification here
+    }
+  };
+
   return (
     <>
       <Head>
@@ -195,7 +213,10 @@ export default function Earnings() {
                 <p className="text-neutral-400">
                   Payments are processed via Stripe on the 1st of each month for balances over $50.
                 </p>
-                <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center">
+                <button 
+                  onClick={updatePaymentDetails}
+                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center"
+                >
                   <i className="fas fa-edit mr-2"></i>
                   Update Payment Details
                 </button>
