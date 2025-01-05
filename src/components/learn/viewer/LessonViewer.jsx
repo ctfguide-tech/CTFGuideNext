@@ -11,6 +11,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getCookie } from '@/utils/request';
 import api from '@/utils/terminal-api';
 import { useRouter } from 'next/router';
+import { StandardNav } from '@/components/StandardNav';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+import request from '@/utils/request';
+import { useContext } from 'react';
+import { Context } from '@/context';
 // Dynamic import of MonacoEditor
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
     ssr: false
@@ -676,6 +682,7 @@ const CompletionScreen = ({ onRestart }) => {
 };
 
 const LessonViewer = ({ lessonData }) => {
+    const { username } = useContext(Context);
     const router = useRouter();
     const [currentPageIndex, setCurrentPageIndex] = useState(lessonData?.initialPage || 0);
     const [pages, setPages] = useState([]);
@@ -694,6 +701,29 @@ const LessonViewer = ({ lessonData }) => {
     const [containerId, setContainerId] = useState('');
     const [foundTerminal, setFoundTerminal] = useState(false);
     const [fetchingTerminal, setFetchingTerminal] = useState(false);
+    const [isTerminalVisible, setIsTerminalVisible] = useState(false);
+    const [isAIActive, setIsAIActive] = useState(false);
+    const [isAISlideOverVisible, setIsAISlideOverVisible] = useState(false);
+    const [chatMessages, setChatMessages] = useState([
+        // Add a welcome message
+        {
+            sender: 'ai',
+            text: "Hi! I'm your AI learning assistant. I can help explain concepts, answer questions about the lesson, or provide additional examples. How can I help you today?",
+            timestamp: new Date()
+        }
+    ]);
+    const [userInput, setUserInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef(null);
+    const [userProfilePic, setUserProfilePic] = useState('');
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [chatMessages]);
 
     useEffect(() => {
         if (!lessonData || !lessonData.content) {
@@ -852,21 +882,124 @@ const LessonViewer = ({ lessonData }) => {
         );
         
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonData.id}/progress`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getCookie('idToken')}`
-                },
-                body: JSON.stringify({
+            await request(
+                `${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonData.id}/progress`,
+                'POST',
+                {
                     currentPage: newIndex,
                     totalPages: pages.length
-                })
-            });
+                },
+                {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getCookie('idToken')}`
+                }
+            );
         } catch (error) {
             console.error('Failed to save progress:', error);
         }
     };
+
+    const handleAIClick = () => {
+        setIsAISlideOverVisible(!isAISlideOverVisible);
+    };
+
+    const handleSendMessage = async (e) => {
+        e?.preventDefault();
+        
+        if (!userInput.trim()) return;
+
+        const userMessage = {
+            sender: 'user',
+            text: userInput,
+            timestamp: new Date()
+        };
+
+        setChatMessages(prev => [...prev, userMessage]);
+        setUserInput('');
+        setIsTyping(true);
+
+        try {
+            // Create context from current lesson page
+            const currentPageContext = currentPage ? {
+                title: currentPage.title,
+                components: currentPage.components.map(comp => ({
+                    type: comp.type,
+                    content: comp.content,
+                    // Only include non-sensitive config data
+                    config: comp.type === 'multiple-choice' ? 
+                        { options: comp.config?.options } : 
+                        comp.config
+                }))
+            } : null;
+
+            const prompt = `You are a helpful AI assistant for CTFGuide, a cybersecurity learning platform. 
+            You help users learn about cybersecurity concepts and challenges.
+            
+            Current lesson context:
+            ${JSON.stringify(currentPageContext, null, 2)}
+            
+            Current conversation:
+            ${chatMessages.map(msg => `${msg.sender}: ${msg.text}`).join('\n')}
+            
+            User: ${userInput}
+            Assistant:`;
+
+            const data = await request(
+                `${process.env.NEXT_PUBLIC_API_URL}/ai-chat`,
+                'POST',
+                { prompt }
+            );
+            
+            if (!data) {
+                throw new Error('No response from server');
+            }
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            // Access the nested response
+            const aiResponse = data.response?.response || 'I apologize, but I couldn\'t process your request properly.';
+
+            setIsTyping(false);
+            setChatMessages(prev => [...prev, {
+                sender: 'ai',
+                text: aiResponse,
+                timestamp: new Date()
+            }]);
+        } catch (error) {
+            console.error('Error calling AI service:', error);
+            setIsTyping(false);
+            setChatMessages(prev => [...prev, {
+                sender: 'ai',
+                text: 'I apologize, but I encountered an error while processing your request. Please try again.',
+                timestamp: new Date(),
+                error: true
+            }]);
+        }
+    };
+
+    useEffect(() => {
+        const fetchUserPfp = async () => {
+            if (!username) return;
+            
+            try {
+                const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/pfp`;
+                const result = await request(endPoint, 'GET', null);
+                
+                if (result) {
+                    setUserProfilePic(result);
+                } else {
+                    // Fallback to robohash if no profile picture
+                    setUserProfilePic(`https://robohash.org/${username}.png?set=set1&size=150x150`);
+                }
+            } catch (err) {
+                console.log('Failed to get profile picture');
+            }
+        };
+
+        fetchUserPfp();
+    }, [username]);
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -883,19 +1016,67 @@ const LessonViewer = ({ lessonData }) => {
 
     return (
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-900 to-neutral-950 text-white">
-            <ToastContainer
-                position="bottom-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"
-            />
+            <StandardNav />
             
+            <nav className="   bg-neutral-900/90 border-b border-neutral-800/50 backdrop-blur-md z-50">
+                <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
+                        <div className="flex items-center space-x-4">
+                            <h1 className="text-lg font-semibold">{ lessonData?.title || 'Untitled Page'}</h1>
+                            <div className="text-sm text-neutral-400">
+                                Page {currentPageIndex + 1} of {pages.length}
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <button
+                                onClick={handleAIClick}
+                                className={`px-4 py-2 rounded-lg transition-colors ${
+                                    isAIActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-neutral-800 hover:bg-neutral-700'
+                                }`}
+                            >
+                                <i className="fas fa-robot"></i> 
+                            </button>
+                            <button
+                                onClick={() => setIsTerminalVisible(!isTerminalVisible)}
+                                className={`px-4 py-2 rounded-lg transition-colors ${
+                                    isTerminalVisible ? 'bg-orange-500 hover:bg-orange-600' : 'bg-neutral-800 hover:bg-neutral-700'
+                                }`}
+                            >
+                                <i className="fas fa-terminal"></i>
+                            </button>
+                            <button
+                                onClick={() => setShowLoadModal(true)}
+                                className="hidden px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center space-x-2"
+                            >
+                                <i className="fas fa-file-import"></i>
+                                <span>Load Lesson</span>
+                            </button>
+                            <button
+                                onClick={() => handlePageChange(Math.max(0, currentPageIndex - 1))}
+                                disabled={currentPageIndex === 0}
+                                className="px-4 py-2 bg-neutral-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors"
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (currentPageIndex === pages.length - 1) {
+                                        setShowCompletion(true);
+                                    } else {
+                                        handlePageChange(currentPageIndex + 1);
+                                    }
+                                }}
+                                disabled={currentPageIndex === pages.length - 1 && showCompletion}
+                                className="px-4 py-2 bg-blue-500 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+                            >
+                                {currentPageIndex === pages.length - 1 ? 'Complete' : 'Next'}
+                            </button>
+                            
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
             {isLoading ? (
                 <div className="flex items-center justify-center h-screen">
                     <div className="animate-spin text-4xl">⚙️</div>
@@ -919,8 +1100,8 @@ const LessonViewer = ({ lessonData }) => {
                     <div className="h-[calc(100vh-4rem)]">
                         <div className="flex h-full">
                             {/* Left side - Lesson Content */}
-                            <div className={`flex flex-col ${isChallengeFullscreen ? 'hidden md:flex' : 'flex'} w-1/2 p-10 overflow-y-auto`}>
-                                <h1 className="text-2xl font-bold mb-4">{lessonData?.title}</h1>
+                            <div className={`flex flex-col ${isTerminalVisible ? 'w-1/2' : 'w-full'} p-10 overflow-y-auto`}>
+                                <h1 className="text-2xl font-bold mb-4">{currentPage?.title}</h1>
                                 <AnimatePresence mode="wait">
                                     <motion.div
                                         key={currentPageIndex}
@@ -944,7 +1125,11 @@ const LessonViewer = ({ lessonData }) => {
                             </div>
 
                             {/* Right side - Ubuntu Terminal */}
-                            <div className={`flex flex-col ${!isChallengeFullscreen ? 'hidden md:flex' : 'flex'} w-1/2 bg-neutral-800 overflow-hidden`}>
+                            <div
+                                className={`flex flex-col transition-transform duration-500 ${
+                                    isTerminalVisible ? 'translate-x-0 w-1/2' : 'translate-x-full w-0'
+                                } ${!isChallengeFullscreen ? 'hidden md:flex' : 'flex'} bg-neutral-800 overflow-hidden`}
+                            >
                                 <div className="grow bg-neutral-950 w-full overflow-hidden">
                                     {fetchingTerminal ? (
                                         <div className="flex items-center justify-center h-full">
@@ -958,7 +1143,7 @@ const LessonViewer = ({ lessonData }) => {
                                         isTerminalBooted ? (
                                             <>
                                                 {foundTerminal && (
-                                                    <div className="flex py-1 mb-4 text-xs">
+                                                    <div className="flex py-1 text-xs">
                                                         <h1 className="text-xs font-semibold py-2 pl-2">
                                                             Username: {userName}
                                                             <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
@@ -977,7 +1162,7 @@ const LessonViewer = ({ lessonData }) => {
                                                         </h1>
                                                     </div>
                                                 )}
-                                                <iframe src={terminalUrl} className="flex-1 w-full" />
+                                                <iframe src={terminalUrl} className="flex-1 w-full h-full" />
                                             </>
                                         ) : (
                                             <div className="flex items-center justify-center h-full">
@@ -1003,51 +1188,165 @@ const LessonViewer = ({ lessonData }) => {
                             </div>
                         </div>
                     </div>
+                </>
+            )}
+            {/* AI Slide-over */}
+            <Transition.Root show={isAISlideOverVisible} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={setIsAISlideOverVisible}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transform transition ease-in-out duration-500"
+                        enterFrom="translate-x-full"
+                        enterTo="translate-x-0"
+                        leave="transform transition ease-in-out duration-500"
+                        leaveFrom="translate-x-0"
+                        leaveTo="translate-x-full"
+                    >
+                        <div className="fixed inset-0 overflow-hidden">
+                            <div className="absolute inset-0 overflow-hidden">
+                                <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                                    <Dialog.Panel className="pointer-events-auto w-screen max-w-2xl">
+                                        <div className="flex h-full flex-col bg-gradient-to-br from-neutral-800 via-neutral-900 to-black shadow-xl">
+                                            {/* Header */}
+                                            <div className="border-b border-neutral-700/30 bg-neutral-800/50 backdrop-blur-sm px-4 py-3 sm:px-6">
+                                                <div className="flex items-center justify-between">
+                                                    <Dialog.Title className="flex items-center space-x-3">
+                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500/10">
+                                                            <i className="fas fa-robot text-orange-400"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-lg font-medium text-white">AI Assistant <span className="text-xs text-neutral-400 bg-neutral-800 px-2">meta/llama-3.1-8b-instruct</span></h3>
+                                                        </div>
+                                                    </Dialog.Title>
+                                                    <button
+                                                        type="button"
+                                                        className="rounded-md p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+                                                        onClick={() => setIsAISlideOverVisible(false)}
+                                                    >
+                                                        <span className="sr-only">Close panel</span>
+                                                        <i className="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
 
-                    {/* Navigation Bar - Now at bottom */}
-                    <nav className="fixed bottom-0 left-0 right-0 bg-neutral-900/90 border-t border-neutral-800/50 backdrop-blur-md z-50">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="flex items-center justify-between h-16">
-                                <div className="flex items-center space-x-4">
-                                    <h1 className="text-lg font-semibold">{currentPage?.title || 'Untitled Page'}</h1>
-                                    <div className="text-sm text-neutral-400">
-                                        Page {currentPageIndex + 1} of {pages.length}
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <button
-                                        onClick={() => setShowLoadModal(true)}
-                                        className="hidden px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center space-x-2"
-                                    >
-                                        <i className="fas fa-file-import"></i>
-                                        <span>Load Lesson</span>
-                                    </button>
-                                    <button
-                                        onClick={() => handlePageChange(Math.max(0, currentPageIndex - 1))}
-                                        disabled={currentPageIndex === 0}
-                                        className="px-4 py-2 bg-neutral-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors"
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            if (currentPageIndex === pages.length - 1) {
-                                                setShowCompletion(true);
-                                            } else {
-                                                handlePageChange(currentPageIndex + 1);
-                                            }
-                                        }}
-                                        disabled={currentPageIndex === pages.length - 1 && showCompletion}
-                                        className="px-4 py-2 bg-blue-500 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
-                                    >
-                                        {currentPageIndex === pages.length - 1 ? 'Complete' : 'Next'}
-                                    </button>
+                                            {/* Messages */}
+                                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                                {chatMessages.map((message, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                                    >
+                                                        <div className={`flex max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                                            {message.sender === 'user' ? (
+                                                                <div className="h-8 w-8 ml-2 rounded-full overflow-hidden">
+                                                                    {userProfilePic ? (
+                                                                        <img 
+                                                                            src={userProfilePic} 
+                                                                            alt="Profile" 
+                                                                            className="h-full w-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <div className="h-full w-full bg-blue-500/10 flex items-center justify-center">
+                                                                            <i className="fas fa-user text-blue-400"></i>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex h-8 w-8 items-center px-2 justify-center rounded-full bg-orange-500/10 mr-2">
+                                                                    <i className="fas fa-robot text-orange-400"></i>
+                                                                </div>
+                                                            )}
+                                                            <div className={`rounded-2xl px-4 py-2 ${
+                                                                message.sender === 'user'
+                                                                    ? 'bg-blue-500 text-white'
+                                                                    : message.error 
+                                                                        ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                                                        : 'bg-neutral-800 text-white'
+                                                            }`}>
+                                                                {message.sender === 'user' ? (
+                                                                    <p className="text-sm">{message.text}</p>
+                                                                ) : (
+                                                                    <div className="text-sm prose prose-invert prose-sm max-w-none">
+                                                                        <MarkdownViewer content={message.text} />
+                                                                    </div>
+                                                                )}
+                                                                <span className="text-xs opacity-50 mt-1 block">
+                                                                    {new Date(message.timestamp).toLocaleTimeString([], { 
+                                                                        hour: '2-digit', 
+                                                                        minute: '2-digit'
+                                                                    })}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                {isTyping && (
+                                                    <div className="flex justify-start">
+                                                        <div className="flex max-w-[80%] flex-row">
+                                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500/10 mr-2">
+                                                                <i className="fas fa-robot text-orange-400"></i>
+                                                            </div>
+                                                            <div className="rounded-2xl px-4 py-2 bg-neutral-800">
+                                                                <div className="flex space-x-2">
+                                                                    <div className="w-2 h-2 bg-neutral-600 rounded-full animate-bounce"></div>
+                                                                    <div className="w-2 h-2 bg-neutral-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                                                    <div className="w-2 h-2 bg-neutral-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <div ref={messagesEndRef} />
+                                            </div>
+
+                                            {/* Input */}
+                                            <div className="border-t border-neutral-800 bg-neutral-900/50 backdrop-blur-sm p-6">
+                                                <form onSubmit={handleSendMessage} className="flex space-x-3">
+                                                    <div className="flex-1 relative">
+                                                        <input
+                                                            type="text"
+                                                            value={userInput}
+                                                            onChange={(e) => setUserInput(e.target.value)}
+                                                            className="w-full rounded-2xl bg-neutral-800/80 px-6 py-4 text-white placeholder-neutral-400 border border-neutral-700/50 hover:border-neutral-600/50 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-200"
+                                                            placeholder="Ask me anything about the lesson..."
+                                                        />
+                                                        {isTyping && (
+                                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                                                <i className="fas fa-circle-notch fa-spin"></i>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        type="submit"
+                                                        disabled={!userInput.trim() || isTyping}
+                                                        className={`flex items-center justify-center rounded-2xl px-6 py-4 font-medium transition-all duration-200 ${
+                                                            !userInput.trim() || isTyping
+                                                                ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
+                                                                : 'bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/20 active:transform active:scale-95'
+                                                        }`}
+                                                    >
+                                                        {isTyping ? (
+                                                            <span className="flex items-center space-x-2">
+                                                                <i className="fas fa-circle-notch fa-spin"></i>
+                                                                <span>Processing...</span>
+                                                            </span>
+                                                        ) : (
+                                                            <span className="flex items-center space-x-2">
+                                                                <span>Send</span>
+                                                                <i className="fas fa-paper-plane"></i>
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </Dialog.Panel>
                                 </div>
                             </div>
                         </div>
-                    </nav>
-                </>
-            )}
+                    </Transition.Child>
+                </Dialog>
+            </Transition.Root>
         </div>
     );
 };

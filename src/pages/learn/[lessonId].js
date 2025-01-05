@@ -71,7 +71,6 @@ export default function LessonPage() {
 
     return (
         <div>
-            <StandardNav />
             <LessonViewer lessonData={lesson} />
         </div>
     );
