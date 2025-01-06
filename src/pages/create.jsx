@@ -689,7 +689,7 @@ export default function Create() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold text-white">Learn Modules</h2>
                   <a href="/create/learn/editor" className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition-all duration-300 hover:transform hover:-translate-y-0.5">
-                    New Module
+                    Open Studio
                   </a>
                 </div>
               </div>
@@ -731,12 +731,7 @@ export default function Create() {
                           </p>
                         </div>
                         <div className="flex space-x-3">
-                          <a 
-                            href={`/create/learn/editor/${module.id}`}
-                            className="text-blue-400 hover:text-blue-300 transition-colors p-2 hover:bg-blue-600/10 rounded-lg"
-                          >
-                            <i className="fas fa-pencil-alt"></i>
-                          </a>
+                     
                           <a 
                             href={`/learn/${module.id}`}
                             target="_blank"
