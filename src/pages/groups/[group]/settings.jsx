@@ -310,24 +310,39 @@ export default function teacherSettings() {
       </Head>
       <StandardNav />
 
-      <div className="bg-neutral-800">
-        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-10 justify-between">
-            {classroom && <ClassroomNav classCode={group} />}
-            <div className="flex items-center">
-              <button
-                onClick={() => {
-                  setViewCreateAssignment(true);
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-plus-circle pe-2"></i> New Assignment
-              </button>
 
-            </div>
-          </div>
-        </div>
-      </div>
+            {classroom && 
+               <div className="border-b border-neutral-800">
+               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                 <div className="flex h-14 items-center space-x-4">
+                   <button
+                     onClick={() => router.push(`/groups/${group}/home`)}
+                     className="text-neutral-400 hover:text-white transition-colors"
+                   >
+                     Home
+                   </button>
+                   <button
+                     onClick={() => router.push(`/groups/${group}/view-all-assignments`)}
+                     className="text-neutral-400 hover:text-white transition-colors"
+                   >
+                     Assignments
+                   </button>
+                   <button
+                     onClick={() => router.push(`/groups/${group}/gradebook`)}
+                     className="text-neutral-400 hover:text-white transition-colors"
+                   >
+                     Gradebook
+                   </button>
+                   <button
+                     onClick={() => router.push(`/groups/${group}/settings`)}
+                     className="text-neutral-400 hover:text-white transition-colors"
+                   >
+                     Settings
+                   </button>
+                 </div>
+               </div>
+             </div>
+}
 
       <Loader isLoad={loadingAuth} />
       {

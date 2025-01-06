@@ -40,6 +40,7 @@ import SpawnTerminal from './nav/SpawnTerminal';
 import { Context } from '@/context';
 import { useContext } from 'react';
 import timeTracker from '@/utils/timeTracker';
+import NotificationsModal from './nav/NotificationsModal';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -270,6 +271,8 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     };
   }, []);
 
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
+
   return (
     <>
       {isPopoverOpen && (
@@ -490,20 +493,52 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                           >
-                            <Popover.Panel className="absolute right-0 mt-2 w-80 bg-neutral-800 rounded-md shadow-lg overflow-hidden z-20">
-                              <div className="py-2">
-                                {notificationData.length > 0 ? (
-                                  notificationData.slice(0, 6).map((notification, index) => (
-                                    <div key={index} className="flex items-center px-4 py-3 ">
-                                    
-                                      <div className="ml-3 text-white">
-                                        <p className="text-sm font-medium">{notification.message}</p>
-                                        <p className="text-xs">{notification.receivedTime}</p>
+                            <Popover.Panel className="absolute right-0 mt-2 w-80 bg-neutral-900 rounded-md shadow-lg overflow-hidden z-20">
+                              <div className="p-2">
+                                <div className="px-4 py-3 border-b border-neutral-800">
+                                  <h3 className="text-sm font-medium text-white">Notifications</h3>
+                                </div>
+                                
+                                <div className="max-h-96 overflow-y-auto">
+                                  {notificationData.length > 0 ? (
+                                    notificationData.slice(0, 6).map((notification, index) => (
+                                      <div 
+                                        key={index} 
+                                        className="px-4 py-3 hover:bg-neutral-800 transition-colors cursor-pointer border-b border-neutral-800/50 last:border-0"
+                                      >
+                                        <div className="flex items-start">
+                                          <div className="flex-shrink-0">
+                                            <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                              <BellIcon className="h-4 w-4 text-blue-500" />
+                                            </div>
+                                          </div>
+                                          <div className="ml-3 flex-1">
+                                            <p className="text-sm text-gray-200">{notification.message}</p>
+                                            <p className="text-xs text-gray-500 mt-1">{notification.receivedTime}</p>
+                                          </div>
+                                        </div>
                                       </div>
+                                    ))
+                                  ) : (
+                                    <div className="px-4 py-6 text-center">
+                                      <BellIcon className="mx-auto h-8 w-8 text-gray-500" />
+                                      <p className="mt-2 text-sm text-gray-500">No new notifications</p>
                                     </div>
-                                  ))
-                                ) : (
-                                  <p className="text-center text-gray-500 py-4">No notifications</p>
+                                  )}
+                                </div>
+
+                                {notificationData.length > 0 && (
+                                  <div className="px-4 py-3 bg-neutral-900 border-t border-neutral-800">
+                                    <button
+                                      onClick={() => {
+                                        setShowAllNotifications(true)
+                                        setIsPopoverOpen(false) // Close the notifications popover
+                                      }}
+                                      className="block w-full text-sm text-blue-500 hover:text-blue-400 text-center"
+                                    >
+                                      View all notifications
+                                    </button>
+                                  </div>
                                 )}
                               </div>
                             </Popover.Panel>
@@ -761,6 +796,11 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
      
 
       <SpawnTerminal open={terminaIsOpen} setOpen={setTerminalIsOpen} />
+      <NotificationsModal
+        open={showAllNotifications}
+        setOpen={setShowAllNotifications}
+        notifications={notificationData}
+      />
     </>
   );
 }
