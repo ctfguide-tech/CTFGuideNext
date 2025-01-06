@@ -141,7 +141,7 @@ const Gradebook = () => {
       <div className="min-h-screen">
         <div className="mx-auto mt-10 max-w-6xl">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-white text-3xl">Gradebook</h1>
+            <h1 className="text-white font-bold text-3xl">Gradebook</h1>
             <div className="flex gap-4">
               <button
                 onClick={() => setViewCreateAssignment(true)}
