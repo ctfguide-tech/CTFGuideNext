@@ -1130,8 +1130,8 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                         onClick={() => setShowJsonModal(true)}
                         className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center justify-center space-x-2"
                     >
-                        <i className="fas fa-code"></i>
-                        <span>View JSON</span>
+                        <i className="fas fa-globe"></i>
+                        <span>Publish Lesson</span>
                     </motion.button>
                 </div>
             </div>

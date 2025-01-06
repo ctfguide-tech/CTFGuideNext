@@ -895,7 +895,7 @@ export default function Create() {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-neutral-400">
-                      Are you sure you want to enable creator mode? This will allow you to create and manage content on CTFGuide.
+                      Are you sure you want to enable creator mode? This will allow you to see metrics on challenges.
                     </p>
                   </div>
 

@@ -323,8 +323,12 @@ const CodeExecutor = ({ initialCode, language }) => {
                     <span className="text-sm font-medium">{language.charAt(0).toUpperCase() + language.slice(1)}</span>
                 </div>
                 <button
-                    onClick={handleRunCode}
-                    disabled={isRunning || isInitializing}
+                   // onClick={handleRunCode}
+                   onClick={() => {
+                    toast.error("Temporarily disabled due to technical issues - please use the terminal instead.")
+                   }}
+                   title="Temporarily disabled"
+                    //disabled={isRunning || isInitializing}
                     className="px-4 py-2 bg-green-500 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-600 transition-colors flex items-center space-x-2"
                 >
                     {isInitializing ? (
@@ -1347,6 +1351,16 @@ const LessonViewer = ({ lessonData }) => {
                     </Transition.Child>
                 </Dialog>
             </Transition.Root>
+
+            <ToastContainer 
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={true}
+                closeOnClick={true}
+                pauseOnHover={true}
+                draggable={true}
+                theme="dark"
+            />
         </div>
     );
 };
