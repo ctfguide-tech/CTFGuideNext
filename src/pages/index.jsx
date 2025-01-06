@@ -7,6 +7,7 @@ import { LearningPanel } from '@/components/home/LearningPanel';
 import { Enterprise } from '@/components/home/Enterprise';
 import { SecondaryFeatures } from '@/components/home/SecondaryFeatures';
 import GP  from '@/components/home/GP';
+import { Seo } from '@/components/Seo';
 import { useEffect, useRef } from 'react';
 
 export default function Home() {

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import dynamic from 'next/dynamic';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { motion, AnimatePresence } from 'framer-motion';
 import request from '../../../utils/request';
-
+import { Context } from '../../../context';
 // Dynamic import of MonacoEditor
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false
@@ -146,6 +146,7 @@ const Toast = ({ message, type = 'success', onClose }) => {
 };
 
 const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
+    const { username } = useContext(Context);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [toast, setToast] = useState(null);
@@ -199,6 +200,7 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
     const [importError, setImportError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [saveError, setSaveError] = useState(null);
+    const [showPublishModal, setShowPublishModal] = useState(false);
 
     // Log the initial data
     useEffect(() => {
@@ -1127,7 +1129,7 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => setShowJsonModal(true)}
+                        onClick={() => setShowPublishModal(true)}
                         className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center justify-center space-x-2"
                     >
                         <i className="fas fa-globe"></i>
@@ -1321,6 +1323,167 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
         }
     };
 
+    const handlePublishRequest = async () => {
+        try {
+            const lessonId = initialLesson?.id;
+            
+            if (!lessonId) {
+                setToast({
+                    message: 'Please save the lesson first before publishing',
+                    type: 'error'
+                });
+                return;
+            }
+
+            let lessonLink = `https://ctfguide.com/learn/${lessonId}`;
+            const response = await request(
+                `${process.env.NEXT_PUBLIC_API_URL}/lesson-publish-request`,
+                'POST',
+                { 
+                    lessonId,
+                    title: initialLesson?.title || pages[0]?.title || 'Untitled Lesson',
+                    authorName: username || 'Anonymous',
+                    lessonLink
+                }
+            );
+            
+            setShowPublishModal(false);
+            setToast({
+                message: 'Publish request sent successfully!',
+                type: 'success'
+            });
+        } catch (error) {
+            console.error('Error sending publish request:', error);
+            setToast({
+                message: 'Failed to send publish request',
+                type: 'error'
+            });
+        }
+    };
+
+    // Add this new component near other modal components
+    const PublishModal = () => (
+        <AnimatePresence>
+            {showPublishModal && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+                    onClick={() => setShowPublishModal(false)}
+                >
+                    {/* Move globe to bottom right and increase z-index */}
+                    <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: "spring", damping: 15 }}
+                        className="fixed bottom-10 right-10 w-32 h-32 pointer-events-none z-[60]"
+                    >
+                        <div className="relative w-full h-full">
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0 rounded-full border-2 border-purple-500/20"
+                            />
+                            <motion.div
+                                animate={{ rotate: -360 }}
+                                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-2 rounded-full border-2 border-purple-400/20"
+                            />
+                            <motion.div
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="absolute inset-0 flex items-center justify-center"
+                            >
+                                <i className="fas fa-globe text-6xl text-purple-400/50"></i>
+                            </motion.div>
+                            {[...Array(6)].map((_, i) => (
+                                <motion.div
+                                    key={i}
+                                    animate={{ scale: [0, 1, 0] }}
+                                    transition={{
+                                        duration: 2,
+                                        repeat: Infinity,
+                                        delay: i * 0.3,
+                                    }}
+                                    className="absolute w-2 h-2 rounded-full bg-purple-400/30"
+                                    style={{
+                                        left: `${50 + 35 * Math.cos(i * Math.PI / 3)}%`,
+                                        top: `${50 + 35 * Math.sin(i * Math.PI / 3)}%`,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ y: "100%" }}
+                        animate={{ y: 0 }}
+                        exit={{ y: "100%" }}
+                        transition={{ type: "spring", damping: 25 }}
+                        className="absolute bottom-0 inset-x-0 bg-neutral-800/90 rounded-t-xl border-t border-neutral-700/50 shadow-2xl backdrop-blur-sm p-6"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="max-w-2xl mx-auto">
+                            <h3 className="text-xl font-medium text-white mb-4 flex items-center space-x-2">
+                                <i className="fas fa-globe text-purple-400"></i>
+                                <span>Publish Lesson</span>
+                            </h3>
+                            
+                            <div className="bg-neutral-900/50 rounded-xl p-4 mb-6 border border-neutral-700/30">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-neutral-400">Title:</span>
+                                    <span className="text-white font-medium">
+                                        {initialLesson?.title || pages[0]?.title || 'Untitled Lesson'}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-neutral-400">Author:</span>
+                                    <span className="text-white font-medium">
+                                        {username || 'Anonymous'}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div className="prose prose-invert prose-sm max-w-none mb-6">
+                                <p>Before publishing your lesson, please ensure:</p>
+                                <ul className="list-disc list-inside ml-4" >
+                                    <li>All content is appropriate and follows our community guidelines</li>
+                                    <li>The lesson is complete and properly structured</li>
+                                    <li>All code examples are working as intended</li>
+                                    <li>Multiple choice questions have correct answers selected</li>
+                                </ul>
+                                <p className="text-neutral-400 mt-2">
+                                    Your lesson will be reviewed by our team before being published to the platform.
+                                    We'll notify you once it's approved.
+                                </p>
+                            </div>
+
+                            <div className="flex justify-end space-x-3">
+                                <button
+                                    onClick={() => setShowPublishModal(false)}
+                                    className="px-4 py-2 text-neutral-400 hover:text-white transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={handlePublishRequest}
+                                    className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 hover:text-purple-300 px-6 py-2 rounded-lg transition-all text-sm font-medium flex items-center space-x-2"
+                                >
+                                    <i className="fas fa-check"></i>
+                                    <span>I Understand, Submit for Review</span>
+                                </motion.button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+
     return (
    
         <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-900 to-neutral-950 text-white p-6 relative">
@@ -1335,6 +1498,7 @@ const StudioEditor = ({ initialLesson = null, onLessonCreated }) => {
             <ImportProjectModal />
             <ContextMenu />
             <RenamePageModal />
+            <PublishModal />
 
             {/* Main content area - remove bottom padding */}
             <div 
