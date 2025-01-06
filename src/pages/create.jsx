@@ -504,11 +504,11 @@ export default function Create() {
                 }`}
               >
                 <i className="fas fa-wallet mr-2"></i>
-                Earnings & Analytics
+                Earnings
               </Link>
               <Link 
                 href="/create/settings"
-                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                className={`hidden text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
                   false  // Replace with actual route check
                     ? 'border-blue-500 text-white' 
                     : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'

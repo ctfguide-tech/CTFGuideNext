@@ -13,6 +13,7 @@ import {
   EllipsisVerticalIcon,
   ShieldCheckIcon,
   BellIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
@@ -379,24 +380,33 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                           >
-                            <Popover.Panel className="absolute z-10 w-48 max-w-sm transform px-4 sm:px-0 lg:max-w-3xl">
-                              <div className="overflow-hidden  shadow-lg ">
-                                <div className="relative grid gap-6 border border-neutral-800 bg-neutral-900  sm:gap-8 sm:p-8">
+                            <Popover.Panel className="absolute z-10 w-64 transform px-4 sm:px-0">
+                              <div className="overflow-hidden rounded-xl shadow-lg ring-1 ring-black/5">
+                                <div className="relative bg-neutral-900 p-3">
                                   <Link
                                     href="/create"
-                                    className="flex w-full items-start rounded-lg "
+                                    className="flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
                                   >
-                                    <p className="text-base font-medium text-gray-400 hover:text-white">
-                                      Create
-                                    </p>
+                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
+                                      <PencilSquareIcon className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium">Create</p>
+                                      <p className="text-sm text-gray-500">Design your own challenges</p>
+                                    </div>
                                   </Link>
+
                                   <Link
                                     href="/groups"
-                                    className=" s flex items-start rounded-lg"
+                                    className="mt-2 flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
                                   >
-                                    <p className="text-base font-medium text-gray-400 hover:text-white">
-                                      Classrooms
-                                    </p>
+                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
+                                      <UserGroupIcon className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium">Classrooms</p>
+                                      <p className="text-sm text-gray-500">Join or manage your classes</p>
+                                    </div>
                                   </Link>
                                 </div>
                               </div>
