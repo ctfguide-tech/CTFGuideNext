@@ -12,6 +12,7 @@ const ModulesPage = () => {
     const [modules, setModules] = useState(null);
     const [loading, setLoading] = useState(true);
     const [nextLesson, setNextLesson] = useState(null);
+    const [showBetaModal, setShowBetaModal] = useState(false);
     const [stats, setStats] = useState({
         completedModules: 0,
         totalModules: 0,
@@ -20,6 +21,18 @@ const ModulesPage = () => {
         nextRank: 'Novice',
         modulesToNextRank: 0
     });
+
+    useEffect(() => {
+        const betaModalDismissed = localStorage.getItem('betaModalDismissed');
+        if (!betaModalDismissed) {
+            setShowBetaModal(true);
+        }
+    }, []);
+
+    const handleCloseBetaModal = () => {
+        setShowBetaModal(false);
+        localStorage.setItem('betaModalDismissed', 'true');
+    };
 
     useEffect(() => {
         const fetchModules = async () => {
@@ -104,6 +117,20 @@ const ModulesPage = () => {
         <div className="min-h-screen bg-neutral-900">
             <StandardNav />
 
+            {showBetaModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="p-6 rounded-lg shadow-lg bg-neutral-900 text-white">
+                        <h2 className="text-xl font-bold mb-4">Beta Feature</h2>
+                        <p>This feature is heavily in development and is currently in beta.</p>
+                        <button 
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                            onClick={handleCloseBetaModal}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 {loading ? (

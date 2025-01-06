@@ -70,7 +70,7 @@ export default function CreatorSettings() {
                 className="text-sm font-medium border-b-2 h-full flex items-center transition-colors border-transparent text-neutral-400 hover:text-white hover:border-[#333333]"
               >
                 <i className="fas fa-wallet mr-2"></i>
-                Earnings & Analytics
+                Earnings
               </Link>
               <Link 
                 href="/create/settings"

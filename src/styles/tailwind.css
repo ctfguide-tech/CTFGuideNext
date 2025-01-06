@@ -102,11 +102,11 @@
   }
 
   .markdown pre {
-    @apply bg-zinc-700 text-white rounded p-4 pb-4;
+    @apply bg-neutral-900 text-white rounded p-4 pb-4;
   }
 
   .markdown code {
-    @apply bg-zinc-700 text-white rounded p-1;
+    @apply bg-neutral-900 text-white rounded p-1;
   }
 
   .markdown table {

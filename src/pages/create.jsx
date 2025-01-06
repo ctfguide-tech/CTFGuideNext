@@ -504,11 +504,11 @@ export default function Create() {
                 }`}
               >
                 <i className="fas fa-wallet mr-2"></i>
-                Earnings & Analytics
+                Earnings
               </Link>
               <Link 
                 href="/create/settings"
-                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                className={`hidden text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
                   false  // Replace with actual route check
                     ? 'border-blue-500 text-white' 
                     : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
@@ -689,7 +689,7 @@ export default function Create() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold text-white">Learn Modules</h2>
                   <a href="/create/learn/editor" className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition-all duration-300 hover:transform hover:-translate-y-0.5">
-                    New Module
+                    Open Studio
                   </a>
                 </div>
               </div>
@@ -731,12 +731,7 @@ export default function Create() {
                           </p>
                         </div>
                         <div className="flex space-x-3">
-                          <a 
-                            href={`/create/learn/editor/${module.id}`}
-                            className="text-blue-400 hover:text-blue-300 transition-colors p-2 hover:bg-blue-600/10 rounded-lg"
-                          >
-                            <i className="fas fa-pencil-alt"></i>
-                          </a>
+                     
                           <a 
                             href={`/learn/${module.id}`}
                             target="_blank"
@@ -900,7 +895,7 @@ export default function Create() {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-neutral-400">
-                      Are you sure you want to enable creator mode? This will allow you to create and manage content on CTFGuide.
+                      Are you sure you want to enable creator mode? This will allow you to see metrics on challenges.
                     </p>
                   </div>
 

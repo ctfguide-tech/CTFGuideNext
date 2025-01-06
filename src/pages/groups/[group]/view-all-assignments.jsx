@@ -89,201 +89,160 @@ const ViewAllAssignments = () => {
         <style>
           @import
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-          /* bold */
         </style>
       </Head>
       <StandardNav />
-      {!isTeacher ? <StudentNav classCode={group} /> :
-      <div className="bg-neutral-800">
-        <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-10 justify-between">
-            {isTeacher && <ClassroomNav classCode={group} />}
-            <div className="flex items-center">
-              {isTeacher && 
-              <button
-                onClick={() => {
-                  setViewCreateAssignment(true);
-                }}
-                className="rounded-lg bg-neutral-800/80 px-4 py-0.5 text-white "
-              >
-                <i className="fas fa-plus-circle pe-2"></i> New Assignment
-              </button>
-              }
-            </div>
+      
+      <div className="border-b border-neutral-800">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-14 items-center space-x-4">
+            <button
+              onClick={() => router.push(`/groups/${group}/home`)}
+              className="text-neutral-400 hover:text-white transition-colors"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => router.push(`/groups/${group}/view-all-assignments`)}
+              className="text-neutral-400 hover:text-white transition-colors"
+            >
+              Assignments
+            </button>
+            <button
+              onClick={() => router.push(`/groups/${group}/gradebook`)}
+              className="text-neutral-400 hover:text-white transition-colors"
+            >
+              Gradebook
+            </button>
+            <button
+              onClick={() => router.push(`/groups/${group}/settings`)}
+              className="text-neutral-400 hover:text-white transition-colors"
+            >
+              Settings
+            </button>
           </div>
         </div>
       </div>
-      }
+
       <Loader isLoad={loadingAuth} />
-      {
-        !loadingAuth && 
-        <>
-      <div className="mx-auto mt-6   max-w-6xl  justify-center ">
-        <h1 className="mx-auto text-2xl font-semibold text-white">
-          Assignments
-        </h1>
-        <h2 className="mb-4 mt-4 text-lg font-semibold text-white">
-          Upcoming Assignments
-        </h2>
+      
+      {!loadingAuth && 
+        <div className="min-h-screen bg-neutral-900 py-8">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-white">Assignments</h1>
+              <p className="mt-2 text-neutral-400">View and manage your class assignments</p>
+            </div>
 
-        {
-        assignments.length > 0 ? (
-          assignments
-            .filter((assignment) => new Date(parseDate(assignment.dueDate)) > new Date())
-            .map((assignment) => (
-              <div
-                key={assignment.id}
-                className="mb-2 cursor-pointer rounded-sm border-l-4 border-green-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800 text-white"
-                      onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
-              >
-                {/* Make assignment box look pretty */}
-                <h2 className="text-md text-white"
-                  onClick={() => {
-                    router.replace(
-                      `/assignments/${isTeacher ? 'teacher' : 'student'}/${assignment.id}`
-                    );
-                  }}
-                >
-                  <Tooltip id="quiz-tooltip" place="left" />
-                  <Tooltip id="test-tooltip" place="left" />
-                  <Tooltip id="homework-tooltip" place="left" />
-                  <Tooltip id="assessment-tooltip" place="left" />
-
-                  {assignment.category === 'quiz' && (
-                    <i
-                      title="quiz"
-                      className="fas fa-question-circle"
-                      data-tooltip-id="quiz-tooltip"
-                      data-tooltip-content="Quiz"
-                    ></i>
-                  )}
-                  {assignment.category === 'test' && (
-                    <i
-                      title="test"
-                      className="fas fa-clipboard-check"
-                      data-tooltip-id="test-tooltip"
-                      data-tooltip-content="Test"
-                    ></i>
-                  )}
-                  {assignment.category === 'homework' && (
-                    <i
-                      title="homework"
-                      className="fas fa-book"
-                      data-tooltip-id="homework-tooltip"
-                      data-tooltip-content="Homework"
-                    ></i>
-                  )}
-                  {assignment.category === 'assessment' && (
-                    <i
-                      title="assessment"
-                      className="fas fa-file-alt"
-                      data-tooltip-id="assessment-tooltip"
-                      data-tooltip-content="Assessment"
-                    ></i>
-                  )}
-
-                  <span className="ml-0.5"> {assignment.name} 
-                              {!assignment.isOpen && 
-                              <span style={{color: "#C41E3A"}}> (closed)</span>} </span>
+            <div className="space-y-8">
+              {/* Upcoming Assignments Section */}
+              <div>
+                <h2 className="mb-4 text-xl font-semibold text-white">
+                  Upcoming Assignments
                 </h2>
-                <p className="text-white">
-                  Due: {parseDate(assignment.dueDate)}
-                </p>
-                      <p>
-                        {grades[assignment.name] && grades[assignment.name].grade || "NA"}/
-                        {assignment.totalPoints} pts
-                      </p>
+                <div className="space-y-3">
+                  {assignments.length > 0 ? (
+                    assignments
+                      .filter((assignment) => new Date(parseDate(assignment.dueDate)) > new Date())
+                      .map((assignment) => (
+                        <div
+                          key={assignment.id}
+                          onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
+                          className="group cursor-pointer rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 transition hover:border-neutral-700 hover:bg-neutral-800"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                {assignment.category === 'quiz' && (
+                                  <i className="fas fa-question-circle text-blue-500" data-tooltip-id="quiz-tooltip" data-tooltip-content="Quiz"></i>
+                                )}
+                                {assignment.category === 'test' && (
+                                  <i className="fas fa-clipboard-check text-green-500" data-tooltip-id="test-tooltip" data-tooltip-content="Test"></i>
+                                )}
+                                {assignment.category === 'homework' && (
+                                  <i className="fas fa-book text-orange-500" data-tooltip-id="homework-tooltip" data-tooltip-content="Homework"></i>
+                                )}
+                                {assignment.category === 'assessment' && (
+                                  <i className="fas fa-file-alt text-purple-500" data-tooltip-id="assessment-tooltip" data-tooltip-content="Assessment"></i>
+                                )}
+                                <h3 className="text-lg font-medium text-white">
+                                  {assignment.name}
+                                  {!assignment.isOpen && 
+                                    <span className="ml-2 text-sm font-normal text-red-500">(closed)</span>
+                                  }
+                                </h3>
+                              </div>
+                              <p className="mt-1 text-sm text-neutral-400">
+                                Due: {parseDate(assignment.dueDate)}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-sm font-medium text-neutral-300">
+                                {grades[assignment.name]?.grade || "NA"}/{assignment.totalPoints} pts
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  ) : (
+                    <div className="rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 text-neutral-400">
+                      No upcoming assignments
+                    </div>
+                  )}
+                </div>
               </div>
-            ))
-        ) : (
-          <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
-            <h1 className="text-white">No assignments available</h1>
-          </div>
-        )}
 
-        <h2 className="mb-4 text-lg font-semibold text-white">
-          Past Assignments
-        </h2>
-        {/*Make so that subitted assignments are also here*/}
-        {
-        
-        assignments.length > 0 ? (
-          assignments
-            .filter((assignment) => new Date(parseDate(assignment.dueDate)) < new Date())
-            .map((assignment) => (
-              <div
-                key={assignment.id}
-                className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 hover:bg-neutral-800"
-                onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
-              >
-                {/* Make assignment look pretty*/}
-                <h2 className="text-md text-white"
-                  onClick={() => {
-                    router.replace(
-                      `/assignments/${isTeacher ? 'teacher' : 'student'}/${assignment.id}`
-                    );
-                  }}
-                >
-                  <Tooltip id="quiz-tooltip" place="left" />
-                  <Tooltip id="test-tooltip" place="left" />
-                  <Tooltip id="homework-tooltip" place="left" />
-                  <Tooltip id="assessment-tooltip" place="left" />
-
-                  {assignment.category === 'quiz' && (
-                    <i
-                      title="quiz"
-                      className="fas fa-question-circle"
-                      data-tooltip-id="quiz-tooltip"
-                      data-tooltip-content="Quiz"
-                    ></i>
-                  )}
-                  {assignment.category === 'test' && (
-                    <i
-                      title="test"
-                      className="fas fa-clipboard-check"
-                      data-tooltip-id="test-tooltip"
-                      data-tooltip-content="Test"
-                    ></i>
-                  )}
-                  {assignment.category === 'homework' && (
-                    <i
-                      title="homework"
-                      className="fas fa-book"
-                      data-tooltip-id="homework-tooltip"
-                      data-tooltip-content="Homework"
-                    ></i>
-                  )}
-                  {assignment.category === 'assessment' && (
-                    <i
-                      title="assessment"
-                      className="fas fa-file-alt"
-                      data-tooltip-id="assessment-tooltip"
-                      data-tooltip-content="Assessment"
-                    ></i>
-                  )}
-
-                  <span className="ml-0.5"> {assignment.name} </span>
+              {/* Past Assignments Section */}
+              <div>
+                <h2 className="mb-4 text-xl font-semibold text-white">
+                  Past Assignments
                 </h2>
-                <p className="text-white">
-                  Due: {parseDate(assignment.dueDate)} 
-                </p>
-                      <p className="text-white">
-                        {grades[assignment.name] && grades[assignment.name].grade && grades[assignment.name] !== -1 || "NA"}
-                        {grades[assignment.name] && grades[assignment.name].grade === -1 && "Not Submitted"}/
-                        {assignment.totalPoints} pts
-                      </p>
+                <div className="space-y-3">
+                  {assignments.length > 0 ? (
+                    assignments
+                      .filter((assignment) => new Date(parseDate(assignment.dueDate)) < new Date())
+                      .map((assignment) => (
+                        <div
+                          key={assignment.id}
+                          onClick={() => router.push(`/assignments/${isTeacher ? 'teacher' : "student"}/${assignment.id}`)}
+                          className="group cursor-pointer rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 transition hover:border-neutral-700 hover:bg-neutral-800"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                {/* Same icons as above */}
+                                <h3 className="text-lg font-medium text-white">
+                                  {assignment.name}
+                                </h3>
+                              </div>
+                              <p className="mt-1 text-sm text-neutral-400">
+                                Due: {parseDate(assignment.dueDate)}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-sm font-medium text-neutral-300">
+                                {grades[assignment.name]?.grade === -1 ? (
+                                  <span className="text-red-500">Not Submitted</span>
+                                ) : (
+                                  `${grades[assignment.name]?.grade || "NA"}/${assignment.totalPoints} pts`
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  ) : (
+                    <div className="rounded-lg border border-neutral-800 bg-neutral-800/50 p-4 text-neutral-400">
+                      No past assignments
+                    </div>
+                  )}
+                </div>
               </div>
-            ))
-        ) : (
-          <div className="mb-2 cursor-pointer rounded-sm border-l-4 border-red-600 bg-neutral-800/50 px-3 py-3 text-white hover:bg-neutral-800">
-            <h1 className="text-white">No assignments available</h1>
+            </div>
           </div>
-        )}
-      </div>
-
-      <Footer />
-          </>
+        </div>
       }
+      <Footer />
     </>
   );
 };
