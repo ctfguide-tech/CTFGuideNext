@@ -1,4 +1,3 @@
-
 import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import { Context } from '@/context';
@@ -169,6 +168,9 @@ export default function Create() {
     onSwipedLeft: () => setCurrentSwipeView('difficultyBreakdown'),
     onSwipedRight: () => setCurrentSwipeView('skillChart'),
   });
+
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [fullActivityData, setFullActivityData] = useState([]);
 
   function closeUnsavedNotif() {
     bannerState(false);
@@ -583,10 +585,56 @@ export default function Create() {
 
   async function loadStreakChart() {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/activity/${router.query.user}`;
-    const response = await request(url, 'GET', null);
-    console.log(response);
-    setActivityData(response.body);
+    try {
+      const response = await request(url, 'GET', null);
+      console.log('Activity data response:', response);
+      setFullActivityData(response.body || []);
+      
+      // Filter and set initial year data
+      filterActivityDataByYear(response.body || [], selectedYear);
+    } catch (error) {
+      console.error('Error loading activity data:', error);
+      setActivityData(generateEmptyYearData(selectedYear));
+    }
   }
+
+  // Add this new function to filter activity data by year
+  const filterActivityDataByYear = (data, year) => {
+    // First filter the data to only include the selected year
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year, 11, 31);
+    
+    // Create a map for quick lookup of activities
+    const activityMap = new Map(
+      data
+        .filter(activity => {
+          const activityDate = new Date(activity.date);
+          return activityDate >= yearStart && activityDate <= yearEnd;
+        })
+        .map(activity => [activity.date, activity])
+    );
+    
+    // Generate complete year data with filtered activities
+    const yearData = [];
+    for (let d = new Date(yearStart); d <= yearEnd; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      const existingActivity = activityMap.get(dateStr);
+      
+      yearData.push({
+        date: dateStr,
+        count: existingActivity ? existingActivity.count : 0,
+        level: existingActivity ? existingActivity.level : 0
+      });
+    }
+    
+    setActivityData(yearData);
+  };
+
+  // Update the handleYearChange function
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    filterActivityDataByYear(fullActivityData, year);
+  };
 
   async function fetchIsFollowing() {
     try {
@@ -626,8 +674,9 @@ export default function Create() {
   };
 
   useEffect(() => {
-    if (router.query.user) loadStreakChart();
-    setDisplayMode('default');
+    if (router.query.user) {
+      loadStreakChart();
+    }
   }, [router.query.user]);
 
   // Get the Username from Local Storage
@@ -1217,14 +1266,30 @@ export default function Create() {
                     <div className="w-full">
                       <div className="text-white">
                         <div className="mt-4 w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4">
-                          <h2 className="mb-4 text-xl font-bold text-white">
-                            ACTIVITY CALENDAR
-                          </h2>
+                          <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold text-white">
+                              ACTIVITY CALENDAR
+                            </h2>
+                            <select 
+                              value={selectedYear}
+                              onChange={(e) => handleYearChange(parseInt(e.target.value))}
+                              className="bg-neutral-700 text-white rounded px-3 py-1 border-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              {Array.from(
+                                { length: new Date().getFullYear() - 2023 + 1 },
+                                (_, i) => 2023 + i
+                              ).reverse().map((year) => (
+                                <option key={year} value={year}>
+                                  {year}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                           <div className="flex justify-center">
                             {activityData && (
                               <ActivityCalendar
                                 data={activityData}
-                                showMonthLabels={true} // Ensure month labels are shown
+                                showMonthLabels={true}
                                 theme={{
                                   light: [
                                     '#1f1f1f',
@@ -1243,9 +1308,9 @@ export default function Create() {
                                   level4: '#3a8fff',
                                 }}
                               />
-                            )}{' '}
-                          </div>{' '}
-                        </div>{' '}
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1423,14 +1488,30 @@ export default function Create() {
                   <div className="w-full">
                     <div className="text-white">
                       <div className="mt-4 w-full border-t-4 border-blue-600 bg-neutral-800 px-4 py-4">
-                        <h2 className="mb-4 text-xl font-bold text-white">
-                          ACTIVITY CALENDAR
-                        </h2>
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-xl font-bold text-white">
+                            ACTIVITY CALENDAR
+                          </h2>
+                          <select 
+                            value={selectedYear}
+                            onChange={(e) => handleYearChange(parseInt(e.target.value))}
+                            className="bg-neutral-700 text-white rounded px-3 py-1 border-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            {Array.from(
+                              { length: new Date().getFullYear() - 2023 + 1 },
+                              (_, i) => 2023 + i
+                            ).reverse().map((year) => (
+                              <option key={year} value={year}>
+                                {year}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                         <div className="flex justify-center">
                           {activityData && (
                             <ActivityCalendar
                               data={activityData}
-                              showMonthLabels={true} // Ensure month labels are shown
+                              showMonthLabels={true}
                               theme={{
                                 light: [
                                   '#1f1f1f',
@@ -1449,9 +1530,9 @@ export default function Create() {
                                 level4: '#3a8fff',
                               }}
                             />
-                          )}{' '}
-                        </div>{' '}
-                      </div>{' '}
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

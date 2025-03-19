@@ -383,7 +383,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                           >
-                            <Popover.Panel className="absolute z-10 w-64 transform px-4 sm:px-0">
+                            <Popover.Panel className="absolute z-[9999] w-64 transform px-4 sm:px-0" style={{ position: 'fixed' }}>
                               <div className="overflow-hidden rounded-xl shadow-lg ring-1 ring-black/5">
                                 <div className="relative bg-neutral-900 p-3">
                                   <Link
