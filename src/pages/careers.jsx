@@ -118,38 +118,35 @@ export default function Careers() {
       <Header />
       <main>
         <div className="bg-cover bg-center" style={{ backgroundImage: "url('https://formlabs-media.formlabs.com/filer_public_thumbnails/filer_public/67/16/67160d62-3040-4c77-9eca-a0be6bfa919a/pennstate_render_exterior.jpg__1354x0_q85_subsampling-2.jpg')" }}>
-          <div className="py-20 w-full text-left bg-black bg-opacity-70">
+          <div className="py-12 sm:py-20 w-full text-left bg-black bg-opacity-70">
             <div className='max-w-7xl mx-auto px-4'>
-              <p className="text-4xl font-bold text-white sm:text-4xl">
+              <p className="text-3xl sm:text-4xl font-bold text-white">
                 careers@
-                <span className="mt-2 text-4xl text-blue-600 font-bold tracking-tight sm:text-4xl">
+                <span className="mt-2 text-3xl sm:text-4xl text-blue-600 font-bold tracking-tight">
                   CTFGuide
                 </span>
               </p>
-              <p className="mt-1 text-xl text-white">
+              <p className="mt-1 text-lg sm:text-xl text-white">
                 Join the company that's building the modern cybersecurity upskilling platform.
               </p>
             </div>
           </div>
         </div>
 
-      <div  className='max-w-7xl w-full  sm:px-2 px-4 mx-auto text-white mt-10 grid sm:grid-cols-6  grid-cols-1 sm:gap-x-8 gap-0'>
-      
-         
-     
-         <div className='col-span-4 '>
+      <div  className='max-w-6xl w-full sm:px-2 px-4 mx-auto text-white mt-10 grid lg:grid-cols-6 grid-cols-1 sm:gap-x-8 gap-0'>
+        <div className='sm:col-span-2 md:col-span-2 lg:col-span-4 xl:col-span-4'>
         <h1 className='text-2xl font-bold text-blue-500'>Working with us</h1>
         <p className=' mt-4'>
         We're all about open, collaborative, and inclusive culture. We believe in learning from each other and the power of community.
-<br></br><br></br>
-Our team? Learners, not know-it-alls. We're after people who want to grow, not those who think they've got it all figured out.
-<br></br><br></br>
-We're remote-friendly, but a lot of us are in State College, PA. Work where you work best - remote, in-office, or a mix of both.
+        <br></br><br></br>
+        Our team? Learners, not know-it-alls. We're after people who want to grow, not those who think they've got it all figured out.
+        <br></br><br></br>
+        We're remote-friendly, but a lot of us are in State College, PA. Work where you work best - remote, in-office, or a mix of both.
 
-</p>
+        </p>
 
-<h1 className='text-2xl font-bold mt-10 text-blue-500'>Backed by the best</h1>
-<p className='mt-4'> CTFGuide is funded by the best of the best. We're backed by investors like Penn State University and Bullmont Capital.</p>
+        <h1 className='text-2xl font-bold mt-10 text-blue-500'>Backed by the best</h1>
+        <p className='mt-4'> CTFGuide is funded by the best of the best. We're backed by investors like Penn State University and Bullmont Capital.</p>
 
         <h1 className='mt-10 text-2xl font-bold text-blue-500'>Open Positions</h1>
         <p className='text-sm'>
@@ -189,67 +186,67 @@ We're remote-friendly, but a lot of us are in State College, PA. Work where you 
          </div>
         </div>
 
-        <div className='col-span-2 w-full mt-10 sm:mt-0 sm:px-2 px-1 '>
-          <p className='text-2xl font-bold text-blue-500'>Our Team</p>
-          <div className='mt-4 flex flex-col gap-1 w-full text-lg  '>
-          <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Pranav Ramesh</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Founder, CEO</p>
-            </div>
-          <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Abhi Byreddy</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Co-Founder, COO</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Jiaming Wang</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>CTO</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Mish Adelanwa</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Advisor</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Stephen Stefantos</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
-            </div>
-                
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Kshitij Kochhar</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
-            <p>Kristopher Hicks</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
-            </div>
-                   <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Josh Herron</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>Infrastructure</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
-            <p>Anindya Das</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
-            <p>Sai Rangineeni</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
-            <p>Ben Haulk</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Travis Peck</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex hidden'>
-            <p>Ishan Voleti</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-          </div>
-          </div>
-   
+        <div className='col-span-2 w-full mt-10 lg:mt-0 lg:col-span-2'>
+          <div className='w-full'>
+            <p className='text-2xl font-bold text-blue-500'>Our Team</p>
+            <div className='mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-1 w-full text-lg'>
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Pranav Ramesh</p>
+              <p className='text-white bg-blue-700 px-2 rounded-md ml-auto'>Founder, CEO</p>
+              </div>
 
-        
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Abhi Byreddy</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>Co-Founder, COO</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Jiaming Wang</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>CTO</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Mish Adelanwa</p>
+                <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>Advisor</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Stephen Stefantos</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE</p>
+              </div>
+                  
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Kshitij Kochhar</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>David Youm</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Josh Herron</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>Infrastructure</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Ben Haulk</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Travis Peck</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
+              </div>
+
+              <div className='w-full bg-neutral-800 justify-between p-4 flex'>
+              <p>Arno Raath</p>
+              <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
 
