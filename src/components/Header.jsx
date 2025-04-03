@@ -97,14 +97,14 @@ export function Header() {
             
           </div>
           
-          <div className="flex items-center gap-x-5 md:gap-x-8">
+          <div className="flex items-center gap-x-3 md:gap-x-8">
             <div>
-              <NavLink className="text-white" href="/login">
+              <NavLink className="text-white text-center" href="/login">
                 Sign in
               </NavLink>
             </div>
             <Button href="/register" color="blue">
-              <span>
+              <span className='text-center'>
                 Get started <span className="hidden lg:inline">today</span>
               </span>
             </Button>
