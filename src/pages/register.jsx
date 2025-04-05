@@ -207,7 +207,7 @@ function Register() {
                           <div>
                             <div className='flex items-center'>
                            <h1 className='text-white  text-xl'>Get started on</h1>
-                              <Link href="/" className="flex items-center ml-1">
+                              <Link href="/" className="flex items-center ml-1" legacyBehavior>
                                 <img
                                   className="z-10 h-10 w-10"
                                   src="/darkLogo.png"

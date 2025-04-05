@@ -46,7 +46,7 @@ export function Hero() {
 
           <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
             <div className="flex lg:flex-1">
-            <Link href="../" aria-label="Home">
+            <Link href="../" aria-label="Home" legacyBehavior>
               <Logo className="h-10 w-auto" />
             </Link>
             
@@ -70,7 +70,10 @@ export function Hero() {
                       <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0">
                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                           <div className="relative grid gap-6 bg-neutral-900 bg-blend-overlay px-5 py-6 sm:gap-8 sm:p-8">
-                            <Link href="/education" className="block p-3 -m-3 transition duration-150 ease-in-out rounded-md hover:bg-neutral-800">
+                            <Link
+                              href="/education"
+                              className="block p-3 -m-3 transition duration-150 ease-in-out rounded-md hover:bg-neutral-800"
+                              legacyBehavior>
                               <div className="flex items-start">
                                 <AcademicCapIcon className="h-8 w-8 text-blue-500 mr-3 mt-1" />
                                 <div>
@@ -135,7 +138,7 @@ export function Hero() {
             <div className="fixed inset-0 z-50" />
             <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
               <div className="flex items-center justify-between">
-              <Link href="../" aria-label="Home">
+              <Link href="../" aria-label="Home" legacyBehavior>
               <Logo className="h-10 w-auto" />
             </Link>
                 <button
@@ -173,7 +176,6 @@ export function Hero() {
             </Dialog.Panel>
           </Dialog>
         </header>
-  
         <div className="relative isolate pt-14">
           <div
             className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -279,5 +281,5 @@ export function Hero() {
           </div>
         </div>
       </div>
-  );
+    );
 }

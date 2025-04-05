@@ -80,10 +80,10 @@ export default function Earnings() {
               >
                 Home
               </Link>
-              <Link 
+              <Link
                 href="/create/earnings"
                 className="text-sm font-medium border-b-2 h-full flex items-center transition-colors border-blue-500 text-white"
-              >
+                legacyBehavior>
                 <i className="fas fa-wallet mr-2"></i>
                 Earnings 
               </Link>

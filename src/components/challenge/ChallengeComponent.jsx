@@ -37,7 +37,7 @@ const Challenge = ({ data, inCarousel }) => {
         classStyle +
         'duration-4000 min-h-[190px] min-w-[200px] transition ease-in-out hover:bg-neutral-800/40'
       }
-    >
+      legacyBehavior>
       <div className="relative h-full">
         <div className="flex">
           <span

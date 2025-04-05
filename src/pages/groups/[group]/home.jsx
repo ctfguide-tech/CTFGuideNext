@@ -70,10 +70,10 @@ export default function GroupDisplay() {
             <p className="text-neutral-400 mb-6">
               The classroom you're looking for doesn't exist or you don't have permission to access it.
             </p>
-            <Link 
+            <Link
               href="/groups"
               className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-neutral-800 text-white hover:bg-neutral-700 transition-colors"
-            >
+              legacyBehavior>
               <i className="fas fa-arrow-left mr-2"></i>
               Back to Classrooms
             </Link>

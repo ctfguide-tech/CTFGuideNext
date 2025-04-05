@@ -346,11 +346,14 @@ function PointsModal({ isOpen, setIsOpen, points }) {
 function TabLink({ tabName, selected, url }) {
   const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
   return (
-    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white px-2 hover:bg-neutral-600 rounded-sm h-full`}>
+    <Link
+      href={url}
+      className={`flex justify-center items-center ${selectedStyle} hover:text-white px-2 hover:bg-neutral-600 rounded-sm h-full`}
+      legacyBehavior>
       <DocumentTextIcon className="text-blue-500 w-6 mr-1 inline-flex" />
       {tabName ?? 'This is a test button'}
     </Link>
-  )
+  );
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -508,7 +511,10 @@ function DescriptionPage({ cache }) {
         <h2 className="flex gap-2 pb-8">
           {challenge ? <>
             <img src={authorPfp} alt="Author's profile picture" className="h-8 w-8 rounded-full" />
-            <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline">{challenge.creator} </Link>
+            <Link
+              href={`/users/${challenge.creator}`}
+              className="text-blue-500 pr-3 hover:underline"
+              legacyBehavior>{challenge.creator} </Link>
             <p className="flex  text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
               {challenge.views}
@@ -524,7 +530,7 @@ function DescriptionPage({ cache }) {
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
-  )
+  );
 }
 
 
@@ -822,13 +828,11 @@ function LeaderboardPage({ cache, setCache }) {
 
 
       </div>
-
       <div className="grid grid-cols-3">
         <div className="">
 
         </div>
       </div>
-
       {leaderboard.slice(0, 10).map((entry, index) => {
         let color;
         switch (index) {
@@ -856,7 +860,7 @@ function LeaderboardPage({ cache, setCache }) {
 
                 <span className="text-2xl font-bold">{index + 1}.</span>
                 <span className="ml-2 text-xl font-semibold text-white">
-                  <Link href={`/users/${entry.user.username}`}>
+                  <Link href={`/users/${entry.user.username}`} legacyBehavior>
                     {entry.user.username}
                   </Link>
                 </span>
@@ -864,11 +868,11 @@ function LeaderboardPage({ cache, setCache }) {
               <div className="text-xl font-semibold">{entry.points} points</div>
             </div>
           </div>
-        )
+        );
       })}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
-  )
+  );
 }
 
 function CommentsPage({ cache }) {

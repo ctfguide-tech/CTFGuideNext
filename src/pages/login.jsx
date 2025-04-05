@@ -142,7 +142,7 @@ export default function Login() {
                       <div className='flex items-center'>
 
                         <h1 className='text-white  text-xl'>Login to </h1>
-                        <Link href="/" className="flex items-center ml-1">
+                        <Link href="/" className="flex items-center ml-1" legacyBehavior>
                           <img
                             className="z-10 h-10 w-10"
                             src="/darkLogo.png"
@@ -269,7 +269,6 @@ export default function Login() {
           </form>
         </div>
       </div>
-
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

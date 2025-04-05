@@ -4,7 +4,7 @@ export function FriendRequestCard({ username, followers, following, onAccept, on
     return (
         <div className='mx-auto mt-6 border border-neutral-500 w-5/6'>
             <div className="py-8 text-neutral-500 text-center flex items-center w-full text-white">
-                <Link href={`/users/${username}`}>
+                <Link href={`/users/${username}`} legacyBehavior>
                     <img
                         style={{ borderColor: '#212121', height: "100px", width: "100px" }}
                         className="mx-5 h-15 w-15 rounded-full border bg-black hover:bg-[#212121]"

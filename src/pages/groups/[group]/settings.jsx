@@ -309,41 +309,38 @@ export default function teacherSettings() {
         </style>
       </Head>
       <StandardNav />
-
-
-            {classroom && 
-               <div className="border-b border-neutral-800">
-               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                 <div className="flex h-14 items-center space-x-4">
-                   <button
-                     onClick={() => router.push(`/groups/${group}/home`)}
-                     className="text-neutral-400 hover:text-white transition-colors"
-                   >
-                     Home
-                   </button>
-                   <button
-                     onClick={() => router.push(`/groups/${group}/view-all-assignments`)}
-                     className="text-neutral-400 hover:text-white transition-colors"
-                   >
-                     Assignments
-                   </button>
-                   <button
-                     onClick={() => router.push(`/groups/${group}/gradebook`)}
-                     className="text-neutral-400 hover:text-white transition-colors"
-                   >
-                     Gradebook
-                   </button>
-                   <button
-                     onClick={() => router.push(`/groups/${group}/settings`)}
-                     className="text-neutral-400 hover:text-white transition-colors"
-                   >
-                     Settings
-                   </button>
-                 </div>
-               </div>
-             </div>
+      {classroom && 
+         <div className="border-b border-neutral-800">
+         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+           <div className="flex h-14 items-center space-x-4">
+             <button
+               onClick={() => router.push(`/groups/${group}/home`)}
+               className="text-neutral-400 hover:text-white transition-colors"
+             >
+               Home
+             </button>
+             <button
+               onClick={() => router.push(`/groups/${group}/view-all-assignments`)}
+               className="text-neutral-400 hover:text-white transition-colors"
+             >
+               Assignments
+             </button>
+             <button
+               onClick={() => router.push(`/groups/${group}/gradebook`)}
+               className="text-neutral-400 hover:text-white transition-colors"
+             >
+               Gradebook
+             </button>
+             <button
+               onClick={() => router.push(`/groups/${group}/settings`)}
+               className="text-neutral-400 hover:text-white transition-colors"
+             >
+               Settings
+             </button>
+           </div>
+         </div>
+       </div>
 }
-
       <Loader isLoad={loadingAuth} />
       {
         !loadingAuth&&
@@ -759,7 +756,6 @@ export default function teacherSettings() {
       }
       <input type="hidden" id="copyBox" value={classCode || ''}></input>
       <input type="hidden" id="copyBox2" value={inviteLink || ''}></input>
-
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
@@ -772,7 +768,6 @@ export default function teacherSettings() {
         pauseOnHover
         theme="dark"
       />
-
     </>
   );
 }

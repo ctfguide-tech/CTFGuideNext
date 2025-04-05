@@ -495,25 +495,25 @@ export default function Create() {
               >
                 Home
               </Link>
-              <Link 
+              <Link
                 href="/create/earnings"
                 className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
                   false  // Replace with actual route check
                     ? 'border-blue-500 text-white' 
                     : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
                 }`}
-              >
+                legacyBehavior>
                 <i className="fas fa-wallet mr-2"></i>
                 Earnings
               </Link>
-              <Link 
+              <Link
                 href="/create/settings"
                 className={`hidden text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
                   false  // Replace with actual route check
                     ? 'border-blue-500 text-white' 
                     : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
                 }`}
-              >
+                legacyBehavior>
                 <i className="fas fa-cog mr-2"></i>
                 Creator Settings
               </Link>
@@ -841,7 +841,6 @@ export default function Create() {
         </div>
       </main>
       <Footer />
-
       {/* Keep existing modals and notifications */}
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
       <Modal open={openModal} onClose={handleCloseModal}>
@@ -863,7 +862,6 @@ export default function Create() {
         </Box>
       </Modal>
       <ToastContainer position="bottom-right" theme="dark" />
-
       <Transition appear show={isEnableModalOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={() => setIsEnableModalOpen(false)}>
           <Transition.Child
@@ -921,7 +919,6 @@ export default function Create() {
           </div>
         </Dialog>
       </Transition>
-
       <Transition appear show={isDisableModalOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={() => setIsDisableModalOpen(false)}>
           <Transition.Child
@@ -979,7 +976,6 @@ export default function Create() {
           </div>
         </Dialog>
       </Transition>
-
       {/* Video Modal */}
       <Transition appear show={isVideoModalOpen} as={Fragment}>
         <Dialog 

@@ -77,7 +77,7 @@ const FriendCard = ({ data }, mutual) => {
   const followers = followedBy.length;
 
   return (
-    <Link href={`/users/${username}`} passHref>
+    <Link href={`/users/${username}`} passHref legacyBehavior>
       <div className="flex flex-1">
         <div className="group relative h-36 w-96 cursor-pointer overflow-hidden rounded-sm border border-gray-900 shadow-2xl hover:border-gray-500">
           <div

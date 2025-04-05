@@ -174,7 +174,6 @@ export default function Groups() {
         />
       )}
       <StandardNav />
-
       <div className="  min-h-screen">
        
 
@@ -261,9 +260,10 @@ export default function Groups() {
                   <p className="font-medium text-white">No classes created yet</p>
                   <p className="text-sm text-neutral-400">Create your first classroom to start teaching</p>
                 </div>
-                <Link href="./groups/create"
+                <Link
+                  href="./groups/create"
                   className="inline-flex items-center px-4 py-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-600/10 transition-colors"
-                >
+                  legacyBehavior>
                   <i className="fas fa-plus mr-2"></i>
                   Create Now
                 </Link>
@@ -442,7 +442,6 @@ export default function Groups() {
           </Transition.Root>
         </div>
       </div>
-
       <ToastContainer />
       <Footer />
     </>

@@ -117,12 +117,11 @@ const Education = () => {
           url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
         </style>
       </Head>
-
       <header className="py-4 " style={{ fontFamily: 'Poppins, sans-serif' }}>
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            <Link href="../" aria-label="Home">
+            <Link href="../" aria-label="Home" legacyBehavior>
             <div className="mx-auto my-auto flex">
       <img className="mx-auto w-12 text-center spin-on-hover" src="../../../../darkLogo.png" />
       <h1
@@ -152,11 +151,9 @@ const Education = () => {
         </nav>
       </Container>
     </header>
-
-    <div className='bg-blue-600 text-white text-center p-2'>
-      <p>CTFGuide EDU is not the same as CTFGuide GP. If you're a solo learner, you can <a href="/register" className='text-white font-semibold'>sign up for CTFGuide GP</a> for free.</p>
-    </div>
-
+      <div className='bg-blue-600 text-white text-center p-2'>
+        <p>CTFGuide EDU is not the same as CTFGuide GP. If you're a solo learner, you can <a href="/register" className='text-white font-semibold'>sign up for CTFGuide GP</a> for free.</p>
+      </div>
       <main>
       <div className="bg-neutral-900 border-t border-neutral-800">
       <div className="relative isolate overflow-hidden bg-gradient-to-b from-blue-100/20">
