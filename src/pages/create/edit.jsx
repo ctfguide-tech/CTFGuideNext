@@ -334,6 +334,10 @@ export default function Createchall() {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${router.query.id}`;
       const body = challengeInfo;
 
+      const hintURL = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${router.query.id}/getHints`;
+      const hintData = await request(hintURL, "GET", null);
+      console.log(hintData)
+
       console.log('Sending request to:', url, 'with body:', body);
       const data = await request(url, "PUT", body);
 
@@ -361,13 +365,18 @@ export default function Createchall() {
         console.log(challengeId)
         const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}`;
 
+        const hintURL = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}/getHints`;
+
         const data = await request(url, 'GET', null);
+        const hintData = await request(hintURL, 'GET', null);
+
         if (data && data.success) {
           const challenge = data.body;
+          const hints = hintData.body;
           setNewChallengeName(challenge.title);
           setCategory(challenge.category[0]);
-          //setHints(challenge.hints);
-         // setPenalty(challenge.penalty);
+          setHints(hints);
+          setPenalty(challenge.penalty);
           setContentPreview(challenge.content);
           setSolution(challenge.solution);
           setDifficulty(challenge.difficulty.toLowerCase());
