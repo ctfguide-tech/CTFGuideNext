@@ -60,57 +60,57 @@ const ChallengeCard = (_props) => {
     'INSANE': 'border-purple-500',
   };
 
-  return (
-    challenge && (
-      <Link {...props} className={`group w-full border-l-4 ${colorBorder[challenge.difficulty]} ${
+  return (challenge && (
+    <Link
+      {...props}
+      className={`group w-full border-l-4 ${colorBorder[challenge.difficulty]} ${
         challenge.solved ? 'bg-green-900/50' : 'bg-[#212121]'
-      } px-5 py-6 transition-all duration-300 hover:bg-[#2c2c2c] ${props.className ?? ''}`} href={`${baseUrl}/challenges/${challenge.id}`} >
-        <div className="flex justify-between">
-          <h1 className="truncate text-2xl  text-white w-2/3">{challenge.title}</h1>
+      } px-5 py-6 transition-all duration-300 hover:bg-[#2c2c2c] ${props.className ?? ''}`}
+      href={`${baseUrl}/challenges/${challenge.id}`}
+      legacyBehavior>
+      <div className="flex justify-between">
+        <h1 className="truncate text-2xl  text-white w-2/3">{challenge.title}</h1>
 
-          <div className="flex items-center text-gray-400 ">
-       
-            <span className='text-green-300'><i className="fas fa-arrow-up text-green-300"></i> {challenge.upvotes !== undefined ? challenge.upvotes : <Skeleton width={20} />}</span>
-            <span className='ml-2 text-red-300'><i className="fas fa-arrow-down text-red-200"></i>  {challenge.downvotes !== undefined ? challenge.downvotes : <Skeleton width={20} />}</span>
-          </div>
-        </div>
-        <div className="mt-2 flex items-center text-gray-400">
-          <img
-            className="h-5 w-5 mr-2 rounded-full"
-            src={creatorPfp || 'default-profile-image-url'}
-            alt="Profile Picture"
-          />
-          <span>@{challenge.creator}</span>
-          {creator && creator.role === 'ADMIN' && (
-            <span className="text-red-500 text-xs ml-1"><i className="fas fa-code fa-fw"></i></span>
-          )}
-          {creator && creator.role === 'PRO' && (
-            <span className="text-yellow-500 text-xs ml-1"><i className="fas fa-crown fa-fw"></i></span>
-       
-       )}
-        </div>
-
-        <div className="mt-4 flex items-center">
-          <PuzzlePieceIcon className="h-5 w-5 mr-2 text-white" />
-          <span className="text-white">{challenge.category}</span>
-          <span className={`ml-4 px-2  rounded-sm text-sm font-bold capitalize ${colorText[challenge.difficulty || 0]}`}>{challenge.difficulty?.toLowerCase() || <Skeleton />}</span>
-
-        <div className=" ml-auto flex text-gray-400">
-          <EyeIcon className="h-5 w-5 mr-2" />
-          <span>{challenge.views !== undefined ? challenge.views : <Skeleton width={20} />}</span>
+        <div className="flex items-center text-gray-400 ">
      
+          <span className='text-green-300'><i className="fas fa-arrow-up text-green-300"></i> {challenge.upvotes !== undefined ? challenge.upvotes : <Skeleton width={20} />}</span>
+          <span className='ml-2 text-red-300'><i className="fas fa-arrow-down text-red-200"></i>  {challenge.downvotes !== undefined ? challenge.downvotes : <Skeleton width={20} />}</span>
         </div>
-        </div>
-      </Link>
-    ) || (
-      <div {...props} className={`bg-neutral-800 w-full rounded-sm pl-8 pr-6 py-4 leading-8 ${props.className ?? ''}`}>
-        <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='10rem' />
-        <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='12rem' />
-        <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='4rem' />
-        <Skeleton baseColor='#262626' highlightColor='#3a3a3a' />
       </div>
-    )
-  );
+      <div className="mt-2 flex items-center text-gray-400">
+        <img
+          className="h-5 w-5 mr-2 rounded-full"
+          src={creatorPfp || 'default-profile-image-url'}
+          alt="Profile Picture"
+        />
+        <span>@{challenge.creator}</span>
+        {creator && creator.role === 'ADMIN' && (
+          <span className="text-red-500 text-xs ml-1"><i className="fas fa-code fa-fw"></i></span>
+        )}
+        {creator && creator.role === 'PRO' && (
+          <span className="text-yellow-500 text-xs ml-1"><i className="fas fa-crown fa-fw"></i></span>
+     
+     )}
+      </div>
+
+      <div className="mt-4 flex items-center">
+        <PuzzlePieceIcon className="h-5 w-5 mr-2 text-white" />
+        <span className="text-white">{challenge.category}</span>
+        <span className={`ml-4 px-2  rounded-sm text-sm font-bold capitalize ${colorText[challenge.difficulty || 0]}`}>{challenge.difficulty?.toLowerCase() || <Skeleton />}</span>
+
+      <div className=" ml-auto flex text-gray-400">
+        <EyeIcon className="h-5 w-5 mr-2" />
+        <span>{challenge.views !== undefined ? challenge.views : <Skeleton width={20} />}</span>
+   
+      </div>
+      </div>
+    </Link>
+  ) || (<div {...props} className={`bg-neutral-800 w-full rounded-sm pl-8 pr-6 py-4 leading-8 ${props.className ?? ''}`}>
+    <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='10rem' />
+    <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='12rem' />
+    <Skeleton baseColor='#262626' highlightColor='#3a3a3a' width='4rem' />
+    <Skeleton baseColor='#262626' highlightColor='#3a3a3a' />
+  </div>));
 };
 
 export default ChallengeCard;

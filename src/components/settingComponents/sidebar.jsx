@@ -10,31 +10,43 @@ export default function Sidebar() {
     >
       <ul className="mr-2 py-2">
         <li className="py-1">
-          <Link href="../settings" passHref>
-            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+          <Link
+            href="../settings"
+            passHref
+            className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+            
               General
-            </a>
+            
           </Link>
         </li>
         <li className="py-1">
-          <Link href="../settings/security" passHref>
-            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+          <Link
+            href="../settings/security"
+            passHref
+            className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+            
               Security
-            </a>
+            
           </Link>
         </li>
         <li className="py-1">
-          <Link href="../settings/preferences" passHref>
-            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+          <Link
+            href="../settings/preferences"
+            passHref
+            className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+            
               Email Preferences
-            </a>
+            
           </Link>
         </li>
         <li className="py-1">
-          <Link href="../settings/billing" passHref>
-            <a className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+          <Link
+            href="../settings/billing"
+            passHref
+            className="px-2 py-1 text-lg font-medium text-white hover:text-gray-400 sm:text-base">
+            
               Billing
-            </a>
+            
           </Link>
         </li>
       </ul>

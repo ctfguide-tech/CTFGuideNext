@@ -288,7 +288,6 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
           <br></br>
         </div>
       )}
-
       <Disclosure as="nav" className=" border-b border-neutral-800 shadow">
         {({ open }) => (
           <>
@@ -313,21 +312,22 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     </Disclosure.Button>
                   </div>
                   <div className="flex flex-shrink-0 items-center">
-                    <Link href="/dashboard" aria-label="Dashboard">
+                    <Link href="/dashboard" aria-label="Dashboard" legacyBehavior>
                       <Logo />
                     </Link>
                   </div>
                   <div className=" vertical-align md:ml-6 md:flex  ">
                   <Link
-                      href="/learn/modules"
-                      className={
-                        linkClass('/learn/modules') + ' hidden lg:inline-flex'
-                      }
-                    >
+                    href="/learn/modules"
+                    className={
+                      linkClass('/learn/modules') + ' hidden lg:inline-flex'
+                    }
+                  >
+                    <div className="flex items-center">
                       Learn
-
                       <span className="bg-blue-600 text-xs  ml-2 text-white px-2 rounded-full">New!</span>
-                    </Link>
+                    </div>
+                  </Link>
                     <Link
                       href="/practice"
                       className={
@@ -389,7 +389,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                   <Link
                                     href="/create"
                                     className="flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
-                                  >
+                                    legacyBehavior>
                                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
                                       <PencilSquareIcon className="h-5 w-5" />
                                     </div>
@@ -402,7 +402,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                   <Link
                                     href="/groups"
                                     className="mt-2 flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
-                                  >
+                                    legacyBehavior>
                                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
                                       <UserGroupIcon className="h-5 w-5" />
                                     </div>
@@ -587,7 +587,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                 className={classNames(
                                   'flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                                 )}
-                              >
+                                legacyBehavior>
                                 <UserCircleIcon
                                   className="mr-4 block h-6 w-6"
                                   aria-hidden="true"
@@ -601,7 +601,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                 className={classNames(
                                   'flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                                 )}
-                              >
+                                legacyBehavior>
                                 <Cog6ToothIcon
                                   className="mr-4 block h-6 w-6"
                                   aria-hidden="true"
@@ -626,7 +626,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               className={classNames(
                                 'hidden flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                               )}
-                            >
+                              legacyBehavior>
                               <ShieldExclamationIcon
                                 className="mr-4 block h-6 w-6"
                                 aria-hidden="true"
@@ -639,7 +639,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               className={classNames(
                                 ' flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                               )}
-                            >
+                              legacyBehavior>
                               <ShieldExclamationIcon
                                 className="mr-4 block h-6 w-6"
                                 aria-hidden="true"
@@ -653,7 +653,7 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                 className={classNames(
                                   'flex w-full px-4 py-3  text-neutral-50 hover:bg-neutral-700'
                                 )}
-                              >
+                                legacyBehavior>
                                 <ShieldCheckIcon
                                   className="mr-4 block h-6 w-6"
                                   aria-hidden="true"
@@ -781,20 +781,16 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
           </>
         )}
       </Disclosure>
-
       <SearchModal
         showSearchModal={showSearchModal}
         setShowSearchModal={setShowSearchModal}
       />
       <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
-
-        <div className="mx-auto  hidden w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
-          <h1 className="mx-auto  px-4 text-left">
-              Our server hosting provider is experiencing issues which may result in CTFGuide not working as expected. Join our <a className="font-bold" href="https://discord.gg/BwbCYHVX">Discord</a> for updates.
-          </h1>
-        </div>
-     
-
+      <div className="mx-auto  hidden w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
+        <h1 className="mx-auto  px-4 text-left">
+            Our server hosting provider is experiencing issues which may result in CTFGuide not working as expected. Join our <a className="font-bold" href="https://discord.gg/BwbCYHVX">Discord</a> for updates.
+        </h1>
+      </div>
       <SpawnTerminal open={terminaIsOpen} setOpen={setTerminalIsOpen} />
       <NotificationsModal
         open={showAllNotifications}

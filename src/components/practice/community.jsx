@@ -375,12 +375,10 @@ export function Community({ challenges }) {
             </>
           ) : (
             // kinda hacky but it works
-            challenges.length != 0 && (
-              <div className="bg-neutral-800/50 p-4 py-10 rounded-md w-full col-span-4 text-center">
-                <FontAwesomeIcon icon={faFolderOpen} className="w-10 h-10 mx-auto mb-4 text-neutral-400" />
-                <p className="text-white">No challenges found with the current filters. Try changing the filters or search for a different challenge.</p>
-              </div>
-            )
+            (challenges.length != 0 && (<div className="bg-neutral-800/50 p-4 py-10 rounded-md w-full col-span-4 text-center">
+              <FontAwesomeIcon icon={faFolderOpen} className="w-10 h-10 mx-auto mb-4 text-neutral-400" />
+              <p className="text-white">No challenges found with the current filters. Try changing the filters or search for a different challenge.</p>
+            </div>))
           )}
         </div>
       </div>

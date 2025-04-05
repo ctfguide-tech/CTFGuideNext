@@ -789,11 +789,14 @@ function TabLink({ tabName, selected, url, className }) {
   }[tabName] || 'fas fa-file-alt text-blue-500'
 
   return (
-    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full ${className}`}>
+    <Link
+      href={url}
+      className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full ${className}`}
+      legacyBehavior>
       <i className={`${icon} w-6 mr-1 inline-flex`}></i>
       {tabName ?? 'This is a test button'}
     </Link>
-  )
+  );
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -1006,7 +1009,10 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
           {challenge ? <>
             <div className="flex items-center">
               <img src={authorPfp} alt="Author's profile picture" className="bg-neutral-700 h-8 w-8 rounded-full" />
-              <Link href={`/users/${challenge.creator}`} className="text-blue-500 pr-3 hover:underline ml-2">{challenge.creator}</Link>
+              <Link
+                href={`/users/${challenge.creator}`}
+                className="text-blue-500 pr-3 hover:underline ml-2"
+                legacyBehavior>{challenge.creator}</Link>
             </div>
             <p className="flex text-neutral-200 opacity-70 items-center text-sm">
               <i className="fas fa-solid fa-eye mr-2 text-lg"></i>
@@ -1074,7 +1080,7 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
-  )
+  );
 }
 
 
@@ -1429,13 +1435,11 @@ function LeaderboardPage({ cache, setCache }) {
 
 
       </div>
-
       <div className="grid grid-cols-3">
         <div className="">
 
         </div>
       </div>
-
       {leaderboard.length > 0 ? (
         <div className="px-1 overflow-y-auto max-h-[calc(100vh-40px)] relative">
           {leaderboard.slice(0, 10).map((entry, index) => {
@@ -1464,7 +1468,7 @@ function LeaderboardPage({ cache, setCache }) {
                     />
                     <span className="text-2xl font-bold">{index + 1}.</span>
                     <span className="ml-2 text-xl font-semibold text-white">
-                      <Link href={`/users/${entry.user.username}`}>
+                      <Link href={`/users/${entry.user.username}`} legacyBehavior>
                         {entry.user.username}
                       </Link>
                     </span>
@@ -1472,7 +1476,7 @@ function LeaderboardPage({ cache, setCache }) {
                   <div className="text-xl font-semibold">{entry.points} points</div>
                 </div>
               </div>
-            )
+            );
           })}
           {/* Add fade-out overlay that stays anchored */}
           <div className="sticky bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-neutral-800 to-transparent pointer-events-none"></div>
@@ -1491,7 +1495,7 @@ function LeaderboardPage({ cache, setCache }) {
       )}
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
-  )
+  );
 }
 
 function CommentsPage({ cache }) {

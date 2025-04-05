@@ -11,7 +11,7 @@ export function AuthPopup() {
     // User logged out
     return (
       <div className="hidden rounded-md bg-[#3B82F6] hover:bg-[#468dff]">
-        <Link href="/login">
+        <Link href="/login" legacyBehavior>
           <div className="mx-auto my-auto flex h-10 text-center">
             <h1 className="mx-auto my-auto text-lg font-semibold text-white">
               Log in to see your progress!

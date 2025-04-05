@@ -42,7 +42,6 @@ export default function StudentView({ group }) {
       </Head>
       <StandardNav />
       <StudentNav classCode={classroom.classCode} />
-      
       <div className="min-h-screen bg-neutral-900/30 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8">
           {/* Header Section */}
@@ -90,7 +89,7 @@ export default function StudentView({ group }) {
                   <Link
                     href={`/groups/${classroom.classCode}/view-all-assignments`}
                     className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center"
-                  >
+                    legacyBehavior>
                     View All <i className="fas fa-arrow-right ml-2"></i>
                   </Link>
                 </div>
@@ -165,7 +164,6 @@ export default function StudentView({ group }) {
           </div>
         </div>
       </div>
-
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

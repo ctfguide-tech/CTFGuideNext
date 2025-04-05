@@ -97,7 +97,7 @@ export function DashboardHeader() {
       <div className="mx-auto max-w-7xl">
         <div className="-mt-12  sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
           <div className="flex justify-center sm:justify-start">
-            <Link href={`${baseUrl}/users/${username}`}>
+            <Link href={`${baseUrl}/users/${username}`} legacyBehavior>
               {(pfp && (
                 <img
                   className="h-32 w-32    rounded-full hover:bg-[#212121] sm:h-32 sm:w-32"

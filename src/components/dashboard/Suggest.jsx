@@ -9,10 +9,9 @@ export function Suggest() {
         {' '}
         RECOMMENDATIONS
       </h1>
-
       <div className="mb-5 grid grid-cols-2 gap-x-4">
         <div className="">
-          <Link href='/challenges/cypher_decoding'>
+          <Link href='/challenges/cypher_decoding' legacyBehavior>
             <div className="  relative isolate overflow-hidden  rounded-md bg-black/10 bg-neutral-900 pb-4   ">
               <div className="relative mx-auto max-w-7xl  px-5">
                 <div className="mx-auto lg:mx-0 lg:max-w-3xl">
