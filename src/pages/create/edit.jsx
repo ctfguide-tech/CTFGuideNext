@@ -517,7 +517,7 @@ export default function Createchall() {
               </h3>
               <div className="px-5 py-5 ">
                 <dt className="truncate text-xl font-medium text-white">
-                  Challenge Instructions
+                  Edit Challenge Instructions
                   <div className="mt-2">
                   <div className="toolbar flex py-1">
                     <button
@@ -703,7 +703,7 @@ export default function Createchall() {
           <div className="900 mt-5 rounded-sm   bg-neutral-800/40 shadow-lg">
             <h3 className="mt-6 flex items-center bg-green-700 px-4 py-4 text-xl font-medium leading-6 text-white">
             <FontAwesomeIcon icon={faCheckCircle} className='mr-2 text-sm w-4 h-4' />
-              Challenge Solution
+              Edit Challenge Solution
             </h3>
             <div className="px-5 py-5">
               <textarea
