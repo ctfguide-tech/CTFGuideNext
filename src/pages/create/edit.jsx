@@ -573,7 +573,7 @@ export default function Createchall() {
                 
               </div>
 
-              <div className=" py-5">
+              <div className="px-5 py-5">
                   {hints.map((hint, idx) => {
                     return (
                       <div key={idx}>
