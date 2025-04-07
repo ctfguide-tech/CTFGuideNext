@@ -317,31 +317,26 @@ export default function Createchall() {
   const uploadChallenge = async (fileId) => {
     setSending(true);
     try {
-      const nConfig = newConfig.replace('\n', ' && ');
-
-      console.log('Uploading challenge with category:', category);
-
+      // Include both challenge info and hints in one object
       const challengeInfo = {
         title: newChallengeName,
         category: [`${category}`],
         content: contentPreview,
         difficulty: difficulty.toUpperCase(),
+        hints: hints,        // Add hints array directly
+        penalties: penalty,   // Add penalties array directly
+        keyword: solution
       };
 
-      console.log("updating with this info...")
-      console.log(challengeInfo)
+      console.log("Updating challenge with:", challengeInfo);
 
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${router.query.id}`;
-      const body = challengeInfo;
+      const challengeUrl = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${router.query.id}`;
 
-      const hintURL = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${router.query.id}/getHints`;
-      const hintData = await request(hintURL, "GET", null);
-      console.log(hintData)
+      // Single PUT request with all data
+      const challengeData = await request(challengeUrl, "PUT", challengeInfo);
+      console.log("Challenge update response:", challengeData);
 
-      console.log('Sending request to:', url, 'with body:', body);
-      const data = await request(url, "PUT", body);
-
-      if (data && data.slug) {
+      if (challengeData && challengeData.slug) {
         toast.success('Challenge updated successfully');
         window.location.href = '/create';
       } else {
@@ -349,6 +344,7 @@ export default function Createchall() {
       }
     } catch (err) {
       console.error('Error during challenge upload:', err);
+      console.error('Error details:', err.response?.data || err.message);
       toast.error('An error occurred during challenge upload');
     }
     setSending(false);
@@ -364,7 +360,6 @@ export default function Createchall() {
         const challengeId = router.query.id;
         console.log(challengeId)
         const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}`;
-
         const hintURL = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}/getHints`;
 
         const data = await request(url, 'GET', null);
@@ -372,13 +367,13 @@ export default function Createchall() {
 
         if (data && data.success) {
           const challenge = data.body;
-          const hints = hintData.body;
+          console.log(challenge)
           setNewChallengeName(challenge.title);
           setCategory(challenge.category[0]);
-          setHints(hints);
-          setPenalty(challenge.penalty);
+          setHints(hintData.hintArray.map(hint => hint.message));
+          setPenalty(hintData.hintArray.map(hint => hint.penalty));
           setContentPreview(challenge.content);
-          setSolution(challenge.solution);
+          setSolution(challenge.solution.keyword);
           setDifficulty(challenge.difficulty.toLowerCase());
           setNewConfig(challenge.commands.replace(/ && /g, '\n'));
         }
@@ -563,7 +558,6 @@ export default function Createchall() {
                     </button>
                 
                   </div>
-              
                 </div></dt>
 
                 <textarea
@@ -576,7 +570,60 @@ export default function Createchall() {
                   }}
                 ></textarea>
 
+                
               </div>
+
+              <div className=" py-5">
+                  {hints.map((hint, idx) => {
+                    return (
+                      <div key={idx}>
+                        <dt className="mt-4 truncate text-xl font-medium text-white">
+                          Hint {idx + 1}
+                        </dt>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <textarea
+                            onChange={(e) => {
+                              setHints((prevState) => {
+                                const newState = [...prevState];
+                                newState[idx] = e.target.value;
+                                return newState;
+                              });
+                            }}
+                            value={hint}
+                            placeholder="No hint set"
+                            className="mt-1 w-full rounded-lg border-neutral-800 bg-neutral-900 text-white shadow-lg"
+                            style={{ flexBasis: '85%' }}
+                          ></textarea>
+                          <input
+                            value={penalty[idx]}
+                            onChange={(e) => {
+                              setPenalty((prevState) => {
+                                let newState = [...prevState];
+                                newState[idx] = parseInt(e.target.value);
+                                return newState;
+                              });
+                            }}
+                            max={100}
+                            min={0}
+                            placeholder={idx * 5}
+                            type="number"
+                            className={
+                              penaltyErr === ''
+                                ? 'mt-1 w-full rounded-lg border-neutral-800 bg-neutral-900 text-white shadow-lg'
+                                : 'mt-1 w-full rounded-lg border-red-800 bg-neutral-900 text-white shadow-lg'
+                            }
+                            style={{ flexBasis: '15%' }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
             </div>
 
             <div className={`rounded-sm bg-neutral-800/40  transition ${isExpanded ? 'duration-400 col-span-2' : 'duration-400 col-span-4'}`}>
@@ -596,13 +643,64 @@ export default function Createchall() {
                 </div>
               </div>
 
-
+              <div className='mt-10'>
+                <h1 className='text-xl font-medium text-white'>Hints</h1>
+                <div
+                  className="mb-2 w-full hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                  onClick={() => toast.info(`Psst, you're in preview mode.`)}
+                >
+                  <div className='flex place-items-center w-full'>
+                    <h1 className='text-blue-500 px-2 mr-2 text-xl'>Hint 1</h1>
+                    <div className='ml-auto'>
+                      <span className="mt-1 text-sm text-white bg-neutral-700 px-2 py-1 rounded-sm">
+                        {penalty[0]}% penalty
+                      </span>
+                    </div>
+                  </div>
+                  <div className='px-2'>
+                      {hints[0]}
+                  </div>
+                </div>
+                <div
+                  className="mb-2 w-full hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                  onClick={() => toast.info(`Psst, you're in preview mode.`)}
+                >
+                  <div className='flex place-items-center w-full'>
+                    <h1 className='text-blue-500 px-2 mr-2 text-xl'>Hint 2</h1>
+                    <div className='ml-auto'>
+                      <span className="mt-1 text-sm text-white bg-neutral-700 px-2 py-1 rounded-sm">
+                        {penalty[1]}% penalty
+                      </span>
+                    </div>
+                  </div>
+                  <div className='px-2'>
+                      {hints[1]}
+                  </div>
+                </div>
+                <div
+                  className="mb-2 w-full hover:cursor-pointer bg-[#212121] px-4 py-2 text-md opacity-75 transition-opacity transition-opacity duration-150 duration-75 hover:opacity-100"
+                  onClick={() => toast.info(`Psst, you're in preview mode.`)}
+                >
+                  <div className='flex place-items-center w-full'>
+                    <h1 className='text-blue-500 px-2 mr-2 text-xl'>Hint 3</h1>
+                    <div className='ml-auto'>
+                      <span className="mt-1 text-sm text-white bg-neutral-700 px-2 py-1 rounded-sm">
+                        {penalty[2]}% penalty
+                      </span>
+                    </div>
+                  </div>
+                  <div className='px-2'>
+                      {hints[2]}
+                  </div>
+                </div>
+              </div>
          
             </div>
             </div>
           </div>
 
-          <div className="900 mt-5 rounded-sm  hidden  bg-neutral-800/40 shadow-lg">
+
+          <div className="900 mt-5 rounded-sm   bg-neutral-800/40 shadow-lg">
             <h3 className="mt-6 flex items-center bg-green-700 px-4 py-4 text-xl font-medium leading-6 text-white">
             <FontAwesomeIcon icon={faCheckCircle} className='mr-2 text-sm w-4 h-4' />
               Challenge Solution
@@ -617,8 +715,6 @@ export default function Createchall() {
               ></textarea>
             </div>
           </div>
-
-
 
 
           <button
