@@ -81,6 +81,17 @@ export default function Earnings() {
                 Home
               </Link>
               <Link 
+                href="/create/compute"
+                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                  false  // Replace with actual route check
+                    ? 'border-blue-500 text-white' 
+                    : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
+                }`}
+              >
+                <i className="fas fa-server mr-2"></i>
+                Docker Containers <span className="text-xs text-blue-400 px-1 ml-2  rounded bg-blue-900 text-white ">BETA</span>
+              </Link>
+              <Link 
                 href="/create/earnings"
                 className="text-sm font-medium border-b-2 h-full flex items-center transition-colors border-blue-500 text-white"
               >
