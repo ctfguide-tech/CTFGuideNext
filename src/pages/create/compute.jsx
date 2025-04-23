@@ -60,6 +60,7 @@ export default function DockerContainers() {
   const [isTestingDeploy, setIsTestingDeploy] = useState(false); // placeholder for isTestingDeploy state
   const [configureModalOpen, setConfigureModalOpen] = useState(false);
   const [selectedContainer, setSelectedContainer] = useState(null);
+  const [hasDeployedThisSession, setHasDeployedThisSession] = useState(false);
 
   // --- IMAGE SEARCH, FILTER, PAGINATION STATE ---
   const [imageSearch, setImageSearch] = useState('');
@@ -222,6 +223,12 @@ export default function DockerContainers() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Enforce frontend container limit
+    const MAX_CONTAINERS = 50;
+    if (containers.length >= MAX_CONTAINERS) {
+      toast.error(`You have reached the maximum of ${MAX_CONTAINERS} containers. Reach out to pranav@ctfguide.com if you need more.`);
+      return;
+    }
     try {
       const userId = localStorage.getItem('username');
       
@@ -670,7 +677,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
     return (
       <div className="mt-4 shadow-xl bg-neutral-900/50  p-4 shadow-lg">
         <div className="flex justify-between items-center mb-2">
-          <h4 className="text-lg font-bold text-white flex items-center gap-2">
+          <h4 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
             <i className="fas fa-folder-open text-blue-400"></i>
             Associated Files
           </h4>
@@ -766,7 +773,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
   };
 
   const handleStartDeploy = async () => {
-    setIsTestingDeploy(true);
+    setIsTestingDeploy(false);
     setBuildLogs([]);
     try {
       // Collect relevant data for test deploy
@@ -792,12 +799,29 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
       const reader = response.body.getReader();
       let decoder = new TextDecoder('utf-8');
       let done = false;
+      let foundDomain = false;
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         if (value) {
           const chunk = decoder.decode(value);
-          setBuildLogs(prev => [...prev, ...chunk.split(/\r?\n/).filter(line => line.trim())]);
+          const lines = chunk.split(/\r?\n/).filter(line => line.trim());
+          setBuildLogs(prev => [...prev, ...lines]);
+          if (!foundDomain) {
+            for (const line of lines) {
+              // Look for [DOMAIN] https://... or discordapp.com in the line
+              let match = line.match(/\[DOMAIN\]\s*(https?:\/\/\S+)/);
+              if (match) {
+                foundDomain = true;
+                break;
+              }
+              match = line.match(/https?:\/\/[\w.-]*discordapp\.com\S*/);
+              if (match) {
+                foundDomain = true;
+                break;
+              }
+            }
+          }
         }
       }
     } catch (error) {
@@ -841,6 +865,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
   useEffect(() => {
     if (createContainerModalOpen) {
       document.body.style.overflow = 'hidden';
+      setHasDeployedThisSession(false);
     } else {
       document.body.style.overflow = '';
     }
@@ -886,6 +911,17 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
     e.preventDefault();
     e.stopPropagation();
   };
+
+  // --- Deployment UI logic based on logs ---
+  const isDeploySuccess = buildLogs.some(line => line.includes("Discordbot/2.0; +https://discordapp.com"));
+  const deployedDomain = (() => {
+    let d = "";
+    buildLogs.forEach(line => {
+      const m = line.match(/\[DOMAIN\]\s*(https?:\/\/\S+)/);
+      if (m) d = m[1];
+    });
+    return d;
+  })();
 
   return (
     <>
@@ -1072,7 +1108,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
                                   <button
                                     type="button"
                                     onClick={createDockerfileFromTemplate}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-none text-sm transition-all duration-200"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-none transition-all duration-200"
                                   >
                                     Use This Template
                                   </button>
@@ -1234,7 +1270,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
                 return (
                   <div
                     key={uniqueKey}
-                    className={`bg-neutral-850 hover:bg-neutral-800  border-blue-400 shadow-lg p-5 transition-all hover:shadow-xl cursor-pointer   ${expandedImageId === expandedKey ? 'border-t-4 border-blue-500 bg-neutral-800' : ''}`}
+                    className={`bg-neutral-700/20 hover:bg-neutral-800    shadow-lg p-5 transition-all hover:shadow-xl cursor-pointer   ${expandedImageId === expandedKey ? 'border-t-4 border-blue-500 bg-neutral-800' : ''}`}
                     onClick={() => setExpandedImageId(expandedImageId === expandedKey ? null : expandedKey)}
                   >
                     <div className="flex flex-col gap-2">
@@ -1338,7 +1374,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
                       />
                       <button
                         type="button"
-                        className="ml-2 px-2 py-1 bg-blue-700 text-white rounded text-xs hover:bg-blue-800 transition"
+                        className="ml-2 px-2 py-1 bg-blue-700 text-white rounded hover:bg-blue-800 transition"
                         onClick={() => setFormData(f => ({ ...f, name: generateCoolName() }))}
                         title="Generate random name"
                       >
@@ -1593,8 +1629,8 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
       
       {/* Deploy Container Modal */}
       {createContainerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-neutral-900 rounded-lg shadow-xl p-8 w-full max-w-7xl relative grid grid-cols-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 mx-auto ">
+          <div className="bg-neutral-900 rounded-lg shadow-xl px-8  pb-4 w-full max-w-7xl relative grid grid-cols-6 items-center">
             <div className="col-span-3">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-red-400"
@@ -1602,13 +1638,13 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
             >
               <XCircleIcon className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center pb-2">
               <ServerIcon className="w-6 h-6 mr-2 text-blue-500" />
               Deploy Container
             </h2>
             <div>
               <div className="mb-4">
-                <label className="block text-gray-300 text-sm mb-1">Container Name</label>
+                <label className="block text-gray-300 text-sm mb-1">Container Name <button type="button" className=" ml-1 w-1  hover:text-blue-500  text-white rounded text-xs  transition" onClick={() => setFormData(f => ({ ...f, name: generateCoolName() }))} title="Generate random name"><i className="fa fa-sync"></i></button></label>
                 <input
                   type="text"
                   name="name"
@@ -1659,7 +1695,7 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-gray-300 text-sm mb-1">Bind to Challenge</label>
+                <label className="block text-gray-300 text-sm mb-1">Bind to Challenge (Optional)</label>
                 <select
                   value={challengeId}
                   onChange={e => setChallengeId(e.target.value)}
@@ -1687,103 +1723,126 @@ CMD ["socat", "TCP-LISTEN:9999,fork,reuseaddr", "EXEC:/challenge/challenge"]`
                   Test Deployment
                 </button>
                 <button
-                  className="flex-1 py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-none shadow-md transition-all"
-                  onClick={handleStartDeploy}
-                  disabled={isLoading}
+                  className={`flex-1 py-2 px-4 bg-green-700  text-white font-semibold rounded-none shadow-md transition-all ${hasDeployedThisSession ? 'bg-green-900 cursor-not-allowed ' : 'hover:bg-green-800'} flex items-center justify-center gap-2`}
+                  onClick={() => {
+                    setHasDeployedThisSession(true);
+                    handleStartDeploy();
+                  }}
+                  disabled={isLoading || hasDeployedThisSession}
                 >
-                  {isLoading ? 'Deploying...' : 'Deploy Container'}
+                  {isLoading && (
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                  )}
+                  {isLoading ? 'Deploying...' : hasDeployedThisSession ? <i className="fas fa-check"></i> : 'Deploy Container'}
                 </button>
               </div>
             </div>
           </div>
-          <div id="testdeploy" className="col-span-3 ml-4 mt-4 h-full w-full">
-            <div className="w-full h-full">
        
-                <div className="bg-black/80 h-[400px] text-white font-mono text-xs rounded p-4  overflow-y-auto border border-neutral-800" id="build-log-stream">
-                  {/* Build logs will be streamed here */}
-                  <p>Build logs will show here...</p>
-                  <br></br>
-                  <p className="text-red-400">This test deployment will be active for 5 minutes.</p>
-                  <br></br>
-                  <p>Your deployment will not automatically end, once you see expected behavior click Deploy.</p>
-                  <br></br>
-                  {buildLogs.map((line, idx) => {
-                    // Remove leading "data: " if present
-                    const cleanLine = line.replace(/^data: ?/, "");
-                    // Regex to match URLs
-                    const urlRegex = /(https?:\/\/[^\s]+)/g;
-                    // Split the line by URLs, keeping the URLs
-                    const parts = cleanLine.split(urlRegex);
-                    return (
-                      <div key={idx}>
-                        {parts.map((part, i) =>
-                          urlRegex.test(part) ? (
-                            <a
-                              key={i}
-                              href={part}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="underline text-blue-400 hover:text-blue-300 break-all"
-                            >
-                              {part}
-                            </a>
-                          ) : (
-                            <span key={i}>{part}</span>
-                          )
-                        )}
-                      </div>
-                    );
-                  })}
-               
-                </div>
-            
-              </div>
-
-          </div>
    
-          <div id="deploysuccess" className="col-span-3 hidden ">
-            <div className="flex flex-col items-center justify-center h-full px-10">
-              {/* Sexy Interactive Map with react-simple-maps */}
-              <div className="mb-4 w-[300px] h-[25s0px] rounded-xl">
-                <ComposableMap
-                  projection="geoAlbersUsa"
-                  width={300}
-                  height={250}
-                  projectionConfig={{ center: [0, 0], scale: 400, rotation: 0, }}
-                  style={{ background: 'transparent' }}
-                >
-                  <Geographies geography="https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json">
-                    {({ geographies }) =>
-                      geographies.map(geo => (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          fill="#23272f"
-                          stroke="#334155"
-                          style={{ outline: 'none', filter: 'drop-shadow(0 2px 8px #0ea5e955)' }}
-                        />
-                      ))
-                    }
-                  </Geographies>
-                  {/* State College, PA marker with pulse */}
-                  <Marker coordinates={[-77.8600, 40.7934]}>
-                    <circle r={8} fill="#34a3ff" stroke="#34a3ff" strokeWidth={0.05} style={{ filter: 'drop-shadow(0 0 10px #4adeffb3)' }} />
-                  </Marker>                </ComposableMap>
+          <div id="deploysuccess" className="col-span-3 ml-4 mt-2 justify-center items-center">
+            {isDeploySuccess ? (
+              <div className="flex flex-col items-center justify-center h-full px-10">
+      
+                <div className="mb-4 w-[300px] h-[250px] rounded-xl">
+                  <ComposableMap
+                    projection="geoAlbersUsa"
+                    width={300}
+                    height={250}
+                    projectionConfig={{ center: [0, 0], scale: 400, rotation: 0, }}
+                    style={{ background: 'transparent' }}
+                  >
+                    <Geographies geography="https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json">
+                      {({ geographies }) =>
+                        geographies.map(geo => (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill="#23272f"
+                            stroke="#334155"
+                            style={{ outline: 'none', filter: 'drop-shadow(0 2px 8px #0ea5e955)' }}
+                          />
+                        ))
+                      }
+                    </Geographies>
+                    {/* State College, PA marker with pulse */}
+                    <Marker coordinates={[-77.8600, 40.7934]}>
+                      <circle r={8} fill="#34a3ff" stroke="#34a3ff" strokeWidth={0.05} style={{ filter: 'drop-shadow(0 0 10px #4adeffb3)' }} />
+                    </Marker>                </ComposableMap>
+                </div>
+                {/* Region label */}
+                <div className="text-blue-300 font-semibold text-sm mb-4">
+                  US East (State College, PA)
+                </div>
+                {/* Domain box */}
+                <div className="bg-neutral-800 rounded-lg p-4 w-full max-w-md text-center shadow border border-neutral-700 mb-4">
+                  <div className="text-gray-400 text-xs mb-1">Autogenerated Domain</div>
+                  <div className="text-md font-mono text-blue-400 break-all select-all">{deployedDomain}</div>
+                </div>
+                {/* Description */}
+                <div className="text-gray-400 text-xs mt-2 text-center max-w-xs">
+                  {isTestingDeploy
+                    ? "This is a test deployment. It will automatically expire in 5 minutes. Use this environment for testing only."
+                    : "Your container will be on our servers in State College, PA (US East). "}
+                </div>
               </div>
-              {/* Region label */}
-              <div className="text-blue-300 font-semibold text-sm mb-4">
-                US East (State College, PA)
+            ) : (
+              <div className="bg-black/80 h-[400px] text-white font-mono text-xs rounded p-4  overflow-y-auto border border-neutral-800" id="build-log-stream">
+                {/* Build logs will be streamed here */}
+                <p>Build logs will show here...</p>
+                <br></br>
+                {isTestingDeploy && (
+                  <>
+                    <p className="text-red-400">This test deployment will be active for 5 minutes.</p>
+                    <br></br>
+                  </>
+                )}
+
+                <pre className="text-yellow-400 text-xs">
+                  {`
+ dP\"\"b8 888888 888888  dP\"\"b8 88   88 88 8888b.  888888 
+dP   \"\"   88   88__   dP   \"\" 88   88 88  8I  Yb 88__   
+Yb        88   88\""   Yb  \"88 Y8   8P 88  8I  dY 88\""   
+ YboodP   88   88      YboodP \`YbodP\' 88 8888Y"  888888 
+`}
+                </pre>
+<br></br>
+                <p>Note, sometimes we can't automatically detect when a container is ready. You can verify if your container is accessible by clicking on the generated domain.</p>
+                <br></br>
+                <p className="text-cyan-400">Log streaming is highly experimental and may not work for all containers.</p>
+                <br></br>
+                {buildLogs.map((line, idx) => {
+                  // Remove leading "data: " if present
+                  const cleanLine = line.replace(/^data: ?/, "");
+                  // Regex to match URLs
+                  const urlRegex = /(https?:\/\/[^\s]+)/g;
+                  // Split the line by URLs, keeping the URLs
+                  const parts = cleanLine.split(urlRegex);
+                  return (
+                    <div key={idx}>
+                      {parts.map((part, i) =>
+                        urlRegex.test(part) ? (
+                          <a
+                            key={i}
+                            href={part}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline text-blue-400 hover:text-blue-300 break-all"
+                          >
+                            {part}
+                          </a>
+                        ) : (
+                          <span key={i}>{part}</span>
+                        )
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-              {/* Domain box */}
-              <div className="bg-neutral-800 rounded-lg p-4 w-full max-w-md text-center shadow border border-neutral-700 mb-4">
-                <div className="text-gray-400 text-xs mb-1">Autogenerated Domain</div>
-                <div className="text-md font-mono text-blue-400 break-all select-all">laphatize333330ujasd.ctfgui.de</div>
-              </div>
-              {/* Description */}
-              <div className="text-gray-400 text-xs mt-2 text-center max-w-xs">
-                Your container will be on our servers in State College, PA (US East). Domain is autogenerated and will be visible after deployment.
-              </div>
-            </div>
+            )}
           </div>
           </div>
         </div>
