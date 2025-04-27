@@ -16,6 +16,7 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
+import { Server } from 'lucide-react';
 import Link from 'next/link';
 import request from '@/utils/request';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -273,6 +274,30 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
 
   const [showAllNotifications, setShowAllNotifications] = useState(false);
 
+  const [showContainersDropdown, setShowContainersDropdown] = useState(false);
+  const serverIconRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const mockContainers = [
+    { name: 'Kali GUI', status: 'Running', ip: '192.168.100.2' },
+    { name: 'Alpine Terminal', status: 'Running', ip: '192.168.100.3' },
+  ];
+
+  useEffect(() => {
+    if (!showContainersDropdown) return;
+    function handleClick(e) {
+      if (
+        serverIconRef.current &&
+        !serverIconRef.current.contains(e.target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
+        setShowContainersDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showContainersDropdown]);
+
   return (
     <>
       {isPopoverOpen && (
@@ -476,7 +501,30 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                         <i className="far fa-check-circle"></i> {points}
                       </h1>
                     </div>
-
+                    <div className="ml-4 flex items-center relative">
+                      <div ref={serverIconRef} className="relative cursor-pointer" onClick={() => setShowContainersDropdown(v => !v)}>
+                        <Server className="h-6 w-6 text-gray-400" />
+                        {/* Pulsing green dot */}
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                      </div>
+                      {/* Dropdown */}
+                      {showContainersDropdown && (
+                        <div ref={dropdownRef} className="absolute top-1 right-0 mt-10 w-64 bg-neutral-900 border border-neutral-700 rounded shadow-lg z-50 animate-fade-in">
+                          <div className="p-3 border-b border-neutral-700 text-white font-bold text-base">Running Containers</div>
+                          <ul className="divide-y divide-neutral-700">
+                            {mockContainers.map((c, idx) => (
+                              <li key={idx} className="p-3 flex flex-col text-white">
+                                <span className="font-semibold">{c.name}</span>
+                                <span className="text-xs text-gray-400">{c.status} • {c.ip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                     {/* Notification Bell Icon */}
                     <Popover className="relative ml-4">
                       {({ open }) => (
@@ -554,6 +602,8 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     {/*     <i class="fas fa-fire"></i> 0 */}
                     {/*   </h1> */}
                     {/* </div> */}
+
+                   
                     <div className="hidden  px-2 md:flex md:flex-shrink-0 md:items-center">
                       {/* Profile dropdown */}
                       <Popover as="div" className="relative ml-3">

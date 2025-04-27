@@ -591,25 +591,31 @@ export default function Challenge() {
                       <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
                     ) : (
                       <div className="flex mx-auto text-center justify-center items-center h-full">
-                        <button
-                          onClick={handleBootTerminal}
-                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
-                        >
-                          Boot Terminal
-                        </button>
+                        <div className="flex mx-auto text-center justify-center items-center h-full w-full ">
+                          <div className="bg-neutral-900 pt-10 pb-10 pl-20 pr-20 border-t-4 border-blue-500">
+                            <h1 className="text-white text-lg text-left font-bold mb-4">CTFGuide Workspace</h1>
+                            <div className=" mx-auto text-center justify-center items-center h-full w-full gap-8">
+                              <button
+                                onClick={handleBootTerminal}
+                                className="w-64 h-40 text-2xl font-bold border-neutral-700   text-white rounded-lg shadow-md flex flex-col items-center justify-center transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                              >
+                                <span className="mb-2"><i className="fas fa-terminal text-3xl"></i></span>
+                                Boot Terminal
+                              </button>
+                              <button
+                                className="w-64 h-40 text-2xl font-bold border-neutral-700  text-white rounded-lg shadow-md flex flex-col items-center justify-center transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                              >
+                                <span className="mb-2"><i className="fas fa-desktop text-3xl"></i></span>
+                                Boot GUI
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )
                   )}
                 </div>
               </div>
-              <button
-                onClick={() => {
-                  setIsChallengeFullscreen(true);
-                }}
-                className="bg-neutral-700/50 hover:bg-neutral-700 text-white px-4 py-1 rounded mt-2 md:hidden"
-              >
-                <i className="fas fa-exchange-alt"></i> Switch to Challenge
-              </button>
             </div>
           )}
           <div className="hidden md:flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
@@ -658,13 +664,51 @@ export default function Challenge() {
                   isTerminalBooted ? (
                     <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
                   ) : (
-                    <div className="flex mx-auto text-center justify-center items-center h-full">
-                      <button
-                        onClick={handleBootTerminal}
-                        className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
-                      >
-                        Boot Terminal
-                      </button>
+                    <div className="flex mx-auto text-center justify-center items-center h-full w-full p-10 ">
+
+                      <div className="bg-neutral-900 w-full border-t-4 border-blue-500 max-w-2xl px-10 pb-10">
+                        <h1 className="mt-10 text-white text-2xl text-left  mb-4 flex items-center"><img src="/darkLogocrop.png" className="w-6" /><span className="ml-2 font-bold">CTFGuide  </span> &nbsp;Workspace</h1>
+                        <div className=" mx-auto text-center justify-center items-center h-full w-full gap-8">
+                          <button
+                            onClick={handleBootTerminal}
+                            className=" w-full px-5 py-4 text-xl hover:bg-blue-600/50 hover:border-blue-600/50 font-bold border-2 bg-neutral-800 border-neutral-700  text-white   transition-all duration-150  "
+                          >
+                            <div className="flex">
+                              <div className="">
+                                <span className="mb-2"><i className="fas fa-terminal text-2xl"></i></span>
+                               
+                              </div>
+                              <div className="ml-auto">
+                            <p>Boot Terminal</p>
+                            </div>
+
+                            </div>
+                            <p className="mt-4 text-left text-sm text-gray-400">These machines have a webshell interface and runs Alpine Linux. All users can use them 24/7.</p>
+
+                          </button>
+                          
+                          <button
+                            onClick={handleBootTerminal}
+                            className="mt-4  w-full px-5 py-4 text-xl hover:bg-blue-600/50 hover:border-blue-600/50 font-bold border-2 bg-neutral-800 border-neutral-700  text-white   transition-all duration-150  "
+                          >
+                            <div className="flex">
+
+                          
+                            <div className="">
+                              <span className="mb-2"><i className="fas fa-desktop text-2xl"></i></span>
+                             
+                            </div>
+                            <div className="ml-auto">
+                            <p>Boot GUI (beta) </p>
+                            </div>
+                            </div>
+
+                            <p className="mt-4 text-left text-sm text-gray-400">These machines have a full GUI interface and are running Kali Linux. User can use these machines for up to one hour a day, and CTFGuide Pro users can use them for up to 24/7.</p>
+                          </button>
+                          
+                          
+                        </div>
+                      </div>
                     </div>
                   )
                 )}
@@ -878,7 +922,6 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
 
 
   const { challenge } = cache;
-
   const [solvesData, setSolvesData] = useState([]);
   const [creatorMode, setCreatorMode] = useState(false); // Add state for creator mode
 
@@ -890,39 +933,36 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   });
 
   useEffect(() => {
-    const fetchSolvesData = async () => {
+    if (!challenge) {
+      return;
+    }
+    (async () => {
       try {
-        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights/solvesLast10Days`, 'GET', null);
-        setSolvesData(response);
-        console.log(response);
+        const fetchSolvesData = async () => {
+          const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights/solvesLast10Days`, 'GET', null);
+          setSolvesData(response);
+          console.log(response);
+        };
+
+        const fetchCreatorMode = async () => {
+          const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
+          setCreatorMode(response.creatorMode);
+          console.log(response.creatorMode);
+        };
+
+        const fetchInsights = async () => {
+          const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights`, 'GET', null);
+          setInsights(response);
+          console.log(response);
+        };
+
+        fetchSolvesData();
+        fetchInsights();
+        fetchCreatorMode();
       } catch (error) {
         console.error('Failed to fetch solves data: ', error);
       }
-    };
-
-    const fetchCreatorMode = async () => {
-      try {
-        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/account`, 'GET', null);
-        setCreatorMode(response.creatorMode);
-        console.log(response.creatorMode);
-      } catch (error) { 
-        console.error('Failed to fetch creator mode: ', error);
-      }
-    };
-
-    const fetchInsights = async () => {
-      try {
-        const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights`, 'GET', null);
-        setInsights(response);
-        console.log(response);
-      } catch (error) {
-        console.error('Failed to fetch solves data: ', error);
-      }
-    };
-
-    fetchSolvesData();
-    fetchInsights();
-    fetchCreatorMode();
+    })();
   }, [challenge]);
 
   const [challengeData, setChallengeData] = useState(null);
@@ -1336,7 +1376,7 @@ function WriteUpPage({ cache, setCache, onWriteupSelect }) {
             </div>
               </div>
             </Dialog>
-          )}
+        )}
 
       
       <Menu open={isCreating} setOpen={setIsCreating} solvedChallenges={solvedChallenges} />
