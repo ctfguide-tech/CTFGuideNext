@@ -23,6 +23,14 @@ const request = async (url, req_method, body) => {
         return null;
       }
 
+      // If response is not successful, throw an error with the data
+      if (!response.ok) {
+        const error = new Error(data.error || 'Request failed');
+        error.status = response.status;
+        error.data = data;
+        throw error;
+      }
+
       return data;
     } else if(method === 'POST' || method === 'PUT') {
       const requestOptions = {
@@ -46,13 +54,21 @@ const request = async (url, req_method, body) => {
         return null;
       }
 
+      // If response is not successful, throw an error with the data
+      if (!response.ok) {
+        const error = new Error(data.error || 'Request failed');
+        error.status = response.status;
+        error.data = data;
+        throw error;
+      }
+
       return data;
     } else {
       return null;
     }
   } catch (error) {
-    console.log(error);
-    return null;
+    console.error('Request error:', error);
+    throw error; // Re-throw the error for the caller to handle
   }
 }
 

@@ -26,6 +26,15 @@ module.exports = {
       maxWidth: {
         '2xl': '40rem',
       },
+      animation: {
+        'fadeIn': 'fadeIn 0.2s ease-in-out forwards',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: 0, transform: 'translateY(10px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
+      },
     },
   },
   plugins: [
@@ -57,6 +66,6 @@ module.exports = {
         },
       })
     }),
-      require("tailwindcss-animate")
+    require("tailwindcss-animate")
 ],
 }

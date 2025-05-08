@@ -20,7 +20,7 @@ import { Server } from 'lucide-react';
 import Link from 'next/link';
 import request from '@/utils/request';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faSearch, faComments } from '@fortawesome/free-solid-svg-icons';
 import {
   faBug,
   faLock,
@@ -389,6 +389,15 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                       Classrooms
                     </Link>
 
+                    <Link
+                      href="/community"
+                      className={
+                        linkClass('/community') +
+                        ' hidden md:hidden lg:hidden xl:hidden 2xl:inline-flex'
+                      }
+                    >
+                      Community
+                    </Link>
                     {/* Ellipsis dropdown */}
                     <Popover className="relative  hidden md:block lg:block lg:inline-flex  xl:block 2xl:hidden">
                       {({ open }) => (
@@ -434,6 +443,19 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                                     <div>
                                       <p className="font-medium">Classrooms</p>
                                       <p className="text-sm text-gray-500">Join or manage your classes</p>
+                                    </div>
+                                  </Link>
+
+                                  <Link
+                                    href="/community"
+                                    className="mt-2 flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
+                                  >
+                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
+                                      <FontAwesomeIcon icon={faComments} className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium">Community</p>
+                                      <p className="text-sm text-gray-500">Join the community and get help from other users</p>
                                     </div>
                                   </Link>
                                 </div>
@@ -773,6 +795,13 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     className="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
                   >
                     Leaderboards
+                  </Disclosure.Button>
+                  <Disclosure.Button
+                    as="a"
+                    href="../groups"
+                    className="block  border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-gray-300  hover:text-gray-100 sm:pl-5 sm:pr-6"
+                  >
+                    Classes
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"

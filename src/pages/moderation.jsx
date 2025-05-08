@@ -29,6 +29,10 @@ export default function Competitions() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [reportIsOpen, setReportIsOpen] = useState(false);
 
+  // Token tester states
+  const [tokenInput, setTokenInput] = useState('');
+  const [tokenData, setTokenData] = useState(null);
+  const [tokenError, setTokenError] = useState(null);
   
   // get reports
   useEffect(() => {
@@ -308,6 +312,28 @@ export default function Competitions() {
     }
   };
 
+  const handleVerifyToken = async () => {
+    setTokenData(null);
+    setTokenError(null);
+    
+    if (!tokenInput.trim()) {
+      setTokenError("Please enter a token");
+      return;
+    }
+    
+    try {
+      const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/admin/verify-token`, "POST", { token: tokenInput });
+      if (response.success) {
+        setTokenData(response.user);
+      } else {
+        setTokenError(response.error || "Invalid token");
+      }
+    } catch (error) {
+      console.error(error);
+      setTokenError("Failed to verify token. Check the console for details.");
+    }
+  };
+
   // Fetch platform stats
   const [stats, setStats] = useState(null);
 
@@ -348,6 +374,70 @@ export default function Competitions() {
               </div>
             </div> 
     
+            {/* Token Tester Section */}
+            <div className='mt-6 border border-neutral-700 px-4 py-4'>
+              <h1 className='text-xl text-white mb-4'>TOKEN TESTER</h1>
+              <div className='flex flex-col'>
+                <div className='flex'>
+                  <textarea 
+                    placeholder='Paste JWT token here' 
+                    className='flex-grow text-white bg-neutral-800 border-none px-3 py-2' 
+                    rows="3"
+                    value={tokenInput}
+                    onChange={(e) => setTokenInput(e.target.value)}
+                  ></textarea>
+                  <button 
+                    className='ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 duration-300 text-white self-end'
+                    onClick={handleVerifyToken}
+                  >
+                    <i className='fa fa-search mr-2'></i>Verify
+                  </button>
+                </div>
+                
+                {tokenError && (
+                  <div className='mt-4 bg-red-900/20 border border-red-700 px-4 py-3 text-red-400'>
+                    <i className='fa fa-exclamation-circle mr-2'></i>
+                    {tokenError}
+                  </div>
+                )}
+                
+                {tokenData && (
+                  <div className='mt-4 bg-neutral-800/50 border border-neutral-700 px-4 py-3'>
+                    <h2 className='text-lg text-white mb-2'>Token Data</h2>
+                    <div className='grid grid-cols-3 gap-4'>
+                      <div>
+                        <p className='text-gray-400 text-sm'>Username</p>
+                        <p className='text-white'>{tokenData.username || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className='text-gray-400 text-sm'>User ID</p>
+                        <p className='text-white'>{tokenData.id || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className='text-gray-400 text-sm'>Role</p>
+                        <p className='text-white'>{tokenData.role || 'N/A'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className='mt-4'>
+                      <p className='text-gray-400 text-sm'>Token Expiration</p>
+                      <p className='text-white'>
+                        {tokenData.exp 
+                          ? new Date(tokenData.exp * 1000).toLocaleString() 
+                          : 'No expiration found'}
+                      </p>
+                    </div>
+                    
+                    <div className='mt-4'>
+                      <p className='text-gray-400 text-sm'>Full Token Data</p>
+                      <pre className='mt-2 bg-neutral-900 p-3 text-white text-xs overflow-auto max-h-48'>
+                        {JSON.stringify(tokenData, null, 2)}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
             <br></br>
             <div className='grid grid-cols-2 gap-x-5 border border-neutral-700 px-4 py-4'>

@@ -19,7 +19,7 @@ const ChallengeCard = (_props) => {
       const endPoint = `${process.env.NEXT_PUBLIC_API_URL}/users/${username}`;
       const result = await request(endPoint, "GET", null);
       setCreator(result);
-      if (result.profileImage) {
+      if (result?.profileImage) {
         setCreatorPfp(result.profileImage);
       } else {
         setCreatorPfp(`https://robohash.org/${username}.png?set=set1&size=150x150`);

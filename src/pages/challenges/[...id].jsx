@@ -2,7 +2,7 @@ import { MarkdownViewer } from "@/components/MarkdownViewer";
 import { StandardNav } from "@/components/StandardNav";
 import request from "@/utils/request";
 import { Dialog } from "@headlessui/react";
-import { DocumentTextIcon } from "@heroicons/react/20/solid";
+import { DocumentTextIcon, CalendarIcon  } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -994,7 +994,7 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
       return;
     }
     setChallengeData({ ...challengeData, upvotes: response.upvotes, downvotes: response.downvotes });
-  }
+  };
 
   useEffect(() => {
     if (challenge) {
@@ -1019,7 +1019,24 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
 
   return (
     <>
+
+    <div className="bg-blue-800">
+      <div className="p-2">
+    <p className="text-white text-base font-medium flex items-center gap-x-2">
+    <span className="bg-white text-blue-800 px-2 rounded-sm">IST 411</span>
+    <CalendarIcon className="w-4 h-4 text-gray-300" />
+    <span>9:49 PM, September 12, 2025</span>
+
+    <button className="ml-auto bg-white text-blue-800 px-2 rounded-sm">
+      Submit Assignment
+    </button>
+    
+  </p>
+  </div>
+      </div>
       <div className="grow bg-neutral-800 text-gray-50 p-3 overflow-y-auto">
+    
+
         <h1 className="flex align-middle text-2xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
           <div className="ml-auto rounded-sm text-right text-2xl flex items-center">
@@ -1057,60 +1074,70 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
             : <Skeleton baseColor="#333" highlightColor="#666" width='20rem' />}
         </h2>
 
+     
+
+
         <ReactMarkdown></ReactMarkdown>
         {challenge ? <MarkdownViewer content={challenge.content}></MarkdownViewer> : <Skeleton baseColor="#333" highlightColor="#666" count={8} />}
    
+        <hr className="border-neutral-700 mt-4"></hr>
+        <h1 className="text-xl font-semibold mt-4">Associated Files</h1>
+        {fileIDName && fileIDLink ? (
+          fileIDName !== "This challenge does not have any associated files." ? (
+            <a href={fileIDLink} className="mt-1 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto items-center text-blue-500" target="_blank" rel="noopener noreferrer">
+              <i className="fas fa-file-alt text-blue-500 mr-2"></i>
+              {fileIDName}
+            </a>
+          ) : (
+            <p>{fileIDName}</p>
+          )
+        ) : (
+          <p>You may need to boot the terminal to see the associated files.</p>
+        )}
+        <hr className="border-neutral-700 mt-4"></hr>
+        <div className="mb-6 rounded-xl bg-neutral-800/70 mt-4">
+
+
+    <h1 className="text-xl mt-2">Teacher Notes</h1>
+    <p className="text-white text-base mt-2">blah blah blah.</p>
+
+</div>
+        {creatorMode && (
+          <>
             <hr className="border-neutral-700 mt-4"></hr>
-            <h1 className="text-xl font-semibold mt-4">Associated Files</h1>
-            {fileIDName && fileIDLink ? (
-              fileIDName !== "This challenge does not have any associated files." ? (
-                <a href={fileIDLink} className="mt-1 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 hover:cursor-pointer px-5 py-2 w-full text-white flex mx-auto items-center text-blue-500" target="_blank" rel="noopener noreferrer">
-                  <i className="fas fa-file-alt text-blue-500 mr-2"></i>
-                  {fileIDName}
-                </a>
-              ) : (
-                <p>{fileIDName}</p>
-              )
-            ) : (
-              <p>You may need to boot the terminal to see the associated files.</p>
-            )}
-            <hr className="border-neutral-700 mt-4"></hr>
-            {creatorMode && (
-              <>
-                <hr className="border-neutral-700 mt-4"></hr>
-                <div className="w-full mt-10 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 rounded-sm text-white mx-auto items-center text-blue-500">
-                  <div className="bg-neutral-800/40 px-4 py-1 pb-3">
-                    <h1 className="text-lg mt-2"><i className="fas fa-lightbulb mr-2"></i>Creator Insights</h1>
-                  </div>
-                  <div className="grid grid-cols-4 w-full mt-2 px-5 py-2">
-                    <div>
-                      <h1 className="text-md">Solves</h1>
-                      <p className="text-xl">{insights.solves}</p>
-                    </div>
-                    <div>
-                      <h1 className="text-md">Attempts</h1>
-                      <p className="text-xl">{insights.attempts}</p>
-                    </div>
-                    <div>
-                      <h1 className="text-md">Solves <span className="text-neutral-500 text-sm">(30d)</span></h1>
-                      <p className="text-xl text-white">{insights.solvesLast30Days}</p>
-                    </div>
-                    <div>
-                      <h1 className="text-md">Attempts <span className="text-neutral-500 text-sm">(30d)</span></h1>
-                      <p className="text-xl text-white">{insights.attemptsLast30Days}</p>
-                    </div>
-                  </div>
-                  <br />
-                  <LineChart className="mb-3" width={600} height={300} data={solvesData}>
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line type="monotone" dataKey="solves" stroke="#8884d8" />
-                  </LineChart>
-                  <br />
+            <div className="w-full mt-10 bg-neutral-700/50 hover:bg-neutral-700/90 duration-100 rounded-sm text-white mx-auto items-center text-blue-500">
+              <div className="bg-neutral-800/40 px-4 py-1 pb-3">
+                <h1 className="text-lg mt-2"><i className="fas fa-lightbulb mr-2"></i>Creator Insights</h1>
+              </div>
+              <div className="grid grid-cols-4 w-full mt-2 px-5 py-2">
+                <div>
+                  <h1 className="text-md">Solves</h1>
+                  <p className="text-xl">{insights.solves}</p>
                 </div>
-              </>
-            )}
+                <div>
+                  <h1 className="text-md">Attempts</h1>
+                  <p className="text-xl">{insights.attempts}</p>
+                </div>
+                <div>
+                  <h1 className="text-md">Solves <span className="text-neutral-500 text-sm">(30d)</span></h1>
+                  <p className="text-xl text-white">{insights.solvesLast30Days}</p>
+                </div>
+                <div>
+                  <h1 className="text-md">Attempts <span className="text-neutral-500 text-sm">(30d)</span></h1>
+                  <p className="text-xl text-white">{insights.attemptsLast30Days}</p>
+                </div>
+              </div>
+              <br />
+              <LineChart className="mb-3" width={600} height={300} data={solvesData}>
+                <XAxis dataKey="date" />
+                <YAxis />
+                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="solves" stroke="#8884d8" />
+              </LineChart>
+              <br />
+            </div>
+          </>
+        )}
       </div >
       <div className="shrink-0 bg-neutral-800 h-10 w-full"></div>
     </>
