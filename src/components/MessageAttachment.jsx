@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const MessageAttachment = ({ attachment }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   
-  // Format file size to readable format
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    else return (bytes / 1048576).toFixed(1) + ' MB';
-  };
+  // Add debug logging when component receives props
+  useEffect(() => {
+    console.log('[MESSAGE_ATTACHMENT] Received attachment:', attachment);
+  }, [attachment]);
   
-  // Get appropriate icon for file type
+  // Get appropriate icon for file type - with null check
   const getFileIcon = (type) => {
+    if (!type) return 'fa-file'; // Return default icon if type is undefined
     if (type.startsWith('image/')) return 'fa-image';
     if (type.startsWith('video/')) return 'fa-video';
     if (type.startsWith('audio/')) return 'fa-music';
@@ -25,67 +24,90 @@ const MessageAttachment = ({ attachment }) => {
     return 'fa-file';
   };
   
-  // Handle image loading
-  const handleImageLoad = () => {
-    setIsLoading(false);
-  };
+  // If no attachment provided, don't render anything
+  if (!attachment) {
+    console.log('[MESSAGE_ATTACHMENT] No attachment provided');
+    return null;
+  }
   
-  // Handle image error
-  const handleImageError = () => {
-    setIsLoading(false);
-    setHasError(true);
-  };
+  // Extract the URL from various possible attachment formats
+  let url = null;
   
-  // Determine if the attachment is an image
-  const isImage = attachment.type?.startsWith('image/');
+  // Case 1: Direct url property
+  if (attachment.url) {
+    url = attachment.url;
+    console.log('[MESSAGE_ATTACHMENT] Found URL in attachment.url:', url);
+  } 
+  // Case 2: Direct imageUrl property (from API response)
+  else if (attachment.imageUrl) {
+    url = attachment.imageUrl;
+    console.log('[MESSAGE_ATTACHMENT] Found URL in attachment.imageUrl:', url);
+  }
+  // Case 3: String attachment
+  else if (typeof attachment === 'string') {
+    url = attachment;
+    console.log('[MESSAGE_ATTACHMENT] Attachment is a string URL:', url);
+  }
+  // Case 4: Cloudflare variants array
+  else if (attachment.variants && attachment.variants.length > 0) {
+    url = attachment.variants[0];
+    console.log('[MESSAGE_ATTACHMENT] Found URL in attachment.variants[0]:', url);
+  }
+  // Case 5: Nested structure with result from Cloudflare
+  else if (attachment.result) {
+    if (attachment.result.variants && attachment.result.variants.length > 0) {
+      url = attachment.result.variants[0];
+      console.log('[MESSAGE_ATTACHMENT] Found URL in attachment.result.variants[0]:', url);
+    } else if (attachment.result.url) {
+      url = attachment.result.url;
+      console.log('[MESSAGE_ATTACHMENT] Found URL in attachment.result.url:', url);
+    }
+  }
+  
+  // Log the final URL we'll use
+  console.log('[MESSAGE_ATTACHMENT] Final URL to display:', url);
+  
+  if (!url) {
+    console.error('[MESSAGE_ATTACHMENT] No URL found in attachment:', attachment);
+    return (
+      <div className="p-2 bg-red-900/20 border border-red-500/20 rounded text-red-400 text-sm">
+        <i className="fas fa-exclamation-triangle mr-1"></i> 
+        Error: Could not extract image URL
+      </div>
+    );
+  }
   
   return (
     <div className="my-2 max-w-lg">
-      {isImage ? (
-        <div className="relative">
-          {isLoading && (
-            <div className="w-full h-40 bg-neutral-800 rounded flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            </div>
-          )}
-          
-          {hasError && (
-            <div className="w-full p-4 bg-red-900/30 border border-red-700/50 rounded flex items-center justify-center">
-              <i className="fas fa-exclamation-triangle text-red-400 mr-2"></i>
-              <span className="text-red-300">Failed to load image</span>
-            </div>
-          )}
-          
-          <img 
-            src={attachment.url} 
-            alt={attachment.filename || 'Image attachment'}
-            className={`rounded-md max-h-96 object-contain ${isLoading ? 'hidden' : 'block'}`}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-          />
-        </div>
-      ) : (
-        <div className="bg-neutral-800 border border-neutral-700 rounded p-3">
-          <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center mr-3 flex-shrink-0">
-              <i className={`fas ${getFileIcon(attachment.type)} text-blue-400`}></i>
-            </div>
-            <div className="overflow-hidden">
-              <div className="font-medium text-white truncate">{attachment.filename || 'File attachment'}</div>
-              <div className="text-xs text-gray-400">{formatFileSize(attachment.size || 0)}</div>
-            </div>
-            <a 
-              href={attachment.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="ml-auto text-blue-400 hover:text-blue-300 p-2"
-              download={attachment.filename}
-            >
-              <i className="fas fa-download"></i>
-            </a>
+      <div className="relative">
+        {isLoading && (
+          <div className="w-full h-48 bg-neutral-800 rounded flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
-        </div>
-      )}
+        )}
+        
+        {hasError && (
+          <div className="w-full p-4 bg-red-900/30 border border-red-700/50 rounded flex items-center justify-center">
+            <i className="fas fa-exclamation-triangle text-red-400 mr-2"></i>
+            <span className="text-red-300">Failed to load image</span>
+          </div>
+        )}
+        
+        <img 
+          src={url}
+          alt="Attachment"
+          className={`rounded-md max-h-96 object-contain ${isLoading ? 'hidden' : 'block'}`}
+          onLoad={() => {
+            console.log('[MESSAGE_ATTACHMENT] Image loaded successfully:', url);
+            setIsLoading(false);
+          }}
+          onError={() => {
+            console.error('[MESSAGE_ATTACHMENT] Failed to load image:', url);
+            setIsLoading(false);
+            setHasError(true);
+          }}
+        />
+      </div>
       
       {attachment.caption && (
         <div className="mt-1 text-sm text-gray-400">

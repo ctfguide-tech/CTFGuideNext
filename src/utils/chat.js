@@ -472,21 +472,57 @@ export const sendAttachment = async (channelId, file, caption = '') => {
     
     console.log(`[CHAT] Uploading attachment to channel ${channelId}: ${file.name} (${file.size} bytes)`);
     
-    // Create FormData for file upload
-    const formData = new FormData();
-    formData.append('file', file);
+    // Get authentication token
+    const token = getCookieToken() || localStorage.getItem('idToken');
+    if (!token) {
+      console.error('[CHAT] No authentication token found for file upload');
+      return false;
+    }
     
-    // First, upload the file to Cloudflare Images
-    const response = await fetch('/api/upload-image', {
+    // Create FormData and append file
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    // Direct upload approach
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const uploadResponse = await fetch(`${apiUrl}/upload-chat-image`, {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
       body: formData
     });
     
-    if (!response.ok) {
-      throw new Error(`Failed to upload image: ${response.statusText}`);
+    // Check if upload was successful
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`Upload failed: ${uploadResponse.status} ${errorText}`);
     }
     
-    const data = await response.json();
+    // Parse response
+    const result = await uploadResponse.json();
+    console.log('[CHAT] Upload response:', result);
+    
+    if (!result.imageUrl) {
+      throw new Error('Invalid response from server: Missing image URL');
+    }
+    
+    // Set the lastUploadedUrl on the file object so we can reference it later
+    // This is a crucial part of our temporary workaround
+    file.lastUploadedUrl = result.imageUrl;
+    
+    // Also store in localStorage immediately as a backup
+    try {
+      if (typeof window !== 'undefined') {
+        const tempMsgId = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+        const storedUrls = JSON.parse(localStorage.getItem('ctfguide_image_urls') || '{}');
+        storedUrls[tempMsgId] = result.imageUrl;
+        localStorage.setItem('ctfguide_image_urls', JSON.stringify(storedUrls));
+        console.log('[CHAT] Saved image URL to localStorage:', tempMsgId, result.imageUrl);
+      }
+    } catch (err) {
+      console.error('[CHAT] Error saving URL to localStorage:', err);
+    }
     
     // Create attachment message payload
     const attachmentPayload = {
@@ -494,20 +530,23 @@ export const sendAttachment = async (channelId, file, caption = '') => {
       messageType: MESSAGE_TYPES.ATTACHMENT,
       channel: channelId,
       content: caption,
+      url: result.imageUrl, // Add URL directly to the message for redundancy
+      imageUrl: result.imageUrl, // Add imageUrl directly to the message for redundancy
+      // Including both property naming formats for compatibility during transition
       attachment: {
-        id: data.id,
-        url: data.url,
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
-        width: data.width,
-        height: data.height
+        url: result.imageUrl,
+        filename: file.name,  
+        fileName: file.name,  
+        size: file.size,      
+        fileSize: file.size,  
+        type: file.type,      
+        fileType: file.type   
       }
     };
     
-    console.log('[CHAT] File uploaded successfully, sending attachment message');
+    console.log('[CHAT] File uploaded successfully, full payload:', JSON.stringify(attachmentPayload));
     
-    // Send the attachment message
+    // Send the attachment message through WebSocket
     socket.send(JSON.stringify(attachmentPayload));
     
     return true;

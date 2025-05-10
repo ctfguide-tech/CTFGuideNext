@@ -23,13 +23,75 @@ import {
   addChannelMention,
   clearChannelMention,
   hasChannelMention,
-  initializeMentions
+  initializeMentions,
+  sendAttachment,
+  joinTeam,
+  leaveTeam
 } from '@/utils/chat';
 import MessageReactions from '@/components/MessageReactions';
-import MessageAttachment from '@/components/MessageAttachment';
-import { sendAttachment, joinTeam, leaveTeam } from '@/utils/chat';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
+// Simple ImageAttachment component inside the community page
+// This avoids any issues with the existing MessageAttachment component
+const ImageAttachment = ({ attachment, message }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  
+  // Get the stored image URL from local storage
+  const getStoredImageUrl = () => {
+    if (typeof window === 'undefined') return null;
+    
+    try {
+      const storedUrls = JSON.parse(localStorage.getItem('ctfguide_image_urls') || '{}');
+      // Try to find by message ID
+      if (message && message.id && storedUrls[message.id]) {
+        console.log('[IMAGE_ATTACHMENT] Found URL in localStorage by message ID:', storedUrls[message.id]);
+        return storedUrls[message.id];
+      }
+    } catch (err) {
+      console.error('[IMAGE_ATTACHMENT] Error reading from localStorage:', err);
+    }
+    return null;
+  };
+  
+  // Try to find the image URL
+  let imageUrl = getStoredImageUrl();
+  
+  if (!imageUrl) {
+    console.error("[IMAGE_ATTACHMENT] Could not find image URL for message:", message?.id);
+    return <div className="p-2 text-red-400 text-sm">Image not available</div>;
+  }
+  
+  return (
+    <div className="my-2 max-w-lg">
+      {isLoading && (
+        <div className="w-full h-40 bg-neutral-800 rounded flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+      
+      {hasError && (
+        <div className="p-2 text-red-400 text-sm">Failed to load image</div>
+      )}
+      
+      <img 
+        src={imageUrl}
+        alt="Attachment"
+        className={`rounded-md max-h-96 object-contain ${isLoading ? 'hidden' : 'block'}`}
+        onLoad={() => {
+          console.log('[IMAGE_ATTACHMENT] Image loaded successfully:', imageUrl);
+          setIsLoading(false);
+        }}
+        onError={() => {
+          console.error('[IMAGE_ATTACHMENT] Failed to load image:', imageUrl);
+          setIsLoading(false);
+          setHasError(true);
+        }}
+      />
+    </div>
+  );
+};
 
 // Predefined channels
 const PREDEFINED_CHANNELS = [
@@ -74,6 +136,14 @@ export default function Community() {
   const [profileCardPosition, setProfileCardPosition] = useState({ top: 0, left: 0 });
   const [loadingProfile, setLoadingProfile] = useState(false);
   
+  // Add this state to track debug mode
+  const [debugMode, setDebugMode] = useState(false);
+  
+  // Add this as a helper method
+  const toggleDebugMode = () => {
+    setDebugMode(prev => !prev);
+  };
+  
   // Handle profile click to show user card
   const handleProfileClick = async (user, event) => {
     event.preventDefault();
@@ -104,133 +174,89 @@ export default function Community() {
       return;
     }
     
-    // Show card with basic info immediately
-    setProfileUser(user);
+    // Show card with basic info immediately - don't wait for API calls
+    // This ensures at least minimal profile info is displayed
+    const initialUserData = {
+      ...user,
+      bio: user.bio || null,
+      points: 0,
+      challengesSolved: 0,
+      badges: [],
+      streak: 0
+    };
+    
+    setProfileUser(initialUserData);
     setShowProfileCard(true);
     setLoadingProfile(true);
-  // Handle profile click to show user card
-  const handleProfileClick = async (user, event) => {
-    event.preventDefault();
-    event.stopPropagation();
     
-    // Always calculate position from the current click event
-    const rect = event.currentTarget.getBoundingClientRect();
-    
-    // Calculate position to ensure the card stays within viewport
-    let left = rect.left + window.scrollX;
-    const top = rect.bottom + window.scrollY + 5; // Add small gap
-    
-    // Adjust horizontal position to keep card within viewport
-    const viewportWidth = window.innerWidth;
-    const cardWidth = 320; // matches the w-80 class (320px)
-    
-    if (left + cardWidth > viewportWidth) {
-      // If card would overflow right edge, align right edge of card with right edge of profile pic
-      left = Math.max(0, rect.right + window.scrollX - cardWidth);
-    }
-    
-    // Always update the position state first
-    setProfileCardPosition({ top, left });
-    
-    // If clicking on the same user, toggle the card
-    if (profileUser && profileUser.username === user.username && showProfileCard) {
-      setShowProfileCard(false);
-      return;
-    }
-    
-    // Show card with basic info immediately
-    setProfileUser(user);
-    setShowProfileCard(true);
-    setLoadingProfile(true);
+    // Define a generic API call function with error handling
+    const safeApiCall = async (url, errorMessage) => {
+      try {
+        console.log(`[PROFILE] Fetching data from ${url}`);
+        const response = await request(url, 'GET', null);
+        console.log(`[PROFILE] Response from ${url}:`, response);
+        return { success: true, data: response };
+      } catch (error) {
+        console.error(`[PROFILE] ${errorMessage}:`, error);
+        return { success: false, error };
+      }
+    };
     
     try {
-      // Fetch comprehensive user data from API using the correct request format
+      // Fetch comprehensive user data from API
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
       
-      const profileData = await request(
-        `${apiUrl}/users/${user.username}`,
-        'GET',
-        null
-      );
+      // Run all API calls in parallel
+      const [profileResult, badgesResult, pointsResult, challengesResult] = await Promise.allSettled([
+        safeApiCall(`${apiUrl}/users/${user.username}`, "Failed to fetch profile data"),
+        safeApiCall(`${apiUrl}/users/${user.username}/badges`, "Failed to fetch badges"),
+        safeApiCall(`${apiUrl}/users/${user.username}/points`, "Failed to fetch points"),
+        safeApiCall(`${apiUrl}/users/${user.username}/solvedChallenges`, "Failed to fetch solved challenges")
+      ]);
       
-      // Basic user data loaded, update with more details gradually
-      if (profileData) {
-        const userData = {
-          ...user,
-          ...profileData,
-          badges: [],
-          points: 0,
-          challengesSolved: 0,
-          isLoading: false
+      // Build up the complete user object based on successful API calls
+      let userData = { ...initialUserData };
+      
+      // Update with profile data if successful
+      if (profileResult.status === 'fulfilled' && profileResult.value.success) {
+        userData = {
+          ...userData,
+          ...profileResult.value.data
         };
-        
-        setProfileUser(userData);
-        
-        // Now fetch additional data
-        try {
-          const badges = await request(
-            `${apiUrl}/users/${user.username}/badges`,
-            'GET',
-            null
-          );
-          
-          if (badges) {
-            setProfileUser(prev => ({
-              ...prev,
-              badges: badges
-            }));
-          }
-        } catch (error) {
-          console.log("Failed to fetch badges", error);
-        }
-        
-        try {
-          const pointsData = await request(
-            `${apiUrl}/users/${user.username}/points`,
-            'GET',
-            null
-          );
-          
-          if (pointsData && pointsData.totalPoints) {
-            setProfileUser(prev => ({
-              ...prev,
-              points: pointsData.totalPoints
-            }));
-          }
-        } catch (error) {
-          console.log("Failed to fetch points", error);
-        }
-        
-        try {
-          const solvedChallenges = await request(
-            `${apiUrl}/users/${user.username}/solvedChallenges`,
-            'GET',
-            null
-          );
-          
-          if (solvedChallenges) {
-            const totalSolved = 
-              (solvedChallenges.beginnerChallenges?.length || 0) +
-              (solvedChallenges.easyChallenges?.length || 0) +
-              (solvedChallenges.mediumChallenges?.length || 0) +
-              (solvedChallenges.hardChallenges?.length || 0) +
-              (solvedChallenges.insaneChallenges?.length || 0);
-            
-            setProfileUser(prev => ({
-              ...prev,
-              challengesSolved: totalSolved
-            }));
-          }
-        } catch (error) {
-          console.log("Failed to fetch solved challenges", error);
+      }
+      
+      // Update with badges if successful
+      if (badgesResult.status === 'fulfilled' && badgesResult.value.success) {
+        userData.badges = badgesResult.value.data || [];
+      }
+      
+      // Update with points if successful
+      if (pointsResult.status === 'fulfilled' && pointsResult.value.success && pointsResult.value.data?.totalPoints) {
+        userData.points = pointsResult.value.data.totalPoints;
+      }
+      
+      // Update with solved challenges if successful
+      if (challengesResult.status === 'fulfilled' && challengesResult.value.success) {
+        const solvedChallenges = challengesResult.value.data;
+        if (solvedChallenges) {
+          userData.challengesSolved = 
+            (solvedChallenges.beginnerChallenges?.length || 0) +
+            (solvedChallenges.easyChallenges?.length || 0) +
+            (solvedChallenges.mediumChallenges?.length || 0) +
+            (solvedChallenges.hardChallenges?.length || 0) +
+            (solvedChallenges.insaneChallenges?.length || 0);
         }
       }
+      
+      // Update the profile user state with all available data
+      setProfileUser(userData);
+      
     } catch (error) {
-      console.error('[PROFILE] Error fetching user profile:', error);
+      console.error('[PROFILE] Error in profile data fetching:', error);
+      // Don't reset the profile user state - keep displaying what we have
     } finally {
       setLoadingProfile(false);
     }
-  };
   };
   
   // Function to close the profile card
@@ -387,16 +413,69 @@ export default function Community() {
           }
           
           if (Array.isArray(data.messages) && data.messages.length > 0) {
+            // Check for duplicate welcome messages
+            const welcomeMessageRegex = /Welcome to the .+ channel! This is the beginning of this channel's history\./;
+            const welcomeMessages = data.messages.filter(msg => 
+              msg.type === 'system' && 
+              typeof msg.content === 'string' && 
+              welcomeMessageRegex.test(msg.content)
+            );
+            
+            // If there are multiple welcome messages, keep only the first one
+            if (welcomeMessages.length > 1) {
+              console.log(`[CHAT] Found ${welcomeMessages.length} duplicate welcome messages, removing duplicates`);
+              // Keep only the first welcome message
+              const firstWelcomeId = welcomeMessages[0].id;
+              data.messages = data.messages.filter(msg => 
+                !(msg.type === 'system' && 
+                  welcomeMessageRegex.test(msg.content) && 
+                  msg.id !== firstWelcomeId)
+              );
+            }
+            
             setMessages(data.messages);
             setIsLoading(false);
           } else {
             console.warn(`[CHAT] Received empty history for ${data.channel}`);
-            setMessages([{
-              id: `empty_${Date.now()}`,
-              type: 'system',
-              content: `No messages yet in #${data.channel}. Be the first to start a conversation!`,
-              createdAt: new Date().toISOString()
-            }]);
+            
+            // Before adding a welcome message, check if we previously added one to prevent duplicates
+            const channelStorageKey = `ctfguide_chat_welcome_${data.channel}`;
+            let shouldAddWelcome = true;
+            
+            // Check if we've shown a welcome message for this channel in this session
+            if (typeof window !== 'undefined' && window.sessionStorage) {
+              try {
+                shouldAddWelcome = !window.sessionStorage.getItem(channelStorageKey);
+                if (!shouldAddWelcome) {
+                  console.log(`[CHAT] Skipping welcome message for ${data.channel} - already shown this session`);
+                }
+              } catch (e) {
+                console.error('[CHAT] Error accessing sessionStorage:', e);
+              }
+            }
+            
+            if (shouldAddWelcome) {
+              // Add the welcome message
+              setMessages([{
+                id: `welcome_${data.channel}_${Date.now()}`,
+                type: 'system',
+                content: `Welcome to the ${data.channel} channel! This is the beginning of this channel's history.`,
+                createdAt: new Date().toISOString()
+              }]);
+              
+              // Mark that we've shown a welcome message for this channel
+              if (typeof window !== 'undefined' && window.sessionStorage) {
+                try {
+                  window.sessionStorage.setItem(channelStorageKey, 'true');
+                } catch (e) {
+                  console.error('[CHAT] Error setting sessionStorage:', e);
+                }
+              }
+            } else {
+              // Just set an empty message array
+              setMessages([]);
+            }
+            
             setIsLoading(false);
           }
         } else {
@@ -408,6 +487,53 @@ export default function Community() {
         // Add the channel ID to the message object for better tracking
         if (data.message && !data.message.channelId) {
           data.message.channelId = data.channel;
+        }
+        
+        // Check if this is an attachment message and needs special handling
+        if (data.message && data.message.type === 'attachment') {
+          console.log('[CHAT] Received attachment message:', data.message);
+          
+          // Try to find the correct message ID and URL combination
+          // Since the server doesn't send back the attachment property
+          const now = Date.now();
+          
+          try {
+            // Get the imageUrls from localStorage
+            const storedUrls = JSON.parse(localStorage.getItem('ctfguide_image_urls') || '{}');
+            
+            // Find the most recent URL (within last 10 seconds)
+            const recentEntries = Object.entries(storedUrls)
+              .filter(([id, url]) => {
+                // Extract timestamp from the message ID
+                const idParts = id.split('_');
+                if (idParts.length >= 2) {
+                  const timestamp = parseInt(idParts[1]);
+                  return !isNaN(timestamp) && (now - timestamp) < 10000; // 10 seconds
+                }
+                return false;
+              })
+              .sort((a, b) => b[0].localeCompare(a[0])); // Sort by ID (newest first)
+            
+            if (recentEntries.length > 0) {
+              // Update the imageUrls with the actual message ID
+              const [tempId, url] = recentEntries[0];
+              storedUrls[data.message.id] = url;
+              
+              // Clean up the temporary ID
+              delete storedUrls[tempId];
+              
+              // Save back to localStorage
+              localStorage.setItem('ctfguide_image_urls', JSON.stringify(storedUrls));
+              
+              console.log('[CHAT] Updated image URL with correct message ID:', {
+                oldId: tempId,
+                newId: data.message.id,
+                url
+              });
+            }
+          } catch (err) {
+            console.error('[CHAT] Error updating image URL in localStorage:', err);
+          }
         }
         
         // Make sure we're only processing messages for the active channel
@@ -1046,19 +1172,56 @@ export default function Community() {
     setUploadingFile(true);
     
     try {
+      // Log for debugging purposes
+      console.log(`[CHAT] File upload - File details:`, {
+        name: fileToUpload.name,
+        size: fileToUpload.size,
+        type: fileToUpload.type,
+        caption: uploadCaption
+      });
+      
       const success = await sendAttachment(activeChannelId, fileToUpload, uploadCaption);
       
+      console.log('[CHAT] File upload - Send attachment result:', success);
+      
       if (success) {
+        // Store the image URL locally as a temporary workaround
+        try {
+          // Get the current time as a message ID estimate (will be close to actual ID)
+          const tempMsgId = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+          
+          // Save the URL to localStorage so we can retrieve it later
+          const storedUrls = JSON.parse(localStorage.getItem('ctfguide_image_urls') || '{}');
+          storedUrls[tempMsgId] = fileToUpload.lastUploadedUrl;
+          
+          // Clean up old entries (keep only the last 50)
+          const entries = Object.entries(storedUrls);
+          if (entries.length > 50) {
+            const newEntries = entries.sort((a, b) => b[0].localeCompare(a[0])).slice(0, 50);
+            const newStoredUrls = Object.fromEntries(newEntries);
+            localStorage.setItem('ctfguide_image_urls', JSON.stringify(newStoredUrls));
+          } else {
+            localStorage.setItem('ctfguide_image_urls', JSON.stringify(storedUrls));
+          }
+          
+          console.log('[CHAT] Stored image URL for future reference:', tempMsgId, fileToUpload.lastUploadedUrl);
+        } catch (err) {
+          console.error('[CHAT] Error storing image URL in localStorage:', err);
+        }
+        
         toast.success('File uploaded successfully');
         setShowUploadModal(false);
         setFileToUpload(null);
         setUploadCaption('');
       } else {
-        toast.error('Failed to upload file');
+        console.error('[CHAT] File upload failed: sendAttachment returned false');
+        toast.error('Failed to upload file. Please try again.');
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      toast.error('Error uploading file');
+      console.error('[CHAT] Error uploading file:', error);
+      // Provide a more specific error message if available
+      const errorMessage = error?.message || 'Error uploading file';
+      toast.error(errorMessage);
     } finally {
       setUploadingFile(false);
     }
@@ -1225,7 +1388,7 @@ export default function Community() {
                   
                 {/* Render attachment if present */}
                 {message.attachment && (
-                  <MessageAttachment attachment={message.attachment} />
+                  <ImageAttachment attachment={message.attachment} message={message} />
                 )}
                 
                 {/* Render message reactions */}
@@ -1268,7 +1431,7 @@ export default function Community() {
               
               {/* Render attachment if present */}
               {message.attachment && (
-                <MessageAttachment attachment={message.attachment} />
+                <ImageAttachment attachment={message.attachment} message={message} />
               )}
               
               {/* Render message reactions */}
@@ -1404,6 +1567,30 @@ export default function Community() {
           return renderDeletedMessage(message);
         }
         
+        // Log the entire message to see what properties it has
+        console.log('[CHAT] Complete attachment message:', message);
+        console.log('[CHAT] Message keys:', Object.keys(message));
+        console.log('[CHAT] Direct attachment property:', message.attachment);
+        
+        // Try to find alternative places where the attachment might be stored
+        const potentialAttachments = {
+          attachment: message.attachment,
+          directUrl: message.url || message.imageUrl,
+          fromContent: typeof message.content === 'object' ? message.content : null,
+          fromSender: message.sender?.attachment
+        };
+        
+        console.log('[CHAT] Potential attachment locations:', potentialAttachments);
+        
+        // Use the first available attachment information
+        const attachmentData = 
+          potentialAttachments.attachment || 
+          (potentialAttachments.directUrl ? { url: potentialAttachments.directUrl } : null) ||
+          potentialAttachments.fromContent ||
+          potentialAttachments.fromSender;
+        
+        console.log('[CHAT] Using attachment data:', attachmentData);
+        
         return (
           <div className="flex items-start group relative">
             <img 
@@ -1429,10 +1616,15 @@ export default function Community() {
             </div>
               
               {/* Render content if present */}
-              {message.content && renderMessageContent(message.content)}
+              {message.content && typeof message.content === 'string' && renderMessageContent(message.content)}
               
-              {/* Render attachment */}
-              <MessageAttachment attachment={message.attachment} />
+              {/* Render attachment using the extracted data */}
+              {attachmentData && (
+                <ImageAttachment 
+                  attachment={attachmentData} 
+                  message={message}
+                />
+              )}
               
               {/* Render message reactions */}
               <MessageReactions 
@@ -1673,6 +1865,15 @@ export default function Community() {
             <i className="fas fa-times"></i>
           </button>
           
+          {/* Debug toggle */}
+          <button 
+            onClick={toggleDebugMode}
+            className="absolute top-2 right-8 text-gray-400 hover:text-white px-1 bg-neutral-900/60 rounded-full z-10"
+            title="Toggle debug mode"
+          >
+            <i className="fas fa-bug"></i>
+          </button>
+          
           {/* Profile header */}
           <div className="h-24 bg-gradient-to-r from-blue-900 to-indigo-900"></div>
           
@@ -1702,6 +1903,20 @@ export default function Community() {
             {loading && (
               <div className="flex justify-center my-4">
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-sm text-gray-400">Loading profile data...</span>
+              </div>
+            )}
+            
+            {/* Debug info */}
+            {debugMode && (
+              <div className="mb-3 bg-red-900/20 border border-red-800/20 rounded-md p-2 text-xs">
+                <div className="font-semibold text-red-400 mb-1">Debug Info:</div>
+                <div className="text-gray-300">User ID: {user?.uid || 'N/A'}</div>
+                <div className="text-gray-300">Username: {user?.username || 'N/A'}</div>
+                <div className="text-gray-300">Has Bio: {user?.bio ? 'Yes' : 'No'}</div>
+                <div className="text-gray-300">Badges: {user?.badges?.length || 0}</div>
+                <div className="text-gray-300">Points: {user?.points || 0}</div>
+                <div className="text-gray-300">API URL: {process.env.NEXT_PUBLIC_API_URL || 'Not set'}</div>
               </div>
             )}
             
@@ -1721,21 +1936,25 @@ export default function Community() {
             )}
             
             {/* Badges section */}
-            {!loading && user?.badges && user.badges.length > 0 && (
+            {!loading && (
               <div className="mb-3">
                 <h4 className="text-sm font-semibold text-gray-300 mb-2">Badges</h4>
-                <div className="flex flex-wrap gap-2">
-                  {user.badges.slice(0, 4).map((badge, index) => (
-                    <div key={index} className="flex items-center justify-center w-8 h-8 bg-neutral-700/50 rounded-full" title={badge.badge?.badgeName || 'Badge'}>
-                      <i className={`fas fa-award text-${getBadgeColor(badge.badge?.badgeTier)}`}></i>
-                    </div>
-                  ))}
-                  {user.badges.length > 4 && (
-                    <div className="flex items-center justify-center w-8 h-8 bg-neutral-700/50 rounded-full">
-                      <span className="text-xs text-gray-300">+{user.badges.length - 4}</span>
-                    </div>
-                  )}
-                </div>
+                {user?.badges && user.badges.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {user.badges.slice(0, 4).map((badge, index) => (
+                      <div key={index} className="flex items-center justify-center w-8 h-8 bg-neutral-700/50 rounded-full" title={badge.badge?.badgeName || 'Badge'}>
+                        <i className={`fas fa-award text-${getBadgeColor(badge.badge?.badgeTier)}`}></i>
+                      </div>
+                    ))}
+                    {user.badges.length > 4 && (
+                      <div className="flex items-center justify-center w-8 h-8 bg-neutral-700/50 rounded-full">
+                        <span className="text-xs text-gray-300">+{user.badges.length - 4}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-400 italic">No badges earned yet</div>
+                )}
               </div>
             )}
             
@@ -2011,6 +2230,7 @@ export default function Community() {
                             className="hidden"
                             onChange={handleFileSelect}
                             accept="image/*,application/pdf,video/*,audio/*"
+                            name="image"
                           />
                         </button>
                         
