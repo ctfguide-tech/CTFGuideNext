@@ -15,6 +15,7 @@ export function middleware(req) {
   // List of paths that don't require authentication
   const publicPaths = [
     '/',
+    '/callback',
     '/login',
     '/careers',
     '/register',

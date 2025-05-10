@@ -18,7 +18,7 @@ const request = async (url, req_method, body) => {
         const path = "/" + parts[parts.length-1];
         const pathNames = ["/", "/login", "/careers", "/register", 
           "/onboarding", "/forgot-password", "/education", "/userrs", 
-          "/privacy-policy","/404", "/terms-of-service", "/learn"];
+          "/privacy-policy","/404", "/terms-of-service", "/learn", "/callback"];
         if(!pathNames.includes(path) && !path.startsWith("/forgot-password")) window.location.href = "/login";
         return null;
       }

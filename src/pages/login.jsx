@@ -245,18 +245,36 @@ export default function Login() {
                           width="370" // Optional: Custom button width
                         />
                       </div>
-                      <div className='mt-2 bg-neutral-900 hidden'>
+                      <div onClick={() => {
+                        // Open a centered popup window
+                        const width = 600;
+                        const height = 600;
+                        const left = window.screen.width/2 - width/2;
+                        const top = window.screen.height/2 - height/2;
+                        window.open(
+                          'https://dev.stibarc.com/oauth/?client_id=ab1d9e2c97dc42211c6f624ae01fe568&response_type=token&scope=authorize', 
+                          'STiBaRC Login',
+                          `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`
+                        );
+                      }} className='px-[.01rem] mx-auto'>
+                      <div className='mt-2 bg-[#202124] rounded-l-md rounded-sm'>
                         <a
                           href="#"
-                          className="inline-flex items-center w-full justify-center rounded-sm py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
+                          className="flex items-center w-full  text-sm font-medium text-white "
                         >
-                          <span className="sr-only">Sign in with Microsoft</span>
-                          <img className='w-5 h-5 mr-2' src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png" alt="Microsoft"/>
-                          <p>Login with Microsoft</p>
+                          <span className="sr-only">Sign in with STiBaRC</span>
+                          <img 
+                            className="h-[37px] w-[37px] rounded-l-md flex-shrink-0"
+                            src="https://raw.githubusercontent.com/STiBaRC/stibarc_branding/refs/heads/main/stibarc/stibarc_pfp.png" 
+                            alt="STiBaRC"
+                          />
+                          <span className="w-full text-center font-bold">Continue with STiBaRC</span>
                         </a>
+                      </div>
                       </div>
                     </div>
                   </div>
+
 
 
                 </div>
