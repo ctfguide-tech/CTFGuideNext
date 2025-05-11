@@ -32,7 +32,7 @@ export default function Careers() {
     },
     {
       personName: 'Jiaming Wang',
-      position: 'CTO',
+      position: 'Software Engineer',
       image: '../mish.jpg',
       width: '200',
       height: '200',
@@ -48,25 +48,15 @@ export default function Careers() {
       bio: "Mishael Adelanwa, a current Bunton-Waller fellow at Penn State University and an innovative investor with an eye for emerging technologies, invested in CTFGuide in a Pre Seed Round in January 2023. Adept at identifying and supporting promising ventures, Mishael brings expertise and curiosity to the world of blockchain technology and cybersecurity."
     },
 
-
     {
-      personName: 'Kshitij Kochhar',
+      personName: 'David Youm',
       position: 'Software Engineer',
-      image: '../kkochhar.jpg',
-      width: '200',
-      height: '200',
-      bio: "Kshitij is a current Computer Science student at the University of Maryland who specializes in full-stack development. Outside of coding he enjoys going to the Gym, playing Tennis, and hanging out with friends."
-    },
-
-    {
-      personName: 'Almond Milk',
-      position: 'Content',
       image: '../mish.jpg',
       width: '200',
       height: '200',
       bio: "Almond Force is a team dedicated to providing the cyber security and IT community with training on different platforms and events such as CTFs, Hack the Box, TryHackMe, and more! The team's founder is Almond Milk, and we strive to grow enough to where we can release content as our full-time career."
     },
-
+   
 
   ];
 
@@ -118,138 +108,150 @@ export default function Careers() {
       <Header />
       <main>
         <div className="bg-cover bg-center" style={{ backgroundImage: "url('https://formlabs-media.formlabs.com/filer_public_thumbnails/filer_public/67/16/67160d62-3040-4c77-9eca-a0be6bfa919a/pennstate_render_exterior.jpg__1354x0_q85_subsampling-2.jpg')" }}>
-          <div className="py-20 w-full text-left bg-black bg-opacity-70">
+          <div className="py-12 sm:py-20 w-full text-left bg-black bg-opacity-70">
             <div className='max-w-7xl mx-auto px-4'>
-              <p className="text-4xl font-bold text-white sm:text-4xl">
-                careers@
-                <span className="mt-2 text-4xl text-blue-600 font-bold tracking-tight sm:text-4xl">
-                  CTFGuide
+              <p className="text-3xl sm:text-4xl font-bold text-white">
+                About 
+                <span className="mt-2 text-3xl sm:text-4xl text-blue-600 font-bold tracking-tight">
+                  &nbsp;CTFGuide
                 </span>
               </p>
-              <p className="mt-1 text-xl text-white">
-                Join the company that's building the modern cybersecurity upskilling platform.
+              <p className="mt-1 text-lg sm:text-xl text-white">
+                The company that's building the modern cybersecurity upskilling platform.
               </p>
             </div>
           </div>
         </div>
 
-      <div  className='max-w-7xl w-full  sm:px-2 px-4 mx-auto text-white mt-10 grid sm:grid-cols-6  grid-cols-1 sm:gap-x-8 gap-0'>
-      
-         
-     
-         <div className='col-span-4 '>
-        <h1 className='text-2xl font-bold text-blue-500'>Working with us</h1>
-        <p className=' mt-4'>
-        We're all about open, collaborative, and inclusive culture. We believe in learning from each other and the power of community.
-<br></br><br></br>
-Our team? Learners, not know-it-alls. We're after people who want to grow, not those who think they've got it all figured out.
-<br></br><br></br>
-We're remote-friendly, but a lot of us are in State College, PA. Work where you work best - remote, in-office, or a mix of both.
-
-</p>
-
-<h1 className='text-2xl font-bold mt-10 text-blue-500'>Backed by the best</h1>
-<p className='mt-4'> CTFGuide is funded by the best of the best. We're backed by investors like Penn State University and Bullmont Capital.</p>
-
-        <h1 className='mt-10 text-2xl font-bold text-blue-500'>Open Positions</h1>
-        <p className='text-sm'>
-          Applications require you to login with your Google account. You can also email your resume to staff@ctfguide.com.
-        </p>
-         <div className='mt-4 bg-neutral-800 p-4  flex justify-between items-center'>
-          <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Frontend SWE</h1> 
-          <p className='text-sm'>Remote</p>
+      <div  className='max-w-6xl w-full sm:px-2 px-4 mx-auto text-white mt-10 grid lg:grid-cols-6 grid-cols-1 sm:gap-x-8 gap-0'>
+        <div className='sm:col-span-2 md:col-span-2 lg:col-span-4 xl:col-span-4'>
+          <h1 className='text-2xl font-bold text-blue-500 mb-6'>Our Team</h1>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            {team.map((member, index) => (
+              <div key={index} className='bg-neutral-800 p-6 '>
+                <div>
+                  <h3 className='text-xl font-semibold'>{member.personName}</h3>
+                  <p className='text-blue-500 text-sm mt-1'>{member.position}</p>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className='ml-auto'>
-          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 hover:bg-blue-600 duration-100 px-4 py-2 rounded-md '>Apply</a>
-          </div>
-         </div>
+          <h1 className='text-2xl font-bold text-blue-500 mt-12 mb-6'>Working with us</h1>
+          <p className='text-gray-300 leading-relaxed'>
+            We're all about open, collaborative, and inclusive culture. We believe in learning from each other and the power of community.
+            <br /><br />
+            Our team? Learners, not know-it-alls. We're after people who want to grow, not those who think they've got it all figured out.
+          </p>
 
-         <div className='mt-2 bg-neutral-800 p-4  flex justify-between items-center'>
-          <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Content Writer</h1> 
-          <p className='text-sm'>Remote</p>
-          </div>
+          <h1 className='text-2xl font-bold text-blue-500 mt-12 mb-6'>Support and community</h1>
+          <p className='text-gray-300 leading-relaxed'>
+            CTFGuide is supported by our university, generous community contributors, and early believers who see the value in making cybersecurity accessible.
+          </p>
 
-          <div className='ml-auto'>
-          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 hover:bg-blue-600 duration-100 px-4 py-2 rounded-md '>Apply</a>
+          <h1 className='text-2xl font-bold text-blue-500 mt-12 mb-6'>Open Positions</h1>
+          <p className='text-sm text-gray-300 mb-6'>
+            Applications require you to login with your Google account. You can also email your resume to staff@ctfguide.com.
+          </p>
+          
+          <div className='space-y-4'>
+            {listings.map((listing, index) => (
+              <div key={index} className='bg-neutral-800 p-6  flex justify-between items-center'>
+                <div className='flex flex-col'>
+                  <h3 className='text-xl font-semibold'>{listing.roleName}</h3>
+                  <div className='flex space-x-4 mt-1'>
+                    <span className='text-sm text-gray-300'>{listing.team}</span>
+                    <span className='text-sm text-gray-300'>•</span>
+                    <span className='text-sm text-gray-300'>{listing.position}</span>
+                    <span className='text-sm text-gray-300'>•</span>
+                    <span className='text-sm text-gray-300'>{listing.type}</span>
+                  </div>
+                </div>
+                <a 
+                  href="https://forms.gle/AQrnizsKoyoG6Y1T7" 
+                  className='bg-blue-700 hover:bg-blue-600 duration-100 px-6 py-2  text-sm'
+                >
+                  Apply
+                </a>
+              </div>
+            ))}
           </div>
-         </div>
-
-         <div className='mt-2 bg-neutral-800 p-4  flex justify-between items-center'>
-          <div className='flex flex-col'>
-          <h1 className='text-xl font-bold'>Infrastructure Engineer</h1> 
-          <p className='text-sm'>Remote</p>
-          </div>
-
-          <div className='ml-auto'>
-          <a href="https://forms.gle/AQrnizsKoyoG6Y1T7" className='bg-blue-700 hover:bg-blue-600 duration-100 px-4 py-2 rounded-md '>Apply</a>
-          </div>
-         </div>
         </div>
 
-        <div className='col-span-2 w-full mt-10 sm:mt-0 sm:px-2 px-1 '>
-          <p className='text-2xl font-bold text-blue-500'>Our Team</p>
-          <div className='mt-4 flex flex-col gap-1 w-full text-lg  '>
-          <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Pranav Ramesh</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Founder, CEO</p>
-            </div>
-          <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Abhi Byreddy</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Co-Founder, COO</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Jiaming Wang</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>CTO</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Mish Adelanwa</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>Advisor</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Stephen Stefantos</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
-            </div>
-                
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Kshitij Kochhar</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Kristopher Hicks</p>
-            <p className='text-white bg-blue-700 px-4  rounded-md ml-auto'>SWE</p>
-            </div>
-                   <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Josh Herron</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>Infrastructure</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Anindya Das</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Sai Rangineeni</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Ben Haulk</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Travis Peck</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-            <div className='w-full bg-neutral-800 py-4 px-4 flex'>
-            <p>Ishan Voleti</p>
-            <p className='text-white bg-blue-700 px-2  rounded-md ml-auto'>SWE Intern</p>
-            </div>
-          </div>
-          </div>
-   
+        <div className='col-span-2 w-full mt-10 lg:mt-0 lg:col-span-2'>
+          <div className='w-full'>
+            <p className='text-2xl font-bold text-blue-500 mb-6'>Sponsors & Partners</p>
 
-        
+<div className='w-full bg-neutral-800 p-6 '>
+  <div className='flex flex-col space-y-3'>
+    <div className='flex items-center justify-between'>
+      <h3 className='text-xl font-semibold'>STiBaRC</h3>
+      <span className='text-white bg-blue-700 px-3 py-1  text-sm'>Compute</span>
+    </div>
+    <p className='text-gray-300 text-sm leading-relaxed'>
+    STiBaRC is a  social media platform created by Joshua Herron, initially started as a joke and a gift to a friend. It has since expanded to include features like a messenger, livestreaming service, record label, and ad system .  
+    
+      </p>
+      <a href="https://stibarc.com" className='text-blue-500 hover:text-blue-600 duration-100'>https://stibarc.com</a>
+  </div>
+
+
+</div>
+
+
+
+<div className='w-full mt-4 bg-neutral-800 p-6 '>
+  <div className='flex flex-col space-y-3'>
+    <div className='flex items-center justify-between'>
+      <h3 className='text-xl font-semibold'>PSU Web Dev Club</h3>
+      <span className='text-white bg-blue-700 px-3 py-1  text-sm'>Compute</span>
+    </div>
+    <p className='text-gray-300 text-sm leading-relaxed'>
+    The Penn State Web Dev Club is a student-run organization at Penn State University that focuses on building a community for web development enthusiasts. </p>
+
+    
+      <a href="https://psuwebdev.org/" className='text-blue-500 hover:text-blue-600 duration-100'>https://psuwebdev.org/</a>
+  </div>
+
+  
+</div>
+
+<div className='w-full mt-4 bg-neutral-800 p-6 '>
+  <div className='flex flex-col space-y-3'>
+    <div className='flex items-center justify-between'>
+      <h3 className='text-xl font-semibold'>Penn State University</h3>
+      <span className='text-white bg-blue-700 px-3 py-1  text-sm'>Capital</span>
+    </div>
+    <p className='text-gray-300 text-sm leading-relaxed'>
+    Penn State University is a public research university in State College, Pennsylvania. It is the flagship institution of the Pennsylvania State System of Higher Education.
+    </p>
+
+    <a href="https://www.psu.edu/" className='text-blue-500 hover:text-blue-600 duration-100'>https://www.psu.edu/</a>
+  </div>
+</div>
+
+<div className='w-full mt-4 bg-neutral-800 p-6 '>
+  <div className='flex flex-col space-y-3'>
+    <div className='flex items-center justify-between'>
+      <h3 className='text-xl font-semibold'>Bullmont Capital</h3>
+      <span className='text-white bg-blue-700 px-3 py-1  text-sm'>Capital</span>
+    </div>
+    <p className='text-gray-300 text-sm leading-relaxed'>
+    Bullmont Capital is a venture capital firm that invests in early-stage startups.
+    </p>
+
+    <a href="https://bullmontcapital.com/" className='text-blue-500 hover:text-blue-600 duration-100'>https://bullmontcapital.com/</a>
+  </div>
+</div>
+
+
+
+
+
+     
+         
+          </div>
+        </div>
       </div>
       
 
