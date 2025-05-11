@@ -12,6 +12,7 @@ const ModulesPage = () => {
     const [modules, setModules] = useState(null);
     const [loading, setLoading] = useState(true);
     const [nextLesson, setNextLesson] = useState(null);
+    const [showBetaModal, setShowBetaModal] = useState(false);
     const [stats, setStats] = useState({
         completedModules: 0,
         totalModules: 0,
@@ -20,6 +21,18 @@ const ModulesPage = () => {
         nextRank: 'Novice',
         modulesToNextRank: 0
     });
+
+    useEffect(() => {
+        const betaModalDismissed = localStorage.getItem('betaModalDismissed');
+        if (!betaModalDismissed) {
+            setShowBetaModal(true);
+        }
+    }, []);
+
+    const handleCloseBetaModal = () => {
+        setShowBetaModal(false);
+        localStorage.setItem('betaModalDismissed', 'true');
+    };
 
     useEffect(() => {
         const fetchModules = async () => {
@@ -104,6 +117,20 @@ const ModulesPage = () => {
         <div className="min-h-screen bg-neutral-900">
             <StandardNav />
 
+            {showBetaModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="p-6 rounded-lg shadow-lg bg-neutral-900 text-white">
+                        <h2 className="text-xl font-bold mb-4">Beta Feature</h2>
+                        <p>This feature is heavily in development and is currently in beta.</p>
+                        <button 
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                            onClick={handleCloseBetaModal}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 {loading ? (
@@ -121,7 +148,7 @@ const ModulesPage = () => {
                                     whileHover={{ scale: 1.02 }}
                                     className="h-[180px] bg-gradient-to-br from-neutral-700/10 to-neutral-800 p-6 border-l-4 shadow-md border-purple-500/10 relative overflow-hidden"
                                 >
-                                    <motion.div layout className="relative z-10">
+                                    <motion.div layout className="relative z-0">
                                         <div className="flex items-center space-x-4 mt-2">
                                             <div className="bg-purple-500/10 p-3 rounded-lg">
                                                 <i className="fas fa-book-open text-2xl text-purple-400"></i>

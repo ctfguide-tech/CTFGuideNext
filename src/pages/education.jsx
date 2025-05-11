@@ -80,10 +80,15 @@ function MobileNavigation() {
         >
           <Popover.Panel
             as="div"
-            className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-black p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
+            className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-neutral-800 p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
           >
-            <hr className="m-2 border-slate-300/40" />
-            <MobileNavLink href="">Sign in</MobileNavLink>
+            <MobileNavLink href="#features">Features</MobileNavLink>
+            <MobileNavLink href="#pricing">Pricing</MobileNavLink>
+            <hr className="m-2 border-neutral-700" />
+            <MobileNavLink href="/login">Sign in</MobileNavLink>
+            <MobileNavLink href="#pricing">
+              <span className="text-blue-400">Get started</span>
+            </MobileNavLink>
           </Popover.Panel>
         </Transition.Child>
       </Transition.Root>
@@ -96,7 +101,7 @@ const Education = () => {
   const [studentCount, setStudentCount] = useState(1);
 
   const calculateTotalCost = () => {
-    return studentCount * 75;
+    return studentCount * 10;
   };
 
   return (
@@ -229,15 +234,18 @@ const Education = () => {
       </p>
     </div>
     <div className="mt-16 flex flex-col lg:flex-row items-center justify-center gap-12">
-      <div className="w-full lg:w-2/5 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-10 text-center shadow-xl transform transition-all duration-300 hover:scale-105">
-        <h3 className="text-3xl font-semibold text-white mb-4">CTFGuide EDU</h3>
+      <div className="w-full lg:w-1/3 rounded-2xl bg-neutral-700 p-10 text-center shadow-xl transform transition-all duration-300 hover:scale-105">
+        <h3 className="text-3xl font-semibold text-white mb-4">Free Plan</h3>
         <div className="mt-6">
-          <span className="text-6xl font-bold text-white">$75</span>
-          <span className="text-2xl text-gray-200">/student</span>
+          <span className="text-6xl font-bold text-white">$0</span>
         </div>
-        <p className="mt-2 text-gray-200">per semester</p>
+        <p className="mt-2 text-gray-200">forever</p>
         <ul className="mt-8 space-y-5 text-left">
-          {['Access to all CTFGuide features', 'Comprehensive cybersecurity curriculum', 'AI-powered grading and feedback'].map((feature, index) => (
+          {[
+            'Unlimited students',
+            'Full cybersecurity curriculum',
+            'Community support'
+          ].map((feature, index) => (
             <li key={index} className="flex items-start">
               <svg className="h-6 w-6 flex-shrink-0 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -247,7 +255,29 @@ const Education = () => {
           ))}
         </ul>
       </div>
-      <div className="w-full lg:w-2/5 rounded-2xl bg-neutral-700 p-10 text-center shadow-xl">
+      <div className="w-full lg:w-1/3 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-10 text-center shadow-xl transform transition-all duration-300 hover:scale-105">
+        <h3 className="text-3xl font-semibold text-white mb-4">CTFGuide EDU</h3>
+        <div className="mt-6">
+          <span className="text-6xl font-bold text-white">$10</span>
+          <span className="text-2xl text-gray-200">/student</span>
+        </div>
+        <p className="mt-2 text-gray-200">per semester</p>
+        <ul className="mt-8 space-y-5 text-left">
+          {[
+            'Everything in Free plan',
+            'AI-powered grading and feedback',
+            'Priority support'
+          ].map((feature, index) => (
+            <li key={index} className="flex items-start">
+              <svg className="h-6 w-6 flex-shrink-0 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="ml-3 text-white text-lg">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="w-full lg:w-1/3 rounded-2xl bg-neutral-700 p-10 text-center shadow-xl">
         <h3 className="text-3xl font-semibold text-white mb-4">Cost Estimate Calculator</h3>
         <div className="mt-8">
           <label htmlFor="studentCount" className="block text-lg font-medium text-gray-200 mb-2">

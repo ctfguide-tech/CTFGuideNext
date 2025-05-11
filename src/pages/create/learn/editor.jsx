@@ -382,14 +382,14 @@ const LearnEditor = () => {
                                     <div className="flex space-x-2">
                                         <button
                                             onClick={() => setShowImportModal(true)}
-                                            className="px-4 py-2 bg-neutral-700/20 hover:bg-neutral-700/30 text-neutral-400 rounded-lg transition-all text-sm"
+                                            className="hidden px-4 py-2 bg-neutral-700/20 hover:bg-neutral-700/30 text-neutral-400 rounded-lg transition-all text-sm"
                                         >
                                             <i className="fas fa-file-import mr-2"></i>
                                             Import
                                         </button>
                                         <button
                                             onClick={() => setShowNewLessonModal(true)}
-                                            className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-all text-sm"
+                                            className="hidden px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-all text-sm"
                                         >
                                             <i className="fas fa-plus mr-2"></i>
                                             Create New
@@ -415,7 +415,7 @@ const LearnEditor = () => {
                                             >
                                                 <div className="flex items-center justify-between">
                                                     <div>
-                                                        <h3 className="text-white font-medium">{lesson.title}</h3>
+                                                        <h3 className="text-white font-medium">{lesson.title.slice(0, 20)}...</h3>
                                                         <p className="text-neutral-400 text-sm">
                                                             {(lesson.pages?.length || 0)} page{(lesson.pages?.length || 0) !== 1 ? 's' : ''} • {(lesson.status || 'draft').toLowerCase()}
                                                         </p>
@@ -438,7 +438,7 @@ const LearnEditor = () => {
                             </div>
 
                                   {/* legacy */}
-                            <div className=" hidden p-1 bg-gradient-to-r from-blue-500/10 via-blue-600/10 to-blue-700/10">
+                            <div className="hidden  p-1 ">
                                 <div 
                                     className={`p-8 transition-all rounded-xl ${
                                         isDragging 
@@ -450,11 +450,7 @@ const LearnEditor = () => {
                                     onDrop={handleDrop}
                                 >
                                     <div className="text-center space-y-3">
-                                        <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center bg-gradient-to-br ${
-                                            isDragging ? 'from-blue-500/20 to-blue-600/20' : 'from-neutral-700/20 to-neutral-800/20'
-                                        }`}>
-                                            <i className={`fas fa-file-import text-2xl ${isDragging ? 'text-blue-400' : 'text-neutral-400'}`}></i>
-                                        </div>
+                                   
                                         <div>
                                             <p className="text-white font-medium">
                                                 Drop your project file here
@@ -495,23 +491,18 @@ const LearnEditor = () => {
                                     </span>
                                 </div>
                                 <div className="flex items-center space-x-3">
+                       
                                     <button
-                                        onClick={() => setIsLoading(false)}
-                                        className="text-neutral-400 hover:text-white text-sm transition-colors"
+                                                                                onClick={() => setShowNewLessonModal(true)}
+
+                                            className={`px-4 py-2 rounded-lg transition-all text-sm flex items-center space-x-2 ${
+                                                true 
+                                                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700' 
+                                                    : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
+                                            }`}
                                     >
-                                        Start Fresh
-                                    </button>
-                                    <button
-                                        onClick={() => handleImportProject(projectJsonInput)}
-                                        disabled={!projectJsonInput}
-                                        className={`px-4 py-2 rounded-lg transition-all text-sm flex items-center space-x-2 ${
-                                            projectJsonInput 
-                                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700' 
-                                                : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
-                                        }`}
-                                    >
-                                        <i className="fas fa-file-import"></i>
-                                        <span>Import Project</span>
+                                        <i className="fas fa-plus"></i>
+                                        <span>Start Fresh</span>
                                     </button>
                                 </div>
                             </div>

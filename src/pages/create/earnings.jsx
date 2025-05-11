@@ -45,6 +45,24 @@ export default function Earnings() {
     fetchEarningsHistory();
   }, []);
 
+  const updatePaymentDetails = async () => {
+    try {
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/stripe/create-account-link`,
+        'POST'
+      );
+      
+      if (response?.url) {
+        window.location.href = response.url;
+      } else {
+        throw new Error('No account link URL received');
+      }
+    } catch (error) {
+      console.error('Failed to update payment details:', error);
+      // Add error notification here
+    }
+  };
+
   return (
     <>
       <Head>
@@ -63,19 +81,24 @@ export default function Earnings() {
                 Home
               </Link>
               <Link 
+                href="/create/compute"
+                className={`text-sm font-medium border-b-2 h-full flex items-center transition-colors ${
+                  false  // Replace with actual route check
+                    ? 'border-blue-500 text-white' 
+                    : 'border-transparent text-neutral-400 hover:text-white hover:border-[#333333]'
+                }`}
+              >
+                <i className="fas fa-server mr-2"></i>
+                Docker Containers <span className="text-xs text-blue-400 px-1 ml-2  rounded bg-blue-900 text-white ">BETA</span>
+              </Link>
+              <Link 
                 href="/create/earnings"
                 className="text-sm font-medium border-b-2 h-full flex items-center transition-colors border-blue-500 text-white"
               >
                 <i className="fas fa-wallet mr-2"></i>
-                Earnings & Analytics
+                Earnings 
               </Link>
-              <Link 
-                href="/create/settings"
-                className="text-sm font-medium border-b-2 h-full flex items-center transition-colors border-transparent text-neutral-400 hover:text-white hover:border-[#333333]"
-              >
-                <i className="fas fa-cog mr-2"></i>
-                Creator Settings
-              </Link>
+           
             </div>
           </div>
         </div>
@@ -123,7 +146,7 @@ export default function Earnings() {
                 <dd className="text-3xl font-semibold text-white mt-2">
                   {earnings.nextPayoutDate 
                     ? new Date(earnings.nextPayoutDate).toLocaleDateString()
-                    : 'No upcoming payout'}
+                    : 'N/A'}
                 </dd>
               </div>
             </div>
@@ -187,15 +210,27 @@ export default function Earnings() {
               Payout Information
             </h2>
             <div className="space-y-6">
-              <div className="bg-[#1c1c1c]/90 rounded-xl p-6 border border-[#2a2a2a] hover:border-blue-500/30 transition-all duration-300">
-                <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+              <div className="bg-[#1c1c1c]/90 rounded-xl p-6 border border-[#2a2a2a] hover:border-blue-500/30 transition-all duration-300 relative">
+                {/* Add overlay message */}
+                <div className="absolute inset-0 bg-black/80 rounded-xl flex items-center justify-center">
+                  <p className="text-white font-bold text-lg">
+                    <i className="fas fa-exclamation-circle mr-2"></i>
+                    Not Eligible for Payments
+                  </p>
+                </div>
+                
+                <h3 className="text-lg font-medium text-white mb-4 flex items-center opacity-50">
                   <i className="fas fa-credit-card mr-2 text-blue-500"></i>
                   Payment Method
                 </h3>
-                <p className="text-neutral-400">
+                <p className="text-neutral-400 opacity-50">
                   Payments are processed via Stripe on the 1st of each month for balances over $50.
                 </p>
-                <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center">
+                <button 
+                  onClick={updatePaymentDetails}
+                  className="disabled mt-4 bg-neutral-600 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center opacity-50"
+                  disabled={true}
+                >
                   <i className="fas fa-edit mr-2"></i>
                   Update Payment Details
                 </button>
@@ -206,23 +241,26 @@ export default function Earnings() {
                   <i className="fas fa-history mr-2 text-blue-500"></i>
                   Payout History
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-4" >
                   {/* Payout history items with hover effects */}
-                  <div className="flex justify-between items-center py-3 border-b border-[#2a2a2a] hover:bg-[#232323]/50 px-4 rounded-lg transition-all duration-300">
+                  <div className="hidden flex justify-between items-center py-3 border-b border-[#2a2a2a] hover:bg-[#232323]/50 px-4 rounded-lg transition-all duration-300">
                     <div>
                       <p className="text-white">March 2024 Payout</p>
                       <p className="text-sm text-neutral-400">Processed on Mar 1, 2024</p>
                     </div>
                     <span className="text-green-400 font-medium">$125.00</span>
                   </div>
-                  <div className="flex justify-between items-center py-3 border-b border-[#2a2a2a] hover:bg-[#232323]/50 px-4 rounded-lg transition-all duration-300">
+                  <div className="hidden flex justify-between items-center py-3 border-b border-[#2a2a2a] hover:bg-[#232323]/50 px-4 rounded-lg transition-all duration-300">
                     <div>
                       <p className="text-white">February 2024 Payout</p>
                       <p className="text-sm text-neutral-400">Processed on Feb 1, 2024</p>
                     </div>
                     <span className="text-green-400 font-medium">$95.50</span>
                   </div>
+
+
                 </div>
+                <p className="text-neutral-400">No payout history available yet</p>
               </div>
             </div>
           </div>

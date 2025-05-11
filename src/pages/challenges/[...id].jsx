@@ -580,6 +580,10 @@ export default function Challenge() {
                         <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
                         <span className="text-white text-xl">{loadingMessage}</span>
                         <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+
+                        <br>
+                        </br>
+
                       </div>
                     </div>
                   ) : (
@@ -641,10 +645,13 @@ export default function Challenge() {
                 )}
                 {fetchingTerminal ? (
                   <div className="flex mx-auto text-center justify-center items-center h-full">
-                    <div>
+                    <div className="flex flex-col items-center">
                       <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
                       <span className="text-white text-xl">{loadingMessage}</span>
                       <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+                      <h1 className="text-white text-lg mt-4 font-bold">Your terminal is hosted on a node sponsored by <a href="https://m.do.co/c/b99e7533012e" target="_blank" className="text-blue-500 hover:text-blue-300">DigitalOcean</a></h1>
+                      <a className="mt-4 mx-auto text-center" href="https://www.digitalocean.com/?refcode=b99e7533012e&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg" alt="DigitalOcean Referral Badge" /></a>
+
                     </div>
                   </div>
                 ) : (

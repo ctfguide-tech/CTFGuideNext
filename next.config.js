@@ -15,23 +15,22 @@ const nextConfig = {
     esmExternals: 'loose',
   },
   transpilePackages: ['@uiw/react-md-editor', '@uiw/react-markdown-preview'],
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
-          },
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-        ],
-      },
-    ];
-  },
+// next.config.js
+// async headers() {
+//   return [
+//     {
+//       source: '/(.*)',
+//       headers: [
+//         { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+//         { key: 'Cross-Origin-Embedder-Policy', value: 'credentialless' },
+//         // Optionally, you can add this if you still have issues with images:
+//         // { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
+//       ],
+//     },
+
+//   ];
+// }
+
 };
 
 module.exports = withPWA(removeImports(nextConfig));

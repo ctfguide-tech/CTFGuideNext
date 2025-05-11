@@ -13,6 +13,7 @@ import {
   EllipsisVerticalIcon,
   ShieldCheckIcon,
   BellIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { Logo } from '@/components/Logo';
 import Link from 'next/link';
@@ -39,6 +40,7 @@ import SpawnTerminal from './nav/SpawnTerminal';
 import { Context } from '@/context';
 import { useContext } from 'react';
 import timeTracker from '@/utils/timeTracker';
+import NotificationsModal from './nav/NotificationsModal';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -269,6 +271,8 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
     };
   }, []);
 
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
+
   return (
     <>
       {isPopoverOpen && (
@@ -379,24 +383,33 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                           >
-                            <Popover.Panel className="absolute z-10 w-48 max-w-sm transform px-4 sm:px-0 lg:max-w-3xl">
-                              <div className="overflow-hidden  shadow-lg ">
-                                <div className="relative grid gap-6 border border-neutral-800 bg-neutral-900  sm:gap-8 sm:p-8">
+                            <Popover.Panel className="absolute z-[9999] w-64 transform px-4 sm:px-0" style={{ position: 'fixed' }}>
+                              <div className="overflow-hidden rounded-xl shadow-lg ring-1 ring-black/5">
+                                <div className="relative bg-neutral-900 p-3">
                                   <Link
                                     href="/create"
-                                    className="flex w-full items-start rounded-lg "
+                                    className="flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
                                   >
-                                    <p className="text-base font-medium text-gray-400 hover:text-white">
-                                      Create
-                                    </p>
+                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
+                                      <PencilSquareIcon className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium">Create</p>
+                                      <p className="text-sm text-gray-500">Design your own challenges</p>
+                                    </div>
                                   </Link>
+
                                   <Link
                                     href="/groups"
-                                    className=" s flex items-start rounded-lg"
+                                    className="mt-2 flex items-center space-x-3 rounded-lg px-4 py-3 text-base text-gray-300 transition-all hover:bg-neutral-800 hover:text-white"
                                   >
-                                    <p className="text-base font-medium text-gray-400 hover:text-white">
-                                      Classrooms
-                                    </p>
+                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-white">
+                                      <UserGroupIcon className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium">Classrooms</p>
+                                      <p className="text-sm text-gray-500">Join or manage your classes</p>
+                                    </div>
                                   </Link>
                                 </div>
                               </div>
@@ -480,20 +493,52 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                           >
-                            <Popover.Panel className="absolute right-0 mt-2 w-80 bg-neutral-800 rounded-md shadow-lg overflow-hidden z-20">
-                              <div className="py-2">
-                                {notificationData.length > 0 ? (
-                                  notificationData.slice(0, 6).map((notification, index) => (
-                                    <div key={index} className="flex items-center px-4 py-3 ">
-                                    
-                                      <div className="ml-3 text-white">
-                                        <p className="text-sm font-medium">{notification.message}</p>
-                                        <p className="text-xs">{notification.receivedTime}</p>
+                            <Popover.Panel className="absolute right-0 mt-2 w-80 bg-neutral-900 rounded-md shadow-lg overflow-hidden z-20">
+                              <div className="p-2">
+                                <div className="px-4 py-3 border-b border-neutral-800">
+                                  <h3 className="text-sm font-medium text-white">Notifications</h3>
+                                </div>
+                                
+                                <div className="max-h-96 overflow-y-auto">
+                                  {notificationData.length > 0 ? (
+                                    notificationData.slice(0, 6).map((notification, index) => (
+                                      <div 
+                                        key={index} 
+                                        className="px-4 py-3 hover:bg-neutral-800 transition-colors cursor-pointer border-b border-neutral-800/50 last:border-0"
+                                      >
+                                        <div className="flex items-start">
+                                          <div className="flex-shrink-0">
+                                            <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                              <BellIcon className="h-4 w-4 text-blue-500" />
+                                            </div>
+                                          </div>
+                                          <div className="ml-3 flex-1">
+                                            <p className="text-sm text-gray-200">{notification.message}</p>
+                                            <p className="text-xs text-gray-500 mt-1">{notification.receivedTime}</p>
+                                          </div>
+                                        </div>
                                       </div>
+                                    ))
+                                  ) : (
+                                    <div className="px-4 py-6 text-center">
+                                      <BellIcon className="mx-auto h-8 w-8 text-gray-500" />
+                                      <p className="mt-2 text-sm text-gray-500">No new notifications</p>
                                     </div>
-                                  ))
-                                ) : (
-                                  <p className="text-center text-gray-500 py-4">No notifications</p>
+                                  )}
+                                </div>
+
+                                {notificationData.length > 0 && (
+                                  <div className="px-4 py-3 bg-neutral-900 border-t border-neutral-800">
+                                    <button
+                                      onClick={() => {
+                                        setShowAllNotifications(true)
+                                        setIsPopoverOpen(false) // Close the notifications popover
+                                      }}
+                                      className="block w-full text-sm text-blue-500 hover:text-blue-400 text-center"
+                                    >
+                                      View all notifications
+                                    </button>
+                                  </div>
                                 )}
                               </div>
                             </Popover.Panel>
@@ -743,14 +788,19 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
       />
       <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
-        <div className="mx-auto hidden w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
+        <div className="mx-auto hidden   w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
           <h1 className="mx-auto  px-4 text-left">
-              Our terminal infrastructure is experiencing issues due to hardware faults. We are taking steps to resolve this and get things working again as possible.
+                We're experiencing issues with our database and API. You may encounter errors while using the platform. We're working on fixing it. Please join the Discord for updates. https://discord.gg/XJ8QfS6D
           </h1>
         </div>
      
 
       <SpawnTerminal open={terminaIsOpen} setOpen={setTerminalIsOpen} />
+      <NotificationsModal
+        open={showAllNotifications}
+        setOpen={setShowAllNotifications}
+        notifications={notificationData}
+      />
     </>
   );
 }
