@@ -41,12 +41,12 @@ export default function GP() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsVisible(true);
-        }
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
       },
-      { threshold: 0.5 } // Trigger when 50% of the element is in view
+      {
+        threshold: 0.1
+      }
     );
 
     if (imgRef.current) {
@@ -58,7 +58,7 @@ export default function GP() {
         observer.unobserve(imgRef.current);
       }
     };
-  }, [imgRef]);
+  }, []);
 
   return (
     <div className="bg-neutral-900 py-24 sm:py-32">
@@ -72,19 +72,16 @@ export default function GP() {
         </div>
       </div>
       <div className="relative overflow-hidden pt-16">
-        <div    ref={imgRef}
-className="mx-auto max-w-7xl px-6 lg:px-8">
-               {isVisible && (
+        <div ref={imgRef} className="mx-auto max-w-7xl px-6 lg:px-8">
+          {isVisible && (
             <img
               src="../site.png"
               alt="App screenshot"
-              className="animate__animated animate__backInUp mb-[-12%] rounded-xl shadow-2xl ring-1 ring-neutral-800"
+              className="mb-[-12%] rounded-xl shadow-2xl ring-1 ring-neutral-800"
               width={2432}
-
               height={1442}
             />
           )}
-       
           <div className="relative" aria-hidden="true">
             <div className="absolute -inset-x-20 bottom-0 bg-gradient-to-t from-neutral-900 pt-[7%]" />
           </div>

@@ -1020,7 +1020,7 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   return (
     <>
 
-    <div className="bg-blue-800">
+    <div className="bg-blue-800 hidden">
       <div className="p-2">
     <p className="text-white text-base font-medium flex items-center gap-x-2">
     <span className="bg-white text-blue-800 px-2 rounded-sm">IST 411</span>
@@ -1095,7 +1095,7 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
           <p>You may need to boot the terminal to see the associated files.</p>
         )}
         <hr className="border-neutral-700 mt-4"></hr>
-        <div className="mb-6 rounded-xl bg-neutral-800/70 mt-4">
+        <div className="mb-6 rounded-xl bg-neutral-800/70 mt-4 hidden">
 
 
     <h1 className="text-xl mt-2">Teacher Notes</h1>
