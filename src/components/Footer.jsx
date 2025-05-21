@@ -7,7 +7,7 @@ export function Footer({isHome}) {
   isHome = false;
   return (
     isHome ?
-    <footer style={{ backgroundColor: '#161716' }} className='max-w-7xl mx-auto'>
+    <footer  className='max-w-7xl mx-auto'>
       <Container>
         <div className="py-20">
           <img 

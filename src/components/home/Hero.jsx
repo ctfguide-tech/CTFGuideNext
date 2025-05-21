@@ -398,11 +398,11 @@ export function Hero() {
                 <div className='grid sm:grid-cols-6 grid-cols-1 gap-x-8 items-start'>
                
                   <div className='col-span-4'>
-                  <div class="absolute top-0 z-[-2] h-screen w-full bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(18,35,166,0.3),rgba(255,255,255,0))]"></div>
+                  <div className="absolute top-0 z-[-2] h-screen w-full bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(18,35,166,0.3),rgba(255,255,255,0))]"></div>
                     
                   
                      <span className='hidden ml-24 bg-blue-900/30 backdrop-blur-sm rounded-full px-4 py-1 text-blue-300 text-sm font-bold'><i className='fa fa-bullseye mr-2'></i>Introducing Bounties on CTFGuide</span>
-                    <h1 className="pl-8 md:pl-24 mt-32 text-6xl font-normal tracking-normal text-white mb-8">
+                    <h1 className="px-4 sm:pl-8 md:pl-24 mt-20 sm:mt-32 text-4xl sm:text-5xl lg:text-6xl font-normal tracking-normal text-white mb-6 sm:mb-8">
                       The platform that <span className="text-blue-600 font-extrabold" >
                         <TextLoop>
                           <span>grows</span>
@@ -414,19 +414,19 @@ export function Hero() {
                       <span className='bg-gradient-to-r from-blue-400 to-blue-400 text-transparent bg-clip-text'>cybersecurity talent.</span>
                     </h1>
 
-                    <p className="pl-8 md:pl-24 text-2xl leading-8 text-gray-300 mb-8">
+                    <p className="px-4 sm:pl-8 md:pl-24 text-xl sm:text-2xl leading-8 text-gray-300 mb-8">
                       The <span className='font-bold text-white'>free</span> social learning platform for all things cybersecurity.
                     </p>
 
-                    <div className="pl-8 md:pl-24 flex items-center gap-x-6">
+                    <div className="px-4 sm:pl-8 md:pl-24 flex flex-col sm:flex-row items-start sm:items-center gap-y-4 sm:gap-y-0 sm:gap-x-6">
                       <a
                         href="../register"
-                        className="rounded-md px-6 py-2 text-xl font-semibold text-white border border-white hover:bg-white hover:text-black transition-all duration-300"
+                        className="w-full sm:w-auto text-center rounded-md px-6 py-3 sm:py-2 text-lg sm:text-xl font-semibold text-white border border-white hover:bg-white hover:text-black transition-all duration-300"
                       >
                         Get started
                       </a>
                       <p onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })} 
-                         className="cursor-pointer text-xl font-semibold leading-6 text-white hover:text-blue-400 transition-colors duration-300">
+                         className="w-full sm:w-auto text-center sm:text-left cursor-pointer text-lg sm:text-xl font-semibold leading-6 text-white sm:text-white hover:text-black hover:bg-white sm:hover:text-blue-400 sm:hover:bg-transparent transition-all duration-300 border border-white sm:border-0 rounded-md px-6 py-3 sm:p-0">
                         Learn more <span aria-hidden="true">→</span>
                       </p>
                     </div>
