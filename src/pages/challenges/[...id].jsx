@@ -16,7 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { getCookie } from '@/utils/request';
 import { jwtDecode } from 'jwt-decode';
-import api from '@/utils/terminal-api';
+import api from '@/utils/terminal-api'; // challenge api
 import Confetti from 'react-confetti';
 import { Context } from '@/context';
 import { useRef } from 'react';
@@ -250,6 +250,7 @@ export default function Challenge() {
 
     const data = await api.buildDocketTerminal(challenge.id, cookie);
     //console.log(data)
+    console.log(data);
     if (data) {
       if (!data.url) {
         toast.error("Unable to create the terminal, please try again");
@@ -258,7 +259,7 @@ export default function Challenge() {
       }
 
       setPassword(data.terminalUserPassword);
-      setUserName(data.terminalUserName);
+      setUserName(localStorage.getItem('username'));
       if (data.fileIDs) {
 
         // CLEAN UP FILE IDS AS IT IS STRING AND CONVERT TO ARRAY
@@ -288,7 +289,7 @@ export default function Challenge() {
 
       // Wait for 5 seconds before setting the terminal URL
       setTimeout(() => {
-        setTerminalUrl(data.url);
+        setTerminalUrl(data.url + "/wetty");
         setFetchingTerminal(false);
         setIsTerminalBooted(true);
         setShowMessage(true);

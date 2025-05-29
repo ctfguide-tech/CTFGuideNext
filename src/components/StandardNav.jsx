@@ -541,6 +541,10 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                               <li key={idx} className="p-3 flex flex-col text-white">
                                 <span className="font-semibold">{c.name}</span>
                                 <span className="text-xs text-gray-400">{c.status} • {c.ip}</span>
+                              <div className="flex flex-row gap-2">
+                              <button className="text-sm mt-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-500 transition-colors">Connect</button>
+                              <button className="text-sm mt-2 px-2 py-1 bg-red-600 text-white rounded hover:bg-red-500 transition-colors">Stop</button>
+                              </div>
                               </li>
                             ))}
                           </ul>

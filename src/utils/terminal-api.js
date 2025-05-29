@@ -1,16 +1,22 @@
 
 async function buildDocketTerminal(challengeId, jwt) {
   try {
-    const url = process.env.NEXT_PUBLIC_TERM_URL + 'docket/createDocket';
+    const url = process.env.NEXT_PUBLIC_TERM_URL + '/api/containers/create';
     const body = {
       jwtToken: jwt,
       terminalUserName: localStorage.getItem('username').toLowerCase(),
-      challengeID: challengeId
+      challengeID: challengeId,
+      port: Math.floor(Math.random() * 1000) + 5000, // Random port between 5000-6000
+      root: "false",
+      commandsToRun: ["ls -la"],
+      terminalUserPassword: 'password' // Using a default password
     };
 
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json',
+        'Authorization': `Bearer testing`
+      },
       body: JSON.stringify(body),
     };
 
