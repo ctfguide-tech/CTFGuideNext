@@ -4,6 +4,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 import request from '@/utils/request';
 import { MarkdownViewer } from '../MarkdownViewer';
+import { getFileName } from '@/utils/file-api';
 
 const ViewChallenge = ({ open, setOpen, selected }) => {
 
@@ -16,6 +17,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
     });
 
     const [isLoading, setIsLoading] = useState(false);
+    const [files, setFiles] = useState([]);
 
     useEffect(() => {
         const fetchChallengeData = async () => {
@@ -24,6 +26,20 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
             console.log("run");
             console.log(response);
             setChallenge(response.body);
+            
+            //fetch stupid file info for each fileId, thanks stephen for the helper function
+            if (response.body.fileIds && response.body.fileIds.length > 0) {
+              const filePromises = response.body.fileIds.map(async (fileId) => {
+                const fileName = await getFileName(fileId);
+                return {
+                  id: fileId,
+                  name: fileName,
+                  url: `${process.env.NEXT_PUBLIC_TERM_URL}files/get?fileID=${fileId}`
+                };
+              });
+              const fileInfo = await Promise.all(filePromises);
+              setFiles(fileInfo);
+            }
           } catch (error) {
             console.error(error);
           }
@@ -119,8 +135,35 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                         
                         </div>
                         <div className='col-span-3'>
+                        <h1 className='font-bold text-blue-600 mb-1'>Environment Container Configuration</h1>
+                        <textarea
+                          value={challenge && challenge.commands}
+                          readOnly
+                          className="mt-2 w-full border-none bg-black text-white"
+                        ></textarea>
+
+                        <h1 className='font-bold text-blue-600 mb-1 mt-4'>Uploaded Files</h1>
+                        <div className="mt-2">
+                          {files && files.length > 0 ? (
+                            files.map((file, index) => (
+                              <div key={index} className="flex items-center justify-between p-2 border-b border-neutral-600">
+                                <span className="text-white">{file.name}</span>
+                                <a
+                                  href={file.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-500 hover:text-blue-700"
+                                >
+                                  Download
+                                </a>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-neutral-400">No files uploaded</p>
+                          )}
+                        </div>
                      
-                     <h1 className='font-bold text-blue-600 mb-1'>Moderator Notes</h1> 
+                     <h1 className='font-bold text-blue-600 mb-1 mt-4'>Moderator Notes</h1> 
       
       <textarea placeholder="Challenge creators can see these notes if you request changes!" className='bg-neutral-800 w-full border-neutral-700'>
       {challenge && challenge.snote}
