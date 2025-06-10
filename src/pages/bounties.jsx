@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer';
 import { useState, useEffect } from 'react';
 import { GiftIcon, UsersIcon, CodeBracketSquareIcon, ShieldCheckIcon, LockClosedIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { BountyModal } from '@/components/BountyModal';
+import { WelcomeModal } from '@/components/WelcomeModal';
 import { rankColors, mockBounties } from '@/data/bounties';
 
 function ForStartups() {
@@ -80,8 +81,15 @@ export default function Bounties() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showLockedOnly, setShowLockedOnly] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   useEffect(() => {
+    // Check if it's the user's first visit
+    const hasVisited = localStorage.getItem('hasViewedBountiesPage');
+    if (!hasVisited) {
+      setShowWelcomeModal(true);
+    }
+
     const fetchBounties = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bounties`);
@@ -96,6 +104,11 @@ export default function Bounties() {
 
     fetchBounties();
   }, []);
+
+  const handleCloseWelcomeModal = () => {
+    setShowWelcomeModal(false);
+    localStorage.setItem('hasViewedBountiesPage', 'true');
+  };
 
   const getRewardRange = (rewards) => {
     const rewardValues = Object.values(rewards).map(r => parseInt(r.replace(',', '')));
@@ -287,6 +300,7 @@ export default function Bounties() {
           </div>
         </div>
         <BountyModal bounty={selectedBounty} onClose={() => setSelectedBounty(null)} />
+        <WelcomeModal isOpen={showWelcomeModal} onClose={handleCloseWelcomeModal} />
       </main>
 
       <Footer />
