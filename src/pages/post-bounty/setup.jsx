@@ -57,18 +57,19 @@ export default function BountySetup() {
     setError('');
 
     try {
-      // Get upload URL from our backend
-      const urlResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bounties/upload-logo`, {
-        method: 'POST'
-      });
-      
-      const { uploadUrl, id } = await urlResponse.json();
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBountyData(prev => ({ ...prev, logo: reader.result }));
+        setUploading(false);
+      };
+      reader.readAsDataURL(file);
 
-      // Upload to Cloudflare Images
+      // Upload to backend
       const formData = new FormData();
       formData.append('file', file);
       
-      const uploadResponse = await fetch(uploadUrl, {
+      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bounties/upload`, {
         method: 'POST',
         body: formData
       });
@@ -77,11 +78,12 @@ export default function BountySetup() {
         throw new Error('Failed to upload image');
       }
 
-      const imageUrl = `https://imagedelivery.net/${process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH}/${id}/public`;
-      setBountyData(prev => ({ ...prev, logo: imageUrl }));
+      const { url } = await uploadResponse.json();
+      setBountyData(prev => ({ ...prev, logo: url }));
     } catch (error) {
       console.error('Upload failed:', error);
       setError('Failed to upload logo. Please try again.');
+      // Keep the preview even if upload fails
     } finally {
       setUploading(false);
     }
@@ -156,6 +158,20 @@ export default function BountySetup() {
             <div className="p-8 bg-neutral-800/50 border border-neutral-700/50 rounded-lg">
                 <h2 className="text-2xl font-semibold text-white mb-6">Program Details</h2>
                 <div className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-medium mb-2 flex items-center"><CodeBracketIcon className="h-5 w-5 mr-2 text-neutral-400"/>Select Repository</label>
+                        <select
+                            value={selectedRepo}
+                            onChange={(e) => setSelectedRepo(e.target.value)}
+                            className="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                            required
+                        >
+                            <option value="">Select a repository</option>
+                            {githubData.repos.map(repo => (
+                            <option key={repo.id} value={repo.full_name}>{repo.full_name}</option>
+                            ))}
+                        </select>
+                    </div>
                     <div>
                         <label className="block text-sm font-medium mb-2 flex items-center"><BuildingOfficeIcon className="h-5 w-5 mr-2 text-neutral-400"/>Company/Organization Name</label>
                         <input
