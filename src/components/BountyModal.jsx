@@ -2,6 +2,7 @@ import { XMarkIcon, LockClosedIcon, CodeBracketIcon, SparklesIcon } from '@heroi
 import { Fragment } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
 
 const rankColors = {
     Gold: {
@@ -131,13 +132,10 @@ export function BountyModal({ bounty, onClose }) {
                             <span>Start Hacking</span>
                         </button>
 
-                        <button
-                            onClick={handleStartHacking}
-                            className="mt-4 w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4  transition-colors text-lg"
-                        >
+                        <Link href={`/bounties/${bounty.id}/submit`} className="mt-4 w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 transition-colors text-lg">
                             <SparklesIcon className="h-6 w-6"/>
                             <span>Make a Submission</span>
-                        </button>
+                        </Link>
                     </>
                 ) : (
                     <div className={`p-6 text-center ${colors.bg} border ${colors.border}`}>
