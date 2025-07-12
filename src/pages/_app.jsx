@@ -28,6 +28,24 @@ export default function App({ Component, pageProps }) {
   };
 
   const fetchUser = async () => {
+    // Check if user has a token before making the request
+    const getCookie = () => {
+      try {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; idToken=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      } catch (error) {
+        return "";
+      }
+      return "";
+    };
+
+    const token = getCookie();
+    if (!token) {
+      // No token, user is not authenticated - don't make the API call
+      return;
+    }
+
     const url = process.env.NEXT_PUBLIC_API_URL + "/account";
     const user = await request(url, "GET", null);
 

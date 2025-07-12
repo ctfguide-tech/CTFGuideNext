@@ -14,12 +14,19 @@ const request = async (url, req_method, body) => {
       const data = await response.json();
 
       if(response.status === 401 && data.error) {
-        const parts = window.location.href.split("/");
-        const path = "/" + parts[parts.length-1];
+        const url = new URL(window.location.href);
+        const path = url.pathname;
         const pathNames = ["/", "/login", "/careers", "/register", 
           "/onboarding", "/forgot-password", "/education", "/userrs", 
           "/privacy-policy","/404", "/terms-of-service", "/learn"];
-        if(!pathNames.includes(path) && !path.startsWith("/forgot-password")) window.location.href = "/login";
+        
+        // Check if it's a challenge page (UUID format)
+        const challengePathRegex = /^\/challenges\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/;
+        const isChallengePage = challengePathRegex.test(path);
+        
+        if(!pathNames.includes(path) && !path.startsWith("/forgot-password") && !isChallengePage) {
+          window.location.href = "/login";
+        }
         return null;
       }
 
@@ -37,12 +44,19 @@ const request = async (url, req_method, body) => {
       const data = await response.json();
 
       if(response.status === 401 && data.error) {
-        const parts = window.location.href.split("/");
-        const path = "/" + parts[parts.length-1];
+        const url = new URL(window.location.href);
+        const path = url.pathname;
         const pathNames = ["/", "/login", "/careers", "/register", 
           "/onboarding", "/forgot-password", "/education", "/userrs", 
           "/privacy-policy","/404", "/terms-of-service", "/learn"];
-        if(!pathNames.includes(path) && !path.startsWith("/forgot-password")) window.location.href = "/login";
+        
+        // Check if it's a challenge page (UUID format)
+        const challengePathRegex = /^\/challenges\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/;
+        const isChallengePage = challengePathRegex.test(path);
+        
+        if(!pathNames.includes(path) && !path.startsWith("/forgot-password") && !isChallengePage) {
+          window.location.href = "/login";
+        }
         return null;
       }
 
