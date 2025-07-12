@@ -842,7 +842,7 @@ export default function Create() {
                     ))}
                   </div>
                 ) : (
-                  <div className="h-[500px] flex items-center justify-center p-4">
+                  <div className="text-center py-12 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a]">
                     <i className="fas fa-pen-fancy text-4xl text-neutral-700 mb-3"></i>
                     <p className="text-neutral-400">No writeups yet</p>
                   </div>

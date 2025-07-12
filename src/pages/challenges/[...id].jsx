@@ -1,5 +1,6 @@
 import { MarkdownViewer } from "@/components/MarkdownViewer";
 import { StandardNav } from "@/components/StandardNav";
+import { Logo } from "@/components/Logo";
 import request from "@/utils/request";
 import { Dialog } from "@headlessui/react";
 import { DocumentTextIcon } from "@heroicons/react/20/solid";
@@ -23,6 +24,164 @@ import { useRef } from 'react';
 import WriteupModal from '@/components/WriteupModal';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { useSearchParams } from 'next/navigation';
+
+// Locked content component for restricted tabs
+function LockedContent({ tabName }) {
+  const features = {
+    'Hints': {
+      icon: 'fas fa-question',
+      title: 'Progressive Hints System',
+      description: 'Get step-by-step guidance when you\'re stuck',
+      benefits: ['Smart hint progression', 'Learn at your own pace', 'Detailed explanations']
+    },
+    'Comments': {
+      icon: 'fas fa-comments',
+      title: 'Community Discussions',
+      description: 'Connect with other learners and share insights',
+      benefits: ['Ask questions', 'Share discoveries', 'Learn from others']
+    },
+    'Writeups': {
+      icon: 'fas fa-book',
+      title: 'Solution Writeups',
+      description: 'Detailed explanations of how to solve challenges',
+      benefits: ['Step-by-step solutions', 'Multiple approaches', 'Learn new techniques']
+    },
+    'AI': {
+      icon: 'fas fa-robot',
+      title: 'AI Assistant',
+      description: 'Get personalized help from our AI tutor',
+      benefits: ['Instant guidance', 'Tailored explanations', 'Available 24/7']
+    }
+  };
+
+  const feature = features[tabName] || features['Hints'];
+
+  return (
+    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+      <div className="bg-neutral-800/80 backdrop-blur-sm rounded-xl p-6 max-w-sm border border-neutral-600/50 shadow-xl">
+        <div className="text-4xl mb-4">
+          <i className={`${feature.icon} text-blue-400`}></i>
+        </div>
+        <h2 className="text-xl font-bold text-white mb-3">
+          {feature.title}
+        </h2>
+        <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+          {feature.description}
+        </p>
+        <div className="space-y-2 mb-4 text-left">
+          {feature.benefits.map((benefit, index) => (
+            <div key={index} className="flex items-center text-green-400 text-sm">
+              <i className="fas fa-check mr-2 text-xs"></i>
+              <span>{benefit}</span>
+            </div>
+          ))}
+        </div>
+        <div className="space-y-2">
+          <Link 
+            href="/login" 
+            className="block w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 text-sm transition-colors"
+          >
+            Login to Access
+          </Link>
+          <Link 
+            href="/register" 
+            className="block w-full bg-transparent border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white font-semibold py-2 px-4 text-sm transition-colors"
+          >
+            Create Free Account
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Simple public navigation component for unauthenticated users
+function PublicNav() {
+  return (
+    <nav className="border-b border-neutral-800 shadow">
+      <div className="px-2">
+        <div className="flex h-16 justify-between items-center">
+          <div className="flex items-center">
+            <Link href="/" aria-label="Home">
+              <Logo />
+            </Link>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link 
+              href="/login" 
+              className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+            >
+              Login
+            </Link>
+            <Link 
+              href="/register" 
+              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 text-sm font-medium transition-colors"
+            >
+              Sign Up
+            </Link>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// Utility function to check if user is authenticated
+function useAuthentication() {
+  const { username } = useContext(Context);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const token = getCookie('idToken');
+    setIsAuthenticated(!!token && !!username);
+    
+    // Set loading to false after checking authentication
+    // Small delay to prevent flash of unauthenticated content
+    setTimeout(() => {
+      setAuthLoading(false);
+    }, 100);
+  }, [username]);
+
+  return { isAuthenticated, authLoading };
+}
+
+// Counting animation hook for points
+function useCountingAnimation(targetValue, duration = 1500) {
+  const [count, setCount] = useState(targetValue || 0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const startAnimation = (newTarget) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    const startValue = count;
+    const startTime = Date.now();
+
+    const animate = () => {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(startValue + (newTarget - startValue) * easeOutQuart);
+      
+      setCount(currentCount);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(newTarget);
+        setIsAnimating(false);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  };
+
+  return { count, startAnimation, isAnimating };
+}
 
 // Move styles to a separate useEffect
 function useHighlightStyles() {
@@ -140,6 +299,20 @@ export default function Challenge() {
   const [selectedWriteup, setSelectedWriteup] = useState(null);
   const [isTerminalFullscreen, setIsTerminalFullscreen] = useState(false);
   const [isChallengeFullscreen, setIsChallengeFullscreen] = useState(true);
+  const { isAuthenticated, authLoading } = useAuthentication();
+  
+  // Context for navbar points update
+  const { points, setPoints } = useContext(Context);
+  
+  // Points animation for navbar  
+  const navbarPointsAnimation = useCountingAnimation(points, 1500);
+  
+  // Initialize animation with current points
+  useEffect(() => {
+    if (points > 0 && navbarPointsAnimation.count !== points) {
+      navbarPointsAnimation.startAnimation(points);
+    }
+  }, [points]);
 
   // I hate this
   const [urlChallengeId, urlSelectedTab, urlWriteupId] = (router ?? {})?.query?.id ?? [undefined, undefined, undefined];
@@ -158,16 +331,14 @@ export default function Challenge() {
   // Tab system is designed to keep browser state in url,
   // while mainting persistence of the terminal.
   const tabs = {
-    'description': { text: 'Description', element: DescriptionPage, },
-    'hints': { text: 'Hints', element: HintsPage, },
-
-    'comments': { text: 'Comments', element: CommentsPage, },
-
-    'write-up': { text: 'Writeups', element: WriteUpPage, },
-    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, },
-    'AI': { text: 'AI', element: AIPage, },
-
+    'description': { text: 'Description', element: DescriptionPage, requiresAuth: false },
+    'hints': { text: 'Hints', element: HintsPage, requiresAuth: true },
+    'comments': { text: 'Comments', element: CommentsPage, requiresAuth: true },
+    'write-up': { text: 'Writeups', element: WriteUpPage, requiresAuth: true },
+    'leaderboard': { text: 'Leaderboard', element: LeaderboardPage, requiresAuth: false },
+    'AI': { text: 'AI', element: AIPage, requiresAuth: true },
   }
+  // Allow selection of restricted tabs for unauthenticated users (will show locked content)
   const selectedTab = tabs[urlSelectedTab] ?? tabs.description;
 
   useEffect(() => {
@@ -180,21 +351,77 @@ export default function Challenge() {
       }
       try {
         const getChallengeByIdEndPoint = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${urlChallengeId}`;
-        const getChallengeResult = await request(getChallengeByIdEndPoint, "GET", null);
-        if (getChallengeResult.success) {
-          setCache("challenge", getChallengeResult.body);
+        
+        if (isAuthenticated) {
+          // For authenticated users, use the normal authenticated endpoint
+          const getChallengeResult = await request(getChallengeByIdEndPoint, "GET", null);
+          if (getChallengeResult.success) {
+            setCache("challenge", getChallengeResult.body);
+          }
+        } else {
+          // For unauthenticated users, use the public endpoint
+          const publicEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/public/challenges/${urlChallengeId}`;
+          
+          const response = await fetch(publicEndpoint, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            
+            if (result.success && result.challenge) {
+              setCache("challenge", result.challenge);
+            }
+          } else {
+            
+            // Fallback to placeholder if the public endpoint fails
+            const placeholderChallenge = {
+              id: urlChallengeId,
+              title: "Challenge Preview",
+              content: `
+## Access Required
+
+This challenge requires you to **login to CTFGuide** to view the full content, access hints, submit flags, and track your progress.
+
+### What you'll get with a free account:
+- 🎯 Full challenge descriptions and content
+- 💡 Progressive hints system  
+- 🖥️ Interactive Linux terminals
+- 📊 Progress tracking and leaderboards
+- 💬 Community discussions and writeups
+- 🏆 Points and achievement system
+
+**Ready to start your cybersecurity journey?**
+              `,
+              difficulty: "PREVIEW",
+              category: ["Preview"],
+              creator: 'CTFGuide',
+              views: 0,
+              upvotes: 0,
+              downvotes: 0,
+            };
+            setCache("challenge", placeholderChallenge);
+          }
         }
-      } catch (error) { throw "Failed to fetch challenge: " + error; }
+      } catch (error) { 
+        console.error("Failed to fetch challenge: " + error);
+      }
     })();
-  }, [urlChallengeId]);
+  }, [urlChallengeId, isAuthenticated]);
 
   const [loadingFlagSubmit, setLoadingFlagSubmit] = useState(false);
   const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
   const [awardedPoints, setAwardedPoints] = useState(0);
 
-  const showPointsModal = (points) => {
-    setAwardedPoints(points);
+  const showPointsModal = (newPoints) => {
+    setAwardedPoints(newPoints);
     setIsPointsModalOpen(true);
+    
+    // Update navbar points with animation
+    const newTotalPoints = points + newPoints;
+    setPoints(newTotalPoints);
+    navbarPointsAnimation.startAnimation(newTotalPoints);
   };
 
   const onSubmitFlag = (e) => {
@@ -470,6 +697,37 @@ export default function Challenge() {
     }
   };
 
+
+  // Show loading state while determining authentication
+  if (authLoading) {
+    return (
+      <>
+        <Head>
+          <title>Challenge - CTFGuide</title>
+          <meta
+            name="description"
+            content="Cybersecurity made easy for everyone"
+          />
+          <style>
+            @import
+            url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
+          </style>
+        </Head>
+        <div className='flex flex-col text-white overflow-x-auto overflow-y-hidden min-h-0 h-screen md:min-w-[64rem]'>
+          <StandardNav alignCenter={false} />
+          <main className="flex flex-grow items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl mb-4">
+                <i className="fas fa-spinner fa-spin text-blue-400"></i>
+              </div>
+              <p className="text-gray-300">Loading challenge...</p>
+            </div>
+          </main>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
   
@@ -487,23 +745,34 @@ export default function Challenge() {
       <FlagDialog />
       <PointsModal isOpen={isPointsModalOpen} setIsOpen={setIsPointsModalOpen} points={awardedPoints} />
       <div className='flex flex-col text-white overflow-x-auto overflow-y-hidden min-h-0 h-screen md:min-w-[64rem]'>
-        <StandardNav alignCenter={false} />
+        {isAuthenticated ? (
+          <StandardNav 
+            alignCenter={false} 
+            animatedPoints={navbarPointsAnimation.count}
+            isPointsAnimating={navbarPointsAnimation.isAnimating}
+          />
+        ) : (
+          <PublicNav />
+        )}
         <main className="flex flex-grow p-2 gap-2 overflow-y-hidden flex-col md:flex-row">
           {isChallengeFullscreen && (
             <div className={`flex flex-col flex-1 bg-neutral-800 overflow-y-hidden rounded-md`}>
-              <div className="flex shrink-0 p-1 items-center gap-1 bg-neutral-700 h-12 w-full overflow-x-auto">
+              <div className="flex shrink-0 p-2 items-center gap-2 bg-neutral-700 h-12 w-full overflow-x-auto">
                 {Object.entries(tabs).map(([url, tab]) => (
                   <TabLink 
                     tabName={tab.text} 
                     selected={selectedTab === tab} 
                     url={`/challenges/${urlChallengeId}/${url}`} 
                     key={url} 
-                    className="text-sm md:text-base px-2 md:px-4"
+                    requiresAuth={tab.requiresAuth}
+                    isAuthenticated={isAuthenticated}
                   />
                 ))}
               </div>
               {selectedWriteup ? (
                 <WriteupModal isOpen={true} onClose={() => setSelectedWriteup(null)} writeup={selectedWriteup} />
+              ) : selectedTab.requiresAuth && !isAuthenticated ? (
+                <LockedContent tabName={selectedTab.text} />
               ) : (
                 <selectedTab.element 
                   cache={cache} 
@@ -514,24 +783,35 @@ export default function Challenge() {
                 />
               )}
               <div className='flex w-full h-full grow basis-0'></div>
-              <div className="shrink-0 bg-neutral-800 h-12 w-full">
-                <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
-                  <input 
-                    name="flag" 
-                    type="text" 
-                    required 
-                    placeholder="Enter flag submission here" 
-                    className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2 text-sm md:text-base" 
-                  />
-                  <input 
-                    name="submitFlag" 
-                    type="submit" 
-                    value="Submit Flag" 
-                    disabled={loadingFlagSubmit} 
-                    className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm text-sm md:text-base" 
-                  />
-                </form>
-              </div>
+              {isAuthenticated ? (
+                <div className="shrink-0 bg-neutral-800 h-12 w-full">
+                  <form action="" method="get" onSubmit={onSubmitFlag} className="flex p-1 gap-2 h-full">
+                    <input 
+                      name="flag" 
+                      type="text" 
+                      required 
+                      placeholder="Enter flag submission here" 
+                      className="text-white bg-neutral-900 border-neutral-600 h-full p-0 rounded-sm grow px-2 w-1/2 text-sm md:text-base" 
+                    />
+                    <input 
+                      name="submitFlag" 
+                      type="submit" 
+                      value="Submit Flag" 
+                      disabled={loadingFlagSubmit} 
+                      className="h-full border border-green-500/50 hover:border-green-200/50 bg-green-600 hover:bg-green-500 disabled:bg-neutral-800 disabled:text-neutral-400 disabled:border-neutral-500/50 transition-all text-green-50 cursor-pointer disabled:cursor-default px-2 rounded-sm text-sm md:text-base" 
+                    />
+                  </form>
+                </div>
+              ) : (
+                <div className="shrink-0 bg-neutral-800 h-12 w-full flex items-center justify-center">
+                  <div className="bg-blue-600/20 border border-blue-500/50 rounded px-4 py-2 text-blue-400 text-sm">
+                    <i className="fas fa-lock mr-2"></i>
+                    <Link href="/login" className="text-blue-400 hover:text-blue-300 underline">
+                      Login to CTFGuide
+                    </Link> to submit flags and track your progress
+                  </div>
+                </div>
+              )}
               <button
                 onClick={() => {
                   setIsChallengeFullscreen(false);
@@ -546,59 +826,87 @@ export default function Challenge() {
             <div className={`flex md:hidden flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md`}>
               <div className="grow bg-neutral-950 w-full overflow-hidden">
                 <div className="h-full">
-                  {foundTerminal && (
-                    <div className="flex py-1  mb-4 text-xs">
-                      <h1 className="text-xs font-semibold py-2  pl-2">
-                        Username: {userName}
-                        <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
-                          <i className="fas fa-copy"></i>
-                        </button>
-                      </h1>
-                      <h1 className="text-xs font-semibold py-2  pl-2">
-                        Password: {password}
-                        <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
-                          <i className="fas fa-copy"></i>
-                        </button>
-                      </h1>
-                      <h1 className="text-xs ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
-                        Remaining Time: {formatTime(minutesRemaining)}
-                        <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
-                        {showMessage && (
-                          <span className="bg-neutral-800 px-2 py-1 absolute right-5 top-32 max-w-[20rem] text-sm text-yellow-500">
-                            Sometimes browsers block iframes, try opening the terminal in full screen if it the terminal is empty.
-                            <button onClick={() => setShowMessage(false)} className="ml-2 text-red-500 hover:text-red-300">
-                              Dismiss
+                  {isAuthenticated ? (
+                    <>
+                      {foundTerminal && (
+                        <div className="flex py-1  mb-4 text-xs">
+                          <h1 className="text-xs font-semibold py-2  pl-2">
+                            Username: {userName}
+                            <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
+                              <i className="fas fa-copy"></i>
                             </button>
-                          </span>
-                        )}
-                      </h1>
-                    </div>
-                  )}
-                  {fetchingTerminal ? (
-                    <div className="flex mx-auto text-center justify-center items-center h-full">
-                      <div>
-                        <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
-                        <span className="text-white text-xl">{loadingMessage}</span>
-                        <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
-
-                        <br>
-                        </br>
-
-                      </div>
-                    </div>
+                          </h1>
+                          <h1 className="text-xs font-semibold py-2  pl-2">
+                            Password: {password}
+                            <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
+                              <i className="fas fa-copy"></i>
+                            </button>
+                          </h1>
+                          <h1 className="text-xs ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
+                            Remaining Time: {formatTime(minutesRemaining)}
+                            <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
+                            {showMessage && (
+                              <span className="bg-neutral-800 px-2 py-1 absolute right-5 top-32 max-w-[20rem] text-sm text-yellow-500">
+                                Sometimes browsers block iframes, try opening the terminal in full screen if it the terminal is empty.
+                                <button onClick={() => setShowMessage(false)} className="ml-2 text-red-500 hover:text-red-300">
+                                  Dismiss
+                                </button>
+                              </span>
+                            )}
+                          </h1>
+                        </div>
+                      )}
+                      {fetchingTerminal ? (
+                        <div className="flex mx-auto text-center justify-center items-center h-full">
+                          <div>
+                            <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
+                            <span className="text-white text-xl">{loadingMessage}</span>
+                            <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+                          </div>
+                        </div>
+                      ) : (
+                        isTerminalBooted ? (
+                          <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                        ) : (
+                          <div className="flex mx-auto text-center justify-center items-center h-full">
+                            <button
+                              onClick={handleBootTerminal}
+                              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                              Boot Terminal
+                            </button>
+                          </div>
+                        )
+                      )}
+                    </>
                   ) : (
-                    isTerminalBooted ? (
-                      <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
-                    ) : (
-                      <div className="flex mx-auto text-center justify-center items-center h-full">
-                        <button
-                          onClick={handleBootTerminal}
-                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
-                        >
-                          Boot Terminal
-                        </button>
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                      <div className="bg-neutral-800/80 backdrop-blur-sm rounded-xl p-6 max-w-sm border border-neutral-600/50 shadow-xl">
+                        <div className="text-4xl mb-4">
+                          <i className="fas fa-terminal text-blue-400"></i>
+                        </div>
+                        <h2 className="text-lg font-bold text-white mb-3">
+                          You'll need to login to boot a terminal for this channel.
+                        </h2>
+                        <p className="text-gray-300 text-sm mb-4">
+                          Login to access interactive terminals and challenge features.
+                        </p>
+                        <div className="space-y-2">
+                          <Link 
+                            href="/login" 
+                            className="block w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 text-sm transition-colors"
+                          >
+                            Login
+                          </Link>
+                          <Link 
+                            href="/register" 
+                            className="block w-full bg-transparent border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white font-semibold py-2 px-4 text-sm transition-colors"
+                          >
+                            Sign Up
+                          </Link>
+                        </div>
                       </div>
-                    )
+                    </div>
                   )}
                 </div>
               </div>
@@ -615,58 +923,107 @@ export default function Challenge() {
           <div className="hidden md:flex flex-col flex-1 bg-neutral-800 overflow-hidden rounded-md">
             <div className="grow bg-neutral-950 w-full overflow-hidden">
               <div className="h-full">
-                {foundTerminal && (
-                  <div className="flex">
-                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
-                      Username: {userName}
-                      <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
-                        <i className="fas fa-copy"></i>
-                      </button>
-                    </h1>
-                    <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
-                      Password: {password}
-                      <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
-                        <i className="fas fa-copy"></i>
-                      </button>
-                    </h1>
-                    <h1 className="text-sm ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
-                      Remaining Time: {formatTime(minutesRemaining)}
-                      <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
-                      {showMessage && (
-                        <span className="bg-neutral-800 px-2 py-1 absolute right-5 top-32 max-w-[20rem] text-sm text-yellow-500">
-                          Sometimes browsers block iframes, try opening the terminal in full screen if it the terminal is empty.
-                          <button onClick={() => setShowMessage(false)} className="ml-2 text-red-500 hover:text-red-300">
-                            Dismiss
+                {isAuthenticated ? (
+                  <>
+                    {foundTerminal && (
+                      <div className="flex">
+                        <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
+                          Username: {userName}
+                          <button onClick={() => copyToClipboard(userName)} className="ml-2 text-blue-500 hover:text-blue-300">
+                            <i className="fas fa-copy"></i>
                           </button>
-                        </span>
-                      )}
-                    </h1>
-                  </div>
-                )}
-                {fetchingTerminal ? (
-                  <div className="flex mx-auto text-center justify-center items-center h-full">
-                    <div className="flex flex-col items-center">
-                      <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
-                      <span className="text-white text-xl">{loadingMessage}</span>
-                      <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
-                      <h1 className="text-white text-lg mt-4 font-bold">Your terminal is hosted on a node sponsored by <a href="https://m.do.co/c/b99e7533012e" target="_blank" className="text-blue-500 hover:text-blue-300">DigitalOcean</a></h1>
-                      <a className="mt-4 mx-auto text-center" href="https://www.digitalocean.com/?refcode=b99e7533012e&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg" alt="DigitalOcean Referral Badge" /></a>
-
-                    </div>
-                  </div>
+                        </h1>
+                        <h1 className="text-sm font-semibold py-2 line-clamp-1 pl-2">
+                          Password: {password}
+                          <button onClick={() => copyToClipboard(password)} className="ml-2 text-blue-500 hover:text-blue-300">
+                            <i className="fas fa-copy"></i>
+                          </button>
+                        </h1>
+                        <h1 className="text-sm ml-auto px-4 text-sm font-semibold py-2 line-clamp-1 pl-2">
+                          Remaining Time: {formatTime(minutesRemaining)}
+                          <i onClick={() => window.open(terminalUrl, '_blank')} className="cursor-pointer hover:text-yellow-500 ml-2 fas fa-expand text-white"></i>
+                          {showMessage && (
+                            <span className="bg-neutral-800 px-2 py-1 absolute right-5 top-32 max-w-[20rem] text-sm text-yellow-500">
+                              Sometimes browsers block iframes, try opening the terminal in full screen if it the terminal is empty.
+                              <button onClick={() => setShowMessage(false)} className="ml-2 text-red-500 hover:text-red-300">
+                                Dismiss
+                              </button>
+                            </span>
+                          )}
+                        </h1>
+                      </div>
+                    )}
+                    {fetchingTerminal ? (
+                      <div className="flex mx-auto text-center justify-center items-center h-full">
+                        <div className="flex flex-col items-center">
+                          <h1 className="text-white text-4xl"><i className="fas fa-spinner fa-spin"></i></h1>
+                          <span className="text-white text-xl">{loadingMessage}</span>
+                          <p className="text-white text-lg">If you see a black screen, please wait a few seconds and refresh the page.</p>
+                          <h1 className="text-white text-lg mt-4 font-bold">Your terminal is hosted on a node sponsored by <a href="https://m.do.co/c/b99e7533012e" target="_blank" className="text-blue-500 hover:text-blue-300">DigitalOcean</a></h1>
+                          <a className="mt-4 mx-auto text-center" href="https://www.digitalocean.com/?refcode=b99e7533012e&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg" alt="DigitalOcean Referral Badge" /></a>
+                        </div>
+                      </div>
+                    ) : (
+                      isTerminalBooted ? (
+                        <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
+                      ) : (
+                        <div className="flex mx-auto text-center justify-center items-center h-full">
+                          <button
+                            onClick={handleBootTerminal}
+                            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                          >
+                            Boot Terminal
+                          </button>
+                        </div>
+                      )
+                    )}
+                  </>
                 ) : (
-                  isTerminalBooted ? (
-                    <iframe src={terminalUrl} className="pl-2 pb-10 w-full h-full overflow-hidden " />
-                  ) : (
-                    <div className="flex mx-auto text-center justify-center items-center h-full">
-                      <button
-                        onClick={handleBootTerminal}
-                        className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
-                      >
-                        Boot Terminal
-                      </button>
+                  <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                    <div className="bg-neutral-800/80 backdrop-blur-sm rounded-xl p-6 max-w-sm border border-neutral-600/50 shadow-xl">
+                      <div className="text-4xl mb-4">
+                        <i className="fas fa-terminal text-blue-400"></i>
+                      </div>
+                      <h2 className="text-xl font-bold text-white mb-3">
+                        You'll need to login to boot a terminal for this channel.
+                      </h2>
+                      <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+                        Get full access to interactive Linux terminals, file downloads, and hands-on cybersecurity learning.
+                      </p>
+                      <div className="space-y-2 mb-4 text-left">
+                        <div className="flex items-center text-green-400 text-sm">
+                          <i className="fas fa-check mr-2 text-xs"></i>
+                          <span>Interactive Linux terminals</span>
+                        </div>
+                        <div className="flex items-center text-green-400 text-sm">
+                          <i className="fas fa-check mr-2 text-xs"></i>
+                          <span>Challenge file downloads</span>
+                        </div>
+                        <div className="flex items-center text-green-400 text-sm">
+                          <i className="fas fa-check mr-2 text-xs"></i>
+                          <span>Progress tracking & hints</span>
+                        </div>
+                        <div className="flex items-center text-green-400 text-sm">
+                          <i className="fas fa-check mr-2 text-xs"></i>
+                          <span>Community features</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Link 
+                          href="/login" 
+                          className="block w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 text-sm transition-colors"
+                        >
+                          Login to CTFGuide
+                        </Link>
+                        <Link 
+                          href="/register" 
+                          className="block w-full bg-transparent border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white font-semibold py-2 px-4 text-sm transition-colors"
+                        >
+                          Create Free Account
+                        </Link>
+                      </div>
                     </div>
-                  )
+                  </div>
                 )}
               </div>
             </div>
@@ -777,8 +1134,11 @@ function PointsModal({ isOpen, setIsOpen, points }) {
   );
 }
 
-function TabLink({ tabName, selected, url, className }) {
+function TabLink({ tabName, selected, url, className, requiresAuth, isAuthenticated }) {
+  const isLocked = requiresAuth && !isAuthenticated;
   const selectedStyle = selected ? 'text-white bg-neutral-600' : 'text-neutral-400';
+  const lockStyle = isLocked ? 'opacity-75 cursor-not-allowed' : '';
+  
   const icon = {
     'Comments': 'fas fa-comments text-green-500',
     'Leaderboard': 'fas fa-trophy text-yellow-500',
@@ -788,12 +1148,33 @@ function TabLink({ tabName, selected, url, className }) {
     'AI': 'fas fa-robot text-orange-500',
   }[tabName] || 'fas fa-file-alt text-blue-500'
 
+  const content = (
+    <div className={`flex justify-center items-center ${selectedStyle} ${lockStyle} hover:text-white transition-all duration-400 px-4 py-2 hover:bg-neutral-600 rounded-sm h-full text-base min-w-fit whitespace-nowrap`}>
+      <i className={`${icon} mr-2`}></i>
+      <span>{tabName ?? 'This is a test button'}</span>
+      {isLocked && <i className="fas fa-lock ml-2 text-xs"></i>}
+    </div>
+  );
+
+  if (isLocked) {
+    return (
+      <div 
+        title="Create a free account to access this feature"
+        className="relative group"
+      >
+        {content}
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+          Create a free account to access this feature
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Link href={url} className={`flex justify-center items-center ${selectedStyle} hover:text-white transition-all duration-400 px-2 hover:bg-neutral-600 rounded-sm h-full ${className}`}>
-      <i className={`${icon} w-6 mr-1 inline-flex`}></i>
-      {tabName ?? 'This is a test button'}
+    <Link href={url}>
+      {content}
     </Link>
-  )
+  );
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -875,12 +1256,12 @@ function HintsPage({ cache }) {
 
 
 function DescriptionPage({ cache, fileIDName, fileIDLink }) {
-
-
   const { challenge } = cache;
+  const { username } = useContext(Context);
+  const isAuthenticated = !!username && !!getCookie('idToken');
 
   const [solvesData, setSolvesData] = useState([]);
-  const [creatorMode, setCreatorMode] = useState(false); // Add state for creator mode
+  const [creatorMode, setCreatorMode] = useState(false);
 
   const [insights, setInsights] = useState({
     solves: 0,
@@ -890,6 +1271,8 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   });
 
   useEffect(() => {
+    if (!challenge || !isAuthenticated) return;
+
     const fetchSolvesData = async () => {
       try {
         const response = await request(`${process.env.NEXT_PUBLIC_API_URL}/${challenge.id}/insights/solvesLast10Days`, 'GET', null);
@@ -923,11 +1306,10 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
     fetchSolvesData();
     fetchInsights();
     fetchCreatorMode();
-  }, [challenge]);
+  }, [challenge, isAuthenticated]);
 
   const [challengeData, setChallengeData] = useState(null);
   const [authorPfp, setAuthorPfp] = useState(null);
-  const { username } = useContext(Context);
   const colorText = {
     'BEGINNER': 'bg-blue-500 text-blue-50',
     'EASY': 'bg-green-500 text-green-50',
@@ -937,6 +1319,7 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   };
 
   async function upvote() {
+    if (!isAuthenticated) return;
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/upvote`;
     const response = await request(url, "POST", {});
     if (!response || !response.success) {
@@ -947,6 +1330,7 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
   }
 
   async function downvote() {
+    if (!isAuthenticated) return;
     const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challenge.id}/downvote`;
     const response = await request(url, "POST", {});
     if (!response || !response.success) {
@@ -983,12 +1367,20 @@ function DescriptionPage({ cache, fileIDName, fileIDLink }) {
         <h1 className="flex align-middle text-2xl font-semibold py-2 line-clamp-1">
           {challenge ? challenge.title : <Skeleton baseColor="#333" highlightColor="#666" />}
           <div className="ml-auto rounded-sm text-right text-2xl flex items-center">
-            <div onClick={upvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
-              <i className="mr-2 fas fa-arrow-up text-green-500 cursor-pointer"></i>
+            <div 
+              onClick={isAuthenticated ? upvote : undefined} 
+              className={`px-2 rounded-sm ${isAuthenticated ? 'cursor-pointer hover:bg-neutral-700' : 'cursor-not-allowed opacity-50'}`}
+              title={isAuthenticated ? '' : 'Login to vote'}
+            >
+              <i className="mr-2 fas fa-arrow-up text-green-500"></i>
               {challengeData && challengeData.upvotes !== undefined ? challengeData.upvotes : <Skeleton width={20} />}
             </div>
-            <div onClick={downvote} className="cursor-pointer px-2 hover:bg-neutral-700 rounded-sm">
-              <i className="mr-2 fas fa-arrow-down text-red-500 cursor-pointer"></i>
+            <div 
+              onClick={isAuthenticated ? downvote : undefined} 
+              className={`px-2 rounded-sm ${isAuthenticated ? 'cursor-pointer hover:bg-neutral-700' : 'cursor-not-allowed opacity-50'}`}
+              title={isAuthenticated ? '' : 'Login to vote'}
+            >
+              <i className="mr-2 fas fa-arrow-down text-red-500"></i>
               {challengeData && challengeData.downvotes !== undefined ? challengeData.downvotes : <Skeleton width={20} />}
             </div>
           </div>
