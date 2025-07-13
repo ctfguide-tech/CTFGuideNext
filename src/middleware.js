@@ -33,6 +33,12 @@ export function middleware(req) {
     return NextResponse.next();
   }
 
+  // Allow access to specific challenge pages (UUID format)
+  const challengePathRegex = /^\/challenges\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/;
+  if (challengePathRegex.test(pathname)) {
+    return NextResponse.next();
+  }
+
   const idToken = req.cookies.get('idToken');
 
   // Redirect to login if token is missing or invalid

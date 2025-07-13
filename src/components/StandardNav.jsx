@@ -57,8 +57,14 @@ const DEFAULT_NOTIFICATION = {
   receivedTime: '',
 };
 
-export function StandardNav({ guestAllowed, alignCenter = true }) {
+export function StandardNav({ guestAllowed, alignCenter = true, animatedPoints, isPointsAnimating: propIsPointsAnimating }) {
   const { role, points } = useContext(Context);
+  
+  // Use animated points if provided, otherwise use regular points
+  const displayPoints = animatedPoints !== undefined ? animatedPoints : points;
+  
+  // Use prop animation state if provided, otherwise track locally
+  const isPointsAnimating = propIsPointsAnimating !== undefined ? propIsPointsAnimating : false;
 
   const [terminaIsOpen, setTerminalIsOpen] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
@@ -469,11 +475,15 @@ export function StandardNav({ guestAllowed, alignCenter = true }) {
                     )}
 
                     <div
-                      className="tooltip mb-0 ml-4 flex cursor-pointer items-center space-x-2 rounded-lg px-4 py-1"
+                      className={`tooltip mb-0 ml-4 flex cursor-pointer items-center space-x-2 rounded-lg px-4 py-1 transition-all duration-300 ${
+                        isPointsAnimating ? 'ring-2 ring-green-400 shadow-lg shadow-green-400/20' : ''
+                      }`}
                       style={{ backgroundColor: '#212121', borderWidth: '0px' }}
                     >
-                      <h1 className="mx-auto mb-0 mt-0 text-center  text-blue-500">
-                        <i className="far fa-check-circle"></i> {points}
+                      <h1 className={`mx-auto mb-0 mt-0 text-center transition-colors duration-300 ${
+                        isPointsAnimating ? 'text-green-400' : 'text-blue-500'
+                      }`}>
+                        <i className="far fa-check-circle"></i> {displayPoints}
                       </h1>
                     </div>
 
