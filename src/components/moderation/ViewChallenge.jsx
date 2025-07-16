@@ -78,7 +78,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md  text-neutral-400  focus:outline-none focus:ring-2 "
+                              className="relative text-neutral-400 focus:outline-none focus:ring-2"
                               onClick={() => setOpen(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -100,7 +100,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                         <div className='col-span-3'> 
                         <h1 className='font-bold text-blue-600 mb-1'>Description</h1> 
 
-                        <MarkdownViewer className='bg-neutral-800 p-3 rounded-md' content={challenge && challenge.content} />
+                        <MarkdownViewer className='bg-neutral-800 p-3' content={challenge && challenge.content} />
                         </div>
                         <div>
                         <h1 className='font-bold text-blue-600 mb-1'>Flag</h1>
@@ -170,7 +170,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
       </textarea>
       
       <br></br><br></br>
-      <div className='flex rounded-md'>
+      <div className='flex'>
 <div>      <h1 className='font-bold text-blue-600 mb-1'>Set Base Points</h1> 
 </div>
       <div className='ml-auto'><p className='mb-2 text-sm font-bold'><i className="fas fa-info-circle"></i> <span className='text-blue-200'>Beginner: 100</span>,
@@ -191,18 +191,18 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                     <div className="flex flex-shrink-0 justify-end px-4 py-4">
                       <button
                         type="button"
-                        className="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
+                        className="px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
                         onClick={() => setOpen(false)}
                       >
                         <XMarkIcon className="h-5 w-5 inline mr-2" aria-hidden="true" />
                         Cancel
                       </button>
-                      <button className='ml-4 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500' onClick={() => window.open(`../../challenges/${selected}`, '_blank')}>
+                      <button className='ml-4 bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500' onClick={() => window.open(`../../challenges/${selected}`, '_blank')}>
                         <i className="fas fa-external-link-alt mr-2"></i>
                         Go to Challenge Page
                       </button>
 
-                      <button className='ml-4 w-auto rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500' onClick={() => window.open(`../../create/edit?id=${selected}`, '_blank')}>
+                      <button className='ml-4 w-auto bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500' onClick={() => window.open(`../../create/edit?id=${selected}`, '_blank')}>
                         <i className="fas fa-edit mr-2"></i>
                         Edit Challenge
                       </button>
@@ -223,7 +223,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                           }
                         }}
                         type="button"
-                        className="ml-4  justify-center rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
+                        className="ml-4 justify-center bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
                       >
                         <i className="fas fa-exclamation-triangle mr-2"></i>
                         Request Changes
@@ -244,7 +244,7 @@ const ViewChallenge = ({ open, setOpen, selected }) => {
                         }
                       }}
                         type="submit"
-                        className="ml-4  justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+                        className="ml-4 justify-center bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
                       >
                         {isLoading ? (
                           <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

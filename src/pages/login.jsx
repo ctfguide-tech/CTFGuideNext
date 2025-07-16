@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import AuthFooter from '@/components/auth/AuthFooter';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import AccountReactivation from '@/components/AccountReactivation';
 
 import { Context } from '@/context';
 import { useContext } from 'react';
@@ -21,15 +22,17 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [accountType, setAccountType] = useState('EMAIL'); // ['EMAIL', 'GOOGLE']
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [accountSuspended, setAccountSuspended] = useState(false);
+  const [suspendedAccountData, setSuspendedAccountData] = useState(null);
 
   async function handleLoginRequest(requestOptions, isGoogle) {
     setIsLoading(true);
-    
+
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + '/account/login';
       const response = await fetch(url, requestOptions);
-      if(response.status === 404) {
-        if(isGoogle) {
+      if (response.status === 404) {
+        if (isGoogle) {
           setShowOnboarding(true);
           return;
         }
@@ -51,13 +54,30 @@ export default function Login() {
 
         router.push('/dashboard');
       } else {
-        if(data.status === 500) {
-          toast.error("There was a problem logging in, try again later");
+        // Check if account is suspended
+        if (data.code === 'ACCOUNT_SUSPENDED') {
+          setAccountSuspended(true);
+
+          // Use deletion info directly from login response
+          const deletionInfo = data.deletionInfo || null;
+
+          setSuspendedAccountData({
+            email: data.email || email,
+            message: data.message,
+            accountType: accountType,
+            password: accountType === 'EMAIL' ? password : null,
+            deletionInfo: deletionInfo, // Pass deletion info to reactivation component
+          });
+          return;
+        }
+
+        if (data.status === 500) {
+          toast.error('There was a problem logging in, try again later');
         } else {
           toast.error(data.message);
         }
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
     setIsLoading(false);
@@ -65,24 +85,24 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const requestOptions = { 
-      method: 'POST', 
-      body: JSON.stringify({ email, password, accountType: 'EMAIL'}), 
-      headers: { 'Content-Type': 'application/json' } 
+    const requestOptions = {
+      method: 'POST',
+      body: JSON.stringify({ email, password, accountType: 'EMAIL' }),
+      headers: { 'Content-Type': 'application/json' },
     };
     setAccountType('EMAIL');
     await handleLoginRequest(requestOptions, false);
-  }
+  };
 
   async function handleSuccess(data) {
     const { credential } = data;
     const decode = jwtDecode(credential);
     const { email } = decode;
     setEmail(email);
-    const requestOptions = { 
-      method: 'POST', 
-      body: JSON.stringify({ email, password: null, accountType: 'GOOGLE'}), 
-      headers: { 'Content-Type': 'application/json' }
+    const requestOptions = {
+      method: 'POST',
+      body: JSON.stringify({ email, password: null, accountType: 'GOOGLE' }),
+      headers: { 'Content-Type': 'application/json' },
     };
     setAccountType('GOOGLE');
     await handleLoginRequest(requestOptions, true);
@@ -93,8 +113,51 @@ export default function Login() {
     toast.error('Google login failed. Please try again later.');
   }
 
+  const handleReactivated = (token) => {
+    if (token) {
+      // Account was reactivated successfully
+      document.cookie = `idToken=${token}; SameSite=None; Secure; Path=/`;
+      router.push('/dashboard');
+    } else {
+      // Go back to login form
+      setAccountSuspended(false);
+      setSuspendedAccountData(null);
+    }
+  };
 
-  if(showOnboarding) return <OnBoardingTransition email={email} password={password} accountType={accountType} />
+  const handleCancelReactivation = () => {
+    setAccountSuspended(false);
+    setSuspendedAccountData(null);
+  };
+
+  if (showOnboarding)
+    return (
+      <OnBoardingTransition
+        email={email}
+        password={password}
+        accountType={accountType}
+      />
+    );
+
+  if (accountSuspended) {
+    return (
+      <>
+        <Head>
+          <title>Account Suspended - CTFGuide</title>
+        </Head>
+        <div className="flex min-h-screen items-center justify-center bg-neutral-900 p-4">
+          <AccountReactivation
+            email={suspendedAccountData?.email}
+            accountType={suspendedAccountData?.accountType}
+            password={suspendedAccountData?.password}
+            deletionInfo={suspendedAccountData?.deletionInfo}
+            onReactivated={handleReactivated}
+            onCancel={handleCancelReactivation}
+          />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -105,30 +168,24 @@ export default function Login() {
           url(&apos;https://fonts.googleapis.com/css2?family=Poppins&display=swap&apos;);
         </style>
       </Head>
-      <div style={{
-        backgroundPosition: 'center',
-        backgroundRepeat: 'repeat',
-        width: '100%',
-        height: '100%',
-      }}>
+      <div
+        style={{
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          width: '100%',
+          height: '100%',
+        }}
+      >
         <div
           style={{ fontFamily: 'Poppins, sans-serif' }}
-          className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 animate__animated animate__fadeIn "
+          className="animate__animated animate__fadeIn flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 "
         >
-
-
           <form onSubmit={handleLogin}>
-
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-
-            </div>
+            <div className="sm:mx-auto sm:w-full sm:max-w-md"></div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
               <div>
-                <div
-
-                  className=" pb-10 pt-4 px-4 shadow sm:px-10 border-t-4 border-blue-600 bg-neutral-800"
-                >
+                <div className=" border-t-4 border-blue-600 bg-neutral-800 px-4 pb-10 pt-4 shadow sm:px-10">
                   <div className="space-y-6">
                     <div
                       id="error"
@@ -139,35 +196,39 @@ export default function Login() {
                       </h1>
                     </div>
                     <div>
-                      <div className='flex items-center'>
-
-                        <h1 className='text-white  text-xl'>Login to </h1>
-                        <Link href="/" className="flex items-center ml-1">
+                      <div className="flex items-center">
+                        <h1 className="text-xl  text-white">Login to </h1>
+                        <Link href="/" className="ml-1 flex items-center">
                           <img
                             className="z-10 h-10 w-10"
                             src="/darkLogo.png"
                             alt="CTFGuide"
                           />
-                          <h1 className="text-xl text-white font-semibold">CTFGuide</h1>
+                          <h1 className="text-xl font-semibold text-white">
+                            CTFGuide
+                          </h1>
                         </Link>
                       </div>
                       <p className="text-sm text-gray-600">
                         <a
                           onClick={() => router.push('/register')}
-                          className="font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+                          className="cursor-pointer font-semibold text-blue-600 hover:text-blue-700"
                         >
                           Don't have an account?
                         </a>
                       </p>
                       <label
                         htmlFor="email"
-                        className="block text-sm font-medium text-gray-200 mt-4"
+                        className="mt-4 block text-sm font-medium text-gray-200"
                       >
                         Email
                       </label>
                       <div className="mt-1">
                         <input
-                          style={{ backgroundColor: '#161716', borderWidth: '0px' }}
+                          style={{
+                            backgroundColor: '#161716',
+                            borderWidth: '0px',
+                          }}
                           id="username"
                           name="email"
                           onChange={(e) => setEmail(e.target.value)}
@@ -188,7 +249,10 @@ export default function Login() {
                       </label>
                       <div className="mt-1">
                         <input
-                          style={{ backgroundColor: '#161716', borderWidth: '0px' }}
+                          style={{
+                            backgroundColor: '#161716',
+                            borderWidth: '0px',
+                          }}
                           id="password"
                           name="password"
                           onChange={(e) => setPassword(e.target.value)}
@@ -215,20 +279,33 @@ export default function Login() {
                       <button
                         type="submit"
                         onClick={handleLogin}
-                        className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 hover:bg-blue-700/90 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="flex w-full justify-center rounded-sm border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 hover:bg-blue-700/90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         style={{ height: '40px' }}
                       >
-                        {
-                          isLoading ? (
-                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                          </svg>                          ) : (
-                              <span className=''>
-                            Sign In
-                            </span>
-                            )
-                        }
+                        {isLoading ? (
+                          <svg
+                            className="h-5 w-5 animate-spin text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                            ></path>
+                          </svg>
+                        ) : (
+                          <span className="">Sign In</span>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -245,25 +322,27 @@ export default function Login() {
                           width="370" // Optional: Custom button width
                         />
                       </div>
-                      <div className='mt-2 bg-neutral-900 hidden'>
+                      <div className="mt-2 hidden bg-neutral-900">
                         <a
                           href="#"
-                          className="inline-flex items-center w-full justify-center rounded-sm py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
+                          className="inline-flex w-full items-center justify-center rounded-sm px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-neutral-900/50"
                         >
-                          <span className="sr-only">Sign in with Microsoft</span>
-                          <img className='w-5 h-5 mr-2' src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png" alt="Microsoft"/>
+                          <span className="sr-only">
+                            Sign in with Microsoft
+                          </span>
+                          <img
+                            className="mr-2 h-5 w-5"
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Microsoft_icon.svg/512px-Microsoft_icon.svg.png"
+                            alt="Microsoft"
+                          />
                           <p>Login with Microsoft</p>
                         </a>
                       </div>
                     </div>
                   </div>
-
-
                 </div>
 
-
-                <AuthFooter/>
-
+                <AuthFooter />
               </div>
             </div>
           </form>
@@ -287,7 +366,7 @@ export default function Login() {
 }
 
 function OnBoardingTransition(props) {
-  console.log('OnboardingTransition')
+  console.log('OnboardingTransition');
   console.log(props);
   const { email, password, accountType } = props;
   return (
@@ -301,9 +380,13 @@ function OnBoardingTransition(props) {
       </Head>
       <main>
         <div className="h-flex h-screen items-center justify-center">
-          <OnboardingFlow email={email} password={password} accountType={accountType} />
+          <OnboardingFlow
+            email={email}
+            password={password}
+            accountType={accountType}
+          />
         </div>
       </main>
     </>
-  )
+  );
 }
