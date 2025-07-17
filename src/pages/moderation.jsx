@@ -12,6 +12,7 @@ import {
   MagnifyingGlassIcon,
   ClockIcon,
   ChevronDownIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/20/solid';
 
 import Head from 'next/head';
@@ -56,12 +57,26 @@ export default function Moderation() {
     useState(null);
   const [suspendedSearchFilter, setSuspendedSearchFilter] = useState('');
 
+  // Suspension history states
+  const [suspensionHistory, setSuspensionHistory] = useState([]);
+  const [suspensionHistoryPage, setSuspensionHistoryPage] = useState(0);
+  const [totalSuspensionHistory, setTotalSuspensionHistory] = useState(0);
+  const [suspensionHistoryPagination, setSuspensionHistoryPagination] =
+    useState(null);
+  const [suspensionHistorySearchFilter, setSuspensionHistorySearchFilter] =
+    useState('');
+  const [suspensionHistoryStatusFilter, setSuspensionHistoryStatusFilter] =
+    useState('all');
+  const [suspensionHistoryLoading, setSuspensionHistoryLoading] =
+    useState(false);
+
   // Platform stats
   const [stats, setStats] = useState(null);
 
   // Active tab state
-  const [activeTab, setActiveTab] = useState('activity');
+  const [activeTab, setActiveTab] = useState('overview');
   const [activeAccountsTab, setActiveAccountsTab] = useState('suspended');
+  const [activeHistoryTab, setActiveHistoryTab] = useState('suspended');
   const [systemStatus, setSystemStatus] = useState('online');
   const [lastStatusCheck, setLastStatusCheck] = useState(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
@@ -96,10 +111,24 @@ export default function Moderation() {
   const [selectedUserForManagement, setSelectedUserForManagement] =
     useState(null);
 
-  // Warning history states
-  const [loadingWarningHistory, setLoadingWarningHistory] = useState(false);
-  const [warningHistory, setWarningHistory] = useState([]);
-  const warningsLoadedRef = useRef(false);
+  // Grouped warnings states
+  const [groupedWarnings, setGroupedWarnings] = useState([]);
+  const [groupedWarningsPage, setGroupedWarningsPage] = useState(1);
+  const [groupedWarningsTotal, setGroupedWarningsTotal] = useState(0);
+  const [groupedWarningsLoading, setGroupedWarningsLoading] = useState(false);
+  const groupedWarningsPerPage = 20;
+  const [expandedWarningUsers, setExpandedWarningUsers] = useState(new Set());
+
+  // Grouped suspensions states
+  const [groupedSuspensions, setGroupedSuspensions] = useState([]);
+  const [groupedSuspensionsPage, setGroupedSuspensionsPage] = useState(1);
+  const [groupedSuspensionsTotal, setGroupedSuspensionsTotal] = useState(0);
+  const [groupedSuspensionsLoading, setGroupedSuspensionsLoading] =
+    useState(false);
+  const groupedSuspensionsPerPage = 20;
+  const [expandedSuspensionUsers, setExpandedSuspensionUsers] = useState(
+    new Set()
+  );
 
   // Recent activity states
   const [recentActivity, setRecentActivity] = useState({
@@ -109,12 +138,15 @@ export default function Moderation() {
   });
   const [loadingActivity, setLoadingActivity] = useState(false);
   const activityLoadedRef = useRef(false);
+  const [activeActivityTab, setActiveActivityTab] = useState('comments');
 
   // New modal states for custom actions
   const [showReactivateModal, setShowReactivateModal] = useState(false);
   const [reactivateForm, setReactivateForm] = useState({ reason: '' });
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedDetails, setSelectedDetails] = useState(null);
+  const [selectedUserForReactivation, setSelectedUserForReactivation] =
+    useState(null);
 
   // Notification helper function
   const showNotification = (message, type = 'info') => {
@@ -438,6 +470,7 @@ export default function Moderation() {
           response.users.length,
           'accounts'
         );
+        console.log('Sample user data:', response.users[0]);
         setSuspendedAccounts(response.users || []);
         setSuspendedAccountsPagination(response.pagination);
         setTotalSuspendedAccounts(response.pagination?.totalCount || 0);
@@ -458,6 +491,40 @@ export default function Moderation() {
       setSuspendedAccountsPagination(null);
       setTotalSuspendedAccounts(0);
       setSuspendedAccountsPage(0);
+    }
+  };
+
+  const fetchSuspensionHistory = async (
+    page = 0,
+    searchQuery = '',
+    statusFilter = 'all'
+  ) => {
+    try {
+      setSuspensionHistoryLoading(true);
+      const response = await request(
+        `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/admin/suspension-history-enhanced?page=${page}&size=20&search=${encodeURIComponent(
+          searchQuery
+        )}&status=${statusFilter}`,
+        'GET'
+      );
+
+      if (response && response.success) {
+        setSuspensionHistory(response.history || []);
+        setSuspensionHistoryPagination(response.pagination);
+        setSuspensionHistoryPage(page);
+      } else {
+        console.error('Failed to fetch suspension history:', response);
+        setSuspensionHistory([]);
+        setSuspensionHistoryPagination(null);
+      }
+    } catch (error) {
+      console.error('Error fetching suspension history:', error);
+      setSuspensionHistory([]);
+      setSuspensionHistoryPagination(null);
+    } finally {
+      setSuspensionHistoryLoading(false);
     }
   };
 
@@ -1044,33 +1111,6 @@ export default function Moderation() {
     }
   };
 
-  // Function to refresh warning history
-  const refreshWarningHistory = async () => {
-    setLoadingWarningHistory(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setWarningHistory(data.warnings || []);
-      } else {
-        console.error('Failed to fetch warnings:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching warnings:', error);
-    } finally {
-      setLoadingWarningHistory(false);
-    }
-  };
-
   const handleWarnUser = async (prefilledUsername = null) => {
     const { username, reason } = getUsernameAndReason(prefilledUsername);
 
@@ -1091,7 +1131,7 @@ export default function Moderation() {
       const response = await request(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${username}/warn`,
         'POST',
-        { reason, severity: 'LOW' }
+        { reason }
       );
 
       if (response && response.success) {
@@ -1104,7 +1144,7 @@ export default function Moderation() {
         fetchUsers(currentUserPage, userSearchFilter);
 
         // Refresh warning history
-        refreshWarningHistory();
+        fetchWarningsPage(warningsPage);
 
         // Trigger notification check for the warned user
         window.dispatchEvent(
@@ -1202,7 +1242,6 @@ export default function Moderation() {
               w.createdAt
             ).toLocaleString()}\n`;
             historyText += `   Reason: ${w.reason}\n`;
-            historyText += `   Severity: ${w.severity}\n`;
             historyText += `   By: ${w.warnedBy}\n\n`;
           });
         }
@@ -1233,12 +1272,21 @@ export default function Moderation() {
       if (response && response.success) {
         // Refresh the suspended accounts list
         fetchSuspendedAccounts(suspendedAccountsPage);
+        // Show success notification
+        showNotification(
+          'Account reactivated successfully! The user has been notified.',
+          'success'
+        );
         return { success: true, message: response.message };
       } else {
         throw new Error(response?.error || 'Failed to reactivate account');
       }
     } catch (error) {
       console.error('Failed to reactivate account:', error);
+      showNotification(
+        `Failed to reactivate account: ${error.message}`,
+        'error'
+      );
       return { success: false, error: error.message };
     }
   };
@@ -1305,7 +1353,7 @@ export default function Moderation() {
         await fetchReportStats();
 
         console.log('9. Fetching warning history...');
-        await refreshWarningHistory();
+        await fetchWarningsPage(1);
 
         console.log('=== ALL DATA FETCH COMPLETE ===');
       } catch (error) {
@@ -1378,7 +1426,29 @@ export default function Moderation() {
     ) {
       fetchPendingDeletions(deletionsSearchFilter);
     }
-  }, [activeTab, activeAccountsTab]);
+    if (
+      activeTab === 'accounts' &&
+      activeAccountsTab === 'history' &&
+      suspensionHistory.length === 0
+    ) {
+      fetchSuspensionHistory(
+        0,
+        suspensionHistorySearchFilter,
+        suspensionHistoryStatusFilter
+      );
+    }
+    if (
+      activeTab === 'warnings' &&
+      activeHistoryTab === 'suspended' &&
+      suspensionHistory.length === 0
+    ) {
+      fetchSuspensionHistory(
+        0,
+        suspensionHistorySearchFilter,
+        suspensionHistoryStatusFilter
+      );
+    }
+  }, [activeTab, activeAccountsTab, activeHistoryTab]);
 
   // System status monitoring - client side only
   useEffect(() => {
@@ -1463,17 +1533,6 @@ export default function Moderation() {
     }
   };
 
-  // Load warning history when warnings tab is accessed
-  useEffect(() => {
-    if (
-      activeTab === 'warnings' &&
-      !warningsLoadedRef.current &&
-      !loadingWarningHistory
-    ) {
-      loadWarningHistory();
-    }
-  }, [activeTab, loadingWarningHistory]);
-
   // Load recent activity when activity tab is accessed
   useEffect(() => {
     if (
@@ -1500,109 +1559,38 @@ export default function Moderation() {
     };
   }, [showMobileMenu]);
 
-  const loadWarningHistory = async () => {
-    if (loadingWarningHistory) return; // Prevent multiple simultaneous requests
-
-    setLoadingWarningHistory(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setWarningHistory(data.warnings || []);
-        warningsLoadedRef.current = true;
-      } else {
-        console.error('Failed to fetch warnings:', response.status);
-        setWarningHistory([]);
-        warningsLoadedRef.current = true;
-      }
-    } catch (error) {
-      console.error('Error fetching warnings:', error);
-      setWarningHistory([]);
-      warningsLoadedRef.current = true;
-    } finally {
-      setLoadingWarningHistory(false);
-    }
-  };
-
   // Fetch recent activity data
   const fetchRecentActivity = async () => {
     if (loadingActivity) return;
 
     setLoadingActivity(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No authentication token found');
-        setRecentActivity({ comments: [], writeups: [], lessons: [] });
-        return;
-      }
-
       const [commentsRes, writeupsRes, lessonsRes] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/activity/comments`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/activity/writeups`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/activity/lessons`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }),
+        request(`${process.env.NEXT_PUBLIC_API_URL}/activity/comments`, 'GET'),
+        request(`${process.env.NEXT_PUBLIC_API_URL}/activity/writeups`, 'GET'),
+        request(`${process.env.NEXT_PUBLIC_API_URL}/activity/lessons`, 'GET'),
       ]);
 
       let comments = [];
       let writeups = [];
       let lessons = [];
 
-      if (commentsRes.ok) {
-        const commentsData = await commentsRes.json();
-        comments = Array.isArray(commentsData) ? commentsData : [];
+      if (commentsRes && !commentsRes.error) {
+        comments = Array.isArray(commentsRes) ? commentsRes : [];
       } else {
-        console.error(
-          'Comments API error:',
-          commentsRes.status,
-          commentsRes.statusText
-        );
+        console.error('Comments API error:', commentsRes?.error);
       }
 
-      if (writeupsRes.ok) {
-        const writeupsData = await writeupsRes.json();
-        writeups = Array.isArray(writeupsData) ? writeupsData : [];
+      if (writeupsRes && !writeupsRes.error) {
+        writeups = Array.isArray(writeupsRes) ? writeupsRes : [];
       } else {
-        console.error(
-          'Writeups API error:',
-          writeupsRes.status,
-          writeupsRes.statusText
-        );
+        console.error('Writeups API error:', writeupsRes?.error);
       }
 
-      if (lessonsRes.ok) {
-        const lessonsData = await lessonsRes.json();
-        lessons = Array.isArray(lessonsData) ? lessonsData : [];
+      if (lessonsRes && !lessonsRes.error) {
+        lessons = Array.isArray(lessonsRes) ? lessonsRes : [];
       } else {
-        console.error(
-          'Lessons API error:',
-          lessonsRes.status,
-          lessonsRes.statusText
-        );
+        console.error('Lessons API error:', lessonsRes?.error);
       }
 
       setRecentActivity({ comments, writeups, lessons });
@@ -1627,6 +1615,232 @@ export default function Moderation() {
       data: deletion,
     });
     setShowDetailsModal(true);
+  };
+
+  const [warnings, setWarnings] = useState([]);
+  const [warningsLoading, setWarningsLoading] = useState(false);
+  const [warningsPage, setWarningsPage] = useState(1);
+  const [warningsTotal, setWarningsTotal] = useState(0);
+  const warningsPerPage = 20;
+
+  const fetchWarnings = async () => {
+    setWarningsLoading(true);
+    try {
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings`,
+        'GET'
+      );
+      if (response && !response.error) {
+        setWarnings(response.warnings || []);
+        setWarningsTotal(response.total || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching warnings:', error);
+    } finally {
+      setWarningsLoading(false);
+    }
+  };
+
+  const fetchWarningsPage = async (page) => {
+    setWarningsLoading(true);
+    try {
+      console.log('Fetching warnings page:', page);
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings?page=${page}&limit=${warningsPerPage}`,
+        'GET'
+      );
+      console.log('Warnings response:', response);
+      if (response && !response.error) {
+        setWarnings(response.warnings || []);
+        setWarningsTotal(response.total || 0);
+        setWarningsPage(page);
+      } else {
+        console.error('Warnings API error:', response?.error);
+      }
+    } catch (error) {
+      console.error('Error fetching warnings:', error);
+    } finally {
+      setWarningsLoading(false);
+    }
+  };
+
+  // Function to group warnings by user
+  const groupWarningsByUser = (warnings) => {
+    const userMap = new Map();
+
+    warnings.forEach((warning) => {
+      const userId = warning.user?.id || warning.userId;
+      const username = warning.user?.username || 'Unknown';
+
+      if (!userMap.has(userId)) {
+        userMap.set(userId, {
+          userId,
+          username,
+          user: warning.user,
+          warnings: [],
+          totalWarnings: 0,
+        });
+      }
+
+      const userWarnings = userMap.get(userId);
+      userWarnings.warnings.push(warning);
+      userWarnings.totalWarnings++;
+    });
+
+    // Convert to array and sort by total warnings (descending)
+    return Array.from(userMap.values()).sort(
+      (a, b) => b.totalWarnings - a.totalWarnings
+    );
+  };
+
+  // Function to group suspensions by user
+  const groupSuspensionsByUser = (suspensions) => {
+    const userMap = new Map();
+
+    suspensions.forEach((suspension) => {
+      const userId = suspension.user?.id || suspension.userId;
+      const username = suspension.user?.username || 'Unknown';
+
+      if (!userMap.has(userId)) {
+        userMap.set(userId, {
+          userId,
+          username,
+          user: suspension.user,
+          suspensions: [],
+          totalSuspensions: 0,
+        });
+      }
+
+      const userSuspensions = userMap.get(userId);
+      userSuspensions.suspensions.push(suspension);
+      userSuspensions.totalSuspensions++;
+    });
+
+    // Convert to array and sort by total suspensions (descending)
+    return Array.from(userMap.values()).sort(
+      (a, b) => b.totalSuspensions - a.totalSuspensions
+    );
+  };
+
+  // Function to fetch grouped warnings
+  const fetchGroupedWarnings = async (page = 1) => {
+    try {
+      setGroupedWarningsLoading(true);
+
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings?page=1&limit=1000`,
+        'GET'
+      );
+
+      const warnings = response?.warnings || [];
+
+      // Group by user
+      const grouped = groupWarningsByUser(warnings);
+
+      // Paginate the grouped results
+      const startIndex = (page - 1) * groupedWarningsPerPage;
+      const endIndex = startIndex + groupedWarningsPerPage;
+      const paginatedGrouped = grouped.slice(startIndex, endIndex);
+
+      setGroupedWarnings(paginatedGrouped);
+      setGroupedWarningsTotal(grouped.length);
+      setGroupedWarningsPage(page);
+    } catch (error) {
+      console.error('Error fetching grouped warnings:', error);
+      setGroupedWarnings([]);
+      setGroupedWarningsTotal(0);
+    } finally {
+      setGroupedWarningsLoading(false);
+    }
+  };
+
+  // Function to fetch grouped suspensions
+  const fetchGroupedSuspensions = async (page = 1) => {
+    try {
+      setGroupedSuspensionsLoading(true);
+
+      const response = await request(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/suspension-history-enhanced?page=0&size=1000&search=&status=all`,
+        'GET'
+      );
+
+      const suspensions = response?.history || [];
+
+      // Group by user
+      const grouped = groupSuspensionsByUser(suspensions);
+
+      // Paginate the grouped results
+      const startIndex = (page - 1) * groupedSuspensionsPerPage;
+      const endIndex = startIndex + groupedSuspensionsPerPage;
+      const paginatedGrouped = grouped.slice(startIndex, endIndex);
+
+      setGroupedSuspensions(paginatedGrouped);
+      setGroupedSuspensionsTotal(grouped.length);
+      setGroupedSuspensionsPage(page);
+    } catch (error) {
+      console.error('Error fetching grouped suspensions:', error);
+      setGroupedSuspensions([]);
+      setGroupedSuspensionsTotal(0);
+    } finally {
+      setGroupedSuspensionsLoading(false);
+    }
+  };
+
+  // Function to toggle warning user expansion
+  const toggleWarningUserExpansion = (userId) => {
+    const newExpanded = new Set(expandedWarningUsers);
+    if (newExpanded.has(userId)) {
+      newExpanded.delete(userId);
+    } else {
+      newExpanded.add(userId);
+    }
+    setExpandedWarningUsers(newExpanded);
+  };
+
+  // Function to toggle suspension user expansion
+  const toggleSuspensionUserExpansion = (userId) => {
+    const newExpanded = new Set(expandedSuspensionUsers);
+    if (newExpanded.has(userId)) {
+      newExpanded.delete(userId);
+    } else {
+      newExpanded.add(userId);
+    }
+    setExpandedSuspensionUsers(newExpanded);
+  };
+
+  useEffect(() => {
+    if (activeTab === 'warnings') {
+      if (activeHistoryTab === 'suspended') {
+        fetchGroupedSuspensions(1);
+      } else if (activeHistoryTab === 'warnings') {
+        fetchGroupedWarnings(1);
+      }
+    }
+  }, [activeTab, activeHistoryTab]);
+
+  const handleReactivateClick = (user) => {
+    setSelectedUserForReactivation(user);
+    setReactivateForm({ reason: '' });
+    setShowReactivateModal(true);
+  };
+
+  const submitReactivationModal = async () => {
+    if (!selectedUserForReactivation) return;
+
+    try {
+      const result = await reactivateAccount(
+        selectedUserForReactivation.id,
+        reactivateForm.reason
+      );
+
+      if (result.success) {
+        setShowReactivateModal(false);
+        setSelectedUserForReactivation(null);
+        setReactivateForm({ reason: '' });
+      }
+    } catch (error) {
+      console.error('Error in reactivation modal:', error);
+    }
   };
 
   return (
@@ -1661,6 +1875,48 @@ export default function Moderation() {
                 </div>
               </div>
               <div className="flex items-center space-x-3">
+                {/* Refresh Button - Desktop */}
+                <button
+                  onClick={() => {
+                    if (activeTab === 'accounts') {
+                      if (activeAccountsTab === 'suspended') {
+                        fetchSuspendedAccounts(
+                          suspendedAccountsPage,
+                          suspendedSearchFilter
+                        );
+                      } else if (activeAccountsTab === 'history') {
+                        fetchSuspensionHistory(
+                          suspensionHistoryPage,
+                          suspensionHistorySearchFilter,
+                          suspensionHistoryStatusFilter
+                        );
+                      } else if (activeAccountsTab === 'deleted') {
+                        fetchPendingDeletions(deletionsSearchFilter);
+                      }
+                    } else if (activeTab === 'users') {
+                      fetchUsers(currentUserPage, userSearchFilter);
+                    } else if (activeTab === 'challenges') {
+                      fetchPendingChallenges();
+                    } else if (activeTab === 'reports') {
+                      fetchReports(reportFilters);
+                    } else if (activeTab === 'warnings') {
+                      if (activeHistoryTab === 'suspended') {
+                        fetchGroupedSuspensions(groupedSuspensionsPage);
+                      } else if (activeHistoryTab === 'warnings') {
+                        fetchGroupedWarnings(groupedWarningsPage);
+                      }
+                    } else if (activeTab === 'activity') {
+                      fetchRecentActivity();
+                    } else {
+                      fetchAllData();
+                    }
+                  }}
+                  className="hidden items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:flex"
+                >
+                  <i className="fas fa-sync-alt text-sm"></i>
+                  <span>Refresh</span>
+                </button>
+
                 <div className="bg-neutral-700 px-3 py-2">
                   <div className="flex items-center space-x-2">
                     <div
@@ -1697,35 +1953,171 @@ export default function Moderation() {
                     className="flex w-full items-center justify-between border border-neutral-600 bg-neutral-800 px-4 py-3 text-left text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <div className="flex items-center space-x-3">
-                      {activeTab === 'overview' && <ChartBarIcon className="h-5 w-5 text-blue-400" />}
-                      {activeTab === 'activity' && <ClockIcon className="h-5 w-5 text-blue-400" />}
-                      {activeTab === 'users' && <UserGroupIcon className="h-5 w-5 text-blue-400" />}
-                      {activeTab === 'challenges' && <DocumentTextIcon className="h-5 w-5 text-blue-400" />}
-                      {activeTab === 'reports' && <ExclamationTriangleIcon className="h-5 w-5 text-blue-400" />}
-                      {activeTab === 'accounts' && <UserGroupIcon className="h-5 w-5 text-blue-400" />}
-                      {activeTab === 'warnings' && <ExclamationTriangleIcon className="h-5 w-5 text-blue-400" />}
+                      {/* Mobile Logo */}
+                      <div className="flex h-8 w-8 items-center justify-center bg-blue-600/20 text-blue-400">
+                        <i className="fas fa-shield-alt text-sm"></i>
+                      </div>
+
+                      {activeTab === 'overview' && (
+                        <ChartBarIcon className="h-5 w-5 text-blue-400" />
+                      )}
+                      {activeTab === 'activity' && (
+                        <ClockIcon className="h-5 w-5 text-blue-400" />
+                      )}
+                      {activeTab === 'users' && (
+                        <UserGroupIcon className="h-5 w-5 text-blue-400" />
+                      )}
+                      {activeTab === 'challenges' && (
+                        <DocumentTextIcon className="h-5 w-5 text-blue-400" />
+                      )}
+                      {activeTab === 'reports' && (
+                        <ExclamationTriangleIcon className="h-5 w-5 text-blue-400" />
+                      )}
+                      {activeTab === 'accounts' && (
+                        <UserGroupIcon className="h-5 w-5 text-blue-400" />
+                      )}
+                      {activeTab === 'warnings' && (
+                        <ExclamationTriangleIcon className="h-5 w-5 text-blue-400" />
+                      )}
                       <span className="font-medium">
                         {activeTab === 'overview' && 'Overview'}
                         {activeTab === 'activity' && 'Recent Activity'}
                         {activeTab === 'users' && `Users (${totalUsers})`}
-                        {activeTab === 'challenges' && `Challenges (${pendingChallenges.length})`}
-                        {activeTab === 'reports' && `Reports (${reportStats?.totalReports || reports.length})`}
-                        {activeTab === 'accounts' && `Accounts (${totalSuspendedAccounts + pendingDeletions.length})`}
-                        {activeTab === 'warnings' && `Warnings (${warningHistory.length})`}
+                        {activeTab === 'challenges' &&
+                          `Challenges (${pendingChallenges.length})`}
+                        {activeTab === 'reports' &&
+                          `Reports (${
+                            reportStats?.totalReports || reports.length
+                          })`}
+                        {activeTab === 'accounts' &&
+                          `Accounts (${
+                            totalSuspendedAccounts + pendingDeletions.length
+                          })`}
+                        {activeTab === 'warnings' &&
+                          `History (${warningsTotal})`}
                       </span>
                     </div>
                     <ChevronDownIcon className="h-5 w-5 text-gray-400" />
                   </button>
                   {showMobileMenu && (
                     <div className="absolute left-0 right-0 top-full z-50 border border-neutral-600 bg-neutral-800 shadow-lg">
+                      {/* Mobile Refresh Button */}
+                      <div className="border-b border-neutral-600 px-4 py-2">
+                        <button
+                          onClick={() => {
+                            if (activeTab === 'accounts') {
+                              if (activeAccountsTab === 'suspended') {
+                                fetchSuspendedAccounts(
+                                  suspendedAccountsPage,
+                                  suspendedSearchFilter
+                                );
+                              } else if (activeAccountsTab === 'history') {
+                                fetchSuspensionHistory(
+                                  suspensionHistoryPage,
+                                  suspensionHistorySearchFilter,
+                                  suspensionHistoryStatusFilter
+                                );
+                              } else if (activeAccountsTab === 'deleted') {
+                                fetchPendingDeletions(deletionsSearchFilter);
+                              }
+                            } else if (activeTab === 'users') {
+                              fetchUsers(currentUserPage, userSearchFilter);
+                            } else if (activeTab === 'challenges') {
+                              fetchPendingChallenges();
+                            } else if (activeTab === 'reports') {
+                              fetchReports(reportFilters);
+                            } else if (activeTab === 'warnings') {
+                              fetchWarnings();
+                            } else if (activeTab === 'activity') {
+                              fetchRecentActivity();
+                            } else {
+                              fetchAllData();
+                            }
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center justify-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20"
+                        >
+                          <i className="fas fa-sync-alt text-sm"></i>
+                          <span>Refresh</span>
+                        </button>
+                      </div>
                       <div className="py-2">
-                        <button onClick={() => { setActiveTab('overview'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><ChartBarIcon className="h-5 w-5 text-blue-400" /><span>Overview</span></button>
-                        <button onClick={() => { setActiveTab('activity'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><ClockIcon className="h-5 w-5 text-gray-400" /><span>Recent Activity</span></button>
-                        <button onClick={() => { setActiveTab('users'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><UserGroupIcon className="h-5 w-5 text-gray-400" /><span>Users ({totalUsers})</span></button>
-                        <button onClick={() => { setActiveTab('challenges'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><DocumentTextIcon className="h-5 w-5 text-gray-400" /><span>Challenges ({pendingChallenges.length})</span></button>
-                        <button onClick={() => { setActiveTab('reports'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><ExclamationTriangleIcon className="h-5 w-5 text-gray-400" /><span>Reports ({reportStats?.totalReports || reports.length})</span></button>
-                        <button onClick={() => { setActiveTab('accounts'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><UserGroupIcon className="h-5 w-5 text-gray-400" /><span>Accounts ({totalSuspendedAccounts + pendingDeletions.length})</span></button>
-                        <button onClick={() => { setActiveTab('warnings'); setShowMobileMenu(false); }} className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"><ExclamationTriangleIcon className="h-5 w-5 text-gray-400" /><span>Warnings ({warningHistory.length})</span></button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('overview');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <ChartBarIcon className="h-5 w-5 text-blue-400" />
+                          <span>Overview</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('activity');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <ClockIcon className="h-5 w-5 text-gray-400" />
+                          <span>Recent Activity</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('users');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <UserGroupIcon className="h-5 w-5 text-gray-400" />
+                          <span>Users ({totalUsers})</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('challenges');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <DocumentTextIcon className="h-5 w-5 text-gray-400" />
+                          <span>Challenges ({pendingChallenges.length})</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('reports');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <ExclamationTriangleIcon className="h-5 w-5 text-gray-400" />
+                          <span>
+                            Reports (
+                            {reportStats?.totalReports || reports.length})
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('accounts');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <UserGroupIcon className="h-5 w-5 text-gray-400" />
+                          <span>
+                            Accounts (
+                            {totalSuspendedAccounts + pendingDeletions.length})
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTab('warnings');
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                        >
+                          <ExclamationTriangleIcon className="h-5 w-5 text-gray-400" />
+                          <span>History ({warningsTotal})</span>
+                        </button>
                       </div>
                     </div>
                   )}
@@ -1735,13 +2127,46 @@ export default function Moderation() {
               <div className="hidden sm:block">
                 <div className="border-b border-neutral-700">
                   <nav className="flex space-x-8">
-                    <TabButton id="overview" label="Overview" icon={ChartBarIcon} />
-                    <TabButton id="activity" label="Recent Activity" icon={ClockIcon} />
-                    <TabButton id="users" label="Users" icon={UserGroupIcon} count={totalUsers} />
-                    <TabButton id="challenges" label="Challenges" icon={DocumentTextIcon} count={pendingChallenges.length} />
-                    <TabButton id="reports" label="Reports" icon={ExclamationTriangleIcon} count={reportStats?.totalReports || reports.length} />
-                    <TabButton id="accounts" label="Accounts" icon={UserGroupIcon} count={totalSuspendedAccounts + pendingDeletions.length} />
-                    <TabButton id="warnings" label="Warnings" icon={ExclamationTriangleIcon} count={warningHistory.length} />
+                    <TabButton
+                      id="overview"
+                      label="Overview"
+                      icon={ChartBarIcon}
+                    />
+                    <TabButton
+                      id="activity"
+                      label="Recent Activity"
+                      icon={ClockIcon}
+                    />
+                    <TabButton
+                      id="users"
+                      label="Users"
+                      icon={UserGroupIcon}
+                      count={totalUsers}
+                    />
+                    <TabButton
+                      id="challenges"
+                      label="Challenges"
+                      icon={DocumentTextIcon}
+                      count={pendingChallenges.length}
+                    />
+                    <TabButton
+                      id="reports"
+                      label="Reports"
+                      icon={ExclamationTriangleIcon}
+                      count={reportStats?.totalReports || reports.length}
+                    />
+                    <TabButton
+                      id="accounts"
+                      label="Accounts"
+                      icon={UserGroupIcon}
+                      count={totalSuspendedAccounts + pendingDeletions.length}
+                    />
+                    <TabButton
+                      id="warnings"
+                      label="History"
+                      icon={ExclamationTriangleIcon}
+                      count={warningsTotal}
+                    />
                   </nav>
                 </div>
               </div>
@@ -1749,56 +2174,119 @@ export default function Moderation() {
 
             {/* Tab Content */}
             {activeTab === 'activity' && (
-              <div className="space-y-8">
+              <div className="space-y-6">
+                {/* Activity Tab Navigation */}
+                <div className="border-b border-neutral-700">
+                  <nav className="flex flex-wrap space-x-2 sm:space-x-8">
+                    <button
+                      onClick={() => setActiveActivityTab('comments')}
+                      className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
+                        activeActivityTab === 'comments'
+                          ? 'border-blue-500 text-blue-400'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      Comments
+                      <span
+                        className={`ml-1 px-1 py-0.5 text-xs font-medium sm:ml-2 sm:px-2 sm:py-1 ${
+                          recentActivity.comments.length > 0
+                            ? 'bg-blue-600/20 text-blue-400'
+                            : 'bg-gray-600/20 text-gray-400'
+                        }`}
+                      >
+                        {recentActivity.comments.length || 0}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setActiveActivityTab('writeups')}
+                      className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
+                        activeActivityTab === 'writeups'
+                          ? 'border-green-500 text-green-400'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      Writeups
+                      <span
+                        className={`ml-1 px-1 py-0.5 text-xs font-medium sm:ml-2 sm:px-2 sm:py-1 ${
+                          recentActivity.writeups.length > 0
+                            ? 'bg-green-600/20 text-green-400'
+                            : 'bg-gray-600/20 text-gray-400'
+                        }`}
+                      >
+                        {recentActivity.writeups.length || 0}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setActiveActivityTab('lessons')}
+                      className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
+                        activeActivityTab === 'lessons'
+                          ? 'border-purple-500 text-purple-400'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      Lessons
+                      <span
+                        className={`ml-1 px-1 py-0.5 text-xs font-medium sm:ml-2 sm:px-2 sm:py-1 ${
+                          recentActivity.lessons.length > 0
+                            ? 'bg-purple-600/20 text-purple-400'
+                            : 'bg-gray-600/20 text-gray-400'
+                        }`}
+                      >
+                        {recentActivity.lessons.length || 0}
+                      </span>
+                    </button>
+                  </nav>
+                </div>
+
+                {/* Activity Content */}
                 <div className="border border-neutral-700/50 bg-neutral-800/80 p-4 backdrop-blur-sm sm:p-8">
                   <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h2 className="text-2xl font-bold text-white">
-                        Recent Activity
+                        Recent{' '}
+                        {activeActivityTab.charAt(0).toUpperCase() +
+                          activeActivityTab.slice(1)}
                       </h2>
                       <p className="text-sm text-gray-400">
-                        Latest user-generated content and platform activity
+                        Latest {activeActivityTab} across the platform
                       </p>
                     </div>
                     <button
                       onClick={refreshActivity}
-                      className="border border-blue-500/30 bg-blue-600/10 px-4 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20"
+                      className="flex items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:px-4"
                     >
-                      Refresh
+                      <i className="fas fa-sync-alt text-sm"></i>
+                      <span className="hidden sm:inline">Refresh</span>
                     </button>
                   </div>
+
                   {loadingActivity ? (
                     <div className="flex justify-center py-12">
                       <div className="text-gray-400">
-                        Loading recent activity...
+                        Loading recent {activeActivityTab}...
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      {/* Recent Comments */}
-                      <div className="border border-neutral-700/50 bg-neutral-800/50 p-3 sm:p-4">
-                        <div className="mb-3 flex items-center justify-between">
-                          <h3 className="text-base font-semibold text-white">
-                            Recent Comments
-                          </h3>
-                          <span className="border border-blue-500/30 bg-blue-600/10 px-2 py-0.5 text-xs text-blue-400">
-                            {recentActivity.comments.length}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
+                    <div className="space-y-4">
+                      {/* Comments Content */}
+                      {activeActivityTab === 'comments' && (
+                        <div>
                           {recentActivity.comments.length === 0 ? (
-                            <div className="border border-neutral-600/50 bg-neutral-700/30 p-2 text-center">
-                              <p className="text-xs text-gray-400">
+                            <div className="border border-neutral-600/50 bg-neutral-700/30 p-8 text-center">
+                              <i className="fas fa-comments mb-4 text-4xl text-gray-500"></i>
+                              <h3 className="text-lg font-medium text-white">
                                 No recent comments
+                              </h3>
+                              <p className="mt-2 text-gray-400">
+                                No comments have been posted recently.
                               </p>
                             </div>
                           ) : (
-                            recentActivity.comments
-                              .slice(0, 10)
-                              .map((comment) => (
+                            <div className="space-y-4">
+                              {recentActivity.comments.map((comment) => (
                                 <div
                                   key={comment.id}
-                                  className="cursor-pointer border border-neutral-600/50 bg-neutral-700/30 p-2 hover:border-blue-500/50"
+                                  className="cursor-pointer border border-neutral-600/50 bg-neutral-700/30 p-4 transition-all duration-200 hover:border-blue-500/50"
                                   onClick={() =>
                                     window.open(
                                       `/challenges/${
@@ -1810,9 +2298,9 @@ export default function Moderation() {
                                     )
                                   }
                                 >
-                                  <div className="mb-1 flex items-center space-x-2">
+                                  <div className="flex items-start space-x-3">
                                     <img
-                                      className="h-7 w-7 border border-neutral-600 bg-neutral-700 object-cover"
+                                      className="h-10 w-10 rounded border border-neutral-600 bg-neutral-700 object-cover"
                                       src={
                                         comment.profilePicture
                                           ? comment.profilePicture
@@ -1824,50 +2312,58 @@ export default function Moderation() {
                                         e.target.onerror = null;
                                       }}
                                     />
-                                    <span className="truncate text-xs font-medium text-white">
-                                      {comment.username}
-                                    </span>
-                                    <span className="truncate text-xs text-gray-400">
-                                      {new Date(
-                                        comment.createdAt
-                                      ).toLocaleDateString()}
-                                    </span>
-                                  </div>
-                                  <div className="truncate text-xs text-gray-300">
-                                    {comment.content}
-                                  </div>
-                                  <div className="mt-1 text-xs text-blue-400">
-                                    on {comment.challengeTitle}
+                                    <div className="min-w-0 flex-1">
+                                      <div className="mb-1 flex items-center space-x-2">
+                                        <span className="font-medium text-white hover:text-blue-400">
+                                          {comment.username}
+                                        </span>
+                                        <span className="text-sm text-gray-400">
+                                          {new Date(
+                                            comment.createdAt
+                                          ).toLocaleDateString()}{' '}
+                                          {new Date(
+                                            comment.createdAt
+                                          ).toLocaleTimeString([], {
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                            hour12: true,
+                                          })}
+                                        </span>
+                                      </div>
+                                      <div className="mb-2 text-sm text-blue-400">
+                                        on {comment.challengeTitle}
+                                      </div>
+                                      <div className="text-gray-300">
+                                        {comment.content}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              ))
+                              ))}
+                            </div>
                           )}
                         </div>
-                      </div>
-                      {/* Recent Writeups */}
-                      <div className="border border-neutral-700/50 bg-neutral-800/50 p-3 sm:p-4">
-                        <div className="mb-3 flex items-center justify-between">
-                          <h3 className="text-base font-semibold text-white">
-                            Recent Writeups
-                          </h3>
-                          <span className="border border-green-500/30 bg-green-600/10 px-2 py-0.5 text-xs text-green-400">
-                            {recentActivity.writeups.length}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
+                      )}
+
+                      {/* Writeups Content */}
+                      {activeActivityTab === 'writeups' && (
+                        <div>
                           {recentActivity.writeups.length === 0 ? (
-                            <div className="border border-neutral-600/50 bg-neutral-700/30 p-2 text-center">
-                              <p className="text-xs text-gray-400">
+                            <div className="border border-neutral-600/50 bg-neutral-700/30 p-8 text-center">
+                              <i className="fas fa-file-alt mb-4 text-4xl text-gray-500"></i>
+                              <h3 className="text-lg font-medium text-white">
                                 No recent writeups
+                              </h3>
+                              <p className="mt-2 text-gray-400">
+                                No writeups have been posted recently.
                               </p>
                             </div>
                           ) : (
-                            recentActivity.writeups
-                              .slice(0, 10)
-                              .map((writeup) => (
+                            <div className="space-y-4">
+                              {recentActivity.writeups.map((writeup) => (
                                 <div
                                   key={writeup.id}
-                                  className="cursor-pointer border border-neutral-600/50 bg-neutral-700/30 p-2 hover:border-green-500/50"
+                                  className="cursor-pointer border border-neutral-600/50 bg-neutral-700/30 p-4 transition-all duration-200 hover:border-green-500/50"
                                   onClick={() =>
                                     window.open(
                                       `/challenges/${
@@ -1879,9 +2375,9 @@ export default function Moderation() {
                                     )
                                   }
                                 >
-                                  <div className="mb-1 flex items-center space-x-2">
+                                  <div className="flex items-start space-x-3">
                                     <img
-                                      className="h-7 w-7 border border-neutral-600 bg-neutral-700 object-cover"
+                                      className="h-10 w-10 rounded border border-neutral-600 bg-neutral-700 object-cover"
                                       src={
                                         writeup.profilePicture
                                           ? writeup.profilePicture
@@ -1893,50 +2389,58 @@ export default function Moderation() {
                                         e.target.onerror = null;
                                       }}
                                     />
-                                    <span className="truncate text-xs font-medium text-white">
-                                      {writeup.username}
-                                    </span>
-                                    <span className="truncate text-xs text-gray-400">
-                                      {new Date(
-                                        writeup.createdAt
-                                      ).toLocaleDateString()}
-                                    </span>
-                                  </div>
-                                  <div className="truncate text-xs text-gray-300">
-                                    {writeup.content}
-                                  </div>
-                                  <div className="mt-1 text-xs text-green-400">
-                                    for {writeup.challengeTitle}
+                                    <div className="min-w-0 flex-1">
+                                      <div className="mb-1 flex items-center space-x-2">
+                                        <span className="font-medium text-white hover:text-green-400">
+                                          {writeup.username}
+                                        </span>
+                                        <span className="text-sm text-gray-400">
+                                          {new Date(
+                                            writeup.createdAt
+                                          ).toLocaleDateString()}{' '}
+                                          {new Date(
+                                            writeup.createdAt
+                                          ).toLocaleTimeString([], {
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                            hour12: true,
+                                          })}
+                                        </span>
+                                      </div>
+                                      <div className="mb-2 text-sm text-green-400">
+                                        for {writeup.challengeTitle}
+                                      </div>
+                                      <div className="text-gray-300">
+                                        {writeup.content}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              ))
+                              ))}
+                            </div>
                           )}
                         </div>
-                      </div>
-                      {/* Recent Lessons */}
-                      <div className="border border-neutral-700/50 bg-neutral-800/50 p-3 sm:p-4">
-                        <div className="mb-3 flex items-center justify-between">
-                          <h3 className="text-base font-semibold text-white">
-                            Recent Lessons
-                          </h3>
-                          <span className="border border-purple-500/30 bg-purple-600/10 px-2 py-0.5 text-xs text-purple-400">
-                            {recentActivity.lessons.length}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
+                      )}
+
+                      {/* Lessons Content */}
+                      {activeActivityTab === 'lessons' && (
+                        <div>
                           {recentActivity.lessons.length === 0 ? (
-                            <div className="border border-neutral-600/50 bg-neutral-700/30 p-2 text-center">
-                              <p className="text-xs text-gray-400">
+                            <div className="border border-neutral-600/50 bg-neutral-700/30 p-8 text-center">
+                              <i className="fas fa-graduation-cap mb-4 text-4xl text-gray-500"></i>
+                              <h3 className="text-lg font-medium text-white">
                                 No recent lessons
+                              </h3>
+                              <p className="mt-2 text-gray-400">
+                                No lessons have been created recently.
                               </p>
                             </div>
                           ) : (
-                            recentActivity.lessons
-                              .slice(0, 10)
-                              .map((lesson) => (
+                            <div className="space-y-4">
+                              {recentActivity.lessons.map((lesson) => (
                                 <div
                                   key={lesson.id}
-                                  className="cursor-pointer border border-neutral-600/50 bg-neutral-700/30 p-2 hover:border-purple-500/50"
+                                  className="cursor-pointer border border-neutral-600/50 bg-neutral-700/30 p-4 transition-all duration-200 hover:border-purple-500/50"
                                   onClick={() =>
                                     window.open(
                                       `/learn/lessons/${lesson.id}`,
@@ -1944,40 +2448,55 @@ export default function Moderation() {
                                     )
                                   }
                                 >
-                                  <div className="mb-1 flex items-center space-x-2">
-                                    <span className="truncate text-xs font-medium text-white">
-                                      {lesson.title}
-                                    </span>
-                                    <span className="truncate text-xs text-gray-400">
-                                      {new Date(
-                                        lesson.createdAt
-                                      ).toLocaleDateString()}
-                                    </span>
-                                  </div>
-                                  <div className="truncate text-xs text-gray-300">
-                                    {lesson.description}
-                                  </div>
-                                  <div className="mt-1 flex items-center justify-between">
-                                    <span className="text-xs text-purple-400">
-                                      by {lesson.author}
-                                    </span>
-                                    <span
-                                      className={`border px-2 py-0.5 text-xs ${
-                                        lesson.status === 'PUBLISHED'
-                                          ? 'border-green-500/30 bg-green-600/10 text-green-400'
-                                          : lesson.status === 'DRAFT'
-                                          ? 'border-yellow-500/30 bg-yellow-600/10 text-yellow-400'
-                                          : 'border-gray-500/30 bg-gray-600/10 text-gray-400'
-                                      }`}
-                                    >
-                                      {lesson.status}
-                                    </span>
+                                  <div className="flex items-start space-x-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded bg-purple-600/20">
+                                      <i className="fas fa-graduation-cap text-purple-400"></i>
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="mb-1 flex items-center space-x-2">
+                                        <span className="font-medium text-white hover:text-purple-400">
+                                          {lesson.title}
+                                        </span>
+                                        <span className="text-sm text-gray-400">
+                                          {new Date(
+                                            lesson.createdAt
+                                          ).toLocaleDateString()}{' '}
+                                          {new Date(
+                                            lesson.createdAt
+                                          ).toLocaleTimeString([], {
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                            hour12: true,
+                                          })}
+                                        </span>
+                                      </div>
+                                      <div className="mb-2 flex items-center space-x-2">
+                                        <span className="text-sm text-purple-400">
+                                          by {lesson.author}
+                                        </span>
+                                        <span
+                                          className={`border px-2 py-0.5 text-xs ${
+                                            lesson.status === 'PUBLISHED'
+                                              ? 'border-green-500/30 bg-green-600/10 text-green-400'
+                                              : lesson.status === 'DRAFT'
+                                              ? 'border-yellow-500/30 bg-yellow-600/10 text-yellow-400'
+                                              : 'border-gray-500/30 bg-gray-600/10 text-gray-400'
+                                          }`}
+                                        >
+                                          {lesson.status}
+                                        </span>
+                                      </div>
+                                      <div className="text-gray-300">
+                                        {lesson.description}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              ))
+                              ))}
+                            </div>
                           )}
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -2639,9 +3158,10 @@ export default function Moderation() {
                       onClick={() =>
                         fetchUsers(currentUserPage, userSearchFilter)
                       }
-                      className="border border-blue-600/30 bg-blue-600/10 px-4 py-2 text-sm font-medium text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20"
+                      className="flex items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:px-4"
                     >
-                      <i className="fas fa-sync-alt m-1"></i>{' '}
+                      <i className="fas fa-sync-alt text-sm"></i>
+                      <span className="hidden sm:inline">Refresh</span>
                     </button>
                   </div>
 
@@ -2970,11 +3490,16 @@ export default function Moderation() {
                             <div className="flex items-center space-x-4">
                               <img
                                 src={
-                                  user.profileImage ||
-                                  'https://robohash.org/' + user.username
+                                  user.profilePicture
+                                    ? user.profilePicture
+                                    : `https://robohash.org/${user.username}.png?set=set1&size=150x150`
                                 }
                                 alt={`${user.username}'s profile`}
-                                className="h-16 w-16"
+                                className="h-16 w-16 object-cover"
+                                onError={(e) => {
+                                  e.target.src = `https://robohash.org/${user.username}.png?set=set1&size=150x150`;
+                                  e.target.onerror = null;
+                                }}
                               />
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2">
@@ -2985,32 +3510,61 @@ export default function Moderation() {
                                     SUSPENDED
                                   </span>
                                   <span className="bg-blue-600/20 px-2 py-1 text-xs font-medium text-blue-400">
-                                    {user.accountType}
+                                    {user.accountType || 'USER'}
                                   </span>
                                 </div>
                                 <p className="text-sm text-gray-400">
-                                  {user.firstName} {user.lastName} •{' '}
-                                  {user.email}
+                                  {user.firstName && user.lastName
+                                    ? `${user.firstName} ${user.lastName}`
+                                    : user.firstName ||
+                                      user.lastName ||
+                                      'No name provided'}{' '}
+                                  • {user.email}
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   Account created:{' '}
-                                  {new Date(
-                                    user.createdAt
-                                  ).toLocaleDateString()}
+                                  {user.createdAt
+                                    ? new Date(
+                                        user.createdAt
+                                      ).toLocaleDateString()
+                                    : 'Unknown'}
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   Suspended:{' '}
-                                  {new Date(
-                                    user.updatedAt
-                                  ).toLocaleDateString()}
+                                  {user.suspensionInfo?.suspendedAt
+                                    ? new Date(
+                                        user.suspensionInfo.suspendedAt
+                                      ).toLocaleDateString()
+                                    : user.disableInfo?.disabledAt
+                                    ? new Date(
+                                        user.disableInfo.disabledAt
+                                      ).toLocaleDateString()
+                                    : user.updatedAt
+                                    ? new Date(
+                                        user.updatedAt
+                                      ).toLocaleDateString()
+                                    : 'Unknown'}
                                 </p>
-                                {user.bio &&
+                                {user.suspensionInfo?.reason && (
+                                  <p className="mt-1 text-xs text-orange-400">
+                                    Reason: {user.suspensionInfo.reason}
+                                  </p>
+                                )}
+                                {!user.suspensionInfo?.reason &&
+                                  user.bio &&
                                   user.bio.includes('[DISABLED:') && (
                                     <p className="mt-1 text-xs text-orange-400">
                                       Reason:{' '}
                                       {user.bio.match(
                                         /\[DISABLED:([^\]]+)\]/
                                       )?.[1] || 'Not specified'}
+                                    </p>
+                                  )}
+                                {!user.suspensionInfo?.reason &&
+                                  (!user.bio ||
+                                    !user.bio.includes('[DISABLED:')) && (
+                                    <p className="mt-1 text-xs text-orange-400">
+                                      Reason: No reason provided
                                     </p>
                                   )}
                               </div>
@@ -3033,11 +3587,10 @@ export default function Moderation() {
                                     'Enter reason for reactivation (optional):'
                                   );
                                   if (reason !== null) {
-                                    const result =
-                                      await handleReactivateAccount(
-                                        user.id,
-                                        user.username
-                                      );
+                                    const result = await reactivateAccount(
+                                      user.id,
+                                      reason
+                                    );
                                     if (result.success) {
                                       showNotification(
                                         'Account reactivated successfully!',
@@ -3126,15 +3679,24 @@ export default function Moderation() {
                   <h2 className="text-xl font-semibold text-white">
                     Pending Challenges
                   </h2>
-                  {selectedChallenges.length > 0 && (
+                  <div className="flex items-center space-x-3">
                     <button
-                      className="bg-red-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-red-500"
-                      onClick={deleteBulk}
+                      onClick={fetchPendingChallenges}
+                      className="flex items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:px-4"
                     >
-                      <i className="fa fa-trash mr-2"></i>Delete Selected (
-                      {selectedChallenges.length})
+                      <i className="fas fa-sync-alt text-sm"></i>
+                      <span className="hidden sm:inline">Refresh</span>
                     </button>
-                  )}
+                    {selectedChallenges.length > 0 && (
+                      <button
+                        className="bg-red-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-red-500"
+                        onClick={deleteBulk}
+                      >
+                        <i className="fa fa-trash mr-2"></i>Delete Selected (
+                        {selectedChallenges.length})
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-3">
@@ -3142,11 +3704,7 @@ export default function Moderation() {
                     pendingChallenges.map((challenge) => (
                       <div
                         key={challenge.id}
-                        onClick={() => {
-                          setSelectedId(challenge.id);
-                          setChallengeIsOpen(true);
-                        }}
-                        className="cursor-pointer bg-neutral-700 p-4 transition-colors duration-200 hover:bg-neutral-600"
+                        className="bg-neutral-700 p-4 transition-colors duration-200 hover:bg-neutral-600"
                       >
                         <div className="flex items-center space-x-3">
                           <input
@@ -3167,19 +3725,30 @@ export default function Moderation() {
                               </span>
                             </p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-400">
-                              {new Date(challenge.createdAt).toLocaleString(
-                                [],
-                                {
-                                  hour: 'numeric',
-                                  minute: 'numeric',
-                                  hour12: true,
-                                  month: 'short',
-                                  day: 'numeric',
-                                }
-                              )}
-                            </p>
+                          <div className="flex items-center space-x-3">
+                            <div className="text-right">
+                              <p className="text-sm text-gray-400">
+                                {new Date(challenge.createdAt).toLocaleString(
+                                  [],
+                                  {
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                    month: 'short',
+                                    day: 'numeric',
+                                  }
+                                )}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setSelectedId(challenge.id);
+                                setChallengeIsOpen(true);
+                              }}
+                              className="border border-blue-600/30 bg-blue-600/10 px-3 py-2 text-sm font-medium text-blue-400 transition-colors hover:border-blue-500/50 hover:bg-blue-600/20"
+                            >
+                              Edit
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -3295,9 +3864,18 @@ export default function Moderation() {
 
                 {/* All Reports */}
                 <div className="border border-neutral-700 bg-neutral-800 p-6">
-                  <h2 className="mb-6 text-xl font-semibold text-white">
-                    All Reports
-                  </h2>
+                  <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-xl font-semibold text-white">
+                      All Reports
+                    </h2>
+                    <button
+                      onClick={() => fetchReports(reportFilters)}
+                      className="flex items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:px-4"
+                    >
+                      <i className="fas fa-sync-alt text-sm"></i>
+                      <span className="hidden sm:inline">Refresh</span>
+                    </button>
+                  </div>
 
                   {reports.length > 0 ? (
                     <div className="space-y-4">
@@ -3691,10 +4269,10 @@ export default function Moderation() {
               <div className="space-y-6">
                 {/* Accounts Tab Navigation */}
                 <div className="border-b border-neutral-700">
-                  <nav className="flex space-x-8">
+                  <nav className="flex flex-wrap space-x-2 sm:space-x-8">
                     <button
                       onClick={() => setActiveAccountsTab('suspended')}
-                      className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors duration-200 ${
+                      className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeAccountsTab === 'suspended'
                           ? 'border-blue-500 text-blue-400'
                           : 'border-transparent text-gray-400 hover:text-gray-300'
@@ -3702,7 +4280,7 @@ export default function Moderation() {
                     >
                       Suspended
                       <span
-                        className={`ml-2 px-2 py-1 text-xs font-medium ${
+                        className={`ml-1 px-1 py-0.5 text-xs font-medium sm:ml-2 sm:px-2 sm:py-1 ${
                           totalSuspendedAccounts > 0
                             ? 'bg-red-600/20 text-red-400'
                             : 'bg-gray-600/20 text-gray-400'
@@ -3713,20 +4291,20 @@ export default function Moderation() {
                     </button>
                     <button
                       onClick={() => setActiveAccountsTab('disabled')}
-                      className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors duration-200 ${
+                      className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeAccountsTab === 'disabled'
                           ? 'border-blue-500 text-blue-400'
                           : 'border-transparent text-gray-400 hover:text-gray-300'
                       }`}
                     >
                       Disabled
-                      <span className="ml-2 bg-gray-600/20 px-2 py-1 text-xs font-medium text-gray-400">
+                      <span className="ml-1 bg-gray-600/20 px-1 py-0.5 text-xs font-medium text-gray-400 sm:ml-2 sm:px-2 sm:py-1">
                         0
                       </span>
                     </button>
                     <button
                       onClick={() => setActiveAccountsTab('deleted')}
-                      className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors duration-200 ${
+                      className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeAccountsTab === 'deleted'
                           ? 'border-blue-500 text-blue-400'
                           : 'border-transparent text-gray-400 hover:text-gray-300'
@@ -3734,7 +4312,7 @@ export default function Moderation() {
                     >
                       Deletion Requests
                       <span
-                        className={`ml-2 px-2 py-1 text-xs font-medium ${
+                        className={`ml-1 px-1 py-0.5 text-xs font-medium sm:ml-2 sm:px-2 sm:py-1 ${
                           pendingDeletions.length > 0
                             ? 'bg-orange-600/20 text-orange-400'
                             : 'bg-gray-600/20 text-gray-400'
@@ -3840,100 +4418,169 @@ export default function Moderation() {
 
                       {suspendedAccounts.length > 0 ? (
                         <div className="space-y-4">
-                          {suspendedAccounts.map((account) => (
+                          {suspendedAccounts.map((user) => (
                             <div
-                              key={account.id}
-                              className="border border-neutral-600 bg-neutral-700/50 p-6"
+                              key={user.id}
+                              className="border border-orange-600/30 bg-orange-900/10 p-6 transition-all duration-200 hover:border-orange-500/50"
                             >
                               <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center space-x-3">
-                                    <div className="flex h-12 w-12 items-center justify-center bg-orange-600/20">
-                                      <i className="fas fa-user-lock text-xl text-orange-400"></i>
+                                <div className="flex items-center space-x-4">
+                                  <div className="h-16 w-16 overflow-hidden">
+                                    {user.profileImage &&
+                                    user.profileImage.trim() !== '' ? (
+                                      <img
+                                        src={user.profileImage}
+                                        alt={`${user.username}'s profile`}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => {
+                                          e.target.style.display = 'none';
+                                          e.target.nextSibling.style.display =
+                                            'flex';
+                                        }}
+                                      />
+                                    ) : null}
+                                    <div
+                                      className={`flex h-full w-full items-center justify-center text-lg font-bold text-white ${
+                                        user.profileImage &&
+                                        user.profileImage.trim() !== ''
+                                          ? 'hidden'
+                                          : 'flex'
+                                      }`}
+                                      style={{
+                                        backgroundColor: '#ff6b35',
+                                        backgroundImage: `url(https://robohash.org/${user.username}.png?set=set1&size=150x150)`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                      }}
+                                    >
+                                      {user.username
+                                        .substring(0, 2)
+                                        .toUpperCase()}
                                     </div>
-                                    <div>
-                                      <h3 className="font-semibold text-white">
-                                        {account.username}
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2">
+                                      <h3 className="text-lg font-semibold text-white">
+                                        {user.username}
                                       </h3>
-                                      <p className="text-sm text-gray-400">
-                                        {account.email}
-                                      </p>
+                                      <span className="bg-orange-600/20 px-2 py-1 text-xs font-medium text-orange-400">
+                                        SUSPENDED
+                                      </span>
+                                      <span className="bg-blue-600/20 px-2 py-1 text-xs font-medium text-blue-400">
+                                        {user.accountType || 'USER'}
+                                      </span>
                                     </div>
-                                  </div>
-
-                                  <div className="mt-4">
-                                    <h4 className="text-sm font-medium text-gray-300">
-                                      Suspension reason:
-                                    </h4>
-                                    <p className="mt-1 text-white">
-                                      {account.suspensionReason ||
-                                        'No reason provided'}
+                                    <p className="text-sm text-gray-400">
+                                      {user.firstName && user.lastName
+                                        ? `${user.firstName} ${user.lastName}`
+                                        : user.firstName ||
+                                          user.lastName ||
+                                          'No name provided'}{' '}
+                                      • {user.email}
                                     </p>
-                                  </div>
-
-                                  <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                      <span className="text-gray-400">
-                                        Suspended:
-                                      </span>
-                                      <span className="ml-2 text-white">
-                                        {new Date(
-                                          account.suspendedAt
-                                        ).toLocaleDateString()}
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <span className="text-gray-400">
-                                        Account created:
-                                      </span>
-                                      <span className="ml-2 text-white">
-                                        {new Date(
-                                          account.createdAt
-                                        ).toLocaleDateString()}
-                                      </span>
-                                    </div>
+                                    <p className="text-xs text-gray-500">
+                                      Account created:{' '}
+                                      {user.createdAt
+                                        ? new Date(
+                                            user.createdAt
+                                          ).toLocaleDateString()
+                                        : 'Unknown'}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      Suspended:{' '}
+                                      {user.suspensionInfo?.suspendedAt
+                                        ? new Date(
+                                            user.suspensionInfo.suspendedAt
+                                          ).toLocaleDateString()
+                                        : user.disableInfo?.disabledAt
+                                        ? new Date(
+                                            user.disableInfo.disabledAt
+                                          ).toLocaleDateString()
+                                        : user.updatedAt
+                                        ? new Date(
+                                            user.updatedAt
+                                          ).toLocaleDateString()
+                                        : 'Unknown'}
+                                    </p>
+                                    {user.suspensionInfo?.reason && (
+                                      <p className="mt-1 text-xs text-orange-400">
+                                        Reason: {user.suspensionInfo.reason}
+                                      </p>
+                                    )}
+                                    {!user.suspensionInfo?.reason &&
+                                      user.bio &&
+                                      user.bio.includes('[DISABLED:') && (
+                                        <p className="mt-1 text-xs text-orange-400">
+                                          Reason:{' '}
+                                          {user.bio.match(
+                                            /\[DISABLED:([^\]]+)\]/
+                                          )?.[1] || 'Not specified'}
+                                        </p>
+                                      )}
+                                    {!user.suspensionInfo?.reason &&
+                                      (!user.bio ||
+                                        !user.bio.includes('[DISABLED:')) && (
+                                        <p className="mt-1 text-xs text-orange-400">
+                                          Reason: No reason provided
+                                        </p>
+                                      )}
                                   </div>
                                 </div>
-
-                                <div className="ml-4 flex flex-col space-y-2">
-                                  <button
-                                    onClick={() =>
-                                      handleReactivateAccount(
-                                        account.id,
-                                        account.username
-                                      )
-                                    }
-                                    className="border border-green-600/30 bg-green-600/10 px-4 py-2 text-sm font-medium text-green-400 transition-colors duration-200 hover:border-green-500/50 hover:bg-green-600/20"
-                                  >
-                                    <i className="fas fa-user-check mr-1"></i>
-                                    Reactivate Account
-                                  </button>
+                                <div className="flex flex-col space-y-2">
                                   <button
                                     onClick={() =>
                                       window.open(
-                                        `/users/${account.username}`,
+                                        `/users/${user.username}`,
                                         '_blank'
                                       )
                                     }
-                                    className="border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:border-neutral-500 hover:bg-neutral-600"
+                                    className="border border-blue-600/30 bg-blue-600/10 px-3 py-2 text-sm font-medium text-blue-400 transition-colors hover:border-blue-500/50 hover:bg-blue-600/20"
                                   >
-                                    <i className="fas fa-user mr-1"></i>
                                     View Profile
                                   </button>
                                   <button
-                                    onClick={() =>
-                                      handleRoleChange(
-                                        account.id,
-                                        account.username
-                                      )
-                                    }
-                                    className="border border-blue-600/30 bg-blue-600/10 px-4 py-2 text-sm font-medium text-blue-400 transition-colors duration-200 hover:border-blue-500/50 hover:bg-blue-600/20"
+                                    onClick={() => handleReactivateClick(user)}
+                                    className="border border-green-600/30 bg-green-600/10 px-3 py-2 text-sm font-medium text-green-400 transition-colors hover:border-green-500/50 hover:bg-green-600/20"
                                   >
-                                    <i className="fas fa-user-cog mr-1"></i>
-                                    Change Role
+                                    Reactivate
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedUserForManagement(user);
+                                      setShowUserManagementPopup(true);
+                                    }}
+                                    className="border border-neutral-600 bg-neutral-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:border-neutral-500 hover:bg-neutral-600"
+                                  >
+                                    Edit
                                   </button>
                                 </div>
                               </div>
+
+                              {user.disableInfo && (
+                                <div className="mt-4 border border-neutral-600 bg-neutral-700/50 p-4">
+                                  <h4 className="mb-2 font-medium text-orange-400">
+                                    Disable Information:
+                                  </h4>
+                                  <div className="space-y-2 text-sm">
+                                    <p className="text-gray-300">
+                                      <strong>Reason:</strong>{' '}
+                                      {user.disableInfo.reason}
+                                    </p>
+                                    {user.disableInfo.disabledAt && (
+                                      <p className="text-gray-300">
+                                        <strong>Disabled At:</strong>{' '}
+                                        {new Date(
+                                          user.disableInfo.disabledAt
+                                        ).toLocaleString()}
+                                      </p>
+                                    )}
+                                    <p className="text-gray-300">
+                                      <strong>Self-disabled:</strong>{' '}
+                                      {user.disableInfo.disabled ? 'Yes' : 'No'}
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -4189,162 +4836,1209 @@ export default function Moderation() {
                     </div>
                   </div>
                 )}
+
+                {/* Suspension History Content */}
+                {activeAccountsTab === 'history' && (
+                  <div className="space-y-6">
+                    {/* Search and Filters */}
+                    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex flex-1 items-center space-x-4">
+                        <div className="relative max-w-md flex-1">
+                          <input
+                            type="text"
+                            placeholder="Search suspension history by username, email, or reason..."
+                            value={suspensionHistorySearchFilter}
+                            onChange={(e) =>
+                              setSuspensionHistorySearchFilter(e.target.value)
+                            }
+                            className="w-full border border-neutral-600 bg-neutral-700 px-4 py-2 pl-10 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                          />
+                          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        </div>
+                        <select
+                          value={suspensionHistoryStatusFilter}
+                          onChange={(e) =>
+                            setSuspensionHistoryStatusFilter(e.target.value)
+                          }
+                          className="border border-neutral-600 bg-neutral-700 px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+                        >
+                          <option value="all">All Statuses</option>
+                          <option value="active">Active Suspensions</option>
+                          <option value="reactivated">Reactivated</option>
+                        </select>
+                      </div>
+                      {suspensionHistoryPagination && (
+                        <div className="text-sm text-gray-400">
+                          Page {suspensionHistoryPage + 1} of{' '}
+                          {suspensionHistoryPagination.totalPages} (
+                          {suspensionHistoryPagination.totalCount} total
+                          entries)
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Suspension History Content */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium text-white">
+                        Suspension History (
+                        {suspensionHistoryPagination?.totalCount || 0})
+                      </h3>
+
+                      {suspensionHistoryLoading ? (
+                        <div className="p-8 text-center">
+                          <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+                          <p className="mt-2 text-gray-400">
+                            Loading suspension history...
+                          </p>
+                        </div>
+                      ) : suspensionHistory.length === 0 ? (
+                        <div className="p-8 text-center">
+                          <div className="text-lg text-gray-400">
+                            No suspension history found
+                          </div>
+                          <p className="mt-2 text-gray-400">
+                            {suspensionHistorySearchFilter ||
+                            suspensionHistoryStatusFilter !== 'all'
+                              ? 'Try adjusting your search criteria.'
+                              : 'No suspension history available.'}
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Desktop Table View */}
+                          <div className="hidden md:block">
+                            <div className="overflow-x-auto">
+                              <table className="w-full">
+                                <thead>
+                                  <tr className="border-b border-gray-700">
+                                    <th className="p-4 text-left font-medium text-gray-300">
+                                      USER
+                                    </th>
+                                    <th className="p-4 text-left font-medium text-gray-300">
+                                      STATUS
+                                    </th>
+                                    <th className="p-4 text-left font-medium text-gray-300">
+                                      ACCOUNT TYPE
+                                    </th>
+                                    <th className="p-4 text-left font-medium text-gray-300">
+                                      EMAIL
+                                    </th>
+                                    <th className="p-4 text-left font-medium text-gray-300">
+                                      DATES
+                                    </th>
+                                    <th className="p-4 text-left font-medium text-gray-300">
+                                      REASON
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {suspensionHistory.map((entry) => (
+                                    <tr
+                                      key={entry.id}
+                                      className="border-b border-gray-800 transition-colors hover:bg-gray-800/50"
+                                    >
+                                      <td className="p-4">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="flex h-10 w-10 items-center justify-center">
+                                            <img
+                                              src={
+                                                entry.user?.profilePicture
+                                                  ? entry.user.profilePicture
+                                                  : `https://robohash.org/${
+                                                      entry.user?.username ||
+                                                      'user'
+                                                    }.png?set=set1&size=150x150`
+                                              }
+                                              alt={entry.user?.username || 'U'}
+                                              className="h-10 w-10 rounded object-cover"
+                                              onError={(e) => {
+                                                e.target.src = `https://robohash.org/${
+                                                  entry.user?.username || 'user'
+                                                }.png?set=set1&size=150x150`;
+                                                e.target.onerror = null;
+                                              }}
+                                            />
+                                          </div>
+                                          <div>
+                                            <div className="font-medium text-white">
+                                              {entry.user?.username ||
+                                                'Unknown'}
+                                            </div>
+                                            <div className="text-sm text-gray-400">
+                                              {entry.user?.firstName &&
+                                              entry.user?.lastName
+                                                ? `${entry.user.firstName} ${entry.user.lastName}`
+                                                : entry.user?.firstName ||
+                                                  entry.user?.lastName ||
+                                                  'No name provided'}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="p-4">
+                                        <span
+                                          className={`px-2 py-1 text-xs font-medium ${
+                                            entry.user?.status === 'ACTIVE'
+                                              ? 'bg-green-600/20 text-green-400'
+                                              : 'bg-orange-600/20 text-orange-400'
+                                          }`}
+                                        >
+                                          {entry.user?.status === 'ACTIVE'
+                                            ? 'ACTIVE'
+                                            : 'SUSPENDED'}
+                                        </span>
+                                      </td>
+                                      <td className="p-4">
+                                        <span className="bg-blue-600/20 px-2 py-1 text-xs font-medium text-blue-400">
+                                          {entry.user?.accountType || 'USER'}
+                                        </span>
+                                      </td>
+                                      <td className="p-4 text-white">
+                                        {entry.user?.email || 'No email'}
+                                      </td>
+                                      <td className="p-4 text-gray-300">
+                                        <div>
+                                          Created:{' '}
+                                          {entry.user?.createdAt
+                                            ? new Date(
+                                                entry.user.createdAt
+                                              ).toLocaleDateString()
+                                            : 'Unknown'}
+                                        </div>
+                                        <div>
+                                          Suspended:{' '}
+                                          {entry.suspendedAt
+                                            ? new Date(
+                                                entry.suspendedAt
+                                              ).toLocaleDateString()
+                                            : 'Unknown'}
+                                        </div>
+                                        {entry.reactivatedAt && (
+                                          <div className="text-green-400">
+                                            Reactivated:{' '}
+                                            {new Date(
+                                              entry.reactivatedAt
+                                            ).toLocaleDateString()}
+                                          </div>
+                                        )}
+                                      </td>
+                                      <td className="p-4">
+                                        {entry.reason && (
+                                          <p className="whitespace-pre-wrap break-words text-white">
+                                            {entry.reason}
+                                          </p>
+                                        )}
+                                        {entry.reactivationReason && (
+                                          <p className="mt-1 text-sm text-green-400">
+                                            <span className="font-medium">
+                                              Reactivation reason:
+                                            </span>{' '}
+                                            {entry.reactivationReason}
+                                          </p>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Mobile Card View */}
+                          <div className="md:hidden">
+                            <div className="space-y-4 p-4">
+                              {suspensionHistory.map((entry) => (
+                                <div
+                                  key={entry.id}
+                                  className="rounded border border-gray-700 bg-gray-800 p-4"
+                                >
+                                  <div className="flex items-start space-x-3">
+                                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center">
+                                      <img
+                                        src={
+                                          entry.user?.profilePicture
+                                            ? entry.user.profilePicture
+                                            : `https://robohash.org/${
+                                                entry.user?.username || 'user'
+                                              }.png?set=set1&size=150x150`
+                                        }
+                                        alt={entry.user?.username || 'U'}
+                                        className="h-12 w-12 rounded object-cover"
+                                        onError={(e) => {
+                                          e.target.src = `https://robohash.org/${
+                                            entry.user?.username || 'user'
+                                          }.png?set=set1&size=150x150`;
+                                          e.target.onerror = null;
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="font-medium text-white">
+                                        {entry.user?.username || 'Unknown'}
+                                      </div>
+                                      <div className="text-sm text-gray-400">
+                                        {entry.user?.firstName &&
+                                        entry.user?.lastName
+                                          ? `${entry.user.firstName} ${entry.user.lastName}`
+                                          : entry.user?.firstName ||
+                                            entry.user?.lastName ||
+                                            'No name provided'}
+                                      </div>
+                                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                                        <span
+                                          className={`px-2 py-1 text-xs font-medium ${
+                                            entry.user?.status === 'ACTIVE'
+                                              ? 'bg-green-600/20 text-green-400'
+                                              : 'bg-orange-600/20 text-orange-400'
+                                          }`}
+                                        >
+                                          {entry.user?.status === 'ACTIVE'
+                                            ? 'ACTIVE'
+                                            : 'SUSPENDED'}
+                                        </span>
+                                        <span className="bg-blue-600/20 px-2 py-1 text-xs font-medium text-blue-400">
+                                          {entry.user?.accountType || 'USER'}
+                                        </span>
+                                      </div>
+                                      <div className="mt-2 text-xs text-gray-400">
+                                        <div>
+                                          Created:{' '}
+                                          {entry.user?.createdAt
+                                            ? new Date(
+                                                entry.user.createdAt
+                                              ).toLocaleDateString()
+                                            : 'Unknown'}
+                                        </div>
+                                        <div>
+                                          Suspended:{' '}
+                                          {entry.suspendedAt
+                                            ? new Date(
+                                                entry.suspendedAt
+                                              ).toLocaleDateString()
+                                            : 'Unknown'}
+                                        </div>
+                                        {entry.reactivatedAt && (
+                                          <div className="text-green-400">
+                                            Reactivated:{' '}
+                                            {new Date(
+                                              entry.reactivatedAt
+                                            ).toLocaleDateString()}
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="mt-2 text-white">
+                                        {entry.reason && (
+                                          <p className="whitespace-pre-wrap break-words text-white">
+                                            {entry.reason}
+                                          </p>
+                                        )}
+                                        {entry.reactivationReason && (
+                                          <p className="mt-1 text-sm text-green-400">
+                                            <span className="font-medium">
+                                              Reactivation reason:
+                                            </span>{' '}
+                                            {entry.reactivationReason}
+                                          </p>
+                                        )}
+                                      </div>
+                                      <div className="mt-2 text-xs text-gray-400">
+                                        <div>
+                                          By: {entry.suspendedBy || 'Unknown'}
+                                        </div>
+                                        {entry.reactivatedBy && (
+                                          <div>
+                                            Reactivated by:{' '}
+                                            {entry.reactivatedBy}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Pagination */}
+                      {suspensionHistoryPagination &&
+                        suspensionHistoryPagination.totalPages > 1 && (
+                          <div className="flex items-center justify-between">
+                            <button
+                              onClick={() =>
+                                fetchSuspensionHistory(
+                                  Math.max(0, suspensionHistoryPage - 1),
+                                  suspensionHistorySearchFilter,
+                                  suspensionHistoryStatusFilter
+                                )
+                              }
+                              disabled={suspensionHistoryPage === 0}
+                              className="bg-neutral-700 px-4 py-2 text-sm text-white transition-colors duration-200 hover:bg-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Previous
+                            </button>
+                            <span className="text-sm text-gray-400">
+                              Page {suspensionHistoryPage + 1} of{' '}
+                              {suspensionHistoryPagination.totalPages}
+                            </span>
+                            <button
+                              onClick={() =>
+                                fetchSuspensionHistory(
+                                  Math.min(
+                                    suspensionHistoryPagination.totalPages - 1,
+                                    suspensionHistoryPage + 1
+                                  ),
+                                  suspensionHistorySearchFilter,
+                                  suspensionHistoryStatusFilter
+                                )
+                              }
+                              disabled={
+                                suspensionHistoryPage >=
+                                suspensionHistoryPagination.totalPages - 1
+                              }
+                              className="bg-neutral-700 px-4 py-2 text-sm text-white transition-colors duration-200 hover:bg-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
             {activeTab === 'warnings' && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-white">
-                    Warning History
-                  </h2>
-                  <button
-                    onClick={refreshWarningHistory}
-                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                  >
-                    Refresh
-                  </button>
-                </div>
+                {/* History Section Header */}
+                <div className="border border-neutral-700 bg-neutral-800 p-6">
+                  <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-xl font-semibold text-white">
+                      History
+                    </h2>
+                    <button
+                      onClick={() => {
+                        if (activeHistoryTab === 'suspended') {
+                          fetchSuspensionHistory(
+                            suspensionHistoryPage,
+                            suspensionHistorySearchFilter,
+                            suspensionHistoryStatusFilter
+                          );
+                        } else if (activeHistoryTab === 'warnings') {
+                          fetchWarningsPage(warningsPage);
+                        }
+                      }}
+                      disabled={warningsLoading}
+                      className="flex items-center gap-2 bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      <ArrowPathIcon className="h-4 w-4" />
+                      <span className="hidden sm:inline">Refresh</span>
+                    </button>
+                  </div>
 
-                {loadingWarningHistory ? (
-                  <div className="flex justify-center py-12">
-                    <div className="text-gray-400">
-                      Loading warning history...
+                  {/* History Sub-tabs */}
+                  <div className="mb-6 border-b border-neutral-600">
+                    <div className="flex space-x-8">
+                      <button
+                        onClick={() => setActiveHistoryTab('suspended')}
+                        className={`border-b-2 px-1 py-2 text-sm font-medium transition-all duration-200 ${
+                          activeHistoryTab === 'suspended'
+                            ? 'border-orange-500 text-orange-400'
+                            : 'border-transparent text-gray-400 hover:border-gray-600 hover:text-gray-300'
+                        }`}
+                      >
+                        Suspended ({suspensionHistory.length})
+                      </button>
+                      <button
+                        onClick={() => setActiveHistoryTab('warnings')}
+                        className={`border-b-2 px-1 py-2 text-sm font-medium transition-all duration-200 ${
+                          activeHistoryTab === 'warnings'
+                            ? 'border-blue-500 text-blue-400'
+                            : 'border-transparent text-gray-400 hover:border-gray-600 hover:text-gray-300'
+                        }`}
+                      >
+                        Warnings ({warningsTotal})
+                      </button>
                     </div>
                   </div>
-                ) : (
-                  <div className="overflow-hidden rounded-lg border border-neutral-700 bg-neutral-800">
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-neutral-700">
-                        <thead className="border-b border-neutral-700 bg-neutral-900/50">
-                          <tr>
-                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
-                              User
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
-                              Reason
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
-                              Severity
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
-                              Warned By
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
-                              Date
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-700 bg-neutral-800">
-                          {warningHistory.length === 0 ? (
-                            <tr>
-                              <td
-                                colSpan="5"
-                                className="px-6 py-4 text-center text-gray-400"
-                              >
-                                No warnings issued yet
-                              </td>
-                            </tr>
-                          ) : (
-                            warningHistory.map((warning) => (
-                              <tr
-                                key={warning.id}
-                                className="hover:bg-neutral-700"
-                              >
-                                <td className="whitespace-nowrap px-6 py-4">
-                                  <div className="flex items-center space-x-3">
-                                    <div className="flex-shrink-0">
+
+                  {/* Grouped Suspensions Tab */}
+                  {activeHistoryTab === 'suspended' && (
+                    <>
+                      {groupedSuspensionsLoading ? (
+                        <div className="p-8 text-center">
+                          <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+                          <p className="mt-2 text-gray-400">
+                            Loading grouped suspensions...
+                          </p>
+                        </div>
+                      ) : groupedSuspensions.length === 0 ? (
+                        <div className="p-8 text-center">
+                          <div className="text-lg text-gray-400">
+                            No suspensions found
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Desktop View */}
+                          <div className="hidden md:block">
+                            <div className="space-y-4">
+                              {groupedSuspensions.map((userSuspensions) => (
+                                <div
+                                  key={userSuspensions.userId}
+                                  className="border border-gray-700 bg-gray-800 p-4"
+                                >
+                                  {/* User Header */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
                                       <img
-                                        className="h-10 w-10 rounded-full border-2 border-neutral-600 bg-neutral-700 object-cover"
                                         src={
-                                          warning.user?.profileImage &&
-                                          warning.user.profileImage !== ''
-                                            ? warning.user.profileImage
-                                            : `https://robohash.org/${
-                                                warning.user?.username ||
-                                                'unknown'
-                                              }.png?set=set1&size=150x150`
+                                          userSuspensions.user?.profilePicture
+                                            ? userSuspensions.user
+                                                .profilePicture
+                                            : `https://robohash.org/${userSuspensions.username}.png?set=set1&size=150x150`
                                         }
-                                        alt={
-                                          warning.user?.username ||
-                                          'Unknown User'
-                                        }
+                                        alt={userSuspensions.username}
+                                        className="h-12 w-12 rounded object-cover"
                                         onError={(e) => {
-                                          e.target.src = `https://robohash.org/${
-                                            warning.user?.username || 'unknown'
-                                          }.png?set=set1&size=150x150`;
-                                          e.target.onerror = null; // Prevent infinite loop
+                                          e.target.src = `https://robohash.org/${userSuspensions.username}.png?set=set1&size=150x150`;
+                                          e.target.onerror = null;
                                         }}
                                       />
+                                      <div>
+                                        <div className="text-lg font-semibold text-white">
+                                          {userSuspensions.username}
+                                        </div>
+                                        <div className="text-sm text-gray-400">
+                                          {userSuspensions.user?.email ||
+                                            'No email'}
+                                        </div>
+                                        <div className="mt-1 flex space-x-2">
+                                          <span className="bg-orange-600/20 px-2 py-1 text-xs font-medium text-orange-400">
+                                            {userSuspensions.totalSuspensions}{' '}
+                                            Suspensions
+                                          </span>
+                                          <span
+                                            className={`px-2 py-1 text-xs font-medium ${
+                                              userSuspensions.user?.status ===
+                                              'ACTIVE'
+                                                ? 'bg-green-600/20 text-green-400'
+                                                : 'bg-red-600/20 text-red-400'
+                                            }`}
+                                          >
+                                            {userSuspensions.user?.status ===
+                                            'ACTIVE'
+                                              ? 'ACTIVE'
+                                              : 'SUSPENDED'}
+                                          </span>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div className="min-w-0 flex-1">
-                                      <div className="truncate text-sm font-medium text-white">
-                                        {warning.user?.username ||
-                                          'Unknown User'}
-                                      </div>
-                                      <div className="truncate text-xs text-gray-400">
-                                        {warning.user?.email || 'No email'}
-                                      </div>
-                                      {warning.user?.firstName &&
-                                        warning.user?.lastName && (
-                                          <div className="truncate text-xs text-gray-500">
-                                            {warning.user.firstName}{' '}
-                                            {warning.user.lastName}
+                                    <button
+                                      onClick={() =>
+                                        toggleSuspensionUserExpansion(
+                                          userSuspensions.userId
+                                        )
+                                      }
+                                      className="flex items-center space-x-2 bg-gray-700 px-3 py-2 text-white transition-colors hover:bg-gray-600"
+                                    >
+                                      <span>
+                                        {expandedSuspensionUsers.has(
+                                          userSuspensions.userId
+                                        )
+                                          ? 'Hide'
+                                          : 'Show'}{' '}
+                                        Details
+                                      </span>
+                                      <svg
+                                        className={`h-4 w-4 transition-transform ${
+                                          expandedSuspensionUsers.has(
+                                            userSuspensions.userId
+                                          )
+                                            ? 'rotate-180'
+                                            : ''
+                                        }`}
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 9l-7 7-7-7"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+
+                                  {/* Expanded Details */}
+                                  {expandedSuspensionUsers.has(
+                                    userSuspensions.userId
+                                  ) && (
+                                    <div className="mt-4 space-y-4">
+                                      {/* Suspensions */}
+                                      {userSuspensions.suspensions.length >
+                                        0 && (
+                                        <div>
+                                          <h4 className="mb-2 text-sm font-medium text-orange-400">
+                                            Suspensions (
+                                            {userSuspensions.suspensions.length}
+                                            )
+                                          </h4>
+                                          <div className="space-y-2">
+                                            {userSuspensions.suspensions.map(
+                                              (suspension) => (
+                                                <div
+                                                  key={suspension.id}
+                                                  className="border-l-2 border-orange-500 bg-gray-700/50 p-3"
+                                                >
+                                                  <div className="text-sm text-white">
+                                                    {suspension.reason}
+                                                  </div>
+                                                  <div className="mt-1 text-xs text-gray-400">
+                                                    {new Date(
+                                                      suspension.suspendedAt
+                                                    ).toLocaleDateString()}{' '}
+                                                    at{' '}
+                                                    {new Date(
+                                                      suspension.suspendedAt
+                                                    ).toLocaleTimeString()}{' '}
+                                                    by{' '}
+                                                    {suspension.suspendedBy ||
+                                                      'Unknown'}
+                                                  </div>
+                                                  {suspension.reactivatedAt && (
+                                                    <div className="mt-1 text-xs text-green-400">
+                                                      Reactivated:{' '}
+                                                      {new Date(
+                                                        suspension.reactivatedAt
+                                                      ).toLocaleDateString()}{' '}
+                                                      at{' '}
+                                                      {new Date(
+                                                        suspension.reactivatedAt
+                                                      ).toLocaleTimeString()}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )
+                                            )}
                                           </div>
-                                        )}
+                                        </div>
+                                      )}
                                     </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Mobile View */}
+                          <div className="md:hidden">
+                            <div className="space-y-4">
+                              {groupedSuspensions.map((userSuspensions) => (
+                                <div
+                                  key={userSuspensions.userId}
+                                  className="border border-gray-700 bg-gray-800 p-4"
+                                >
+                                  {/* User Header */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                      <img
+                                        src={
+                                          userSuspensions.user?.profilePicture
+                                            ? userSuspensions.user
+                                                .profilePicture
+                                            : `https://robohash.org/${userSuspensions.username}.png?set=set1&size=150x150`
+                                        }
+                                        alt={userSuspensions.username}
+                                        className="h-10 w-10 rounded object-cover"
+                                        onError={(e) => {
+                                          e.target.src = `https://robohash.org/${userSuspensions.username}.png?set=set1&size=150x150`;
+                                          e.target.onerror = null;
+                                        }}
+                                      />
+                                      <div>
+                                        <div className="font-semibold text-white">
+                                          {userSuspensions.username}
+                                        </div>
+                                        <div className="text-sm text-gray-400">
+                                          {userSuspensions.user?.email ||
+                                            'No email'}
+                                        </div>
+                                        <div className="mt-1 flex space-x-2">
+                                          <span className="bg-orange-600/20 px-2 py-1 text-xs font-medium text-orange-400">
+                                            {userSuspensions.totalSuspensions}{' '}
+                                            Suspensions
+                                          </span>
+                                          <span
+                                            className={`px-2 py-1 text-xs font-medium ${
+                                              userSuspensions.user?.status ===
+                                              'ACTIVE'
+                                                ? 'bg-green-600/20 text-green-400'
+                                                : 'bg-red-600/20 text-red-400'
+                                            }`}
+                                          >
+                                            {userSuspensions.user?.status ===
+                                            'ACTIVE'
+                                              ? 'ACTIVE'
+                                              : 'SUSPENDED'}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <button
+                                      onClick={() =>
+                                        toggleSuspensionUserExpansion(
+                                          userSuspensions.userId
+                                        )
+                                      }
+                                      className="flex items-center space-x-1 bg-gray-700 px-2 py-1 text-xs text-white transition-colors hover:bg-gray-600"
+                                    >
+                                      <span>
+                                        {expandedSuspensionUsers.has(
+                                          userSuspensions.userId
+                                        )
+                                          ? 'Hide'
+                                          : 'Show'}
+                                      </span>
+                                      <svg
+                                        className={`h-3 w-3 transition-transform ${
+                                          expandedSuspensionUsers.has(
+                                            userSuspensions.userId
+                                          )
+                                            ? 'rotate-180'
+                                            : ''
+                                        }`}
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 9l-7 7-7-7"
+                                        />
+                                      </svg>
+                                    </button>
                                   </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <div className="max-w-xs truncate text-sm text-white">
-                                    {warning.reason}
-                                  </div>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                  <span
-                                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                                      warning.severity === 'SEVERE'
-                                        ? 'border border-red-500/30 bg-red-500/20 text-red-400'
-                                        : warning.severity === 'HIGH'
-                                        ? 'border border-orange-500/30 bg-orange-500/20 text-orange-400'
-                                        : warning.severity === 'MEDIUM'
-                                        ? 'border border-yellow-500/30 bg-yellow-500/20 text-yellow-400'
-                                        : 'border border-green-500/30 bg-green-500/20 text-green-400'
-                                    }`}
+
+                                  {/* Expanded Details */}
+                                  {expandedSuspensionUsers.has(
+                                    userSuspensions.userId
+                                  ) && (
+                                    <div className="mt-4 space-y-3">
+                                      {/* Suspensions */}
+                                      {userSuspensions.suspensions.length >
+                                        0 && (
+                                        <div>
+                                          <h4 className="mb-2 text-sm font-medium text-orange-400">
+                                            Suspensions (
+                                            {userSuspensions.suspensions.length}
+                                            )
+                                          </h4>
+                                          <div className="space-y-2">
+                                            {userSuspensions.suspensions.map(
+                                              (suspension) => (
+                                                <div
+                                                  key={suspension.id}
+                                                  className="border-l-2 border-orange-500 bg-gray-700/50 p-2"
+                                                >
+                                                  <div className="text-sm text-white">
+                                                    {suspension.reason}
+                                                  </div>
+                                                  <div className="mt-1 text-xs text-gray-400">
+                                                    {new Date(
+                                                      suspension.suspendedAt
+                                                    ).toLocaleDateString()}{' '}
+                                                    at{' '}
+                                                    {new Date(
+                                                      suspension.suspendedAt
+                                                    ).toLocaleTimeString()}{' '}
+                                                    by{' '}
+                                                    {suspension.suspendedBy ||
+                                                      'Unknown'}
+                                                  </div>
+                                                  {suspension.reactivatedAt && (
+                                                    <div className="mt-1 text-xs text-green-400">
+                                                      Reactivated:{' '}
+                                                      {new Date(
+                                                        suspension.reactivatedAt
+                                                      ).toLocaleDateString()}{' '}
+                                                      at{' '}
+                                                      {new Date(
+                                                        suspension.reactivatedAt
+                                                      ).toLocaleTimeString()}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Pagination */}
+                          {groupedSuspensionsTotal >
+                            groupedSuspensionsPerPage && (
+                            <div className="flex items-center justify-between border-t border-gray-700 p-6">
+                              <div className="text-sm text-gray-400">
+                                Showing{' '}
+                                {(groupedSuspensionsPage - 1) *
+                                  groupedSuspensionsPerPage +
+                                  1}{' '}
+                                to{' '}
+                                {Math.min(
+                                  groupedSuspensionsPage *
+                                    groupedSuspensionsPerPage,
+                                  groupedSuspensionsTotal
+                                )}{' '}
+                                of {groupedSuspensionsTotal} users
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() =>
+                                    fetchGroupedSuspensions(
+                                      groupedSuspensionsPage - 1
+                                    )
+                                  }
+                                  disabled={
+                                    groupedSuspensionsPage === 1 ||
+                                    groupedSuspensionsLoading
+                                  }
+                                  className="flex h-10 w-10 items-center justify-center bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  <svg
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                   >
-                                    <span
-                                      className={`mr-2 h-2 w-2 rounded-full ${
-                                        warning.severity === 'SEVERE'
-                                          ? 'bg-red-400'
-                                          : warning.severity === 'HIGH'
-                                          ? 'bg-orange-400'
-                                          : warning.severity === 'MEDIUM'
-                                          ? 'bg-yellow-400'
-                                          : 'bg-green-400'
-                                      }`}
-                                    ></span>
-                                    {warning.severity}
-                                  </span>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-300">
-                                  {warning.warnedBy}
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-300">
-                                  {new Date(
-                                    warning.createdAt
-                                  ).toLocaleDateString()}{' '}
-                                  {new Date(
-                                    warning.createdAt
-                                  ).toLocaleTimeString()}
-                                </td>
-                              </tr>
-                            ))
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M15 19l-7-7 7-7"
+                                    />
+                                  </svg>
+                                </button>
+                                <span className="px-3 py-2 font-medium text-white">
+                                  {groupedSuspensionsPage} of{' '}
+                                  {Math.ceil(
+                                    groupedSuspensionsTotal /
+                                      groupedSuspensionsPerPage
+                                  )}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    fetchGroupedSuspensions(
+                                      groupedSuspensionsPage + 1
+                                    )
+                                  }
+                                  disabled={
+                                    groupedSuspensionsPage >=
+                                      Math.ceil(
+                                        groupedSuspensionsTotal /
+                                          groupedSuspensionsPerPage
+                                      ) || groupedSuspensionsLoading
+                                  }
+                                  className="flex h-10 w-10 items-center justify-center bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  <svg
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5l7 7-7 7"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {/* Grouped Warnings Tab */}
+                  {activeHistoryTab === 'warnings' && (
+                    <>
+                      {groupedWarningsLoading ? (
+                        <div className="p-8 text-center">
+                          <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+                          <p className="mt-2 text-gray-400">
+                            Loading grouped warnings...
+                          </p>
+                        </div>
+                      ) : groupedWarnings.length === 0 ? (
+                        <div className="p-8 text-center">
+                          <div className="text-lg text-gray-400">
+                            No warnings found
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Desktop View */}
+                          <div className="hidden md:block">
+                            <div className="space-y-4">
+                              {groupedWarnings.map((userWarnings) => (
+                                <div
+                                  key={userWarnings.userId}
+                                  className="border border-gray-700 bg-gray-800 p-4"
+                                >
+                                  {/* User Header */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                      <img
+                                        src={
+                                          userWarnings.user?.profilePicture
+                                            ? userWarnings.user.profilePicture
+                                            : `https://robohash.org/${userWarnings.username}.png?set=set1&size=150x150`
+                                        }
+                                        alt={userWarnings.username}
+                                        className="h-12 w-12 rounded object-cover"
+                                        onError={(e) => {
+                                          e.target.src = `https://robohash.org/${userWarnings.username}.png?set=set1&size=150x150`;
+                                          e.target.onerror = null;
+                                        }}
+                                      />
+                                      <div>
+                                        <div className="text-lg font-semibold text-white">
+                                          {userWarnings.username}
+                                        </div>
+                                        <div className="text-sm text-gray-400">
+                                          {userWarnings.user?.email ||
+                                            'No email'}
+                                        </div>
+                                        <div className="mt-1 flex space-x-2">
+                                          <span className="bg-blue-600/20 px-2 py-1 text-xs font-medium text-blue-400">
+                                            {userWarnings.totalWarnings}{' '}
+                                            Warnings
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <button
+                                      onClick={() =>
+                                        toggleWarningUserExpansion(
+                                          userWarnings.userId
+                                        )
+                                      }
+                                      className="flex items-center space-x-2 bg-gray-700 px-3 py-2 text-white transition-colors hover:bg-gray-600"
+                                    >
+                                      <span>
+                                        {expandedWarningUsers.has(
+                                          userWarnings.userId
+                                        )
+                                          ? 'Hide'
+                                          : 'Show'}{' '}
+                                        Details
+                                      </span>
+                                      <svg
+                                        className={`h-4 w-4 transition-transform ${
+                                          expandedWarningUsers.has(
+                                            userWarnings.userId
+                                          )
+                                            ? 'rotate-180'
+                                            : ''
+                                        }`}
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 9l-7 7-7-7"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+
+                                  {/* Expanded Details */}
+                                  {expandedWarningUsers.has(
+                                    userWarnings.userId
+                                  ) && (
+                                    <div className="mt-4 space-y-4">
+                                      {/* Warnings */}
+                                      {userWarnings.warnings.length > 0 && (
+                                        <div>
+                                          <h4 className="mb-2 text-sm font-medium text-blue-400">
+                                            Warnings (
+                                            {userWarnings.warnings.length})
+                                          </h4>
+                                          <div className="space-y-2">
+                                            {userWarnings.warnings.map(
+                                              (warning) => (
+                                                <div
+                                                  key={warning.id}
+                                                  className="border-l-2 border-blue-500 bg-gray-700/50 p-3"
+                                                >
+                                                  <div className="text-sm text-white">
+                                                    {warning.reason}
+                                                  </div>
+                                                  <div className="mt-1 text-xs text-gray-400">
+                                                    {new Date(
+                                                      warning.createdAt
+                                                    ).toLocaleDateString()}{' '}
+                                                    at{' '}
+                                                    {new Date(
+                                                      warning.createdAt
+                                                    ).toLocaleTimeString()}{' '}
+                                                    by{' '}
+                                                    {warning.warnedBy
+                                                      ?.username || 'Unknown'}
+                                                  </div>
+                                                </div>
+                                              )
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Mobile View */}
+                          <div className="md:hidden">
+                            <div className="space-y-4">
+                              {groupedWarnings.map((userWarnings) => (
+                                <div
+                                  key={userWarnings.userId}
+                                  className="border border-gray-700 bg-gray-800 p-4"
+                                >
+                                  {/* User Header */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                      <img
+                                        src={
+                                          userWarnings.user?.profilePicture
+                                            ? userWarnings.user.profilePicture
+                                            : `https://robohash.org/${userWarnings.username}.png?set=set1&size=150x150`
+                                        }
+                                        alt={userWarnings.username}
+                                        className="h-10 w-10 rounded object-cover"
+                                        onError={(e) => {
+                                          e.target.src = `https://robohash.org/${userWarnings.username}.png?set=set1&size=150x150`;
+                                          e.target.onerror = null;
+                                        }}
+                                      />
+                                      <div>
+                                        <div className="font-semibold text-white">
+                                          {userWarnings.username}
+                                        </div>
+                                        <div className="text-sm text-gray-400">
+                                          {userWarnings.user?.email ||
+                                            'No email'}
+                                        </div>
+                                        <div className="mt-1 flex space-x-2">
+                                          <span className="bg-blue-600/20 px-2 py-1 text-xs font-medium text-blue-400">
+                                            {userWarnings.totalWarnings}{' '}
+                                            Warnings
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <button
+                                      onClick={() =>
+                                        toggleWarningUserExpansion(
+                                          userWarnings.userId
+                                        )
+                                      }
+                                      className="flex items-center space-x-1 bg-gray-700 px-2 py-1 text-xs text-white transition-colors hover:bg-gray-600"
+                                    >
+                                      <span>
+                                        {expandedWarningUsers.has(
+                                          userWarnings.userId
+                                        )
+                                          ? 'Hide'
+                                          : 'Show'}
+                                      </span>
+                                      <svg
+                                        className={`h-3 w-3 transition-transform ${
+                                          expandedWarningUsers.has(
+                                            userWarnings.userId
+                                          )
+                                            ? 'rotate-180'
+                                            : ''
+                                        }`}
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 9l-7 7-7-7"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+
+                                  {/* Expanded Details */}
+                                  {expandedWarningUsers.has(
+                                    userWarnings.userId
+                                  ) && (
+                                    <div className="mt-4 space-y-3">
+                                      {/* Warnings */}
+                                      {userWarnings.warnings.length > 0 && (
+                                        <div>
+                                          <h4 className="mb-2 text-sm font-medium text-blue-400">
+                                            Warnings (
+                                            {userWarnings.warnings.length})
+                                          </h4>
+                                          <div className="space-y-2">
+                                            {userWarnings.warnings.map(
+                                              (warning) => (
+                                                <div
+                                                  key={warning.id}
+                                                  className="border-l-2 border-blue-500 bg-gray-700/50 p-2"
+                                                >
+                                                  <div className="text-sm text-white">
+                                                    {warning.reason}
+                                                  </div>
+                                                  <div className="mt-1 text-xs text-gray-400">
+                                                    {new Date(
+                                                      warning.createdAt
+                                                    ).toLocaleDateString()}{' '}
+                                                    at{' '}
+                                                    {new Date(
+                                                      warning.createdAt
+                                                    ).toLocaleTimeString()}{' '}
+                                                    by{' '}
+                                                    {warning.warnedBy
+                                                      ?.username || 'Unknown'}
+                                                  </div>
+                                                  {warning.reactivatedAt && (
+                                                    <div className="mt-1 text-xs text-green-400">
+                                                      Reactivated:{' '}
+                                                      {new Date(
+                                                        warning.reactivatedAt
+                                                      ).toLocaleDateString()}{' '}
+                                                      at{' '}
+                                                      {new Date(
+                                                        warning.reactivatedAt
+                                                      ).toLocaleTimeString()}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Pagination */}
+                          {groupedWarningsTotal > groupedWarningsPerPage && (
+                            <div className="flex items-center justify-between border-t border-gray-700 p-6">
+                              <div className="text-sm text-gray-400">
+                                Showing{' '}
+                                {(groupedWarningsPage - 1) *
+                                  groupedWarningsPerPage +
+                                  1}{' '}
+                                to{' '}
+                                {Math.min(
+                                  groupedWarningsPage * groupedWarningsPerPage,
+                                  groupedWarningsTotal
+                                )}{' '}
+                                of {groupedWarningsTotal} users
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() =>
+                                    fetchGroupedWarnings(
+                                      groupedWarningsPage - 1
+                                    )
+                                  }
+                                  disabled={
+                                    groupedWarningsPage === 1 ||
+                                    groupedWarningsLoading
+                                  }
+                                  className="flex h-10 w-10 items-center justify-center bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  <svg
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M15 19l-7-7 7-7"
+                                    />
+                                  </svg>
+                                </button>
+                                <span className="px-3 py-2 font-medium text-white">
+                                  {groupedWarningsPage} of{' '}
+                                  {Math.ceil(
+                                    groupedWarningsTotal /
+                                      groupedWarningsPerPage
+                                  )}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    fetchGroupedWarnings(
+                                      groupedWarningsPage + 1
+                                    )
+                                  }
+                                  disabled={
+                                    groupedWarningsPage >=
+                                      Math.ceil(
+                                        groupedWarningsTotal /
+                                          groupedWarningsPerPage
+                                      ) || groupedWarningsLoading
+                                  }
+                                  className="flex h-10 w-10 items-center justify-center bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  <svg
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5l7 7-7 7"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -4390,7 +6084,7 @@ export default function Moderation() {
               <p className="mb-4 text-neutral-300">
                 Reactivating account for:{' '}
                 <span className="font-medium">
-                  {selectedUserForAction?.username}
+                  {selectedUserForReactivation?.username}
                 </span>
               </p>
 
@@ -4424,7 +6118,7 @@ export default function Moderation() {
                   Cancel
                 </button>
                 <button
-                  onClick={submitReactivation}
+                  onClick={submitReactivationModal}
                   className="flex-1 bg-green-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-green-500"
                 >
                   Reactivate Account
