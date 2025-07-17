@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from 'react';
 import {
   ArrowRightIcon,
   QuestionMarkCircleIcon,
@@ -116,7 +122,7 @@ export default function Moderation() {
   const [groupedWarningsPage, setGroupedWarningsPage] = useState(1);
   const [groupedWarningsTotal, setGroupedWarningsTotal] = useState(0);
   const [groupedWarningsLoading, setGroupedWarningsLoading] = useState(false);
-  const groupedWarningsPerPage = 20;
+  const groupedWarningsPerPage = 10;
   const [expandedWarningUsers, setExpandedWarningUsers] = useState(new Set());
 
   // Grouped suspensions states
@@ -125,9 +131,92 @@ export default function Moderation() {
   const [groupedSuspensionsTotal, setGroupedSuspensionsTotal] = useState(0);
   const [groupedSuspensionsLoading, setGroupedSuspensionsLoading] =
     useState(false);
-  const groupedSuspensionsPerPage = 20;
+  const groupedSuspensionsPerPage = 10;
   const [expandedSuspensionUsers, setExpandedSuspensionUsers] = useState(
     new Set()
+  );
+
+  // Combined history total (unique users)
+  const [historyTotalUsers, setHistoryTotalUsers] = useState(0);
+
+  // Performance optimization states
+  const [dataCache, setDataCache] = useState(new Map());
+  const [lastFetchTimes, setLastFetchTimes] = useState(new Map());
+  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+  // Function to check if data is cached and fresh
+  const isDataFresh = useCallback(
+    (key) => {
+      const lastFetch = lastFetchTimes.get(key);
+      if (!lastFetch) return false;
+      return Date.now() - lastFetch < CACHE_DURATION;
+    },
+    [lastFetchTimes]
+  );
+
+  // Function to update cache
+  const updateCache = useCallback((key, data) => {
+    setDataCache((prev) => new Map(prev).set(key, data));
+    setLastFetchTimes((prev) => new Map(prev).set(key, Date.now()));
+  }, []);
+
+  // Function to get cached data
+  const getCachedData = useCallback(
+    (key) => {
+      return dataCache.get(key);
+    },
+    [dataCache]
+  );
+
+  // Optimized function to calculate total unique users in history
+  const calculateHistoryTotalUsers = useCallback(
+    async (forceRefresh = false) => {
+      const cacheKey = 'historyTotalUsers';
+
+      // Return cached data if fresh and not forcing refresh
+      if (!forceRefresh && isDataFresh(cacheKey)) {
+        const cached = getCachedData(cacheKey);
+        if (cached !== undefined) {
+          setHistoryTotalUsers(cached);
+          return;
+        }
+      }
+
+      try {
+        // Use smaller limits for better performance
+        const [warningsResponse, suspensionsResponse] = await Promise.all([
+          request(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings?page=1&limit=100`,
+            'GET'
+          ),
+          request(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/suspension-history-enhanced?page=0&size=100&search=&status=all`,
+            'GET'
+          ),
+        ]);
+
+        const warnings = warningsResponse?.warnings || [];
+        const suspensions = suspensionsResponse?.history || [];
+
+        // Group by user with optimized processing
+        const groupedWarnings = groupWarningsByUser(warnings);
+        const groupedSuspensions = groupSuspensionsByUser(suspensions);
+
+        // Calculate total unique users
+        const totalUsers = groupedWarnings.length + groupedSuspensions.length;
+        setHistoryTotalUsers(totalUsers);
+
+        // Cache the result
+        updateCache(cacheKey, totalUsers);
+      } catch (error) {
+        console.error('Error calculating history total users:', error);
+        setHistoryTotalUsers(0);
+      }
+    },
+    [isDataFresh, getCachedData, updateCache]
   );
 
   // Recent activity states
@@ -230,7 +319,7 @@ export default function Moderation() {
 
   // ENHANCED AUTOCOMPLETE FUNCTIONS
   const fetchUserSuggestions = async (query) => {
-    if (query.length < 2) {
+    if (query.length < 1) {
       setUserSuggestions([]);
       return;
     }
@@ -242,7 +331,15 @@ export default function Moderation() {
         }/admin/users?search=${encodeURIComponent(query)}&limit=15`,
         'GET'
       );
-      setUserSuggestions(response.users || []);
+      const q = query.toLowerCase();
+      const users = (response.users || []).filter((user) => {
+        return (
+          (user.username && user.username.toLowerCase().includes(q)) ||
+          (user.email && user.email.toLowerCase().includes(q)) ||
+          (user.name && user.name.toLowerCase().includes(q))
+        );
+      });
+      setUserSuggestions(users);
     } catch (error) {
       console.error('Failed to fetch user suggestions:', error);
       setUserSuggestions([]);
@@ -295,6 +392,7 @@ export default function Moderation() {
 
       // Set new timeout for debouncing
       window.userSearchTimeout = setTimeout(() => {
+        // Fetch suggestions from API, but also filter by email if needed
         fetchUserSuggestions(value);
         setShowUserSuggestions(true);
       }, 300);
@@ -1320,48 +1418,87 @@ export default function Moderation() {
     }
   };
 
-  // Initial data fetch
+  // Fetch all data function
+  // Optimized initial data fetch - only load essential data
+  const fetchAllData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      console.log('1. Fetching stats...');
+      await fetchStats();
+
+      console.log('2. Fetching report stats...');
+      await fetchReportStats();
+
+      console.log('3. Fetching deletion stats...');
+      await fetchDeletionStats();
+
+      console.log('4. Calculating history total users...');
+      await calculateHistoryTotalUsers();
+
+      console.log('=== ESSENTIAL DATA FETCH COMPLETE ===');
+      setIsInitialLoadComplete(true);
+    } catch (error) {
+      console.error('Error in essential data fetch sequence:', error);
+      setError('Failed to load essential data. Please refresh the page.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Lazy load function for non-essential data
+  const fetchLazyData = async () => {
+    try {
+      console.log('1. Fetching reports...');
+      await fetchReports();
+
+      console.log('2. Fetching pending challenges...');
+      await fetchPendingChallenges();
+
+      console.log('3. Fetching users...');
+      await fetchUsers(0, '');
+
+      console.log('4. Fetching recent activity...');
+      await fetchRecentActivity();
+
+      console.log('5. Fetching pending deletions...');
+      await fetchPendingDeletions();
+
+      console.log('=== LAZY DATA FETCH COMPLETE ===');
+    } catch (error) {
+      console.error('Error in lazy data fetch sequence:', error);
+    }
+  };
+
+  // Initial data fetch with instant tab numbers
   useEffect(() => {
     console.log('=== MODERATION PANEL INITIALIZING ===');
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
     console.log('Starting data fetch sequence...');
 
-    const fetchAllData = async () => {
+    // Load essential data immediately for instant tab numbers
+    const loadEssentialData = async () => {
       try {
-        console.log('1. Fetching reports...');
-        await fetchReports();
+        // Load all essential data in parallel for fastest possible load
+        await Promise.all([
+          fetchStats(),
+          fetchReportStats(),
+          fetchDeletionStats(),
+          calculateHistoryTotalUsers(),
+        ]);
 
-        console.log('2. Fetching pending challenges...');
-        await fetchPendingChallenges();
-
-        console.log('3. Fetching users...');
-        await fetchUsers(0, '');
-
-        console.log('4. Fetching recent activity...');
-        await fetchRecentActivity();
-
-        console.log('5. Fetching stats...');
-        await fetchStats();
-
-        console.log('6. Fetching pending deletions...');
-        await fetchPendingDeletions();
-
-        console.log('7. Fetching deletion stats...');
-        await fetchDeletionStats();
-
-        console.log('8. Fetching report stats...');
-        await fetchReportStats();
-
-        console.log('9. Fetching warning history...');
-        await fetchWarningsPage(1);
-
-        console.log('=== ALL DATA FETCH COMPLETE ===');
+        setIsInitialLoadComplete(true);
+        console.log('=== ESSENTIAL DATA LOADED INSTANTLY ===');
       } catch (error) {
-        console.error('Error in data fetch sequence:', error);
+        console.error('Error loading essential data:', error);
+        setError('Failed to load essential data. Please refresh the page.');
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchAllData();
+    loadEssentialData();
   }, []);
 
   // Handle clicking outside autocomplete dropdowns and escape key
@@ -1467,10 +1604,47 @@ export default function Moderation() {
     }
   }, []);
 
-  // Tab navigation component
+  // Optimized tab navigation component with instant switching
   const TabButton = ({ id, label, icon: Icon, count }) => (
     <button
-      onClick={() => setActiveTab(id)}
+      onClick={() => {
+        setActiveTab(id);
+
+        // Lazy load non-essential data if not already loaded
+        if (!isInitialLoadComplete) {
+          fetchLazyData();
+        }
+
+        // Instant tab switching with background data refresh
+        setTimeout(() => {
+          if (id === 'accounts') {
+            // Fetch all accounts-related data
+            fetchSuspendedAccounts(
+              suspendedAccountsPage,
+              suspendedSearchFilter
+            );
+            fetchPendingDeletions(deletionsSearchFilter);
+            fetchDeletionStats();
+          } else if (id === 'users') {
+            fetchUsers(currentUserPage, userSearchFilter);
+          } else if (id === 'challenges') {
+            fetchPendingChallenges();
+          } else if (id === 'reports') {
+            fetchReports(reportFilters);
+            fetchReportStats();
+          } else if (id === 'warnings') {
+            // Fetch all history-related data with caching
+            fetchGroupedSuspensions(groupedSuspensionsPage);
+            fetchGroupedWarnings(groupedWarningsPage);
+            calculateHistoryTotalUsers();
+          } else if (id === 'activity') {
+            fetchRecentActivity();
+          } else if (id === 'overview') {
+            // Only fetch essential data for overview
+            fetchAllData();
+          }
+        }, 0); // Use setTimeout to ensure tab switch is instant
+      }}
       className={`flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-all duration-200 ${
         activeTab === id
           ? 'border-blue-500 text-blue-400'
@@ -1664,127 +1838,215 @@ export default function Moderation() {
     }
   };
 
-  // Function to group warnings by user
-  const groupWarningsByUser = (warnings) => {
+  // Optimized function to group warnings by user
+  const groupWarningsByUser = useCallback((warnings) => {
+    if (!warnings || warnings.length === 0) return [];
+
     const userMap = new Map();
 
-    warnings.forEach((warning) => {
-      const userId = warning.user?.id || warning.userId;
-      const username = warning.user?.username || 'Unknown';
+    // Process warnings in chunks for better performance
+    const chunkSize = 100;
+    for (let i = 0; i < warnings.length; i += chunkSize) {
+      const chunk = warnings.slice(i, i + chunkSize);
 
-      if (!userMap.has(userId)) {
-        userMap.set(userId, {
-          userId,
-          username,
-          user: warning.user,
-          warnings: [],
-          totalWarnings: 0,
-        });
-      }
+      chunk.forEach((warning) => {
+        const userId = warning.user?.id || warning.userId;
+        const username = warning.user?.username || 'Unknown';
 
-      const userWarnings = userMap.get(userId);
-      userWarnings.warnings.push(warning);
-      userWarnings.totalWarnings++;
+        if (!userMap.has(userId)) {
+          userMap.set(userId, {
+            userId,
+            username,
+            user: warning.user,
+            warnings: [],
+            totalWarnings: 0,
+          });
+        }
+
+        const userWarnings = userMap.get(userId);
+        userWarnings.warnings.push(warning);
+        userWarnings.totalWarnings++;
+      });
+    }
+
+    // Convert to array and sort by most recent warning (descending)
+    const result = Array.from(userMap.values());
+
+    // Optimize sorting for large datasets
+    return result.sort((a, b) => {
+      if (a.warnings.length === 0 && b.warnings.length === 0) return 0;
+      if (a.warnings.length === 0) return 1;
+      if (b.warnings.length === 0) return -1;
+
+      const aLatest = Math.max(
+        ...a.warnings.map((w) => new Date(w.createdAt).getTime())
+      );
+      const bLatest = Math.max(
+        ...b.warnings.map((w) => new Date(w.createdAt).getTime())
+      );
+      return bLatest - aLatest;
     });
+  }, []);
 
-    // Convert to array and sort by total warnings (descending)
-    return Array.from(userMap.values()).sort(
-      (a, b) => b.totalWarnings - a.totalWarnings
-    );
-  };
+  // Optimized function to group suspensions by user
+  const groupSuspensionsByUser = useCallback((suspensions) => {
+    if (!suspensions || suspensions.length === 0) return [];
 
-  // Function to group suspensions by user
-  const groupSuspensionsByUser = (suspensions) => {
     const userMap = new Map();
 
-    suspensions.forEach((suspension) => {
-      const userId = suspension.user?.id || suspension.userId;
-      const username = suspension.user?.username || 'Unknown';
+    // Process suspensions in chunks for better performance
+    const chunkSize = 100;
+    for (let i = 0; i < suspensions.length; i += chunkSize) {
+      const chunk = suspensions.slice(i, i + chunkSize);
 
-      if (!userMap.has(userId)) {
-        userMap.set(userId, {
-          userId,
-          username,
-          user: suspension.user,
-          suspensions: [],
-          totalSuspensions: 0,
-        });
+      chunk.forEach((suspension) => {
+        const userId = suspension.user?.id || suspension.userId;
+        const username = suspension.user?.username || 'Unknown';
+
+        if (!userMap.has(userId)) {
+          userMap.set(userId, {
+            userId,
+            username,
+            user: suspension.user,
+            suspensions: [],
+            totalSuspensions: 0,
+          });
+        }
+
+        const userSuspensions = userMap.get(userId);
+        userSuspensions.suspensions.push(suspension);
+        userSuspensions.totalSuspensions++;
+      });
+    }
+
+    // Convert to array and sort by most recent suspension (descending)
+    const result = Array.from(userMap.values());
+
+    // Optimize sorting for large datasets
+    return result.sort((a, b) => {
+      if (a.suspensions.length === 0 && b.suspensions.length === 0) return 0;
+      if (a.suspensions.length === 0) return 1;
+      if (b.suspensions.length === 0) return -1;
+
+      const aLatest = Math.max(
+        ...a.suspensions.map((s) => new Date(s.suspendedAt).getTime())
+      );
+      const bLatest = Math.max(
+        ...b.suspensions.map((s) => new Date(s.suspendedAt).getTime())
+      );
+      return bLatest - aLatest;
+    });
+  }, []);
+
+  // Optimized function to fetch grouped warnings
+  const fetchGroupedWarnings = useCallback(
+    async (page = 1, forceRefresh = false) => {
+      const cacheKey = `groupedWarnings_${page}`;
+
+      // Return cached data if fresh and not forcing refresh
+      if (!forceRefresh && isDataFresh(cacheKey)) {
+        const cached = getCachedData(cacheKey);
+        if (cached) {
+          setGroupedWarnings(cached.paginatedGrouped);
+          setGroupedWarningsTotal(cached.total);
+          setGroupedWarningsPage(page);
+          return;
+        }
       }
 
-      const userSuspensions = userMap.get(userId);
-      userSuspensions.suspensions.push(suspension);
-      userSuspensions.totalSuspensions++;
-    });
+      try {
+        setGroupedWarningsLoading(true);
 
-    // Convert to array and sort by total suspensions (descending)
-    return Array.from(userMap.values()).sort(
-      (a, b) => b.totalSuspensions - a.totalSuspensions
-    );
-  };
+        // Use smaller limit for better performance
+        const response = await request(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings?page=1&limit=200`,
+          'GET'
+        );
 
-  // Function to fetch grouped warnings
-  const fetchGroupedWarnings = async (page = 1) => {
-    try {
-      setGroupedWarningsLoading(true);
+        const warnings = response?.warnings || [];
 
-      const response = await request(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/warnings?page=1&limit=1000`,
-        'GET'
-      );
+        // Group by user
+        const grouped = groupWarningsByUser(warnings);
 
-      const warnings = response?.warnings || [];
+        // Paginate the grouped results
+        const startIndex = (page - 1) * groupedWarningsPerPage;
+        const endIndex = startIndex + groupedWarningsPerPage;
+        const paginatedGrouped = grouped.slice(startIndex, endIndex);
 
-      // Group by user
-      const grouped = groupWarningsByUser(warnings);
+        setGroupedWarnings(paginatedGrouped);
+        setGroupedWarningsTotal(grouped.length);
+        setGroupedWarningsPage(page);
 
-      // Paginate the grouped results
-      const startIndex = (page - 1) * groupedWarningsPerPage;
-      const endIndex = startIndex + groupedWarningsPerPage;
-      const paginatedGrouped = grouped.slice(startIndex, endIndex);
+        // Cache the result
+        updateCache(cacheKey, {
+          paginatedGrouped,
+          total: grouped.length,
+        });
+      } catch (error) {
+        console.error('Error fetching grouped warnings:', error);
+        setGroupedWarnings([]);
+        setGroupedWarningsTotal(0);
+      } finally {
+        setGroupedWarningsLoading(false);
+      }
+    },
+    [isDataFresh, getCachedData, updateCache]
+  );
 
-      setGroupedWarnings(paginatedGrouped);
-      setGroupedWarningsTotal(grouped.length);
-      setGroupedWarningsPage(page);
-    } catch (error) {
-      console.error('Error fetching grouped warnings:', error);
-      setGroupedWarnings([]);
-      setGroupedWarningsTotal(0);
-    } finally {
-      setGroupedWarningsLoading(false);
-    }
-  };
+  // Optimized function to fetch grouped suspensions
+  const fetchGroupedSuspensions = useCallback(
+    async (page = 1, forceRefresh = false) => {
+      const cacheKey = `groupedSuspensions_${page}`;
 
-  // Function to fetch grouped suspensions
-  const fetchGroupedSuspensions = async (page = 1) => {
-    try {
-      setGroupedSuspensionsLoading(true);
+      // Return cached data if fresh and not forcing refresh
+      if (!forceRefresh && isDataFresh(cacheKey)) {
+        const cached = getCachedData(cacheKey);
+        if (cached) {
+          setGroupedSuspensions(cached.paginatedGrouped);
+          setGroupedSuspensionsTotal(cached.total);
+          setGroupedSuspensionsPage(page);
+          return;
+        }
+      }
 
-      const response = await request(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/suspension-history-enhanced?page=0&size=1000&search=&status=all`,
-        'GET'
-      );
+      try {
+        setGroupedSuspensionsLoading(true);
 
-      const suspensions = response?.history || [];
+        // Use smaller limit for better performance
+        const response = await request(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/suspension-history-enhanced?page=0&size=200&search=&status=all`,
+          'GET'
+        );
 
-      // Group by user
-      const grouped = groupSuspensionsByUser(suspensions);
+        const suspensions = response?.history || [];
 
-      // Paginate the grouped results
-      const startIndex = (page - 1) * groupedSuspensionsPerPage;
-      const endIndex = startIndex + groupedSuspensionsPerPage;
-      const paginatedGrouped = grouped.slice(startIndex, endIndex);
+        // Group by user
+        const grouped = groupSuspensionsByUser(suspensions);
 
-      setGroupedSuspensions(paginatedGrouped);
-      setGroupedSuspensionsTotal(grouped.length);
-      setGroupedSuspensionsPage(page);
-    } catch (error) {
-      console.error('Error fetching grouped suspensions:', error);
-      setGroupedSuspensions([]);
-      setGroupedSuspensionsTotal(0);
-    } finally {
-      setGroupedSuspensionsLoading(false);
-    }
-  };
+        // Paginate the grouped results
+        const startIndex = (page - 1) * groupedSuspensionsPerPage;
+        const endIndex = startIndex + groupedSuspensionsPerPage;
+        const paginatedGrouped = grouped.slice(startIndex, endIndex);
+
+        setGroupedSuspensions(paginatedGrouped);
+        setGroupedSuspensionsTotal(grouped.length);
+        setGroupedSuspensionsPage(page);
+
+        // Cache the result
+        updateCache(cacheKey, {
+          paginatedGrouped,
+          total: grouped.length,
+        });
+      } catch (error) {
+        console.error('Error fetching grouped suspensions:', error);
+        setGroupedSuspensions([]);
+        setGroupedSuspensionsTotal(0);
+      } finally {
+        setGroupedSuspensionsLoading(false);
+      }
+    },
+    [isDataFresh, getCachedData, updateCache]
+  );
 
   // Function to toggle warning user expansion
   const toggleWarningUserExpansion = (userId) => {
@@ -1843,6 +2105,52 @@ export default function Moderation() {
     }
   };
 
+  // Loading component
+  const LoadingSpinner = () => (
+    <div className="flex min-h-screen items-center justify-center bg-neutral-900">
+      <div className="text-center">
+        <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-lg text-gray-400">
+          Loading Moderation Panel...
+        </p>
+        <p className="mt-2 text-sm text-gray-500">
+          Please wait while we load essential data
+        </p>
+      </div>
+    </div>
+  );
+
+  // Error component
+  const ErrorDisplay = ({ message, onRetry }) => (
+    <div className="flex min-h-screen items-center justify-center bg-neutral-900">
+      <div className="text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-600/20">
+          <ExclamationTriangleIcon className="h-8 w-8 text-red-400" />
+        </div>
+        <h2 className="mt-4 text-xl font-semibold text-white">
+          Error Loading Data
+        </h2>
+        <p className="mt-2 text-gray-400">{message}</p>
+        <button
+          onClick={onRetry}
+          className="mt-4 rounded bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+        >
+          Retry
+        </button>
+      </div>
+    </div>
+  );
+
+  // Show loading spinner during initial load
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  // Show error if there's an error
+  if (error) {
+    return <ErrorDisplay message={error} onRetry={() => fetchAllData()} />;
+  }
+
   return (
     <>
       <Head>
@@ -1875,48 +2183,6 @@ export default function Moderation() {
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                {/* Refresh Button - Desktop */}
-                <button
-                  onClick={() => {
-                    if (activeTab === 'accounts') {
-                      if (activeAccountsTab === 'suspended') {
-                        fetchSuspendedAccounts(
-                          suspendedAccountsPage,
-                          suspendedSearchFilter
-                        );
-                      } else if (activeAccountsTab === 'history') {
-                        fetchSuspensionHistory(
-                          suspensionHistoryPage,
-                          suspensionHistorySearchFilter,
-                          suspensionHistoryStatusFilter
-                        );
-                      } else if (activeAccountsTab === 'deleted') {
-                        fetchPendingDeletions(deletionsSearchFilter);
-                      }
-                    } else if (activeTab === 'users') {
-                      fetchUsers(currentUserPage, userSearchFilter);
-                    } else if (activeTab === 'challenges') {
-                      fetchPendingChallenges();
-                    } else if (activeTab === 'reports') {
-                      fetchReports(reportFilters);
-                    } else if (activeTab === 'warnings') {
-                      if (activeHistoryTab === 'suspended') {
-                        fetchGroupedSuspensions(groupedSuspensionsPage);
-                      } else if (activeHistoryTab === 'warnings') {
-                        fetchGroupedWarnings(groupedWarningsPage);
-                      }
-                    } else if (activeTab === 'activity') {
-                      fetchRecentActivity();
-                    } else {
-                      fetchAllData();
-                    }
-                  }}
-                  className="hidden items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:flex"
-                >
-                  <i className="fas fa-sync-alt text-sm"></i>
-                  <span>Refresh</span>
-                </button>
-
                 <div className="bg-neutral-700 px-3 py-2">
                   <div className="flex items-center space-x-2">
                     <div
@@ -1953,11 +2219,6 @@ export default function Moderation() {
                     className="flex w-full items-center justify-between border border-neutral-600 bg-neutral-800 px-4 py-3 text-left text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <div className="flex items-center space-x-3">
-                      {/* Mobile Logo */}
-                      <div className="flex h-8 w-8 items-center justify-center bg-blue-600/20 text-blue-400">
-                        <i className="fas fa-shield-alt text-sm"></i>
-                      </div>
-
                       {activeTab === 'overview' && (
                         <ChartBarIcon className="h-5 w-5 text-blue-400" />
                       )}
@@ -1994,57 +2255,18 @@ export default function Moderation() {
                             totalSuspendedAccounts + pendingDeletions.length
                           })`}
                         {activeTab === 'warnings' &&
-                          `History (${warningsTotal})`}
+                          `History (${historyTotalUsers})`}
                       </span>
                     </div>
                     <ChevronDownIcon className="h-5 w-5 text-gray-400" />
                   </button>
                   {showMobileMenu && (
                     <div className="absolute left-0 right-0 top-full z-50 border border-neutral-600 bg-neutral-800 shadow-lg">
-                      {/* Mobile Refresh Button */}
-                      <div className="border-b border-neutral-600 px-4 py-2">
-                        <button
-                          onClick={() => {
-                            if (activeTab === 'accounts') {
-                              if (activeAccountsTab === 'suspended') {
-                                fetchSuspendedAccounts(
-                                  suspendedAccountsPage,
-                                  suspendedSearchFilter
-                                );
-                              } else if (activeAccountsTab === 'history') {
-                                fetchSuspensionHistory(
-                                  suspensionHistoryPage,
-                                  suspensionHistorySearchFilter,
-                                  suspensionHistoryStatusFilter
-                                );
-                              } else if (activeAccountsTab === 'deleted') {
-                                fetchPendingDeletions(deletionsSearchFilter);
-                              }
-                            } else if (activeTab === 'users') {
-                              fetchUsers(currentUserPage, userSearchFilter);
-                            } else if (activeTab === 'challenges') {
-                              fetchPendingChallenges();
-                            } else if (activeTab === 'reports') {
-                              fetchReports(reportFilters);
-                            } else if (activeTab === 'warnings') {
-                              fetchWarnings();
-                            } else if (activeTab === 'activity') {
-                              fetchRecentActivity();
-                            } else {
-                              fetchAllData();
-                            }
-                            setShowMobileMenu(false);
-                          }}
-                          className="flex w-full items-center justify-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20"
-                        >
-                          <i className="fas fa-sync-alt text-sm"></i>
-                          <span>Refresh</span>
-                        </button>
-                      </div>
                       <div className="py-2">
                         <button
                           onClick={() => {
                             setActiveTab('overview');
+                            fetchAllData();
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
@@ -2055,6 +2277,7 @@ export default function Moderation() {
                         <button
                           onClick={() => {
                             setActiveTab('activity');
+                            fetchRecentActivity();
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
@@ -2065,6 +2288,7 @@ export default function Moderation() {
                         <button
                           onClick={() => {
                             setActiveTab('users');
+                            fetchUsers(currentUserPage, userSearchFilter);
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
@@ -2075,6 +2299,7 @@ export default function Moderation() {
                         <button
                           onClick={() => {
                             setActiveTab('challenges');
+                            fetchPendingChallenges();
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
@@ -2085,6 +2310,8 @@ export default function Moderation() {
                         <button
                           onClick={() => {
                             setActiveTab('reports');
+                            fetchReports(reportFilters);
+                            fetchReportStats();
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
@@ -2098,6 +2325,13 @@ export default function Moderation() {
                         <button
                           onClick={() => {
                             setActiveTab('accounts');
+                            // Fetch all accounts-related data
+                            fetchSuspendedAccounts(
+                              suspendedAccountsPage,
+                              suspendedSearchFilter
+                            );
+                            fetchPendingDeletions(deletionsSearchFilter);
+                            fetchDeletionStats();
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
@@ -2111,12 +2345,16 @@ export default function Moderation() {
                         <button
                           onClick={() => {
                             setActiveTab('warnings');
+                            // Fetch all history-related data
+                            fetchGroupedSuspensions(groupedSuspensionsPage);
+                            fetchGroupedWarnings(groupedWarningsPage);
+                            calculateHistoryTotalUsers();
                             setShowMobileMenu(false);
                           }}
                           className="flex w-full items-center space-x-3 px-4 py-3 text-left text-white hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
                         >
                           <ExclamationTriangleIcon className="h-5 w-5 text-gray-400" />
-                          <span>History ({warningsTotal})</span>
+                          <span>History ({historyTotalUsers})</span>
                         </button>
                       </div>
                     </div>
@@ -2165,7 +2403,7 @@ export default function Moderation() {
                       id="warnings"
                       label="History"
                       icon={ExclamationTriangleIcon}
-                      count={warningsTotal}
+                      count={historyTotalUsers}
                     />
                   </nav>
                 </div>
@@ -2179,7 +2417,10 @@ export default function Moderation() {
                 <div className="border-b border-neutral-700">
                   <nav className="flex flex-wrap space-x-2 sm:space-x-8">
                     <button
-                      onClick={() => setActiveActivityTab('comments')}
+                      onClick={() => {
+                        setActiveActivityTab('comments');
+                        fetchRecentActivity();
+                      }}
                       className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeActivityTab === 'comments'
                           ? 'border-blue-500 text-blue-400'
@@ -2198,7 +2439,10 @@ export default function Moderation() {
                       </span>
                     </button>
                     <button
-                      onClick={() => setActiveActivityTab('writeups')}
+                      onClick={() => {
+                        setActiveActivityTab('writeups');
+                        fetchRecentActivity();
+                      }}
                       className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeActivityTab === 'writeups'
                           ? 'border-green-500 text-green-400'
@@ -2217,7 +2461,10 @@ export default function Moderation() {
                       </span>
                     </button>
                     <button
-                      onClick={() => setActiveActivityTab('lessons')}
+                      onClick={() => {
+                        setActiveActivityTab('lessons');
+                        fetchRecentActivity();
+                      }}
                       className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeActivityTab === 'lessons'
                           ? 'border-purple-500 text-purple-400'
@@ -2240,7 +2487,7 @@ export default function Moderation() {
 
                 {/* Activity Content */}
                 <div className="border border-neutral-700/50 bg-neutral-800/80 p-4 backdrop-blur-sm sm:p-8">
-                  <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="mb-6 flex items-center justify-between">
                     <div>
                       <h2 className="text-2xl font-bold text-white">
                         Recent{' '}
@@ -2928,7 +3175,8 @@ export default function Moderation() {
                                   <p className="font-medium text-white">
                                     {user.username}
                                   </p>
-                                  <p className="text-sm text-gray-400">
+                                  <p className="text-xs text-gray-400">{user.email || ''}</p>
+                                  <p className="text-xs text-gray-500">
                                     {user.points || 0} points • Joined{' '}
                                     {new Date(
                                       user.createdAt
@@ -3177,13 +3425,65 @@ export default function Moderation() {
                       value={userSearchFilter}
                       onChange={(e) => {
                         setUserSearchFilter(e.target.value);
-                        clearTimeout(window.userSearchTimeout);
-                        window.userSearchTimeout = setTimeout(() => {
+                        handleUserInputChange(e); // trigger suggestions
+                        clearTimeout(window.userSearchTimeout2);
+                        window.userSearchTimeout2 = setTimeout(() => {
                           setCurrentUserPage(0);
                           fetchUsers(0, e.target.value);
                         }, 500);
                       }}
+                      onFocus={() => {
+                        if (userSuggestions.length > 0) {
+                          setShowUserSuggestions(true);
+                        }
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => setShowUserSuggestions(false), 200);
+                      }}
+                      autoComplete="off"
                     />
+                    {/* User Suggestions Dropdown */}
+                    {showUserSuggestions && userSuggestions.length > 0 && (
+                      <div className="user-suggestions absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto border border-neutral-600 bg-neutral-800 shadow-lg">
+                        {userSuggestions.map((user) => (
+                          <div
+                            key={user.id}
+                            className="flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors duration-200 hover:bg-neutral-700"
+                            onClick={() => {
+                              setUserSearchFilter(user.username);
+                              setShowUserSuggestions(false);
+                              setUserSuggestions([]);
+                              setCurrentUserPage(0);
+                              fetchUsers(0, user.username);
+                            }}
+                          >
+                            <img
+                              src={
+                                user.profileImage ||
+                                'https://robohash.org/' + user.username
+                              }
+                              alt={`${user.username}'s profile`}
+                              className="h-8 w-8"
+                            />
+                            <div className="flex-1">
+                              <p className="font-medium text-white">
+                                {user.username}
+                              </p>
+                              <p className="text-xs text-gray-400">{user.email || ''}</p>
+                              <p className="text-xs text-gray-500">
+                                {user.points || 0} points • Joined{' '}
+                                {new Date(user.createdAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                            {user.disabled && (
+                              <span className="bg-red-600 px-2 py-1 text-xs text-white">
+                                Disabled
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Users Grid */}
@@ -3200,6 +3500,19 @@ export default function Moderation() {
                               onClick={() => {
                                 setSelectedUserForManagement(user);
                                 setShowUserManagementPopup(true);
+                                // Pre-fill the username in the main input and focus on reason field
+                                setTimeout(() => {
+                                  const usernameInput =
+                                    document.getElementById('username-input');
+                                  const reasonInput =
+                                    document.getElementById('popupReasonInput');
+                                  if (usernameInput) {
+                                    usernameInput.value = user.username;
+                                  }
+                                  if (reasonInput) {
+                                    reasonInput.focus();
+                                  }
+                                }, 100);
                               }}
                               className="absolute right-2 top-2 p-1.5 text-gray-400 transition-all duration-200 hover:bg-neutral-700 hover:text-white"
                               title="Manage User"
@@ -3869,10 +4182,17 @@ export default function Moderation() {
                       All Reports
                     </h2>
                     <button
-                      onClick={() => fetchReports(reportFilters)}
-                      className="flex items-center space-x-2 border border-blue-500/30 bg-blue-600/10 px-3 py-2 text-blue-400 transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-600/20 sm:px-4"
+                      onClick={() => {
+                        if (activeHistoryTab === 'suspended') {
+                          fetchGroupedSuspensions(groupedSuspensionsPage, true); // forceRefresh = true
+                        } else if (activeHistoryTab === 'warnings') {
+                          fetchGroupedWarnings(groupedWarningsPage, true); // forceRefresh = true
+                        }
+                      }}
+                      disabled={groupedWarningsLoading || groupedSuspensionsLoading}
+                      className="flex items-center gap-2 bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
                     >
-                      <i className="fas fa-sync-alt text-sm"></i>
+                      <ArrowPathIcon className="h-4 w-4" />
                       <span className="hidden sm:inline">Refresh</span>
                     </button>
                   </div>
@@ -4271,7 +4591,13 @@ export default function Moderation() {
                 <div className="border-b border-neutral-700">
                   <nav className="flex flex-wrap space-x-2 sm:space-x-8">
                     <button
-                      onClick={() => setActiveAccountsTab('suspended')}
+                      onClick={() => {
+                        setActiveAccountsTab('suspended');
+                        fetchSuspendedAccounts(
+                          suspendedAccountsPage,
+                          suspendedSearchFilter
+                        );
+                      }}
                       className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeAccountsTab === 'suspended'
                           ? 'border-blue-500 text-blue-400'
@@ -4290,7 +4616,10 @@ export default function Moderation() {
                       </span>
                     </button>
                     <button
-                      onClick={() => setActiveAccountsTab('disabled')}
+                      onClick={() => {
+                        setActiveAccountsTab('disabled');
+                        // No data to refresh for disabled tab currently
+                      }}
                       className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeAccountsTab === 'disabled'
                           ? 'border-blue-500 text-blue-400'
@@ -4303,7 +4632,10 @@ export default function Moderation() {
                       </span>
                     </button>
                     <button
-                      onClick={() => setActiveAccountsTab('deleted')}
+                      onClick={() => {
+                        setActiveAccountsTab('deleted');
+                        fetchPendingDeletions(deletionsSearchFilter);
+                      }}
                       className={`border-b-2 px-1 py-2 text-xs font-medium transition-colors duration-200 sm:py-4 sm:text-sm ${
                         activeAccountsTab === 'deleted'
                           ? 'border-blue-500 text-blue-400'
@@ -5220,16 +5552,12 @@ export default function Moderation() {
                     <button
                       onClick={() => {
                         if (activeHistoryTab === 'suspended') {
-                          fetchSuspensionHistory(
-                            suspensionHistoryPage,
-                            suspensionHistorySearchFilter,
-                            suspensionHistoryStatusFilter
-                          );
+                          fetchGroupedSuspensions(groupedSuspensionsPage, true); // forceRefresh = true
                         } else if (activeHistoryTab === 'warnings') {
-                          fetchWarningsPage(warningsPage);
+                          fetchGroupedWarnings(groupedWarningsPage, true); // forceRefresh = true
                         }
                       }}
-                      disabled={warningsLoading}
+                      disabled={groupedWarningsLoading || groupedSuspensionsLoading}
                       className="flex items-center gap-2 bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
                     >
                       <ArrowPathIcon className="h-4 w-4" />
@@ -5241,24 +5569,30 @@ export default function Moderation() {
                   <div className="mb-6 border-b border-neutral-600">
                     <div className="flex space-x-8">
                       <button
-                        onClick={() => setActiveHistoryTab('suspended')}
+                        onClick={() => {
+                          setActiveHistoryTab('suspended');
+                          fetchGroupedSuspensions(groupedSuspensionsPage);
+                        }}
                         className={`border-b-2 px-1 py-2 text-sm font-medium transition-all duration-200 ${
                           activeHistoryTab === 'suspended'
                             ? 'border-orange-500 text-orange-400'
                             : 'border-transparent text-gray-400 hover:border-gray-600 hover:text-gray-300'
                         }`}
                       >
-                        Suspended ({suspensionHistory.length})
+                        Suspended ({groupedSuspensionsTotal || 0})
                       </button>
                       <button
-                        onClick={() => setActiveHistoryTab('warnings')}
+                        onClick={() => {
+                          setActiveHistoryTab('warnings');
+                          fetchGroupedWarnings(groupedWarningsPage);
+                        }}
                         className={`border-b-2 px-1 py-2 text-sm font-medium transition-all duration-200 ${
                           activeHistoryTab === 'warnings'
                             ? 'border-blue-500 text-blue-400'
                             : 'border-transparent text-gray-400 hover:border-gray-600 hover:text-gray-300'
                         }`}
                       >
-                        Warnings ({warningsTotal})
+                        Warnings ({groupedWarningsTotal || 0})
                       </button>
                     </div>
                   </div>
@@ -5266,6 +5600,80 @@ export default function Moderation() {
                   {/* Grouped Suspensions Tab */}
                   {activeHistoryTab === 'suspended' && (
                     <>
+                      {/* Smart Search Bar for Suspended */}
+                      <div className="relative mb-6 max-w-md">
+                        <div className="absolute left-3 top-2.5">
+                          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Search suspended users by username..."
+                          className="w-full border-0 bg-neutral-700/80 py-2 pl-10 pr-4 text-white placeholder-gray-400 shadow-inner transition-all duration-200 focus:bg-neutral-700 focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-0"
+                          value={suspendedSearchFilter}
+                          onChange={(e) => {
+                            setSuspendedSearchFilter(e.target.value);
+                            handleUserInputChange(e); // trigger suggestions
+                            clearTimeout(window.suspendedSearchTimeout2);
+                            window.suspendedSearchTimeout2 = setTimeout(() => {
+                              fetchGroupedSuspensions(1, e.target.value);
+                            }, 500);
+                          }}
+                          onFocus={() => {
+                            if (userSuggestions.length > 0) {
+                              setShowUserSuggestions(true);
+                            }
+                          }}
+                          onBlur={() => {
+                            setTimeout(
+                              () => setShowUserSuggestions(false),
+                              200
+                            );
+                          }}
+                          autoComplete="off"
+                        />
+                        {/* User Suggestions Dropdown */}
+                        {showUserSuggestions && userSuggestions.length > 0 && (
+                          <div className="user-suggestions absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto border border-neutral-600 bg-neutral-800 shadow-lg">
+                            {userSuggestions.map((user) => (
+                              <div
+                                key={user.id}
+                                className="flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors duration-200 hover:bg-neutral-700"
+                                onClick={() => {
+                                  setSuspendedSearchFilter(user.username);
+                                  setShowUserSuggestions(false);
+                                  setUserSuggestions([]);
+                                  fetchGroupedSuspensions(1, user.username);
+                                }}
+                              >
+                                <img
+                                  src={
+                                    user.profileImage ||
+                                    'https://robohash.org/' + user.username
+                                  }
+                                  alt={`${user.username}'s profile`}
+                                  className="h-8 w-8"
+                                />
+                                <div className="flex-1">
+                                  <p className="font-medium text-white">
+                                    {user.username}
+                                  </p>
+                                  <p className="text-sm text-gray-400">
+                                    {user.points || 0} points • Joined{' '}
+                                    {new Date(
+                                      user.createdAt
+                                    ).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                {user.disabled && (
+                                  <span className="bg-red-600 px-2 py-1 text-xs text-white">
+                                    Disabled
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       {groupedSuspensionsLoading ? (
                         <div className="p-8 text-center">
                           <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
@@ -5631,7 +6039,7 @@ export default function Moderation() {
                                   </svg>
                                 </button>
                                 <span className="px-3 py-2 font-medium text-white">
-                                  {groupedSuspensionsPage} of{' '}
+                                  Page {groupedSuspensionsPage} of{' '}
                                   {Math.ceil(
                                     groupedSuspensionsTotal /
                                       groupedSuspensionsPerPage
@@ -5677,6 +6085,80 @@ export default function Moderation() {
                   {/* Grouped Warnings Tab */}
                   {activeHistoryTab === 'warnings' && (
                     <>
+                      {/* Smart Search Bar for Warnings */}
+                      <div className="relative mb-6 max-w-md">
+                        <div className="absolute left-3 top-2.5">
+                          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Search warned users by username..."
+                          className="w-full border-0 bg-neutral-700/80 py-2 pl-10 pr-4 text-white placeholder-gray-400 shadow-inner transition-all duration-200 focus:bg-neutral-700 focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-0"
+                          value={suspendedSearchFilter}
+                          onChange={(e) => {
+                            setSuspendedSearchFilter(e.target.value);
+                            handleUserInputChange(e); // trigger suggestions
+                            clearTimeout(window.warningsSearchTimeout2);
+                            window.warningsSearchTimeout2 = setTimeout(() => {
+                              fetchGroupedWarnings(1, e.target.value);
+                            }, 500);
+                          }}
+                          onFocus={() => {
+                            if (userSuggestions.length > 0) {
+                              setShowUserSuggestions(true);
+                            }
+                          }}
+                          onBlur={() => {
+                            setTimeout(
+                              () => setShowUserSuggestions(false),
+                              200
+                            );
+                          }}
+                          autoComplete="off"
+                        />
+                        {/* User Suggestions Dropdown */}
+                        {showUserSuggestions && userSuggestions.length > 0 && (
+                          <div className="user-suggestions absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto border border-neutral-600 bg-neutral-800 shadow-lg">
+                            {userSuggestions.map((user) => (
+                              <div
+                                key={user.id}
+                                className="flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors duration-200 hover:bg-neutral-700"
+                                onClick={() => {
+                                  setSuspendedSearchFilter(user.username);
+                                  setShowUserSuggestions(false);
+                                  setUserSuggestions([]);
+                                  fetchGroupedWarnings(1, user.username);
+                                }}
+                              >
+                                <img
+                                  src={
+                                    user.profileImage ||
+                                    'https://robohash.org/' + user.username
+                                  }
+                                  alt={`${user.username}'s profile`}
+                                  className="h-8 w-8"
+                                />
+                                <div className="flex-1">
+                                  <p className="font-medium text-white">
+                                    {user.username}
+                                  </p>
+                                  <p className="text-sm text-gray-400">
+                                    {user.points || 0} points • Joined{' '}
+                                    {new Date(
+                                      user.createdAt
+                                    ).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                {user.disabled && (
+                                  <span className="bg-red-600 px-2 py-1 text-xs text-white">
+                                    Disabled
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       {groupedWarningsLoading ? (
                         <div className="p-8 text-center">
                           <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
@@ -5996,7 +6478,7 @@ export default function Moderation() {
                                   </svg>
                                 </button>
                                 <span className="px-3 py-2 font-medium text-white">
-                                  {groupedWarningsPage} of{' '}
+                                  Page {groupedWarningsPage} of{' '}
                                   {Math.ceil(
                                     groupedWarningsTotal /
                                       groupedWarningsPerPage
@@ -6058,6 +6540,123 @@ export default function Moderation() {
 
         {/* Notification Modal */}
         <NotificationModal />
+
+        {/* User Management Popup Modal */}
+        {showUserManagementPopup && selectedUserForManagement && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-full max-w-md border border-neutral-700 bg-neutral-800 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-medium text-white">
+                  Manage User: {selectedUserForManagement.username}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowUserManagementPopup(false);
+                    setSelectedUserForManagement(null);
+                  }}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedUserForManagement.username}
+                    readOnly
+                    className="w-full border border-neutral-600 bg-neutral-700 px-3 py-2 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Reason for action (required for audit trail)
+                  </label>
+                  <textarea
+                    id="popupReasonInput"
+                    placeholder="Enter reason for action..."
+                    className="h-24 w-full resize-none border border-neutral-600 bg-neutral-700 p-3 text-white focus:border-blue-500 focus:outline-none"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => {
+                      handleDisableAccount(selectedUserForManagement.username);
+                      setShowUserManagementPopup(false);
+                      setSelectedUserForManagement(null);
+                    }}
+                    className="flex items-center justify-center space-x-2 border border-red-600/30 bg-red-600/10 px-4 py-2 text-sm font-medium text-red-400 transition-all duration-200 hover:border-red-500/50 hover:bg-red-600/20"
+                  >
+                    <span>Disable Account</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleEnableAccount(selectedUserForManagement.username);
+                      setShowUserManagementPopup(false);
+                      setSelectedUserForManagement(null);
+                    }}
+                    className="flex items-center justify-center space-x-2 border border-green-600/30 bg-green-600/10 px-4 py-2 text-sm font-medium text-green-400 transition-all duration-200 hover:border-green-500/50 hover:bg-green-600/20"
+                  >
+                    <span>Enable Account</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleWarnUser(selectedUserForManagement.username);
+                      setShowUserManagementPopup(false);
+                      setSelectedUserForManagement(null);
+                    }}
+                    className="flex items-center justify-center space-x-2 border border-yellow-600/30 bg-yellow-600/10 px-4 py-2 text-sm font-medium text-yellow-400 transition-all duration-200 hover:border-yellow-500/50 hover:bg-yellow-600/20"
+                  >
+                    <i className="fas fa-exclamation-triangle"></i>
+                    <span>Warn User</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleResetPFP(selectedUserForManagement.username);
+                      setShowUserManagementPopup(false);
+                      setSelectedUserForManagement(null);
+                    }}
+                    className="flex items-center justify-center space-x-2 border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:border-neutral-500 hover:bg-neutral-600"
+                  >
+                    <span>Reset Avatar</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleResetBanner(selectedUserForManagement.username);
+                      setShowUserManagementPopup(false);
+                      setSelectedUserForManagement(null);
+                    }}
+                    className="flex items-center justify-center space-x-2 border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:border-neutral-500 hover:bg-neutral-600"
+                  >
+                    <span>Reset Banner</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleResetBio(selectedUserForManagement.username);
+                      setShowUserManagementPopup(false);
+                      setSelectedUserForManagement(null);
+                    }}
+                    className="flex items-center justify-center space-x-2 border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:border-neutral-500 hover:bg-neutral-600"
+                  >
+                    <span>Reset Bio</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* User Action Modals - Suspend and Role only */}
         <UserActionModals
