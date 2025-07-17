@@ -356,9 +356,12 @@ export default function Createchall() {
 
   useEffect(() => {
     const loadChallengeData = async () => {
+      const challengeId = router.query.id;
+      if (!challengeId) {
+        toast.error('No challenge ID provided in the URL.');
+        return;
+      }
       try {
-        const challengeId = router.query.id;
-        console.log(challengeId)
         const url = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}`;
         const hintURL = `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}/getHints`;
 
@@ -367,7 +370,6 @@ export default function Createchall() {
 
         if (data && data.success) {
           const challenge = data.body;
-          console.log(challenge)
           setNewChallengeName(challenge.title);
           setCategory(challenge.category[0]);
           setHints(hintData.hintArray.map(hint => hint.message));
