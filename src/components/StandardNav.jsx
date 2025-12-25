@@ -798,9 +798,10 @@ export function StandardNav({ guestAllowed, alignCenter = true, animatedPoints, 
       />
       <Upgrade open={upgradeModalOpen} setOpen={setUpgradeModalOpen} />
 
-        <div className="mx-auto hidden   w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
+        <div className="mx-auto    w-full bg-yellow-800 py-1 text-center  text-sm text-white ">
           <h1 className="mx-auto  px-4 text-left">
-                We're experiencing issues with our database and API. You may encounter errors while using the platform. We're working on fixing it. Please join the Discord for updates. https://discord.gg/XJ8QfS6D
+
+              Our terminal infrastructure is temporarily down. Please join the Discord server for updates: https://discord.gg/YsU6jbz3ET
           </h1>
         </div>
      
