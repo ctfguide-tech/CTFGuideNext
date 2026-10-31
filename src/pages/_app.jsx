@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import request from '@/utils/request';
 import { Analytics } from "@vercel/analytics/react"
 import { usePathname, useRouter } from 'next/navigation';
+import SpookyOverlay from '@/components/halloween/SpookyOverlay';
 
 
 export default function App({ Component, pageProps }) {
@@ -66,6 +67,7 @@ export default function App({ Component, pageProps }) {
     <Context.Provider value={appState}>
       <Component {...pageProps} />
       <Analytics />
+      <SpookyOverlay />
 
     </Context.Provider>
   </GoogleOAuthProvider>
