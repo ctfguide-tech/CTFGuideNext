@@ -536,3 +536,132 @@ ul {
     transform: translate(300px, 300px);
   }
 }
+/* ------------------------------------------------------------------ */
+/* Halloween theme (cosmetic). Active when <html> has the .spooky      */
+/* class; see src/components/halloween/SpookyOverlay.jsx.             */
+/* ------------------------------------------------------------------ */
+.spooky-hat { display: none; }
+.spooky .spooky-hat {
+  display: block;
+  position: absolute;
+  width: 34px;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-46%) rotate(-12deg);
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.spooky ::selection { background: #ea580c; color: #fff; }
+.spooky { scrollbar-color: #9a3412 #171717; }
+
+.spooky-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.spooky-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(234, 88, 12, 0.10), transparent 55%),
+    radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.35) 100%);
+}
+
+.spooky-fog {
+  position: absolute;
+  left: -50%;
+  bottom: -40px;
+  width: 200%;
+  height: 160px;
+  background: radial-gradient(ellipse at 20% 60%, rgba(163, 163, 163, 0.10), transparent 60%),
+              radial-gradient(ellipse at 55% 70%, rgba(163, 163, 163, 0.08), transparent 55%),
+              radial-gradient(ellipse at 85% 60%, rgba(163, 163, 163, 0.10), transparent 60%);
+  filter: blur(8px);
+  animation: spooky-drift 40s linear infinite alternate;
+}
+.spooky-fog-b { bottom: -70px; opacity: 0.7; animation-duration: 55s; animation-direction: alternate-reverse; }
+
+@keyframes spooky-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(25%); }
+}
+
+.spooky-web { position: absolute; top: 0; }
+.spooky-web-left { left: 0; }
+.spooky-web-right { right: 0; transform: scaleX(-1); }
+
+.spooky-spider {
+  position: absolute;
+  top: 0;
+  right: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center;
+  animation: spooky-dangle 7s ease-in-out infinite;
+}
+.spooky-thread { width: 1px; height: 90px; background: linear-gradient(rgba(163,163,163,0), rgba(212,212,212,0.55)); }
+@keyframes spooky-dangle {
+  0%, 100% { transform: translateY(-30px) rotate(2deg); }
+  50%      { transform: translateY(20px) rotate(-2deg); }
+}
+
+.spooky-bat {
+  position: absolute;
+  left: -60px;
+  opacity: 0;
+  animation-name: spooky-fly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.spooky-bat svg { transform: scale(var(--bat-scale, 1)); }
+.spooky-bat-wings { transform-origin: 32px 14px; animation: spooky-flap 0.28s ease-in-out infinite alternate; }
+
+@keyframes spooky-fly {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  5%   { opacity: 0.85; }
+  25%  { transform: translate(28vw, -30px); }
+  50%  { transform: translate(55vw, 25px); }
+  75%  { transform: translate(82vw, -15px); }
+  95%  { opacity: 0.85; }
+  100% { transform: translate(calc(100vw + 120px), 10px); opacity: 0; }
+}
+@keyframes spooky-flap {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(0.5); }
+}
+
+.spooky-toggle {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  background: rgba(23, 23, 23, 0.85);
+  backdrop-filter: blur(6px);
+  color: #fdba74;
+  font-size: 0.8rem;
+  box-shadow: 0 0 18px rgba(234, 88, 12, 0.18);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.spooky-toggle:hover { border-color: rgba(249, 115, 22, 0.8); box-shadow: 0 0 24px rgba(234, 88, 12, 0.35); transform: translateY(-1px); }
+.spooky-toggle-icon { font-size: 1.1rem; display: inline-block; }
+.spooky .spooky-toggle-icon { animation: spooky-glow 2.4s ease-in-out infinite; }
+@keyframes spooky-glow {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(249, 115, 22, 0.4)); }
+  50%      { filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.9)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spooky-bat { display: none; }
+  .spooky-fog, .spooky-spider, .spooky-bat-wings, .spooky .spooky-toggle-icon { animation: none; }
+}
